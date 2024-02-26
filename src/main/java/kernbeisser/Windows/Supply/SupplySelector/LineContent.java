@@ -1,12 +1,11 @@
 package kernbeisser.Windows.Supply.SupplySelector;
 
-import com.sun.istack.NotNull;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import javax.swing.*;
 import jiconfont.icons.font_awesome.FontAwesome;
 import kernbeisser.CustomComponents.ObjectTable.Column;
@@ -31,6 +30,7 @@ import org.apache.commons.lang3.Range;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.jdt.core.compiler.InvalidInputException;
+import org.jetbrains.annotations.NotNull;
 
 @Data
 @Setter(AccessLevel.PUBLIC)

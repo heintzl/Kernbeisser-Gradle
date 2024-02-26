@@ -1,7 +1,7 @@
 package kernbeisser.Security;
 
-import kernbeisser.Enums.PermissionKey;
 import lombok.Getter;
+import rs.groump.PermissionKey;
 
 public class StaticPermissionChecks {
 

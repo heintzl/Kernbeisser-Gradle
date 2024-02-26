@@ -1,5 +1,6 @@
 package kernbeisser.DBEntities;
 
+import jakarta.persistence.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.Instant;
@@ -7,9 +8,7 @@ import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.InvalidTransactionException;
@@ -28,6 +27,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.jetbrains.annotations.NotNull;
+import rs.groump.PermissionKey;
 
 @Table(indexes = {@Index(name = "IX_transaction_date", columnList = "date")})
 @Entity

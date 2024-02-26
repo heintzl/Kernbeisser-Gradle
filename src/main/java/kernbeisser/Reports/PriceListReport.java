@@ -1,5 +1,6 @@
 package kernbeisser.Reports;
 
+import java.time.Instant;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -8,7 +9,6 @@ import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Articles;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.Reports.ReportDTO.PriceListReportArticle;
-import lombok.var;
 
 public class PriceListReport extends Report {
   private final Collection<PriceListReportArticle> priceListReportArticles;
@@ -21,7 +21,7 @@ public class PriceListReport extends Report {
   public PriceListReport(Collection<Article> articles, String priceListName) {
     super(ReportFileNames.PRICELIST_REPORT_FILENAME);
     setDuplexPrint(false);
-    var lastDeliveries = Articles.getLastDeliveries();
+    Map<Integer, Instant> lastDeliveries = Articles.getLastDeliveries();
     this.priceListReportArticles =
         articles.stream()
             .map(a -> PriceListReportArticle.ofArticle(a, lastDeliveries))

@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.PermissionSet;
 import kernbeisser.Useful.Tools;
 import lombok.SneakyThrows;
@@ -15,6 +14,7 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import rs.groump.PermissionKey;
 
 /** faster imp of the SubMethodVisitor by buffering target methods */
 public class PermissionKeyMethodVisitor extends ClassVisitor {

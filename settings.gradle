@@ -1,1 +1,3 @@
 rootProject.name = 'kernbeisser'
+include 'annotation-processor'
+

@@ -1,16 +1,16 @@
 package kernbeisser.DBEntities;
 
+import jakarta.persistence.*;
 import java.util.*;
-import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionConstants;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
 import lombok.Cleanup;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import rs.groump.PermissionKey;
 
 @Entity
 @Table

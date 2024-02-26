@@ -1,8 +1,8 @@
 package kernbeisser.Windows.ShoppingMask;
 
+import jakarta.persistence.NoResultException;
 import java.awt.event.KeyEvent;
 import java.util.Objects;
-import javax.persistence.NoResultException;
 import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.CustomComponents.KeyCapture;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;

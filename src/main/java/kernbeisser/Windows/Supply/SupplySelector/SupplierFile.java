@@ -1,5 +1,7 @@
 package kernbeisser.Windows.Supply.SupplySelector;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import java.awt.*;
 import java.io.File;
 import java.nio.file.Files;
@@ -8,8 +10,6 @@ import java.time.Instant;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;

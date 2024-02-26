@@ -1,9 +1,9 @@
 package kernbeisser.Windows.EditSurchargeGroups;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import java.util.Collection;
 import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import kernbeisser.CustomComponents.ObjectTree.Node;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;

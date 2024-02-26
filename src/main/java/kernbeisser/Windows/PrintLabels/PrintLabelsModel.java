@@ -1,10 +1,11 @@
 package kernbeisser.Windows.PrintLabels;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.NoResultException;
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import javax.persistence.NoResultException;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.DBConnection.DBConnection;
@@ -20,7 +21,6 @@ import kernbeisser.Windows.CollectionView.CollectionController;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
 import lombok.Getter;
-import lombok.var;
 
 public class PrintLabelsModel implements IModel<PrintLabelsController> {
 
@@ -28,7 +28,7 @@ public class PrintLabelsModel implements IModel<PrintLabelsController> {
   @Getter private Map<Article, Integer> printPoolMap;
 
   public static CollectionController<Article> getArticleSource() {
-    var lastDeliveries = Articles.getLastDeliveries();
+    Map<Integer, Instant> lastDeliveries = Articles.getLastDeliveries();
     return new CollectionController<>(
         new ArrayList<>(),
         Source.empty(),

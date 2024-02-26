@@ -4,7 +4,6 @@ import at.favre.lib.crypto.bcrypt.BCrypt;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Windows.MVC.Controller;
-import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
 // @Requires(PermissionKey.ACTION_OPEN_CHANGE_PASSWORD)
@@ -41,7 +40,7 @@ public class ChangePasswordController extends Controller<ChangePasswordView, Cha
   }
 
   private boolean comparePasswords() {
-    var view = getView();
+    ChangePasswordView view = getView();
     return view.getNewPassword().equals(view.getRepeatedPassword());
   }
 
@@ -58,7 +57,7 @@ public class ChangePasswordController extends Controller<ChangePasswordView, Cha
   }
 
   void refreshPasswordStrength() {
-    var view = getView();
+    ChangePasswordView view = getView();
     show(getPasswordStrength(view.getNewPassword()));
   }
 

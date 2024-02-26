@@ -1,16 +1,16 @@
 package kernbeisser.Windows.PermissionManagement;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import java.util.*;
-import java.util.stream.Collectors;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
-import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Security.PermissionKeyOrdering;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
+import rs.groump.PermissionKey;
 
 public class PermissionModel implements IModel<PermissionController> {
   void addKey(Permission permission, PermissionKey key) {
@@ -25,15 +25,8 @@ public class PermissionModel implements IModel<PermissionController> {
     return Permission.getAll(null);
   }
 
-  List<Class<?>> getAllKeyCategories() {
-    List<Class<?>> classes =
-        Arrays.stream(PermissionKey.values())
-            .filter(v -> v.getClazz() != null)
-            .map(PermissionKey::getClazz)
-            .distinct()
-            .sorted(Comparator.comparing(Class::getName))
-            .collect(Collectors.toList());
-    return classes;
+  List<PermissionKeyOrdering> getAllKeyCategories() {
+    return Arrays.asList(PermissionKeyOrdering.values());
   }
 
   void deletePermission(Permission selectedObject) {

@@ -1,5 +1,6 @@
 package kernbeisser.Useful;
 
+import jakarta.persistence.*;
 import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
@@ -15,7 +16,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.function.*;
 import java.util.stream.Collectors;
-import javax.persistence.*;
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
 import jiconfont.icons.font_awesome.FontAwesome;
@@ -33,7 +33,7 @@ import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.ViewContainers.SubWindow;
 import lombok.Cleanup;
-import lombok.var;
+import org.hibernate.envers.AuditReader;
 import org.hibernate.envers.AuditReaderFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -416,28 +416,6 @@ public class Tools {
     }
   }
 
-  private static final Field modField;
-
-  static {
-    try {
-      modField = Field.class.getDeclaredField("modifiers");
-      modField.setAccessible(true);
-    } catch (NoSuchFieldException e) {
-      Tools.showUnexpectedErrorWarning(e);
-      throw new RuntimeException(e);
-    }
-  }
-
-  public static Field makeFinalFieldAccessible(Field field) {
-    try {
-      modField.set(field, modField.getModifiers() & ~Modifier.FINAL);
-    } catch (IllegalAccessException e) {
-      Tools.showUnexpectedErrorWarning(e);
-    }
-    field.setAccessible(true);
-    return field;
-  }
-
   public static void copyInto(@NotNull Object source, @NotNull Object destination) {
     Class<?> clazz = source.getClass();
     while (!clazz.equals(Object.class)) {
@@ -446,8 +424,8 @@ public class Tools {
           continue;
         }
         if (Modifier.isFinal(field.getModifiers())) {
-          makeFinalFieldAccessible(field);
-          continue;
+          throw new UnsupportedOperationException(
+              "cannot copy into field " + field.getName() + " it is final");
         }
         field.setAccessible(true);
         try {
@@ -781,7 +759,7 @@ public class Tools {
     @Cleanup("commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    var auditReaderFactory = AuditReaderFactory.get(em);
+    AuditReader auditReaderFactory = AuditReaderFactory.get(em);
     List<Number> revisions = auditReaderFactory.getRevisions(o.getClass(), Tools.getId(o));
     return revisions.get(revisions.size() - 1).intValue();
   }

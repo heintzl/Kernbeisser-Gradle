@@ -2,10 +2,10 @@ package kernbeisser.Reports;
 
 import static org.mockito.Mockito.*;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
 import java.time.LocalDate;
 import java.util.Collections;
-import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Permission;
 import net.sf.jasperreports.engine.JasperPrint;

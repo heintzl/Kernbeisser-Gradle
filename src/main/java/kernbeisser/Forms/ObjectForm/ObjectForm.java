@@ -1,10 +1,10 @@
 package kernbeisser.Forms.ObjectForm;
 
 import com.google.common.collect.Iterables;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import java.util.*;
 import java.util.function.Predicate;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import javax.swing.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.Mode;

@@ -1,19 +1,19 @@
 package kernbeisser.VersionIntegrationTools.UpdatingTools;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Permission;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Useful.DelegatingMap;
 import kernbeisser.VersionIntegrationTools.Version;
 import kernbeisser.VersionIntegrationTools.VersionUpdatingTool;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
+import rs.groump.PermissionKey;
 
 public class PermissionKeyChange implements VersionUpdatingTool {
 

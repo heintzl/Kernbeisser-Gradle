@@ -1,10 +1,10 @@
 package kernbeisser.Windows.Inventory.Counting;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.ArticleStock;

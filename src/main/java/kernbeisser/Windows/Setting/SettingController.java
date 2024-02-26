@@ -3,14 +3,13 @@ package kernbeisser.Windows.Setting;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.Arrays;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Main;
 import kernbeisser.Security.Key;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
-import lombok.var;
 import org.jetbrains.annotations.NotNull;
+import rs.groump.PermissionKey;
 
 public class SettingController extends Controller<SettingView, SettingModel> {
   @Key(PermissionKey.ACTION_OPEN_APPLICATION_SETTINGS)
@@ -26,13 +25,13 @@ public class SettingController extends Controller<SettingView, SettingModel> {
 
   @Override
   public void fillView(SettingView settingView) {
-    var view = getView();
+    SettingView view = getView();
     view.setEditEnable(false);
     view.setValues(Arrays.asList(Setting.values()));
   }
 
   public void apply() {
-    var view = getView();
+    SettingView view = getView();
     Setting setting = model.getSelectedSettingValue();
     switch (Setting.getExpectedType(model.getSelectedSettingValue()).getSimpleName()) {
       case "Integer":
@@ -107,12 +106,12 @@ public class SettingController extends Controller<SettingView, SettingModel> {
   }
 
   public void cancel() {
-    var view = getView();
+    SettingView view = getView();
     view.back();
   }
 
   public void resetAllSettings() {
-    var view = getView();
+    SettingView view = getView();
     if (view.commitResetSettings()) {
       for (Setting value : Setting.values()) {
         if (value != Setting.DB_INITIALIZED) {
@@ -126,7 +125,7 @@ public class SettingController extends Controller<SettingView, SettingModel> {
   }
 
   public void select(Setting settingValue) {
-    var view = getView();
+    SettingView view = getView();
     view.setValue(settingValue.getValue());
     view.setSelectedSetting(settingValue);
     view.setEditEnable(true);

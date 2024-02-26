@@ -4,14 +4,12 @@ import java.awt.Color;
 import java.util.Optional;
 import java.util.concurrent.CancellationException;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import jiconfont.IconCode;
 import jiconfont.swing.IconFontSwing;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.ClassIsSingletonException;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Security.Access.Access;
@@ -68,11 +66,7 @@ public class ControllerButton extends JButton {
             exception.printStackTrace();
             JOptionPane.showMessageDialog(
                 this,
-                "Das Fenster kann nicht geöffnet werden,\nda du nicht die benötigte Berechtigung hast. \nFehlende Berechtigung/en: "
-                    + exception.calculateMissingKeys().stream()
-                        .map(PermissionKey::name)
-                        .map(PermissionKey::getPermissionHint)
-                        .collect(Collectors.joining(", ")));
+                "Das Fenster kann nicht geöffnet werden,\nda du nicht die benötigte Berechtigung hast.");
           } catch (ClassIsSingletonException exception) {
             JOptionPane.showMessageDialog(
                 this,

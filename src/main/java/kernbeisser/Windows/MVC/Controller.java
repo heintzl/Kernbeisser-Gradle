@@ -112,7 +112,8 @@ public abstract class Controller<
     openIn(TabbedPaneModel.getMainPanel().createTabViewContainer());
   }
 
-  protected void closed() {};
+  protected void closed() {}
+  ;
 
   protected boolean commitClose() {
     return true;

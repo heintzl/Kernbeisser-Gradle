@@ -1,11 +1,11 @@
 package kernbeisser.Windows.ManagePriceLists;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.PersistenceException;
+import jakarta.persistence.Query;
 import java.util.Collection;
 import java.util.concurrent.atomic.AtomicBoolean;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import javax.persistence.PersistenceException;
-import javax.persistence.Query;
 import kernbeisser.CustomComponents.ObjectTree.Node;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;

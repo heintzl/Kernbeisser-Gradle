@@ -3,11 +3,11 @@ package kernbeisser.Windows.AccountingReports;
 import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.ExportTypes;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.StatementType;
 import kernbeisser.Exeptions.IncorrectInput;
 import kernbeisser.Exeptions.NoTransactionsFoundException;
@@ -16,7 +16,7 @@ import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.CashierShoppingMask.CashierShoppingMaskModel;
 import kernbeisser.Windows.MVC.Controller;
-import lombok.var;
+import rs.groump.PermissionKey;
 
 public class AccountingReportsController
     extends Controller<AccountingReportsView, AccountingReportsModel> {
@@ -55,8 +55,8 @@ public class AccountingReportsController
   }
 
   private void exportReport(Report report, String message) {
-    var view = getView();
-    var exportType = view.getExportType();
+    AccountingReportsView view = getView();
+    ExportTypes exportType = view.getExportType();
     try {
       AccountingReportsModel.exportReport(
           exportType,
@@ -79,7 +79,7 @@ public class AccountingReportsController
   }
 
   public void exportAccountingReport(long reportNo, UserNameObfuscation withNames) {
-    var view = getView();
+    AccountingReportsView view = getView();
     if (reportNo == Transaction.getLastReportNo() + 1) {
       try {
         CashierShoppingMaskModel.printAccountingReports(
@@ -89,7 +89,7 @@ public class AccountingReportsController
       }
     } else {
       try {
-        var reportTransactions =
+        List<Transaction> reportTransactions =
             Transaction.getTransactionsByReportNo(reportNo).stream()
                 .filter(t -> t.isAccountingReportTransaction() || t.isPurchase())
                 .collect(Collectors.toList());

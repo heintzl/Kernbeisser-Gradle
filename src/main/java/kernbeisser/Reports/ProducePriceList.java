@@ -1,5 +1,6 @@
 package kernbeisser.Reports;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -9,7 +10,6 @@ import kernbeisser.Reports.ReportDTO.PriceListReportArticle;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.Supply.SupplySelector.LineContent;
 import kernbeisser.Windows.Supply.SupplySelector.ResolveStatus;
-import lombok.var;
 import org.eclipse.jdt.core.compiler.InvalidInputException;
 
 public class ProducePriceList extends Report {
@@ -19,7 +19,7 @@ public class ProducePriceList extends Report {
   public ProducePriceList(Collection<LineContent> contents, String priceListName) {
     super(ReportFileNames.PRODUCE_PRICELIST);
     // setDuplexPrint(false);
-    var lastDeliveries = Articles.getLastDeliveries();
+    Map<Integer, Instant> lastDeliveries = Articles.getLastDeliveries();
     this.priceListReportContents = new ArrayList<>();
     for (LineContent c : contents) {
       if (c.getStatus() == ResolveStatus.PRODUCE) {

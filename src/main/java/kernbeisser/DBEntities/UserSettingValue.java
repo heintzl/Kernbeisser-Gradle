@@ -1,10 +1,9 @@
 package kernbeisser.DBEntities;
 
+import jakarta.persistence.*;
 import java.util.Collection;
 import java.util.HashMap;
-import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.UserSetting;
 import kernbeisser.Security.Key;
 import kernbeisser.Security.Relations.UserRelated;
@@ -14,6 +13,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
+import rs.groump.PermissionKey;
 
 @Entity
 @Table

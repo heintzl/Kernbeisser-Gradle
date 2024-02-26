@@ -1,9 +1,9 @@
 package kernbeisser.Windows.Pay;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.PersistenceException;
 import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import javax.persistence.PersistenceException;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.SaleSession;

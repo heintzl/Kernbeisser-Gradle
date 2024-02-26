@@ -1,10 +1,10 @@
 package kernbeisser.DBEntities;
 
+import jakarta.persistence.*;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Optional;
-import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Useful.Tools;

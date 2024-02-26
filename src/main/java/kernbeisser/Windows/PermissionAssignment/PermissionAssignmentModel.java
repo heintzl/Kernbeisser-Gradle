@@ -1,14 +1,13 @@
 package kernbeisser.Windows.PermissionAssignment;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import java.util.*;
 import java.util.stream.Collectors;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import kernbeisser.CustomComponents.ClipboardFilter;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.Access.AccessManager;
 import kernbeisser.Security.Key;
@@ -16,9 +15,9 @@ import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
 import lombok.Setter;
-import lombok.var;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.util.Supplier;
+import rs.groump.PermissionKey;
 
 public class PermissionAssignmentModel implements IModel<PermissionAssignmentController> {
 
@@ -77,7 +76,7 @@ public class PermissionAssignmentModel implements IModel<PermissionAssignmentCon
                 User.class)
             .setParameter("pid", permission)
             .getResultList();
-    var notToRemove = new ArrayList<>(loaded);
+    ArrayList<User> notToRemove = new ArrayList<>(loaded);
     loaded.removeAll(hadBefore);
     hadBefore.removeAll(notToRemove);
     Collection<User> willGet =
@@ -102,12 +101,13 @@ public class PermissionAssignmentModel implements IModel<PermissionAssignmentCon
   }
 
   private Collection<User> getUserRowFilter(String[] rows) {
-    var userNames = Arrays.stream(rows).map(r -> r.replace("\t", "&")).collect(Collectors.toList());
+    List<String> userNames =
+        Arrays.stream(rows).map(r -> r.replace("\t", "&")).collect(Collectors.toList());
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    var result =
+    List<User> result =
         em.createQuery(
                 "Select u from User u where concat(u.surname, '&', u.firstName) in (:ul)",
                 User.class)

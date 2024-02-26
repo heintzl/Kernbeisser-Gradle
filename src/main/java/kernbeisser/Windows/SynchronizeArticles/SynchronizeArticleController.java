@@ -12,7 +12,6 @@ import java.util.concurrent.CancellationException;
 import java.util.stream.Collectors;
 import javax.swing.filechooser.FileSystemView;
 import kernbeisser.Config.Config;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Key;
 import kernbeisser.Tasks.Catalog.Catalog;
 import kernbeisser.Tasks.Catalog.Merge.ArticleMerge;
@@ -21,6 +20,7 @@ import kernbeisser.Tasks.Catalog.Merge.Solution;
 import kernbeisser.Useful.KornKraft;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
+import rs.groump.PermissionKey;
 
 public class SynchronizeArticleController
     extends Controller<SynchronizeArticleView, SynchronizeArticleModel> {

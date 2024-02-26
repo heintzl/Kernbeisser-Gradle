@@ -1,20 +1,20 @@
 package kernbeisser.DBEntities;
 
+import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import javax.persistence.*;
 import kernbeisser.CustomComponents.ObjectTree.CachedNode;
 import kernbeisser.CustomComponents.ObjectTree.Node;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.ActuallyCloneable;
 import kernbeisser.Useful.Tools;
 import lombok.*;
 import org.hibernate.envers.Audited;
+import rs.groump.PermissionKey;
 
 @Table
 @Entity
@@ -29,9 +29,7 @@ public class SurchargeGroup implements Serializable, ActuallyCloneable {
   @Setter(onMethod_ = {@Key(PermissionKey.SURCHARGE_TABLE_ID_WRITE)})
   private int id;
 
-  @Column
-  @Setter(onMethod_ = {@Key(PermissionKey.SURCHARGE_TABLE_SURCHARGE_WRITE)})
-  private Double surcharge;
+  @Column @Setter() private Double surcharge;
 
   @Column
   @Getter(onMethod_ = {@Key(PermissionKey.SURCHARGE_TABLE_NAME_READ)})

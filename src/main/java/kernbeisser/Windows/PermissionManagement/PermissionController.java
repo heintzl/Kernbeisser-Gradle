@@ -1,21 +1,22 @@
 package kernbeisser.Windows.PermissionManagement;
 
+import jakarta.persistence.PersistenceException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CancellationException;
 import java.util.stream.Collectors;
-import javax.persistence.PersistenceException;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.DBEntities.Permission;
-import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Security.ActionPermission;
 import kernbeisser.Security.Key;
+import kernbeisser.Security.PermissionKeyOrdering;
+import kernbeisser.Security.PermissionKeys;
 import kernbeisser.Useful.CSV;
 import kernbeisser.Windows.MVC.Controller;
 import org.jetbrains.annotations.NotNull;
+import rs.groump.PermissionKey;
 
 public class PermissionController extends Controller<PermissionView, PermissionModel> {
 
@@ -37,11 +38,11 @@ public class PermissionController extends Controller<PermissionView, PermissionM
   private void change(Permission permission, PermissionKey key) {
     // if(LogInModel.getLoggedIn().hasPermission(Key.find(KeyCategory.PERMISSIONS)))
     if (permission.contains(key)) {
-      if (permission.contains(key.getWriteKey())) {
-        model.removeKey(permission, key.getWriteKey());
+      if (permission.contains(PermissionKeys.getWriteKey(key))) {
+        model.removeKey(permission, PermissionKeys.getWriteKey(key));
         model.removeKey(permission, key);
       } else {
-        model.addKey(permission, key.getWriteKey());
+        model.addKey(permission, PermissionKeys.getWriteKey(key));
       }
     } else {
       model.addKey(permission, key);
@@ -50,23 +51,24 @@ public class PermissionController extends Controller<PermissionView, PermissionM
   }
 
   void loadSolutions() {
+    Optional<PermissionKeyOrdering> selectedPermissionKerOrdering = getView().getCategory();
+    if (selectedPermissionKerOrdering.isEmpty()) return;
     List<Permission> permissions = Permission.getAll("where NOT name = '@ADMIN'");
     Collections.reverse(permissions);
     Column<PermissionKey> nameColumn =
         Columns.create(
             "Schlüssel-Name",
             e ->
-                PermissionKey.getPermissionHint(
+                PermissionKeys.getPermissionHint(
                     e.name()
                         .replace("_WRITE", "")
                         .replace("_READ", "")
                         .replace("CHANGE_ALL", "Alle Bearbeiten")));
     ArrayList<Column<PermissionKey>> permissionColumns = new ArrayList<>();
     permissionColumns.add(nameColumn);
-    Collection<PermissionKey> readPermission =
-        PermissionKey.find(getView().getCategory(), true, false);
-    Collection<PermissionKey> writePermission =
-        PermissionKey.find(getView().getCategory(), false, true);
+    PermissionKeyOrdering selected = selectedPermissionKerOrdering.get();
+    Collection<PermissionKey> readPermission = PermissionKeys.find(selected, true, false);
+    Collection<PermissionKey> writePermission = PermissionKeys.find(selected, false, true);
     permissionColumns.addAll(
         permissions.stream()
             .map(
@@ -74,21 +76,24 @@ public class PermissionController extends Controller<PermissionView, PermissionM
                     Columns.create(
                         permission.getNeatName(),
                         (PermissionKey permissionKey) -> {
-                          if (permissionKey.getClazz() == null) {
+                          if (permissionKey == PermissionKey.CHANGE_ALL) {
                             boolean read = permission.getKeySet().containsAll(readPermission);
                             boolean write = permission.getKeySet().containsAll(writePermission);
                             return read ? write ? "Lesen & schreiben" : "Lesen" : "Keine";
                           }
-                          if (permissionKey.getClazz().equals(ActionPermission.class)) {
+
+                          if (PermissionKeyOrdering.isInGroup(
+                              permissionKey, PermissionKeyOrdering.ACTIONS)) {
                             return permission.contains(permissionKey) ? "Ja" : "Nein";
                           }
                           boolean read = permission.contains(permissionKey);
-                          boolean write = permission.contains(permissionKey.getWriteKey());
+                          boolean write =
+                              permission.contains(PermissionKeys.getWriteKey(permissionKey));
                           return read ? write ? "Lesen & schreiben" : "Lesen" : "Keine";
                         },
                         e -> {
                           lastSelection = permission;
-                          if (e.getClazz() == null) {
+                          if (e == PermissionKey.CHANGE_ALL) {
                             boolean read = permission.getKeySet().containsAll(readPermission);
                             boolean write = permission.getKeySet().containsAll(writePermission);
                             if (read) {
@@ -102,16 +107,11 @@ public class PermissionController extends Controller<PermissionView, PermissionM
                         }))
             .collect(Collectors.toCollection(ArrayList::new)));
     List<PermissionKey> values =
-        Arrays.stream(
-                PermissionKey.with(
-                    e ->
-                        e.getClazz() != null
-                            && (e.getClazz().equals(getView().getCategory())
-                                & !e.name().endsWith("_WRITE"))))
-            .sorted(Comparator.comparing(p -> PermissionKey.getPermissionHint(p.toString())))
+        Arrays.stream(selected.getKeys())
+            .filter(key -> key.name().endsWith("_WRITE"))
+            .sorted(Comparator.comparing(p -> PermissionKeys.getPermissionHint(p.toString())))
             .collect(Collectors.toList());
-    if (!getView().getCategory().equals(ActionPermission.class))
-      values.add(0, PermissionKey.CHANGE_ALL);
+    if (!selected.equals(PermissionKeyOrdering.ACTIONS)) values.addFirst(PermissionKey.CHANGE_ALL);
     getView().setValues(values);
     getView().setColumns(permissionColumns);
   }

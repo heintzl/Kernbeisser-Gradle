@@ -1,10 +1,10 @@
 package kernbeisser.CustomComponents.SearchBox;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import java.awt.*;
 import java.util.*;
 import java.util.function.Consumer;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectSelectionListener;
@@ -13,7 +13,6 @@ import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.Searchable;
 import lombok.Cleanup;
-import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
 public class SearchBoxController<T> extends Controller<SearchBoxView<T>, SearchBoxModel<T>> {
@@ -83,8 +82,8 @@ public class SearchBoxController<T> extends Controller<SearchBoxView<T>, SearchB
   }
 
   public void modifyNamedComponent(String name, Consumer<Component> modifier) {
-    var searchOptions = getView().getExtraOptionsPanel();
-    for (var component : searchOptions.getComponents()) {
+    JPanel searchOptions = getView().getExtraOptionsPanel();
+    for (Component component : searchOptions.getComponents()) {
       Optional.ofNullable(component.getName())
           .ifPresent(
               s -> {

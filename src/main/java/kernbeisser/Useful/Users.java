@@ -1,10 +1,10 @@
 package kernbeisser.Useful;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import java.nio.charset.StandardCharsets;
 import java.util.Random;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import kernbeisser.Config.IgnoreThis;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.User;

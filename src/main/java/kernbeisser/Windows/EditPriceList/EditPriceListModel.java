@@ -1,10 +1,10 @@
 package kernbeisser.Windows.EditPriceList;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.BiFunction;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.DBConnection.DBConnection;
@@ -16,7 +16,6 @@ import kernbeisser.Windows.CollectionView.CollectionController;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
 import lombok.Getter;
-import lombok.var;
 
 public class EditPriceListModel implements IModel<EditPriceListController> {
 
@@ -62,9 +61,9 @@ public class EditPriceListModel implements IModel<EditPriceListController> {
     if (articles.equals(priceListBefore)) {
       return true;
     }
-    var addedToPriceList = new ArrayList<>(articles);
+    ArrayList<Article> addedToPriceList = new ArrayList<>(articles);
     addedToPriceList.removeAll(priceListBefore);
-    var removedFromPriceList = new ArrayList<>(priceListBefore);
+    ArrayList<Article> removedFromPriceList = new ArrayList<>(priceListBefore);
     removedFromPriceList.removeAll(articles);
     int confirmation =
         confirmValues.apply(

@@ -1,12 +1,11 @@
 package kernbeisser.DBEntities;
 
+import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
-import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.ActuallyCloneable;
@@ -18,6 +17,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.envers.Audited;
+import rs.groump.PermissionKey;
 
 @Entity
 @Table

@@ -33,10 +33,10 @@
         <class>kernbeisser.DBEntities.ArticlePrintPool</class>
         <class>kernbeisser.DBEntities.Post</class>
         <properties>
-            <property name="javax.persistence.schema-generation.database.action" value="update"/>
-            <property name="javax.persistence.sql-load-script-source" value="META-INF/data.sql"/>
-            <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
-            <property name="javax.persistence.jdbc.auto" value="create"/>
+            <property name="jakarta.persistence.schema-generation.database.action" value="update"/>
+            <property name="jakarta.persistence.sql-load-script-source" value="META-INF/data.sql"/>
+            <property name="jakarta.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
+            <property name="jakarta.persistence.jdbc.auto" value="create"/>
             <property name="hibernate.generate_statistics" value="false"/>
             <property name="hibernate.cache.use_second_level_cache" value="false"/>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MariaDBDialect"/>

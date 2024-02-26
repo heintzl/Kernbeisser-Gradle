@@ -12,7 +12,6 @@ import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.Shelf;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.FormImplemetations.Shelf.ShelfController;
@@ -27,6 +26,7 @@ import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import rs.groump.PermissionKey;
 
 public class InventoryController extends Controller<InventoryView, InventoryModel> {
   @Linked @Getter private final ObjectViewController<Shelf> shelfViewController;

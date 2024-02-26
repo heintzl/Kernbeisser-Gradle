@@ -1,6 +1,6 @@
 package kernbeisser.Exeptions;
 
-import javax.persistence.NoResultException;
+import jakarta.persistence.NoResultException;
 
 public class NoTransactionsFoundException extends NoResultException {
 

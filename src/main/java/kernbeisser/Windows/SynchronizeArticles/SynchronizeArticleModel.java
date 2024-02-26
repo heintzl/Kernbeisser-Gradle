@@ -1,11 +1,11 @@
 package kernbeisser.Windows.SynchronizeArticles;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Stream;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Supplier;

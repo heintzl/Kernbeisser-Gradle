@@ -6,7 +6,6 @@ import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionConstants;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.MissingFullMemberException;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
@@ -17,8 +16,8 @@ import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Useful.Users;
 import lombok.Getter;
-import lombok.var;
 import org.jetbrains.annotations.NotNull;
+import rs.groump.PermissionKey;
 
 public class UserController extends FormController<UserView, UserModel, User> {
 
@@ -29,7 +28,7 @@ public class UserController extends FormController<UserView, UserModel, User> {
   }
 
   public static UserController getBeginnerUserController() {
-    var controller = new UserController();
+    UserController controller = new UserController();
     controller.trialMemberMode = true;
     return controller;
   }
@@ -102,7 +101,7 @@ public class UserController extends FormController<UserView, UserModel, User> {
   public void fillView(UserView userView) {}
 
   void refreshUsername() {
-    var view = getView();
+    UserView view = getView();
     String originalUserName = getObjectContainer().getOriginal().getUsername();
     if (originalUserName == null || originalUserName.isEmpty()) {
       String firstName = view.getFirstName();
@@ -164,7 +163,7 @@ public class UserController extends FormController<UserView, UserModel, User> {
       getView().messageDeleteSuccess(false);
       return;
     }
-    var userGroup = user.getUserGroup();
+    UserGroup userGroup = user.getUserGroup();
     double userValue = userGroup.getValue();
     if (!user.isTestOnly() && userGroup.getMembers().size() > 1) {
       getView().messageUserIsInGroup();

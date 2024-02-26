@@ -13,7 +13,6 @@ import kernbeisser.CustomComponents.Verifier.NotNullVerifier;
 import kernbeisser.DBEntities.Job;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Forms.ObjectForm.Components.*;
 import kernbeisser.Forms.ObjectForm.ObjectForm;
 import kernbeisser.Reports.LoginInfo;
@@ -22,8 +21,8 @@ import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
-import lombok.var;
 import org.jetbrains.annotations.NotNull;
+import rs.groump.PermissionKey;
 
 public class UserView implements IView<UserController> {
 
@@ -266,7 +265,7 @@ public class UserView implements IView<UserController> {
   }
 
   public static void showPasswordToken(String resetPassword, User user, Component parentComponent) {
-    var printButton = new JButton("Benutzerinfo drucken");
+    JButton printButton = new JButton("Benutzerinfo drucken");
     printButton.addActionListener(
         e ->
             new LoginInfo(user, resetPassword)

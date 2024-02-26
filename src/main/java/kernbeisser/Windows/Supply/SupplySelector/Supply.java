@@ -1,17 +1,14 @@
 package kernbeisser.Windows.Supply.SupplySelector;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import java.io.File;
-import java.time.DayOfWeek;
-import java.time.Duration;
-import java.time.Instant;
-import java.time.ZoneId;
+import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.stream.Collectors;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.Setting;
 import lombok.AccessLevel;
@@ -19,7 +16,6 @@ import lombok.Cleanup;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import lombok.var;
 
 @RequiredArgsConstructor
 @Data
@@ -51,7 +47,7 @@ public class Supply {
     for (File file : files) {
       if (!isSupplyFile(file)) continue;
       Instant date = Instant.ofEpochMilli(file.lastModified());
-      var dateTime = date.atZone(ZoneId.systemDefault());
+      ZonedDateTime dateTime = date.atZone(ZoneId.systemDefault());
       int h = dateTime.getHour();
       DayOfWeek d = dateTime.getDayOfWeek();
       if (h >= hFrom && h <= hTo) {

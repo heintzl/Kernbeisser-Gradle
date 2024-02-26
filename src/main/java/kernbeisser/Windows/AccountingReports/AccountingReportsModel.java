@@ -9,7 +9,6 @@ import kernbeisser.Enums.ExportTypes;
 import kernbeisser.Reports.*;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Getter;
-import lombok.var;
 
 public class AccountingReportsModel implements IModel<AccountingReportsController> {
 
@@ -53,7 +52,7 @@ public class AccountingReportsModel implements IModel<AccountingReportsControlle
           });
       printValueSums = false;
     }
-    var otherTransactions =
+    List<Transaction> otherTransactions =
         transactions.stream()
             .filter(Transaction::isAccountingReportTransaction)
             .collect(Collectors.toList());

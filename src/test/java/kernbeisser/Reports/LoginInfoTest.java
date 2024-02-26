@@ -2,7 +2,7 @@ package kernbeisser.Reports;
 
 import static org.mockito.Mockito.mockStatic;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.User;
 import net.sf.jasperreports.engine.JasperPrint;

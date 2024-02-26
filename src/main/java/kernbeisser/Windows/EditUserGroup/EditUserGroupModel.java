@@ -1,9 +1,9 @@
 package kernbeisser.Windows.EditUserGroup;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import java.util.Collection;
 import java.util.Optional;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;

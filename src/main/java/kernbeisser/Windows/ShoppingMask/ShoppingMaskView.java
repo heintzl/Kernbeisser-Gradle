@@ -737,6 +737,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
   void setVat(VAT vatEnum) {
     vat.getModel().setSelectedItem(vatEnum);
   }
+
   // Getters and Setters END
 
   public static void resizeFonts(JPanel p, float fontSize) {

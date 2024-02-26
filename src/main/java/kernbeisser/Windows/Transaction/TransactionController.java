@@ -2,13 +2,12 @@ package kernbeisser.Windows.Transaction;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
+import jakarta.persistence.NoResultException;
 import java.util.Collections;
 import java.util.function.Predicate;
-import javax.persistence.NoResultException;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.InvalidTransactionException;
@@ -18,7 +17,7 @@ import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
-import lombok.var;
+import rs.groump.PermissionKey;
 
 public class TransactionController extends Controller<TransactionView, TransactionModel> {
 
@@ -39,7 +38,7 @@ public class TransactionController extends Controller<TransactionView, Transacti
   }
 
   void transfer() {
-    var view = getView();
+    TransactionView view = getView();
     if (!view.confirm(model.getCount())) {
       return;
     }
@@ -47,7 +46,7 @@ public class TransactionController extends Controller<TransactionView, Transacti
   }
 
   void unsafeTransfer() {
-    var view = getView();
+    TransactionView view = getView();
     try {
       model.transfer();
     } catch (InvalidTransactionException e) {
@@ -67,7 +66,7 @@ public class TransactionController extends Controller<TransactionView, Transacti
 
   void addTransaction() {
     Transaction transaction = new Transaction();
-    var view = getView();
+    TransactionView view = getView();
     if (view.getValue() > Setting.WARN_OVER_TRANSACTION_VALUE.getDoubleValue()
         && !view.confirmExtraHeightTransaction()) {
       return;
@@ -108,7 +107,7 @@ public class TransactionController extends Controller<TransactionView, Transacti
   }
 
   void remove() {
-    var view = getView();
+    TransactionView view = getView();
     try {
       model.remove(view.getSelectedTransaction().orElseThrow(NoSelectionException::new));
     } catch (NoSelectionException e) {
@@ -119,7 +118,7 @@ public class TransactionController extends Controller<TransactionView, Transacti
   }
 
   private void refreshTable() {
-    var view = getView();
+    TransactionView view = getView();
     view.setTransactions(model.getTransactions());
     view.setCount(model.getCount());
     view.setSum(model.getSum());
@@ -159,7 +158,7 @@ public class TransactionController extends Controller<TransactionView, Transacti
 
   @Override
   public void fillView(TransactionView transactionView) {
-    var view = getView();
+    TransactionView view = getView();
     AdvancedComboBox<User> fromControl = view.getFromControl();
     AdvancedComboBox<User> toControl = view.getToControl();
     fillUsers(true);
@@ -190,7 +189,7 @@ public class TransactionController extends Controller<TransactionView, Transacti
 
   @Override
   public boolean commitClose() {
-    var view = getView();
+    TransactionView view = getView();
     if (model.getTransactions().size() > 0) {
       switch (view.commitUnsavedTransactions(model.getCount())) {
         case 0:

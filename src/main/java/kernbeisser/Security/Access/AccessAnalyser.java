@@ -1,11 +1,11 @@
 package kernbeisser.Security.Access;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Optional;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -14,9 +14,9 @@ import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Permission;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.PermissionSet;
 import lombok.Cleanup;
+import rs.groump.PermissionKey;
 
 /** Visualizes the access keys by the current user */
 public class AccessAnalyser implements AccessManager, PermissionKeyBasedAccessManager {

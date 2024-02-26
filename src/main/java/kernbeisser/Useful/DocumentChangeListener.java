@@ -9,15 +9,20 @@ public interface DocumentChangeListener extends DocumentListener {
   @Override
   default void insertUpdate(DocumentEvent e) {
     documentChanged(e);
-  };
+  }
+  ;
 
   @Override
   default void removeUpdate(DocumentEvent e) {
     documentChanged(e);
-  };;
+  }
+  ;
+  ;
 
   @Override
   default void changedUpdate(DocumentEvent e) {
     documentChanged(e);
-  };;
+  }
+  ;
+  ;
 }

@@ -1,13 +1,12 @@
 package kernbeisser.DBEntities;
 
 import com.google.common.collect.ImmutableMap;
+import jakarta.persistence.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
 import kernbeisser.VersionIntegrationTools.Version;
@@ -15,6 +14,7 @@ import lombok.Cleanup;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import rs.groump.PermissionKey;
 
 @Entity
 @Table

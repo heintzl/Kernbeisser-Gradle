@@ -1,11 +1,11 @@
 package kernbeisser.Windows.Supply;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.NoResultException;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.Optional;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import javax.persistence.NoResultException;
 import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.CustomComponents.KeyCapture;
 import kernbeisser.DBConnection.DBConnection;
@@ -22,10 +22,10 @@ import kernbeisser.Windows.Supply.SupplySelector.ResolveStatus;
 import kernbeisser.Windows.Supply.SupplySelector.SupplySelectorController;
 import kernbeisser.Windows.ViewContainers.SubWindow;
 import lombok.Cleanup;
-import lombok.var;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+import rs.groump.PermissionKey;
 
 public class SupplyController extends Controller<SupplyView, SupplyModel> {
 

@@ -4,12 +4,12 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
-import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.UserGroup;
 import net.sf.jasperreports.engine.JasperPrint;

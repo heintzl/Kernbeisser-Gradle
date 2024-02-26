@@ -1,8 +1,8 @@
 package kernbeisser.Windows.Supply;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import java.util.*;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.FieldCondition;
 import kernbeisser.DBEntities.*;
@@ -108,7 +108,7 @@ public class SupplyModel implements IModel<SupplyController> {
     List<PreOrder> userPreorders =
         DBConnection.getConditioned(
             PreOrder.class,
-            new FieldCondition("delivery", null),
+            FieldCondition.isNull("delivery"),
             new FieldCondition("user", User.getKernbeisserUser()).not());
     Map<CatalogEntry, Integer> entryCounts = new HashMap<>(userPreorders.size());
     for (PreOrder preorder : userPreorders) {

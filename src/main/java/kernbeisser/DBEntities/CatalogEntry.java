@@ -1,12 +1,13 @@
 package kernbeisser.DBEntities;
 
 import com.google.common.collect.ImmutableMap;
+import jakarta.persistence.*;
 import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.FieldCondition;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Tasks.Catalog.BoolValues;
@@ -233,7 +234,9 @@ public class CatalogEntry implements ActuallyCloneable {
   }
 
   public static Optional<CatalogEntry> getByBarcode(String barcode) {
-    return DBConnection.getConditioned(CatalogEntry.class, "EanLadenEinheit", barcode).stream()
+    return DBConnection.getConditioned(
+            CatalogEntry.class, new FieldCondition("EanLadenEinheit", barcode))
+        .stream()
         .findFirst();
   }
 

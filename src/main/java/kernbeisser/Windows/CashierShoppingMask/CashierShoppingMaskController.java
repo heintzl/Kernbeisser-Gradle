@@ -1,8 +1,8 @@
 package kernbeisser.Windows.CashierShoppingMask;
 
+import jakarta.persistence.NoResultException;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.persistence.NoResultException;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.SearchBox.Filters.UserFilter;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
@@ -24,8 +24,8 @@ import kernbeisser.Windows.PostPanel.PostPanelController;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskController;
 import kernbeisser.Windows.UserInfo.UserInfoController;
 import kernbeisser.Windows.ViewContainers.SubWindow;
-import lombok.var;
 import org.jetbrains.annotations.NotNull;
+import rs.groump.PermissionKey;
 
 public class CashierShoppingMaskController
     extends Controller<CashierShoppingMaskView, CashierShoppingMaskModel> {
@@ -63,7 +63,7 @@ public class CashierShoppingMaskController
   }
 
   private void selectUser(User tableSelection) {
-    var view = getView();
+    CashierShoppingMaskView view = getView();
     if (tableSelection != null) {
       view.setOpenShoppingMaskEnabled(!model.isOpenLock());
       view.setUserInfoEnabled(true);

@@ -1,14 +1,14 @@
 package kernbeisser.DBEntities;
 
+import jakarta.persistence.*;
 import java.util.List;
-import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.FieldCondition;
 import kernbeisser.Enums.PostContext;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Useful.Tools;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
 
 @Entity
 @Table
@@ -23,8 +23,7 @@ public class Post {
   @Column(unique = true)
   private PostContext context;
 
-  @Column
-  @Type(type = "text")
+  @Column(columnDefinition = "TEXT")
   @Getter
   private String htmlContent;
 
@@ -64,7 +63,8 @@ public class Post {
   }
 
   public static Post getByContext(PostContext postContext) {
-    List<Post> posts = DBConnection.getConditioned(Post.class, "context", postContext);
+    List<Post> posts =
+        DBConnection.getConditioned(Post.class, new FieldCondition("context", postContext));
     if (posts.isEmpty()) {
       return new Post(postContext);
     } else {
@@ -73,7 +73,8 @@ public class Post {
   }
 
   private Post get() {
-    List<Post> posts = DBConnection.getConditioned(Post.class, "context", context);
+    List<Post> posts =
+        DBConnection.getConditioned(Post.class, new FieldCondition("context", context));
     if (posts.isEmpty()) {
       return null;
     } else {

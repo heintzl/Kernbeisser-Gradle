@@ -5,7 +5,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.List;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Exeptions.UnknownFileFormatException;
 import kernbeisser.Security.Key;
@@ -13,6 +12,7 @@ import kernbeisser.Tasks.Catalog.CatalogImportError;
 import kernbeisser.Tasks.Catalog.CatalogImporter;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
+import rs.groump.PermissionKey;
 
 public class CatalogImportController extends Controller<CatalogImportView, CatalogImportModel> {
 

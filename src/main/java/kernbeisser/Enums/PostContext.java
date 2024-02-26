@@ -5,6 +5,7 @@ import kernbeisser.Security.Access.AccessManager;
 import kernbeisser.Security.Access.UserRelatedAccessManager;
 import kernbeisser.Windows.LogIn.LogInModel;
 import lombok.Getter;
+import rs.groump.PermissionKey;
 
 public enum PostContext {
   ON_SALE_SESSION_CLOSE("Ladendienst-Ende", PermissionKey.POST_ON_SALE_SESSION_CLOSE);

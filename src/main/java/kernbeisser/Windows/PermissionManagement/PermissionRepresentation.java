@@ -2,21 +2,20 @@ package kernbeisser.Windows.PermissionManagement;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import java.awt.*;
 import java.io.*;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import javax.swing.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Useful.Tools;
 import lombok.Cleanup;
-import lombok.var;
+import rs.groump.PermissionKey;
 
 public class PermissionRepresentation {
   private final List<String> permissionName = new ArrayList<>();
@@ -35,28 +34,28 @@ public class PermissionRepresentation {
   }
 
   public static boolean putInDB(File file) throws FileNotFoundException {
-    var optionsPanel = new JPanel();
+    JPanel optionsPanel = new JPanel();
     optionsPanel.setLayout(new BoxLayout(optionsPanel, BoxLayout.Y_AXIS));
 
-    var options = new ButtonGroup();
-    var keepUserPermissions = new JRadioButton();
+    ButtonGroup options = new ButtonGroup();
+    JRadioButton keepUserPermissions = new JRadioButton();
     keepUserPermissions.setText(
         "Rollendefinition überschreiben, Benutzerberechtigungen beibehalten");
     keepUserPermissions.setSelected(true);
     options.add(keepUserPermissions);
-    var overwriteUserPermissions = new JRadioButton();
+    JRadioButton overwriteUserPermissions = new JRadioButton();
     overwriteUserPermissions.setText("Rollendefinition und Benutzerberechtigungen überschreiben");
     options.add(overwriteUserPermissions);
-    var dropUserPermissions = new JRadioButton();
+    JRadioButton dropUserPermissions = new JRadioButton();
     dropUserPermissions.setText(
         "Rollendefinition überschreiben, alle Benutzerberechtigungen verwerfen");
     options.add(dropUserPermissions);
-    var onlyUserPermissions = new JRadioButton();
+    JRadioButton onlyUserPermissions = new JRadioButton();
     onlyUserPermissions.setText(
         "<html>Rollendefinition beibehalten, Benutzerberechtigungen überschreiben");
     options.add(onlyUserPermissions);
 
-    var warningMessage =
+    JTextArea warningMessage =
         new JTextArea(
             "\nAchtung, nach dem Berechtigungsimport muss das Programm neu gestartet\n"
                 + "werden. Es ist möglich, dass Du dich dann nicht mehr einloggen kannst!\n"

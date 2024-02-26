@@ -2,6 +2,8 @@ package kernbeisser.Tasks.Catalog.Merge;
 
 import static kernbeisser.Tasks.Catalog.Catalog.parseArticle;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -14,8 +16,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.CatalogEntry;

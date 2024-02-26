@@ -1,12 +1,11 @@
 package kernbeisser.Windows.LogIn;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import javax.persistence.NoResultException;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.NoResultException;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.User;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.CannotLogInException;
 import kernbeisser.Exeptions.PermissionRequired;
 import kernbeisser.Main;
@@ -20,6 +19,7 @@ import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
 import lombok.Getter;
 import lombok.Setter;
+import rs.groump.PermissionKey;
 
 public final class LogInModel implements IModel {
 

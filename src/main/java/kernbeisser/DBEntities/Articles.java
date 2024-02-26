@@ -1,5 +1,6 @@
 package kernbeisser.DBEntities;
 
+import jakarta.persistence.*;
 import java.text.DecimalFormat;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -8,11 +9,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import javax.persistence.*;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.FieldCondition;
 import kernbeisser.EntityWrapper.ObjectState;
 import kernbeisser.Enums.*;
 import kernbeisser.Security.Access.Access;
@@ -87,10 +85,13 @@ public class Articles {
   public static Optional<ObjectState<Article>> searchInArticleHistoryForKbNumber(
       EntityManager em, int kbNumber) {
     return ((Optional<Object[]>)
-            AuditReaderFactory.get(em).createQuery()
+            AuditReaderFactory.get(em)
+                .createQuery()
                 .forRevisionsOfEntity(Article.class, false, true)
                 .add(AuditEntity.property("kbNumber").eq(kbNumber))
-                .addOrder(AuditEntity.property("updateDate").desc()).getResultList().stream()
+                .addOrder(AuditEntity.property("updateDate").desc())
+                .getResultList()
+                .stream()
                 .findFirst())
         .map(e -> ObjectState.wrap(((Article) e[0]), ((DefaultRevisionEntity) e[1]).getId()))
         .map(
@@ -229,63 +230,12 @@ public class Articles {
         .setParameter("u", search.toUpperCase() + "%");
   }
 
-  // implement later
-  public static javax.persistence.criteria.Predicate defaultSearchAlgorithm(
-      EntityManager em, String search, PriceList p, boolean inShopRange) {
-    CriteriaBuilder cb = em.getCriteriaBuilder();
-    CriteriaQuery<Article> criteriaQuery = cb.createQuery(Article.class);
-    Root<Article> root = criteriaQuery.from(Article.class);
-    return cb.and(
-        Tools.asAvailable(
-            true,
-            javax.persistence.criteria.Predicate.class,
-            () ->
-                cb.or(
-                    Tools.asAvailable(
-                        true,
-                        javax.persistence.criteria.Predicate.class,
-                        () -> cb.equal(root.get("kbNumber"), Integer.parseInt(search)),
-                        () -> cb.equal(root.get("suppliersItemNumber"), Integer.parseInt(search)),
-                        () -> cb.like(root.get("supplier.shortName"), search + "%"),
-                        () -> cb.like(root.get("supplier.name"), search + "%"),
-                        () ->
-                            cb.equal(
-                                cb.upper(root.get("name")),
-                                (search.length() > 3 ? "%" + search + "%" : search + "%")
-                                    .toUpperCase()),
-                        () -> cb.equal(cb.upper(root.get("priceList.name")), search.toUpperCase()),
-                        () ->
-                            cb.equal(
-                                cb.mod(
-                                    root.get("barcode"),
-                                    (int)
-                                        (Math.pow(
-                                            10, Math.ceil(Math.log10(Integer.parseInt(search)))))),
-                                search.toUpperCase()))),
-            () -> {
-              if (p == null) return null;
-              return cb.equal(root.get("priceList"), p);
-            },
-            () -> {
-              if (!inShopRange) return null;
-              return cb.isTrue(root.get("shopRange"));
-            }));
-  }
-
   public static int nextFreeKBNumber(EntityManager em) {
     return em.createQuery(
             "select a.kbNumber+1 from Article a where not exists (select b from Article b where b.kbNumber = a.kbNumber+1)",
             Integer.class)
         .setMaxResults(1)
         .getSingleResult();
-  }
-
-  public static Article nextArticleTo(int suppliersItemNumber, Supplier supplier) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return nextArticleTo(em, suppliersItemNumber, supplier);
   }
 
   public static Article nextArticleTo(
@@ -325,8 +275,11 @@ public class Articles {
     @Cleanup("commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    return em.createQuery("select o from Offer o where o.offerArticle = :o", Offer.class)
-        .setParameter("o", article).getResultList().stream()
+    return em
+        .createQuery("select o from Offer o where o.offerArticle = :o", Offer.class)
+        .setParameter("o", article)
+        .getResultList()
+        .stream()
         .filter(e -> e.getFromDate().isBefore(Instant.now()))
         .filter(e -> e.getToDate().isAfter(Instant.now()))
         .findAny();
@@ -416,37 +369,6 @@ public class Articles {
   public static Article withValidKBNumber(Article article, EntityManager em) {
     article.setKbNumber(Articles.nextFreeKBNumber(em));
     return article;
-  }
-
-  public static Map<Long, Integer> calculateAmounts() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup("commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    List<Object[]> out =
-        em.createQuery("select s.articleId, s.itemMultiplier from ShoppingItem s").getResultList();
-    HashMap<Long, Integer> amountMapper = new HashMap<>();
-    for (Object[] objects : out) {
-      long articleId = (long) objects[0];
-      int amount = (int) Tools.ifNull(objects[1], 0);
-      Integer before = amountMapper.get(articleId);
-      amountMapper.put(articleId, Tools.ifNull(before, 0) + amount);
-    }
-    return amountMapper;
-  }
-
-  public static long calculateCurrentAmount(Article article) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup("commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    Long result =
-        em.createQuery(
-                "select sum(s.itemMultiplier) from ShoppingItem s where s.articleId = :aid",
-                Long.class)
-            .setParameter("aid", (long) article.getId())
-            .getSingleResult();
-    return -Tools.ifNull(result, 0L);
   }
 
   public static Collection<Article> getPrintPool() {
@@ -585,7 +507,9 @@ public class Articles {
         .mapToInt(Article::getSuppliersItemNumber)
         .forEach(articleNos::add);
 
-    return DBConnection.getConditioned(CatalogEntry.class, "artikelNr", articleNos).stream()
+    return DBConnection.getConditioned(
+            CatalogEntry.class, new FieldCondition("artikelNr", articleNos))
+        .stream()
         .filter(
             e ->
                 Boolean.FALSE == e.getAktionspreis()

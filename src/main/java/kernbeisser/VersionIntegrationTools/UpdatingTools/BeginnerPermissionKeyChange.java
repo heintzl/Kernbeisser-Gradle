@@ -1,8 +1,8 @@
 package kernbeisser.VersionIntegrationTools.UpdatingTools;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import java.util.HashMap;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import kernbeisser.Config.Config;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.VersionIntegrationTools.VersionUpdatingTool;

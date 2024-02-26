@@ -1,7 +1,7 @@
 package kernbeisser.DBEntities;
 
+import jakarta.persistence.*;
 import java.util.Collection;
-import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
 import lombok.Cleanup;
 import lombok.Getter;

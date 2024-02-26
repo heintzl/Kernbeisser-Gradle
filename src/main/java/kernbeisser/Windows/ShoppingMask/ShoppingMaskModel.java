@@ -1,6 +1,6 @@
 package kernbeisser.Windows.ShoppingMask;
 
-import javax.persistence.NoResultException;
+import jakarta.persistence.NoResultException;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Articles;
 import kernbeisser.DBEntities.SaleSession;

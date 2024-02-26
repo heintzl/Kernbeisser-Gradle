@@ -1,16 +1,15 @@
 package kernbeisser.Windows.ManagePriceLists;
 
+import jakarta.persistence.PersistenceException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
-import javax.persistence.PersistenceException;
 import kernbeisser.CustomComponents.ObjectTree.Node;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.Enums.Mode;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Forms.FormEditor.FormEditorController;
 import kernbeisser.Forms.FormImplemetations.Article.ArticleController;
 import kernbeisser.Security.Key;
@@ -18,6 +17,7 @@ import kernbeisser.Windows.EditPriceList.EditPriceListController;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.ViewContainers.SubWindow;
 import org.jetbrains.annotations.NotNull;
+import rs.groump.PermissionKey;
 
 public class ManagePriceListsController
     extends Controller<ManagePriceListsView, ManagePriceListsModel> implements ActionListener {

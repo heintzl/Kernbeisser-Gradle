@@ -1,5 +1,6 @@
 package kernbeisser.DBEntities;
 
+import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.DayOfWeek;
 import java.time.Instant;
@@ -7,8 +8,6 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.TemporalAdjusters;
 import java.util.List;
-import javax.persistence.*;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Security.Key;
 import kernbeisser.Security.Relations.UserRelated;
@@ -18,6 +17,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.jetbrains.annotations.NotNull;
+import rs.groump.PermissionKey;
 
 @Entity
 @Table

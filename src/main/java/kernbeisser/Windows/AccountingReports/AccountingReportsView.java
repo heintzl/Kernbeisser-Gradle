@@ -19,7 +19,6 @@ import kernbeisser.Useful.Date;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import lombok.Getter;
-import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
 public class AccountingReportsView extends JDialog implements IView<AccountingReportsController> {
@@ -131,7 +130,7 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
     }
     optCurrent.setSelected(true);
 
-    var now = LocalDate.now(ZoneId.systemDefault());
+    LocalDate now = LocalDate.now(ZoneId.systemDefault());
     tillRollStartDate.setDate(now);
     tillRollEndDate.setDate(now);
 

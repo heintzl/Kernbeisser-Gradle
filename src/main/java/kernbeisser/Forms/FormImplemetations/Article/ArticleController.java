@@ -11,7 +11,6 @@ import kernbeisser.DBEntities.Supplier;
 import kernbeisser.DBEntities.SurchargeGroup;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.Mode;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.ShopRange;
 import kernbeisser.Enums.VAT;
@@ -21,7 +20,7 @@ import kernbeisser.Forms.ObjectForm.Exceptions.SilentParseException;
 import kernbeisser.Forms.ObjectForm.ObjectForm;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
-import lombok.var;
+import rs.groump.PermissionKey;
 
 public class ArticleController extends FormController<ArticleView, ArticleModel, Article> {
 
@@ -65,7 +64,7 @@ public class ArticleController extends FormController<ArticleView, ArticleModel,
   }
 
   public int parseAmount(String s) throws SilentParseException {
-    var view = getView();
+    ArticleView view = getView();
     MetricUnits unit = view.getMetricUnits();
     if (unit != null) {
       return (int)
@@ -76,7 +75,7 @@ public class ArticleController extends FormController<ArticleView, ArticleModel,
   }
 
   public String displayAmount(int amount) {
-    var view = getView();
+    ArticleView view = getView();
     MetricUnits units = view.getMetricUnits() != null ? view.getMetricUnits() : MetricUnits.GRAM;
     return amount * units.getBaseFactor() + "";
   }

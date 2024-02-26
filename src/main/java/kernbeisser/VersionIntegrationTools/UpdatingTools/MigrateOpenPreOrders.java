@@ -1,12 +1,12 @@
 package kernbeisser.VersionIntegrationTools.UpdatingTools;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import java.util.Collection;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import javax.swing.*;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.FieldCondition;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.CatalogEntry;
 import kernbeisser.DBEntities.PreOrder;
@@ -21,13 +21,14 @@ public class MigrateOpenPreOrders implements VersionUpdatingTool {
     EntityTransaction et = em.getTransaction();
     et.begin();
     Collection<PreOrder> relevantPreorders =
-        DBConnection.getConditioned(PreOrder.class, "delivery", null).stream()
+        DBConnection.getConditioned(PreOrder.class, FieldCondition.isNull("delivery")).stream()
             .filter(p -> p.getCatalogEntry() == null)
-            .collect(Collectors.toList());
+            .toList();
     for (PreOrder preOrder : relevantPreorders) {
       int kkNUmber = preOrder.getArticle().getSuppliersItemNumber();
       Optional<CatalogEntry> entry =
-          DBConnection.getConditioned(CatalogEntry.class, "artikelNr", Integer.toString(kkNUmber))
+          DBConnection.getConditioned(
+                  CatalogEntry.class, new FieldCondition("artikelNr", Integer.toString(kkNUmber)))
               .stream()
               .filter(e -> !e.getAktionspreis())
               .findFirst();

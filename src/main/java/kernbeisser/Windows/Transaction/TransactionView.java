@@ -1,5 +1,6 @@
 package kernbeisser.Windows.Transaction;
 
+import jakarta.persistence.NoResultException;
 import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
@@ -7,7 +8,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
 import java.util.Optional;
-import javax.persistence.NoResultException;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;

@@ -1,7 +1,7 @@
 package kernbeisser.VersionIntegrationTools.UpdatingTools;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.VersionIntegrationTools.VersionUpdatingTool;
 import lombok.Cleanup;

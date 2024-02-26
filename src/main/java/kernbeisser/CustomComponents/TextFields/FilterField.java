@@ -1,11 +1,11 @@
 package kernbeisser.CustomComponents.TextFields;
 
-import com.sun.istack.NotNull;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
 import kernbeisser.Exeptions.IncorrectInput;
+import org.jetbrains.annotations.NotNull;
 
 public class FilterField<T> extends PermissionField {
   private final Transformable<T> transformer;

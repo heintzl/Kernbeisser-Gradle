@@ -1,15 +1,15 @@
 package kernbeisser.DBEntities;
 
+import jakarta.persistence.*;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Key;
 import kernbeisser.Security.StaticPermissionChecks;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
+import rs.groump.PermissionKey;
 
 @Entity
 @Table

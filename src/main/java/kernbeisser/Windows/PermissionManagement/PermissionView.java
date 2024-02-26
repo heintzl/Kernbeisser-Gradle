@@ -18,17 +18,18 @@ import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.Enums.ExportTypes;
-import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Security.PermissionKeyOrdering;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
+import rs.groump.PermissionKey;
 
 public class PermissionView implements IView<PermissionController> {
 
   @lombok.Getter private ObjectTable<PermissionKey> permission;
   private JPanel main;
-  private JComboBox<Class> category;
+  private AdvancedComboBox<PermissionKeyOrdering> category;
   private JButton back;
   private JButton add;
   private JButton delete;
@@ -78,15 +79,12 @@ public class PermissionView implements IView<PermissionController> {
     this.permission.setObjects(permissions);
   }
 
-  void setCategories(List<Class<?>> categories) {
-    category.removeAllItems();
-    for (Class<?> keyCategory : categories) {
-      category.addItem(keyCategory);
-    }
+  void setCategories(List<PermissionKeyOrdering> categories) {
+    category.setItems(categories);
   }
 
-  public Class<?> getCategory() {
-    return (Class<?>) category.getSelectedItem();
+  public Optional<PermissionKeyOrdering> getCategory() {
+    return category.getSelected();
   }
 
   @Override

@@ -1,9 +1,9 @@
 package kernbeisser.Tasks.Catalog;
 
+import jakarta.persistence.EntityManager;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import javax.persistence.EntityManager;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.DBEntities.SurchargeGroup;

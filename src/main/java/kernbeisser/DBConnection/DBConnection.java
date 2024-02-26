@@ -1,8 +1,8 @@
 package kernbeisser.DBConnection;
 
+import jakarta.persistence.*;
+import jakarta.persistence.criteria.*;
 import java.util.*;
-import javax.persistence.*;
-import javax.persistence.criteria.*;
 import javax.swing.*;
 import kernbeisser.Config.Config;
 import kernbeisser.Config.Config.DBAccess;
@@ -37,14 +37,14 @@ public class DBConnection {
 
   private static EntityManagerFactory establishConnection(String name, DBAccess dbAccessData) {
     HashMap<String, String> properties = new HashMap<>(3);
-    properties.put("javax.persistence.jdbc.user", dbAccessData.getUsername());
+    properties.put("jakarta.persistence.jdbc.user", dbAccessData.getUsername());
     properties.put(
-        "javax.persistence.jdbc.url",
+        "jakarta.persistence.jdbc.url",
         dbAccessData.getUrl()
             + (dbAccessData.getUrl().contains("?") ? "&" : "")
             + "?characterEncoding="
             + dbAccessData.getEncoding());
-    properties.put("javax.persistence.jdbc.password", dbAccessData.getPassword());
+    properties.put("jakarta.persistence.jdbc.password", dbAccessData.getPassword());
     return Persistence.createEntityManagerFactory(name, properties);
   }
 
@@ -155,11 +155,6 @@ public class DBConnection {
                     .map(e -> e.buildPredicate(root))
                     .toArray(Predicate[]::new)))
         .getResultList();
-  }
-
-  public static <T> List<T> getConditioned(
-      Class<T> clazz, String conditionFieldName, Object... conditionValues) {
-    return getConditioned(clazz, new FieldCondition(conditionFieldName, conditionValues));
   }
 
   public static <T> List<T> getAll(Class<T> clazz) {

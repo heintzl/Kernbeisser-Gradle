@@ -9,7 +9,6 @@ import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.SearchBox.Filters.UserFilter;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.MissingFullMemberException;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.FormImplemetations.User.UserController;
@@ -23,6 +22,7 @@ import kernbeisser.Useful.Users;
 import kernbeisser.Windows.EditUserGroup.EditUserGroupController;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.ViewContainers.SubWindow;
+import rs.groump.PermissionKey;
 
 public class EditUsers extends ObjectViewController<User> {
 

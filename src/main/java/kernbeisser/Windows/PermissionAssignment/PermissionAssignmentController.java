@@ -11,7 +11,6 @@ import kernbeisser.CustomComponents.ClipboardFilter;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.ObjectForm.Components.Source;
 import kernbeisser.Security.Key;
@@ -19,6 +18,7 @@ import kernbeisser.Windows.CollectionView.CollectionController;
 import kernbeisser.Windows.CollectionView.CollectionView;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
+import rs.groump.PermissionKey;
 
 public class PermissionAssignmentController
     extends Controller<PermissionAssignmentView, PermissionAssignmentModel> {

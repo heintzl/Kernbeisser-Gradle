@@ -1,8 +1,8 @@
 package kernbeisser.Windows.Pay;
 
+import jakarta.persistence.PersistenceException;
 import java.awt.*;
 import java.util.List;
-import javax.persistence.PersistenceException;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
@@ -13,7 +13,6 @@ import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
 import lombok.Getter;
-import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
 public class PayController extends Controller<PayView, PayModel> {
@@ -36,7 +35,7 @@ public class PayController extends Controller<PayView, PayModel> {
   }
 
   void commitPayment(boolean printReceipt) {
-    var view = getView();
+    PayView view = getView();
     // FIXME why pass shoppingCart to model if it was initialized with it?
     try {
       long purchaseId = model.pay();
@@ -68,7 +67,7 @@ public class PayController extends Controller<PayView, PayModel> {
 
   @Override
   public void fillView(PayView payView) {
-    var view = getView();
+    PayView view = getView();
     view.fillShoppingCart(model.getShoppingCart());
     view.setCustomerStandard.setVisible(false);
     User customer = model.getSaleSession().getCustomer();

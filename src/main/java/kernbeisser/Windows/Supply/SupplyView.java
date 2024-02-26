@@ -1,10 +1,10 @@
 package kernbeisser.Windows.Supply;
 
+import jakarta.persistence.NoResultException;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
-import javax.persistence.NoResultException;
 import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;

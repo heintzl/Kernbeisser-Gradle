@@ -1,7 +1,7 @@
 package kernbeisser.Windows.MVC;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 
 public class ActiveSessionModel<T extends Controller<? extends IView<T>, ? extends IModel<T>>>

@@ -1,9 +1,9 @@
 package kernbeisser.Windows.UserInfo;
 
+import jakarta.persistence.EntityManager;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import javax.persistence.EntityManager;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;

@@ -20,7 +20,6 @@ import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.Menu.MenuController;
 import kernbeisser.Windows.TabbedPane.TabbedPaneModel;
 import kernbeisser.Windows.ViewContainers.SubWindow;
-import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
 public class SimpleLogInController extends Controller<SimpleLogInView, SimpleLogInModel> {
@@ -44,7 +43,7 @@ public class SimpleLogInController extends Controller<SimpleLogInView, SimpleLog
   }
 
   public void logIn() {
-    var view = getView();
+    SimpleLogInView view = getView();
     if (view.getUsername().toLowerCase(Locale.ROOT).equals("admin")) {
       PermissionConstants.cleanAdminPermission(User.getByUsername("Admin"));
     }

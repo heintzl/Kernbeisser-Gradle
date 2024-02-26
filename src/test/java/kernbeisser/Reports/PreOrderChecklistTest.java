@@ -2,9 +2,9 @@ package kernbeisser.Reports;
 
 import static org.mockito.Mockito.mockStatic;
 
+import jakarta.persistence.EntityManager;
 import java.time.LocalDate;
 import java.util.Collections;
-import javax.persistence.EntityManager;
 import kernbeisser.DBConnection.DBConnection;
 import net.sf.jasperreports.engine.JasperPrint;
 import org.junit.jupiter.api.Assertions;

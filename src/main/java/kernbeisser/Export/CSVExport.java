@@ -16,7 +16,6 @@ import kernbeisser.Config.Config;
 import kernbeisser.DBEntities.PreOrder;
 import kernbeisser.Useful.Tools;
 import lombok.Cleanup;
-import lombok.var;
 
 public class CSVExport {
 
@@ -60,7 +59,7 @@ public class CSVExport {
 
   public static boolean exportPreOrder(
       Component parent, Collection<PreOrder> preOrders, String defaultFilename) {
-    var fileContent = getOrdersFileContent(preOrders);
+    List<String[]> fileContent = getOrdersFileContent(preOrders);
     try {
       Path exportPath = Config.getConfig().getPreorders().getExportDirectory().toPath();
       if (!Files.exists(exportPath)) {

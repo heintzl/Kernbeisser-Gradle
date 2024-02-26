@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 public interface ViewContainer {
   void loadController(@NotNull Controller<?, ?> controller);
+
   // returns null if no controller is loaded
   Controller<?, ?> getLoaded();
 

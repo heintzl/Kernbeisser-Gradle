@@ -1,8 +1,8 @@
 package kernbeisser.CustomComponents.Verifier;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import javax.persistence.NoResultException;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.NoResultException;
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
 import kernbeisser.DBConnection.DBConnection;

@@ -1,14 +1,14 @@
 package kernbeisser.DBEntities;
 
+import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.Instant;
-import javax.persistence.*;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Key;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import rs.groump.PermissionKey;
 
 @Entity
 @Table(

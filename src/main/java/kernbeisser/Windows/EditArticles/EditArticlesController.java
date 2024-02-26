@@ -3,14 +3,15 @@ package kernbeisser.Windows.EditArticles;
 import static javax.swing.SwingConstants.LEFT;
 import static javax.swing.SwingConstants.RIGHT;
 
+import jakarta.persistence.NoResultException;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import javax.persistence.NoResultException;
 import javax.swing.*;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
@@ -23,7 +24,6 @@ import kernbeisser.CustomComponents.ObjectTree.ObjectTree;
 import kernbeisser.CustomComponents.SearchBox.Filters.ArticleFilter;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.Mode;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.FormImplemetations.Article.ArticleController;
 import kernbeisser.Forms.ObjectView.ObjectViewController;
@@ -37,8 +37,8 @@ import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.PrintLabels.PrintLabelsController;
 import kernbeisser.Windows.ViewContainers.SubWindow;
-import lombok.var;
 import org.jetbrains.annotations.NotNull;
+import rs.groump.PermissionKey;
 
 public class EditArticlesController extends Controller<EditArticlesView, EditArticlesModel> {
 
@@ -63,7 +63,7 @@ public class EditArticlesController extends Controller<EditArticlesView, EditArt
   @Key(PermissionKey.ACTION_OPEN_EDIT_ARTICLES)
   public EditArticlesController() {
     super(new EditArticlesModel());
-    var lastDeliveries = Articles.getLastDeliveries();
+    Map<Integer, Instant> lastDeliveries = Articles.getLastDeliveries();
     objectViewController =
         new ObjectViewController<>(
             "Artikel bearbeiten",
@@ -168,7 +168,7 @@ public class EditArticlesController extends Controller<EditArticlesView, EditArt
   }
 
   void openPriceListSelection() {
-    var view = getView();
+    EditArticlesView view = getView();
     ObjectTree<PriceList> priceListObjectTree = new ObjectTree<>(PriceList.getPriceListsAsNode());
     priceListObjectTree.addSelectionListener(
         e -> {

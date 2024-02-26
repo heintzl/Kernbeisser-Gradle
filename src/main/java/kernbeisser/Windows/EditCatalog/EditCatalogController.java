@@ -8,7 +8,6 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.SearchBox.Filters.CatalogFilter;
 import kernbeisser.DBEntities.CatalogEntry;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Forms.FormImplemetations.CatalogEntry.CatalogEntryController;
 import kernbeisser.Forms.ObjectView.ObjectViewController;
 import kernbeisser.Forms.ObjectView.ObjectViewView;
@@ -17,6 +16,7 @@ import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Icons;
 import kernbeisser.Windows.MVC.Controller;
 import org.jetbrains.annotations.NotNull;
+import rs.groump.PermissionKey;
 
 public class EditCatalogController extends Controller<EditCatalogView, EditCatalogModel> {
 

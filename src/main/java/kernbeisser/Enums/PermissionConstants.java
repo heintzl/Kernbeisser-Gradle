@@ -1,17 +1,20 @@
 package kernbeisser.Enums;
 
 import com.google.common.collect.ImmutableMap;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.NoResultException;
 import java.util.Set;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import javax.persistence.NoResultException;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.Access.AccessManager;
+import kernbeisser.Security.PermissionKeyOrdering;
+import kernbeisser.Security.PermissionKeys;
 import kernbeisser.Security.PermissionSet;
 import lombok.Cleanup;
+import rs.groump.PermissionKey;
 
 // Permissions which become automatically generated when the application
 // requires them to prevent the functionality from the application
@@ -24,7 +27,7 @@ public enum PermissionConstants {
   // the permission which is given to all users which has a key in the old application
   KEY_PERMISSION(PermissionKey.ACTION_LOGIN, PermissionKey.GO_UNDER_MIN),
   APPLICATION(PermissionKey.values()),
-  IN_RELATION_TO_OWN_USER(PermissionKey.find(User.class).toArray(new PermissionKey[0])),
+  IN_RELATION_TO_OWN_USER(PermissionKeyOrdering.USER.getKeys()),
   CASHIER(PermissionKey.ACTION_OPEN_CASHIER_SHOPPING_MASK),
   // the default permission for all new users
   BASIC_ACCESS(PermissionKey.ACTION_LOGIN),
@@ -101,7 +104,7 @@ public enum PermissionConstants {
     Access.putException(currentUser, AccessManager.NO_ACCESS_CHECKING);
     Permission adminPermission = ADMIN.getPermission();
     Access.putException(adminPermission, AccessManager.NO_ACCESS_CHECKING);
-    adminPermission.setKeySet(allPermissions().minus(PermissionKey.getNonAdminPermissions()));
+    adminPermission.setKeySet(allPermissions().minus(PermissionKeys.getNonAdminPermissions()));
     Set<Permission> adminPermissionSet = new java.util.HashSet<>();
     adminPermissionSet.add(adminPermission);
     currentUser.setPermissions(adminPermissionSet);

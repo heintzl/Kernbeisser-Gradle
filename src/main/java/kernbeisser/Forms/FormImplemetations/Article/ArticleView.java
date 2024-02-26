@@ -14,7 +14,6 @@ import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.DBEntities.SurchargeGroup;
 import kernbeisser.Enums.MetricUnits;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.ShopRange;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Forms.ObjectForm.Components.AccessCheckBox;
@@ -26,6 +25,7 @@ import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
+import rs.groump.PermissionKey;
 
 public class ArticleView implements IView<ArticleController> {
 

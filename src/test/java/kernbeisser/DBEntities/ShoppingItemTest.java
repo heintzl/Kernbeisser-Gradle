@@ -9,7 +9,6 @@ import java.time.Instant;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.ShopRange;
 import kernbeisser.Enums.VAT;
-import lombok.var;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;

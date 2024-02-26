@@ -1,0 +1,27 @@
+plugins {
+    id 'java'
+}
+
+group = 'rs.groump'
+version = '2.0'
+
+repositories {
+    mavenCentral()
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+
+dependencies {
+    implementation group: 'com.google.auto.service', name: 'auto-service', version: '1.0'
+    annotationProcessor group: 'com.google.auto.service', name: 'auto-service', version: '1.0'
+}
+
+test {
+    useJUnitPlatform()
+}

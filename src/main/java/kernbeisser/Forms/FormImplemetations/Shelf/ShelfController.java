@@ -1,13 +1,13 @@
 package kernbeisser.Forms.FormImplemetations.Shelf;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;

@@ -3,7 +3,6 @@ package kernbeisser.Windows.Menu;
 import javax.swing.*;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Mode;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.TransactionType;
 import kernbeisser.Forms.FormEditor.FormEditorController;
@@ -21,8 +20,8 @@ import kernbeisser.Windows.PreOrder.PreOrderController;
 import kernbeisser.Windows.TabbedPane.TabbedPaneModel;
 import kernbeisser.Windows.Transaction.TransactionController;
 import kernbeisser.Windows.UserInfo.UserInfoController;
-import lombok.var;
 import org.jetbrains.annotations.NotNull;
+import rs.groump.PermissionKey;
 
 public class MenuController extends Controller<MenuView, MenuModel> {
 
@@ -80,7 +79,7 @@ public class MenuController extends Controller<MenuView, MenuModel> {
 
   @Override
   public boolean commitClose() {
-    var view = getView();
+    MenuView view = getView();
     if (alreadyAsked) return true;
     if (JOptionPane.showConfirmDialog(
             view.getTopComponent(),

@@ -7,7 +7,6 @@ import javax.swing.*;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Mode;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.StatementType;
 import kernbeisser.Exeptions.NoSelectionException;
 import kernbeisser.Forms.FormEditor.FormEditorController;
@@ -19,8 +18,8 @@ import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.Purchase.PurchaseController;
 import kernbeisser.Windows.ViewContainers.SubWindow;
-import lombok.var;
 import org.jetbrains.annotations.NotNull;
+import rs.groump.PermissionKey;
 
 public class UserInfoController extends Controller<UserInfoView, UserInfoModel> {
 
@@ -34,7 +33,7 @@ public class UserInfoController extends Controller<UserInfoView, UserInfoModel> 
   }
 
   public void loadCurrentSite() {
-    var view = getView();
+    UserInfoView view = getView();
     switch (view.getSelectedTabIndex()) {
       case 0:
         optional(model.getUser()::getJobsAsAvailable).ifPresent(view::setJobs);
@@ -56,7 +55,7 @@ public class UserInfoController extends Controller<UserInfoView, UserInfoModel> 
   }
 
   public void openPurchase() {
-    var view = getView();
+    UserInfoView view = getView();
     try {
       new PurchaseController(view.getSelectedPurchase().orElseThrow(NoSelectionException::new))
           .openIn(new SubWindow(view.traceViewContainer()));

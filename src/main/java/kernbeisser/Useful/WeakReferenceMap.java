@@ -269,14 +269,16 @@ public class WeakReferenceMap<K, V> extends AbstractMap<K, V> implements Map<K, 
   public void clear() {
     // clear out ref queue. We don't need to expunge entries
     // since table is getting cleared.
-    while (queue.poll() != null) ;
+    while (queue.poll() != null)
+      ;
     modCount++;
     Arrays.fill(table, null);
     size = 0;
     // Allocation of array may have caused GC, which may have caused
     // additional entries to go stale.  Removing these entries from the
     // reference queue will make them eligible for reclamation.
-    while (queue.poll() != null) ;
+    while (queue.poll() != null)
+      ;
   }
 
   public boolean containsValue(Object value) {
@@ -414,6 +416,7 @@ public class WeakReferenceMap<K, V> extends AbstractMap<K, V> implements Map<K, 
       return nextEntry();
     }
   }
+
   // Views
   private transient Set<Map.Entry<K, V>> entrySet;
 

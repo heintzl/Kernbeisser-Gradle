@@ -26,7 +26,6 @@ import kernbeisser.Useful.Tools;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
-import lombok.var;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.design.JasperDesign;
@@ -60,7 +59,7 @@ public abstract class Report {
 
   JasperPrint lazyGetJspPrint() {
     Map<String, Object> params = new HashMap<>();
-    var reportParams = getReportParams();
+    Map<String, Object> reportParams = getReportParams();
     if (reportParams != null) params.putAll(reportParams);
     params.put("reportFooter", Setting.REPORT_FOOTLINE.getStringValue());
     try {
@@ -139,7 +138,7 @@ public abstract class Report {
                   new ProgressMonitor(null, message, "Initialisiere Druckerservice...", 0, 2);
               pm.setProgress(1);
               pm.setNote("Druck wird erstellt...");
-              var jasperPrint = getJspPrint();
+              JasperPrint jasperPrint = getJspPrint();
               JRPrintServiceExporter printExporter = new JRPrintServiceExporter();
               printExporter.setExporterInput(new SimpleExporterInput(jasperPrint));
               PrintRequestAttributeSet requestAttributeSet = getPageFormatFromReport(jasperPrint);

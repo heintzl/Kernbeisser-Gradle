@@ -1,5 +1,6 @@
 package kernbeisser.DBEntities;
 
+import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Collection;
@@ -7,7 +8,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.function.ToDoubleFunction;
-import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.EntityWrapper.ObjectState;
 import kernbeisser.Enums.*;
@@ -15,6 +15,7 @@ import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
 import lombok.*;
 import org.hibernate.envers.AuditReaderFactory;
+import rs.groump.PermissionKey;
 
 @Entity
 @Table(
@@ -166,6 +167,7 @@ public class ShoppingItem implements Serializable {
   private void setTimestamp() {
     createDate = Instant.now();
   }
+
   /**
    * @param discount percentage of netprice reduction
    * @param hasContainerDiscount if true reduced surcharge is applied
@@ -471,6 +473,7 @@ public class ShoppingItem implements Serializable {
   public String getSafeSuppliersShortName() {
     return (suppliersShortName == null ? "" : suppliersShortName);
   }
+
   // TODO maybe replace this with check at ShoppingCartTable to not bind the hash code to this class
   @Override
   public int hashCode() {

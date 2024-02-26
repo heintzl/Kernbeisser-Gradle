@@ -1,5 +1,7 @@
 package kernbeisser.Reports;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -8,8 +10,6 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.User;
 import lombok.Cleanup;

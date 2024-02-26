@@ -1,5 +1,7 @@
 package kernbeisser.Windows.CatalogImport;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.time.format.DateTimeParseException;
@@ -7,8 +9,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.CatalogEntry;
 import kernbeisser.Enums.Setting;

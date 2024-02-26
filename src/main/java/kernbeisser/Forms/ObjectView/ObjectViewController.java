@@ -20,7 +20,6 @@ import kernbeisser.Windows.Searchable;
 import kernbeisser.Windows.ViewContainers.SubWindow;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
 public class ObjectViewController<T extends ActuallyCloneable>
@@ -56,7 +55,7 @@ public class ObjectViewController<T extends ActuallyCloneable>
   }
 
   void refreshButtonStates() {
-    var view = getView();
+    ObjectViewView<T> view = getView();
     view.setAddAvailable(model.isAddAvailable());
     if (searchBoxController.getSelectedObject().isPresent()) {
       view.setEditAvailable(model.isEditAvailable());

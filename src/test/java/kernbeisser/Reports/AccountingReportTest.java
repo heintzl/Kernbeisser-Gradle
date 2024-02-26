@@ -2,12 +2,12 @@ package kernbeisser.Reports;
 
 import static org.mockito.Mockito.*;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Tuple;
+import jakarta.persistence.TypedQuery;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.Tuple;
-import javax.persistence.TypedQuery;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.TransactionType;

@@ -1,8 +1,8 @@
 package kernbeisser.Windows.ChangePassword;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Windows.MVC.IModel;

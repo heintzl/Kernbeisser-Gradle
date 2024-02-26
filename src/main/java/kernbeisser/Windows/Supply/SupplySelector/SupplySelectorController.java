@@ -28,7 +28,6 @@ import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.Supply.SupplyController;
 import kernbeisser.Windows.ViewContainers.SubWindow;
 import lombok.SneakyThrows;
-import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
 public class SupplySelectorController extends Controller<SupplySelectorView, SupplySelectorModel> {
@@ -244,7 +243,7 @@ public class SupplySelectorController extends Controller<SupplySelectorView, Sup
                                       .sum())));
               ot.setObjects(supply.getSupplierFiles());
               SubWindow sw = new SubWindow(getView().traceViewContainer());
-              var cc = new ComponentController(new JScrollPane(ot));
+              ComponentController cc = new ComponentController(new JScrollPane(ot));
               sw.setTitle(
                   "Aufträge der Lierung vom " + Date.INSTANT_DATE.format(supply.getDeliveryDate()));
               cc.openIn(sw);

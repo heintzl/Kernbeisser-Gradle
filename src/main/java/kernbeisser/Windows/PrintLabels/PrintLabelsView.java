@@ -1,6 +1,6 @@
 package kernbeisser.Windows.PrintLabels;
 
-import javax.persistence.NoResultException;
+import jakarta.persistence.NoResultException;
 import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.Article;

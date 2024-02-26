@@ -3,6 +3,7 @@ package kernbeisser.Windows.PrintLabels;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import javax.swing.*;
@@ -14,7 +15,6 @@ import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.ArticlePrintPool;
 import kernbeisser.DBEntities.Articles;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Security.Key;
@@ -25,7 +25,7 @@ import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.ViewContainer;
 import kernbeisser.Windows.ViewContainers.SubWindow;
-import lombok.var;
+import rs.groump.PermissionKey;
 
 public class PrintLabelsController extends Controller<PrintLabelsView, PrintLabelsModel> {
 
@@ -145,7 +145,7 @@ public class PrintLabelsController extends Controller<PrintLabelsView, PrintLabe
   }
 
   private void persistPrintPoolIfNecessary(boolean confirm) {
-    var newPrintPool = model.getPrintPoolMap();
+    Map<Article, Integer> newPrintPool = model.getPrintPoolMap();
     if (newPrintPool.equals(model.getPrintPoolMapBefore())) return;
     if (confirm && !(articles.getModel().isSaveChanges() || getView().confirmChanges())) return;
     ArticlePrintPool.setPrintPoolFromMap(newPrintPool);

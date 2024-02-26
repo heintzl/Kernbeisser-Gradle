@@ -1,12 +1,13 @@
 package kernbeisser.Windows.Inventory;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.FieldCondition;
 import kernbeisser.DBEntities.ArticleStock;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.Shelf;
@@ -81,7 +82,9 @@ public class InventoryModel implements IModel<InventoryController> {
       return;
     }
     List<ArticleStock> stocksToRemove =
-        DBConnection.getConditioned(ArticleStock.class, "inventoryDate", inventoryDate).stream()
+        DBConnection.getConditioned(
+                ArticleStock.class, new FieldCondition("inventoryDate", inventoryDate))
+            .stream()
             .filter(
                 s ->
                     s.getCreateDate()

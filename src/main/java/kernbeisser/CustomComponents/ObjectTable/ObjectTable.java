@@ -16,7 +16,6 @@ import javax.swing.table.*;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.Useful.DocumentChangeListener;
-import lombok.var;
 import org.jetbrains.annotations.NotNull;
 
 public class ObjectTable<T> extends JTable implements Iterable<T> {
@@ -153,12 +152,12 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
   }
 
   private JPopupMenu createPopupMenu(Column<T> column) {
-    var popup = new JPopupMenu("Spaltenfilter");
-    var textSize = new Dimension(200, 25);
+    JPopupMenu popup = new JPopupMenu("Spaltenfilter");
+    Dimension textSize = new Dimension(200, 25);
 
-    var textFilterPanel = new JPanel(new FlowLayout());
+    JPanel textFilterPanel = new JPanel(new FlowLayout());
     textFilterPanel.add(new JLabel(IconFontSwing.buildIcon(FontAwesome.FILTER, 15, Color.BLUE)));
-    var filterText = new JTextField();
+    JTextField filterText = new JTextField();
     filterText.setPreferredSize(textSize);
     filterText
         .getDocument()
@@ -167,10 +166,10 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
     filterText.addActionListener(e -> popup.setVisible(false));
     textFilterPanel.add(filterText);
 
-    var removeFilterPanel = new JPanel(new FlowLayout());
+    JPanel removeFilterPanel = new JPanel(new FlowLayout());
     removeFilterPanel.add(
         new JLabel(IconFontSwing.buildIcon(FontAwesome.TRASH, 15, Color.DARK_GRAY)));
-    var removeFilter = new JLabel("Spaltenfilter Entfernen");
+    JLabel removeFilter = new JLabel("Spaltenfilter Entfernen");
     removeFilter.setPreferredSize(textSize);
     removeFilterPanel.add(removeFilter);
     removeFilterPanel.addMouseListener(
@@ -181,10 +180,10 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
           }
         });
 
-    var removeAllFiltersPanel = new JPanel(new FlowLayout());
+    JPanel removeAllFiltersPanel = new JPanel(new FlowLayout());
     removeAllFiltersPanel.add(
         new JLabel(IconFontSwing.buildIcon(FontAwesome.TIMES, 15, Color.RED.darker())));
-    var removeAllFilters = new JLabel("Alle Filter Entfernen");
+    JLabel removeAllFilters = new JLabel("Alle Filter Entfernen");
     removeAllFilters.setPreferredSize(textSize);
     removeAllFiltersPanel.add(removeAllFilters);
     removeAllFiltersPanel.addMouseListener(
@@ -258,7 +257,7 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
   }
 
   private void insertColumn(Column<T> column, int index) {
-    var beforeCopy = new ArrayList<>(getModel().getColumns());
+    ArrayList<Column<T>> beforeCopy = new ArrayList<>(getModel().getColumns());
     beforeCopy.add(index, column);
     getModel().setColumns(beforeCopy);
   }

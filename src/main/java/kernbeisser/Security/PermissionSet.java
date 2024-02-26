@@ -4,11 +4,11 @@ import java.math.BigInteger;
 import java.util.*;
 import java.util.function.LongBinaryOperator;
 import kernbeisser.DBEntities.Permission;
-import kernbeisser.Enums.PermissionKey;
 import org.jetbrains.annotations.NotNull;
+import rs.groump.PermissionKey;
 
 /**
- * loads given permission set into a bit field saved as long array so we can easily check a
+ * loads given permission set into a bit field saved as long array, so we can easily check a
  * permission with bit field comparision against it.
  */
 public class PermissionSet implements Set<PermissionKey> {
@@ -300,7 +300,9 @@ public class PermissionSet implements Set<PermissionKey> {
 
   @Override
   @Deprecated
-  /** @Depreccated use removeAll(PermissionSet) instead much faster implementation */
+  /**
+   * @Depreccated use removeAll(PermissionSet) instead much faster implementation
+   */
   public boolean removeAll(@NotNull Collection<?> c) {
     boolean changed = false;
     for (Object permissionKey : c) {

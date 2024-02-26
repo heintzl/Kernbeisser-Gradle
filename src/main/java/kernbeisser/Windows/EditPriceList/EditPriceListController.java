@@ -4,13 +4,13 @@ import java.awt.*;
 import javax.swing.*;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.PriceList;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Security.Key;
 import kernbeisser.Windows.CollectionView.CollectionController;
 import kernbeisser.Windows.CollectionView.CollectionView;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
+import rs.groump.PermissionKey;
 
 public class EditPriceListController extends Controller<EditPriceListView, EditPriceListModel> {
 

@@ -3,15 +3,21 @@
 plugins {
     id 'java'
     id 'idea'
-    id 'com.diffplug.gradle.spotless' version '4.0.1'
+    id 'com.diffplug.spotless' version "6.25.0"
     id 'com.github.jakemarsden.git-hooks' version '0.0.2'
     id 'com.github.johnrengelman.shadow' version '7.0.0'
+    id("io.freefair.lombok") version "8.6"
 }
 
 group 'Kernbeisser'
 version '2.0'
 
-sourceCompatibility = JavaVersion.VERSION_1_8
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
 
 repositories {
     mavenCentral()
@@ -29,7 +35,6 @@ test {
 }
 
 dependencies {
-    implementation 'org.projectlombok:lombok:1.18.22'
     constraints {
         implementation("org.apache.logging.log4j:log4j-core") {
             version {
@@ -39,7 +44,7 @@ dependencies {
             because("CVE-2021-44228: Log4j vulnerable to remote code execution")
         }
     }
-    def hibernateVersion = '5.3.12.Final'
+    def hibernateVersion = '6.4.4.Final'
     implementation 'org.hibernate:hibernate-agroal:'+hibernateVersion
     implementation "org.hibernate:hibernate-envers:"+hibernateVersion
     implementation files("${rootDir}/libs/forms_rt.jar")
@@ -61,15 +66,17 @@ dependencies {
     implementation group: 'org.ow2.asm', name: 'asm', version: '7.0'
     implementation 'org.javassist:javassist:3.27.0-GA'
     implementation 'org.objenesis:objenesis:1.2'
-
     implementation group: 'com.github.lgooddatepicker', name: 'LGoodDatePicker', version: '11.2.1'
 
-    compileOnly 'org.projectlombok:lombok:1.18.30'
+    //Key-Annotation-Processor
+    implementation project(":annotation-processor")
+    annotationProcessor files("annotation-processor/build/libs/annotation-processor-2.0.jar")
+    implementation 'org.projectlombok:lombok:1.18.30'
     annotationProcessor 'org.projectlombok:lombok:1.18.30'
 
+    //Tests
     testCompileOnly 'org.projectlombok:lombok:1.18.30'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.30'
-
     testImplementation 'org.mockito:mockito-inline:3.7.7'
     testImplementation 'org.mockito:mockito-junit-jupiter:3.7.7'
     testImplementation 'org.junit.jupiter:junit-jupiter-params:5.7.0'
@@ -104,10 +111,6 @@ task copyReportsFolder(type: Copy){
     into "$buildDir/libs/reports"
 //    fileMode 750
 }
-
-//task chmodRecursively(type: Exec){
-//    commandLine "chmod", "-R", "755", "$buildDir"
-//}
 
 copyProductionFolderContent.dependsOn copyAgent
 processResources.dependsOn copyProductionFolderContent, copyReportsFolder//, chmodRecursively

@@ -1,10 +1,10 @@
 package kernbeisser.Forms.FormImplemetations.Article;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Optional;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.PriceList;

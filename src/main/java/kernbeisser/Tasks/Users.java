@@ -2,9 +2,9 @@ package kernbeisser.Tasks;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import com.google.common.collect.Sets;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import java.util.*;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import javax.swing.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.*;

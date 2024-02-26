@@ -1,13 +1,12 @@
 package kernbeisser.DBEntities;
 
+import jakarta.persistence.*;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
-import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Security.Key;
 import kernbeisser.Security.Relations.UserRelated;
@@ -19,6 +18,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.jetbrains.annotations.NotNull;
+import rs.groump.PermissionKey;
 
 @Table
 @Entity
@@ -47,7 +47,7 @@ public class Purchase implements UserRelated {
   @Setter(onMethod_ = {@Key(PermissionKey.PURCHASE_USER_SURCHARGE_WRITE)})
   private double userSurcharge;
 
-  /* the following member variables are used to pass non static values to reports */
+  /* the following member variables are used to pass non-static values to reports */
   @Column @Transient @Getter private String sellerIdentification;
 
   @Column @Transient @Getter private String customerIdentification;

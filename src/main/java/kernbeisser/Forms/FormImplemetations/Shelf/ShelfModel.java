@@ -1,7 +1,7 @@
 package kernbeisser.Forms.FormImplemetations.Shelf;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;

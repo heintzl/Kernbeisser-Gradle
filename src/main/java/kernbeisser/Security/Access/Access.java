@@ -6,16 +6,17 @@ import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Security.Bytecode.PermissionKeyMethodVisitor;
 import kernbeisser.Security.Key;
+import kernbeisser.Security.PermissionKeyOrdering;
 import kernbeisser.Security.PermissionSet;
 import kernbeisser.Useful.WeakReferenceMap;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
+import rs.groump.PermissionKey;
 
 public class Access {
 
@@ -112,7 +113,9 @@ public class Access {
     if (defaultManager instanceof PermissionKeyBasedAccessManager) {
       PermissionSet requiredPermissions =
           peekPermissions(serializable)
-              .operator(PermissionKey.getAllActionPermissions(), (a, b) -> a & b);
+              .operator(
+                  PermissionSet.asPermissionSet(PermissionKeyOrdering.ACTIONS.getKeys()),
+                  (a, b) -> a & b);
       return ((PermissionKeyBasedAccessManager) defaultManager).hasPermission(requiredPermissions);
     }
     throw new UnsupportedOperationException("Default access manager is not peek able");

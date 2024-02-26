@@ -1,19 +1,18 @@
 package kernbeisser.DBEntities;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
+import jakarta.persistence.*;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 import java.io.Serializable;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.function.Predicate;
-import javax.persistence.*;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionConstants;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.InvalidValue;
@@ -27,6 +26,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.jetbrains.annotations.NotNull;
+import rs.groump.PermissionKey;
 
 @Entity
 @Table(
@@ -214,14 +214,14 @@ public class User implements Serializable, UserRelated, ActuallyCloneable {
 
     if (isFullMember()) {
       if (this.userGroup != null) {
-        var remainingMembers = this.userGroup.getMembers();
+        Collection<User> remainingMembers = this.userGroup.getMembers();
         remainingMembers.remove(this);
         validateGroupMemberships(
             remainingMembers,
             "In der alten Benutzergruppe muss mindestens ein Vollmitglied bleiben");
       }
     } else {
-      var newMembers = userGroup.getMembers();
+      Collection<User> newMembers = userGroup.getMembers();
       newMembers.add(this);
       validateGroupMemberships(
           newMembers, "In der neuen Benutzergruppe muss mindestens ein Vollmitglied sein");
@@ -356,6 +356,7 @@ public class User implements Serializable, UserRelated, ActuallyCloneable {
       this.forcePasswordChange = false;
     }
   }
+
   // changed from direct reference to getter to keep security
   public String getFullName() {
     return getFullName(false);

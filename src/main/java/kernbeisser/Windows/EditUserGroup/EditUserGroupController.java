@@ -12,7 +12,6 @@ import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.CannotLogInException;
 import kernbeisser.Exeptions.MissingFullMemberException;
 import kernbeisser.Security.Key;
@@ -21,6 +20,7 @@ import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
+import rs.groump.PermissionKey;
 
 public class EditUserGroupController extends Controller<EditUserGroupView, EditUserGroupModel> {
 

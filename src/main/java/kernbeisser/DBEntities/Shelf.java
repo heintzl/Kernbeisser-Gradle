@@ -1,12 +1,11 @@
 package kernbeisser.DBEntities;
 
+import jakarta.persistence.*;
 import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Security.Key;
 import kernbeisser.Useful.ActuallyCloneable;
 import kernbeisser.Useful.Tools;
@@ -15,6 +14,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import rs.groump.PermissionKey;
 
 @Entity
 @Table
@@ -43,16 +43,14 @@ public class Shelf implements ActuallyCloneable {
 
   @JoinColumn
   @ManyToMany(fetch = FetchType.EAGER)
-  @Getter(
-      onMethod_ = {@Key({PermissionKey.SHELF_ARTICLES_READ, PermissionKey.SHELF_ARTICLES_WRITE})})
-  @Setter(onMethod_ = {@Key(PermissionKey.SHELF_ARTICLES_WRITE)})
+  @Getter()
+  @Setter()
   private Set<PriceList> priceLists = new HashSet<>();
 
   @JoinColumn
   @ManyToMany(fetch = FetchType.EAGER)
-  @Getter(
-      onMethod_ = {@Key({PermissionKey.SHELF_ARTICLES_READ, PermissionKey.SHELF_ARTICLES_WRITE})})
-  @Setter(onMethod_ = {@Key(PermissionKey.SHELF_ARTICLES_WRITE)})
+  @Getter()
+  @Setter()
   private Set<Article> articles = new HashSet<>();
 
   @CreationTimestamp @Getter private Instant createDate;

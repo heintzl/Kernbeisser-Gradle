@@ -1,5 +1,6 @@
 package kernbeisser.Windows.PreOrder;
 
+import jakarta.persistence.NoResultException;
 import java.awt.event.KeyEvent;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -8,14 +9,12 @@ import java.time.temporal.TemporalAdjusters;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
-import javax.persistence.NoResultException;
 import javax.swing.*;
 import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.CustomComponents.Dialogs.DateSelectorDialog;
 import kernbeisser.CustomComponents.KeyCapture;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.Mode;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.InvalidValue;
 import kernbeisser.Exeptions.PermissionKeyRequiredException;
@@ -26,8 +25,8 @@ import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.PreOrder.CatalogSelector.CatalogSelectorController;
 import kernbeisser.Windows.ViewContainers.SubWindow;
 import lombok.Getter;
-import lombok.var;
 import org.jetbrains.annotations.NotNull;
+import rs.groump.PermissionKey;
 
 public class PreOrderController extends Controller<PreOrderView, PreOrderModel> {
 
@@ -64,7 +63,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
   }
 
   void add() {
-    var view = getView();
+    PreOrderView view = getView();
     try {
       PreOrder order = obtainFromView();
       model.add(order);
@@ -78,7 +77,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
   }
 
   void edit(PreOrder preOrder) {
-    var view = getView();
+    PreOrderView view = getView();
     try {
       PreOrder order = obtainFromView();
       model.edit(preOrder, order);
@@ -91,7 +90,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
   }
 
   void delete(PreOrder preOrder) {
-    var view = getView();
+    PreOrderView view = getView();
     if (preOrder == null) {
       view.noPreOrderSelected();
       return;
@@ -112,7 +111,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
   }
 
   void forceDelete(PreOrder preOrder) {
-    var view = getView();
+    PreOrderView view = getView();
     if (preOrder == null) {
       view.noPreOrderSelected();
       return;
@@ -151,7 +150,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
 
   void pasteDataInView(CatalogEntry entry) {
     selectedEntry = entry;
-    var view = getView();
+    PreOrderView view = getView();
     view.setContainerSize(entry.getBestelleinheit());
     view.setItemName(entry.getBezeichnung());
     view.setKkNumber(entry.getArtikelNr());
@@ -167,7 +166,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
       throw new NoResultException();
     }
     PreOrder preOrder = new PreOrder();
-    var view = getView();
+    PreOrderView view = getView();
     preOrder.setUser(view.getUser());
     preOrder.setCatalogEntry(selectedEntry);
     preOrder.setAmount(view.getAmount());
@@ -181,7 +180,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
 
   void insert(CatalogEntry entry) {
     if (entry == null) throw new NullPointerException("cannot insert null as PreOrder");
-    var view = getView();
+    PreOrderView view = getView();
     if (view.getUser() == null) {
       getView().notifyNoUserSelected();
       return;
@@ -203,11 +202,11 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
   }
 
   void openSearchWindow() {
-    var searchWindow = new CatalogSelectorController(this::catalogSearch);
+    CatalogSelectorController searchWindow = new CatalogSelectorController(this::catalogSearch);
     searchWindow.modifyNamedComponent(
         "KKFilter",
         c -> {
-          var checkbox = (JCheckBox) c;
+          JCheckBox checkbox = (JCheckBox) c;
           if (!checkbox.isSelected()) {
             checkbox.doClick();
           }
@@ -307,7 +306,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
   }
 
   public void printChecklist() {
-    var view = getView();
+    PreOrderView view = getView();
     LocalDate defaultDate =
         LocalDate.now()
             .minusDays(2)

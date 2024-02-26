@@ -1,11 +1,10 @@
 package kernbeisser.DBEntities;
 
+import jakarta.persistence.*;
 import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
-import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Exeptions.InconsistentUserGroupValueException;
 import kernbeisser.Exeptions.MissingFullMemberException;
 import kernbeisser.Security.Key;
@@ -15,6 +14,7 @@ import kernbeisser.Windows.LogIn.LogInModel;
 import lombok.*;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.jetbrains.annotations.NotNull;
+import rs.groump.PermissionKey;
 
 @Table
 @Entity
@@ -249,7 +249,7 @@ public class UserGroup implements UserRelated {
     double sum = 0;
     double sum_negative = 0;
     double sum_positive = 0;
-    var historicGroups = getValueMapAtTransactionId(tId, withUnreadables);
+    Map<UserGroup, Double> historicGroups = getValueMapAtTransactionId(tId, withUnreadables);
     for (UserGroup ug : historicGroups.keySet()) {
       double value = historicGroups.get(ug);
       sum += value;

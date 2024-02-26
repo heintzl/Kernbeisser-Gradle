@@ -2,7 +2,6 @@ package kernbeisser.Windows.SoloShoppingMask;
 
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.User;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.SaleSessionType;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.MissingFullMemberException;
@@ -13,6 +12,7 @@ import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskController;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskView;
+import rs.groump.PermissionKey;
 
 public class SoloShoppingMaskController
     extends Controller<SoloShoppingMaskView, SoloShoppingMaskModel> {

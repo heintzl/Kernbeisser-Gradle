@@ -49,5 +49,6 @@ public class CashierShoppingMaskModel implements IModel<CashierShoppingMaskContr
             Instant.now().truncatedTo(ChronoUnit.DAYS).toString());
       }
     }
-  };
+  }
+  ;
 }

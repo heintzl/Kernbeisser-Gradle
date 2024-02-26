@@ -1,9 +1,8 @@
 package kernbeisser.DBEntities;
 
+import jakarta.persistence.*;
 import java.time.Instant;
-import javax.persistence.*;
 import kernbeisser.Enums.MetricUnits;
-import kernbeisser.Enums.PermissionKey;
 import kernbeisser.Enums.ShopRange;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Security.Key;
@@ -13,6 +12,7 @@ import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.envers.Audited;
+import rs.groump.PermissionKey;
 
 /*
  extends from the main article structure ArticleBase which extends Article and ArticleKornkraft

@@ -3,11 +3,11 @@ package kernbeisser.Reports;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
-import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Exeptions.MissingFullMemberException;

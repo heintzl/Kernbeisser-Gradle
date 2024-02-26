@@ -30,7 +30,12 @@ public final class Config {
   private static Path configPath = Paths.get("config.json");
 
   @Getter(AccessLevel.NONE)
-  private static final Gson gson = new GsonBuilder().serializeNulls().setPrettyPrinting().create();
+  private static final Gson gson =
+      new GsonBuilder()
+          .serializeNulls()
+          .registerTypeAdapter(File.class, new FileTypeAdapter())
+          .setPrettyPrinting()
+          .create();
 
   @Getter(AccessLevel.NONE)
   public static Logger logger = LogManager.getLogger(Config.class);
