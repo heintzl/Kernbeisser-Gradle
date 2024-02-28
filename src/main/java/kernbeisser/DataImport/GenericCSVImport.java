@@ -6,13 +6,13 @@ import com.opencsv.*;
 import com.opencsv.exceptions.CsvException;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
@@ -38,7 +38,7 @@ public class GenericCSVImport {
   private final List<ComplexSetter> setters = new ArrayList<>();
   private final List<String[]> data = new ArrayList<>();
   private String stringDelimiter = "";
-  private final Consumer<KeyValue> logConsumer;
+  private final BiConsumer<Level, String> logConsumer;
 
   static {
     if (ALL_DB_ENTITYNAMES == null) {
@@ -58,7 +58,7 @@ public class GenericCSVImport {
 
   public GenericCSVImport(Path filePath, Consumer<KeyValue> logConsumer)
       throws InvocationTargetException, IllegalAccessException, IOException {
-    this.logConsumer = logConsumer;
+    this.logConsumer = (l, s) -> log(logConsumer, l, s);
     String result = readFile(filePath);
     if (!result.isEmpty()) {
       log(Level.ERROR, result);
@@ -71,17 +71,13 @@ public class GenericCSVImport {
     return ALL_DB_ENTITYNAMES.stream().anyMatch(e -> e.equals(clazz.getName()));
   }
 
-  private String capitalize1st(String s) {
-    return (s.substring(0, 1).toUpperCase()) + s.substring(1);
-  }
-
   public static void log(Consumer<KeyValue> logConsumer, Level level, String message) {
     logConsumer.accept(new UnmodifiableMapEntry(level, message));
     logger.log(level, message);
   }
 
   public void log(Level level, String message) {
-    log(logConsumer, level, message);
+    logConsumer.accept(level, message);
   }
 
   private String readFile(Path filePath)
@@ -113,6 +109,9 @@ public class GenericCSVImport {
       if (entityName.equals("Transaction")) {
         return "Transaktionen können nicht manipuliert werden";
       }
+      if (entityName.equals("ShoppingItems")) {
+        return "ShoppingItems können nicht manipuliert werden";
+      }
       String finalEntityName = entityName;
       Optional<String> clazzCandidate =
           ALL_DB_ENTITYNAMES.stream().filter(e -> e.endsWith("." + finalEntityName)).findAny();
@@ -133,11 +132,11 @@ public class GenericCSVImport {
       String[] targetFields = infoContent[1].split(separator);
       for (int i = 0; i < identityColumns; i++) {
         fieldName = targetFields[i];
-        identificationGetters.add(buildGetterChain(clazz, fieldName));
+        identificationGetters.add(ComplexGetter.of(clazz, fieldName));
       }
       for (int i = identityColumns; i < targetFields.length; i++) {
         fieldName = targetFields[i];
-        setters.add(buildSetter(clazz, fieldName));
+        setters.add(ComplexSetter.of(clazz, fieldName, logConsumer));
       }
       CSVParser csvParser = new CSVParserBuilder().withSeparator(separator.charAt(0)).build();
 
@@ -156,60 +155,6 @@ public class GenericCSVImport {
     }
   }
 
-  private Method buildGetter(final Class clazz, final String fieldName)
-      throws NoSuchFieldException, NoSuchMethodException {
-    Field targetField = clazz.getDeclaredField(fieldName);
-    String getterPrefix = targetField.getType().equals(Boolean.class) ? "is" : "get";
-    return clazz.getDeclaredMethod(getterPrefix + capitalize1st(fieldName));
-  }
-
-  private ComplexGetter buildGetterChain(Class clazz, final String fieldName)
-      throws NoSuchFieldException, NoSuchMethodException {
-    ComplexGetter result = new ComplexGetter();
-    String[] fieldParts = fieldName.split("\\.");
-    int chainLength = fieldParts.length;
-    for (int i = 0; i < chainLength; i++) {
-      if (i > 0) {
-        Field targetField = clazz.getDeclaredField(fieldParts[i]);
-        clazz = targetField.getType();
-      }
-      result.addMethod(buildGetter(clazz, fieldParts[i]));
-    }
-    return result;
-  }
-
-  private ComplexSetter buildSetter(Class clazz, final String fieldName)
-      throws NoSuchFieldException, NoSuchMethodException {
-    String[] fieldParts = fieldName.split("\\.");
-    ComplexSetter result = null;
-    int chainLength = fieldParts.length;
-    String setterName = "set" + Tools.capitalize1st(fieldParts[0]);
-    for (Method setter : allSetters(clazz)) {
-      if (setter.getName().equals(setterName)) {
-        result = new ComplexSetter(setter, logConsumer);
-        clazz = setter.getParameterTypes()[0];
-        break;
-      }
-    }
-    if (result == null) {
-      throw new NoSuchMethodException();
-    }
-
-    for (int i = 1; i < chainLength; i++) {
-      Field targetField = clazz.getDeclaredField(fieldParts[i]);
-      result.addGetterMethod(buildGetter(clazz, fieldParts[i]));
-      clazz = targetField.getType();
-    }
-    return result;
-  }
-
-  private Set<Method> allSetters(Class clazz) {
-    Method[] methods = clazz.getDeclaredMethods();
-    return Arrays.stream(methods)
-        .filter(m -> m.getName().startsWith("set"))
-        .collect(Collectors.toSet());
-  }
-
   void processData()
       throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
     Method idGetter = clazz.getDeclaredMethod("getId");
@@ -220,8 +165,8 @@ public class GenericCSVImport {
     et.begin();
     String message;
     for (String[] row : data) {
-      List<?> targetObjects = clazzObjects;
-      Object targetObject = null;
+      List<?> targetObjects;
+      Object targetObject;
       targetObjects =
           clazzObjects.stream()
               .filter(o -> identificationGetters.get(0).match(o, row[0]))

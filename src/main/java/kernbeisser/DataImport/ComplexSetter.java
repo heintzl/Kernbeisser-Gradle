@@ -4,29 +4,28 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import kernbeisser.DBConnection.DBConnection;
-import org.apache.commons.collections.KeyValue;
+import kernbeisser.Useful.Tools;
 import org.apache.logging.log4j.Level;
 
 public class ComplexSetter {
 
   private final Method setter;
-  private final ComplexGetter objectGetter = new ComplexGetter();
+  private ComplexGetter objectGetter = new ComplexGetter();
   private final Class clazz;
   private final List<?> allCandidates;
-  private final Consumer<KeyValue> logConsumer;
+  private BiConsumer<Level, String> logConsumer;
 
-  public ComplexSetter(Method setter, Consumer<KeyValue> logConsumer) {
+  public ComplexSetter(Method setter) {
     this.setter = setter;
     // this looks extremely unsafe - what if a getter has more than 1 Parameter? That would be a bit
     // aside the getter/setter pattern and anyway the module can currently pass only one value to
     // each target field
     clazz = setter.getParameterTypes()[0];
-    this.logConsumer = logConsumer;
     if (GenericCSVImport.isDBEntity(clazz)) {
       allCandidates = Collections.unmodifiableList(DBConnection.getAll(clazz));
     } else {
@@ -34,12 +33,38 @@ public class ComplexSetter {
     }
   }
 
-  public void addGetterMethod(Method m) {
-    objectGetter.addMethod(m);
+  public ComplexSetter(Method setter, BiConsumer<Level, String> logConsumer) {
+    this(setter);
+    this.logConsumer = logConsumer;
+  }
+
+  public static ComplexSetter of(
+      Class clazz, final String fieldName, BiConsumer<Level, String> logConsumer)
+      throws NoSuchFieldException, NoSuchMethodException {
+    String[] fieldParts = fieldName.split("\\.");
+    String setterName = "set" + Tools.capitalize1st(fieldParts[0]);
+    Method setter = null;
+    for (Method method : clazz.getMethods()) {
+      if (method.getName().equals(setterName)) {
+        setter = method;
+        break;
+      }
+    }
+    if (setter == null) {
+      throw new NoSuchMethodException();
+    }
+    ComplexSetter result = new ComplexSetter(setter, logConsumer);
+    String getterFieldName = fieldName.substring(fieldParts[0].length() + 1);
+    if (!getterFieldName.isEmpty()) {
+      result.objectGetter = ComplexGetter.of(setter.getParameterTypes()[0], getterFieldName);
+    }
+    return result;
   }
 
   private void writeLog(Level level, String message) {
-    GenericCSVImport.log(logConsumer, level, message);
+    if (logConsumer != null) {
+      logConsumer.accept(level, message);
+    }
   }
 
   private Object adjustArgType(String arg) throws NumberFormatException, ClassCastException {
