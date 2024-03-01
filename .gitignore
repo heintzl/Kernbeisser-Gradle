@@ -197,7 +197,7 @@ gradle-app.setting
 #misc
 /importPath.txt
 /testUser.txt
-/src/main/java/kernbeisser/Config/IgnoreThis.java
+*/IgnoreThis.java
 
 # End of https://www.gitignore.io/api/java,linux,gradle,windows,intellij
 /output/
