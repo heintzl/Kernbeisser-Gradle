@@ -21,6 +21,8 @@ import kernbeisser.Windows.Menu.MenuController;
 import kernbeisser.Windows.TabbedPane.TabbedPaneModel;
 import kernbeisser.Windows.ViewContainers.SubWindow;
 import org.jetbrains.annotations.NotNull;
+import rs.groump.Access;
+import rs.groump.AccessDeniedException;
 
 public class SimpleLogInController extends Controller<SimpleLogInView, SimpleLogInModel> {
 
@@ -37,9 +39,11 @@ public class SimpleLogInController extends Controller<SimpleLogInView, SimpleLog
   public void fillView(SimpleLogInView simpleLogInView) {}
 
   public boolean shouldForcePasswordChange(User user) {
-    return user.getLastPasswordChange().until(Instant.now(), ChronoUnit.DAYS)
-            > Setting.FORCE_PASSWORD_CHANGE_AFTER.getIntValue()
-        || user.isForcePasswordChange();
+    return Access.runUnchecked(
+        () ->
+            user.getLastPasswordChange().until(Instant.now(), ChronoUnit.DAYS)
+                    > Setting.FORCE_PASSWORD_CHANGE_AFTER.getIntValue()
+                || user.isForcePasswordChange());
   }
 
   public void logIn() {
@@ -69,7 +73,7 @@ public class SimpleLogInController extends Controller<SimpleLogInView, SimpleLog
               }
               try {
                 UserGroup.checkUserGroupConsistency();
-              } catch (PermissionKeyRequiredException ignored) {
+              } catch (AccessDeniedException ignored) {
               } catch (InconsistentUserGroupValueException e) {
                 JOptionPane.showMessageDialog(
                     getView().getTopComponent(),
@@ -107,7 +111,7 @@ public class SimpleLogInController extends Controller<SimpleLogInView, SimpleLog
           TabbedPaneModel.getMainPanel().getView().getTabbedPane());
     } catch (UnsupportedLookAndFeelException e) {
       Tools.showUnexpectedErrorWarning(e);
-    } catch (PermissionKeyRequiredException p) {
+    } catch (AccessDeniedException p) {
       Main.logger.error(p.getMessage(), p);
       JOptionPane.showMessageDialog(
           null,

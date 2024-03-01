@@ -1,11 +1,11 @@
 package kernbeisser.Forms.ObjectForm.Components;
 
 import javax.swing.JLabel;
-import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.ObjectForm.ObjectFormComponents.ObjectFormComponent;
 import kernbeisser.Forms.ObjectForm.Properties.BoundedReadProperty;
 import kernbeisser.Forms.ObjectForm.Properties.PredictableModifiable;
 import kernbeisser.Security.Utils.Getter;
+import rs.groump.AccessDeniedException;
 
 public class AccessCheckingLabel<T> extends JLabel
     implements BoundedReadProperty<T, String>, PredictableModifiable<T>, ObjectFormComponent<T> {
@@ -30,7 +30,7 @@ public class AccessCheckingLabel<T> extends JLabel
   }
 
   @Override
-  public String get(T t) throws PermissionKeyRequiredException {
+  public String get(T t) throws AccessDeniedException {
     return getter.get(t);
   }
 

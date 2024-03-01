@@ -19,12 +19,12 @@ import java.util.List;
 import kernbeisser.CustomComponents.ObjectTree.Node;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Forms.ObjectForm.Components.Source;
-import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.envers.Audited;
+import rs.groump.Key;
 import rs.groump.PermissionKey;
 
 @Entity

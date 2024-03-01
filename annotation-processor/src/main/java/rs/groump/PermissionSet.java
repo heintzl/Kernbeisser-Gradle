@@ -1,11 +1,8 @@
-package kernbeisser.Security;
+package rs.groump;
 
 import java.math.BigInteger;
 import java.util.*;
 import java.util.function.LongBinaryOperator;
-import kernbeisser.DBEntities.Permission;
-import org.jetbrains.annotations.NotNull;
-import rs.groump.PermissionKey;
 
 /**
  * loads given permission set into a bit field saved as long array, so we can easily check a
@@ -17,18 +14,7 @@ public class PermissionSet implements Set<PermissionKey> {
 
   /** the java option for a c bitfield */
   private final long[] bits = new long[ARRAY_SIZE];
-
-  /**
-   * loads all permission from the collection into the bit field
-   *
-   * @param permissions the collection of all permission which the logged in user has.
-   */
-  public void loadPermission(Collection<Permission> permissions) {
-    Arrays.fill(bits, 0L);
-    for (Permission permission : permissions) {
-      loadKeys(permission.getKeySet());
-    }
-  }
+  
 
   public void loadKeys(Iterable<PermissionKey> keys) {
     for (PermissionKey key : keys) {
@@ -149,18 +135,6 @@ public class PermissionSet implements Set<PermissionKey> {
     return ps;
   }
 
-  public static PermissionSet ofPermission(Permission permission) {
-    PermissionSet out = new PermissionSet();
-    out.loadKeys(permission.getKeySetAsAvailable());
-    return out;
-  }
-
-  public static PermissionSet ofPermissions(Collection<Permission> permission) {
-    PermissionSet out = new PermissionSet();
-    out.loadPermission(permission);
-    return out;
-  }
-
   @Override
   public int size() {
     int size = 0;
@@ -185,7 +159,7 @@ public class PermissionSet implements Set<PermissionKey> {
     return hasPermission((PermissionKey) o);
   }
 
-  @NotNull
+  
   @Override
   public Iterator<PermissionKey> iterator() {
     return new Iterator<PermissionKey>() {
@@ -220,9 +194,9 @@ public class PermissionSet implements Set<PermissionKey> {
     };
   }
 
-  @NotNull
+  
   @Override
-  public PermissionKey[] toArray() {
+  public PermissionKey [] toArray() {
     PermissionKey[] out = new PermissionKey[size()];
     int index = 0;
     for (PermissionKey permissionKey : this) {
@@ -230,10 +204,9 @@ public class PermissionSet implements Set<PermissionKey> {
     }
     return out;
   }
-
-  @NotNull
+  
   @Override
-  public <T> T[] toArray(@NotNull T[] a) {
+  public <T> T [] toArray(T [] a) {
     PermissionKey[] out = new PermissionKey[size()];
     int index = 0;
     for (PermissionKey permissionKey : this) {
@@ -260,7 +233,7 @@ public class PermissionSet implements Set<PermissionKey> {
   }
 
   @Override
-  public boolean containsAll(@NotNull Collection<?> c) {
+  public boolean containsAll(Collection<?> c) {
     for (Object o : c) {
       if (!(o instanceof PermissionKey) || !hasPermission((PermissionKey) o)) return false;
     }
@@ -268,7 +241,7 @@ public class PermissionSet implements Set<PermissionKey> {
   }
 
   @Override
-  public boolean addAll(@NotNull Collection<? extends PermissionKey> c) {
+  public boolean addAll(Collection<? extends PermissionKey> c) {
     boolean changed = false;
     for (PermissionKey permissionKey : c) {
       changed = changed | add(permissionKey);
@@ -277,7 +250,7 @@ public class PermissionSet implements Set<PermissionKey> {
   }
 
   @Override
-  public boolean retainAll(@NotNull Collection<?> c) {
+  public boolean retainAll(Collection<?> c) {
     boolean changed = false;
     for (Object o : c) {
       if (add((PermissionKey) o)) {
@@ -303,7 +276,7 @@ public class PermissionSet implements Set<PermissionKey> {
   /**
    * @Depreccated use removeAll(PermissionSet) instead much faster implementation
    */
-  public boolean removeAll(@NotNull Collection<?> c) {
+  public boolean removeAll(Collection<?> c) {
     boolean changed = false;
     for (Object permissionKey : c) {
       changed = changed | remove(permissionKey);

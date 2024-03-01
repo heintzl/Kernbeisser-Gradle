@@ -12,11 +12,11 @@ import kernbeisser.DBEntities.PriceList;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Forms.FormEditor.FormEditorController;
 import kernbeisser.Forms.FormImplemetations.Article.ArticleController;
-import kernbeisser.Security.Key;
 import kernbeisser.Windows.EditPriceList.EditPriceListController;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.ViewContainers.SubWindow;
 import org.jetbrains.annotations.NotNull;
+import rs.groump.Key;
 import rs.groump.PermissionKey;
 
 public class ManagePriceListsController

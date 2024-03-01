@@ -15,7 +15,6 @@ import kernbeisser.Enums.*;
 import kernbeisser.Exeptions.NoSelectionException;
 import kernbeisser.Exeptions.NoTransactionsFoundException;
 import kernbeisser.Exeptions.NotEnoughCreditException;
-import kernbeisser.Security.Key;
 import kernbeisser.Useful.Users;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
@@ -25,6 +24,7 @@ import kernbeisser.Windows.ShoppingMask.ShoppingMaskController;
 import kernbeisser.Windows.UserInfo.UserInfoController;
 import kernbeisser.Windows.ViewContainers.SubWindow;
 import org.jetbrains.annotations.NotNull;
+import rs.groump.Key;
 import rs.groump.PermissionKey;
 
 public class CashierShoppingMaskController

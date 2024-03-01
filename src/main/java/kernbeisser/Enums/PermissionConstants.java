@@ -8,13 +8,13 @@ import java.util.Set;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
-import kernbeisser.Security.Access.Access;
-import kernbeisser.Security.Access.AccessManager;
-import kernbeisser.Security.PermissionKeyOrdering;
+import kernbeisser.Security.PermissionKeyGroups;
 import kernbeisser.Security.PermissionKeys;
-import kernbeisser.Security.PermissionSet;
 import lombok.Cleanup;
+import rs.groump.Access;
+import rs.groump.AccessManager;
 import rs.groump.PermissionKey;
+import rs.groump.PermissionSet;
 
 // Permissions which become automatically generated when the application
 // requires them to prevent the functionality from the application
@@ -27,7 +27,7 @@ public enum PermissionConstants {
   // the permission which is given to all users which has a key in the old application
   KEY_PERMISSION(PermissionKey.ACTION_LOGIN, PermissionKey.GO_UNDER_MIN),
   APPLICATION(PermissionKey.values()),
-  IN_RELATION_TO_OWN_USER(PermissionKeyOrdering.USER.getKeys()),
+  IN_RELATION_TO_OWN_USER(PermissionKeyGroups.USER.getKeys()),
   CASHIER(PermissionKey.ACTION_OPEN_CASHIER_SHOPPING_MASK),
   // the default permission for all new users
   BASIC_ACCESS(PermissionKey.ACTION_LOGIN),
@@ -69,7 +69,7 @@ public enum PermissionConstants {
 
   private static Permission loadOrCreate(PermissionConstants constants) {
     return Access.runWithAccessManager(
-        AccessManager.NO_ACCESS_CHECKING,
+        AccessManager.ACCESS_GRANTED,
         () -> {
           @Cleanup EntityManager em = DBConnection.getEntityManager();
           try {
@@ -101,20 +101,22 @@ public enum PermissionConstants {
   }
 
   public static void cleanAdminPermission(User currentUser) {
-    Access.putException(currentUser, AccessManager.NO_ACCESS_CHECKING);
-    Permission adminPermission = ADMIN.getPermission();
-    Access.putException(adminPermission, AccessManager.NO_ACCESS_CHECKING);
-    adminPermission.setKeySet(allPermissions().minus(PermissionKeys.getNonAdminPermissions()));
-    Set<Permission> adminPermissionSet = new java.util.HashSet<>();
-    adminPermissionSet.add(adminPermission);
-    currentUser.setPermissions(adminPermissionSet);
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    em.merge(adminPermission);
-    em.merge(currentUser);
-    em.flush();
-    Access.removeException(currentUser);
+    Access.runWithAccessManager(
+        AccessManager.ACCESS_GRANTED,
+        () -> {
+          Permission adminPermission = ADMIN.getPermission();
+          adminPermission.setKeySet(
+              allPermissions().minus(PermissionKeys.getNonAdminPermissions()));
+          Set<Permission> adminPermissionSet = new java.util.HashSet<>();
+          adminPermissionSet.add(adminPermission);
+          currentUser.setPermissions(adminPermissionSet);
+          @Cleanup EntityManager em = DBConnection.getEntityManager();
+          @Cleanup(value = "commit")
+          EntityTransaction et = em.getTransaction();
+          et.begin();
+          em.merge(adminPermission);
+          em.merge(currentUser);
+          em.flush();
+        });
   }
 }

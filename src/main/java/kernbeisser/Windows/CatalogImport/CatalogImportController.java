@@ -5,19 +5,19 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.List;
-import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Exeptions.UnknownFileFormatException;
-import kernbeisser.Security.Key;
 import kernbeisser.Tasks.Catalog.CatalogImportError;
 import kernbeisser.Tasks.Catalog.CatalogImporter;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
+import rs.groump.AccessDeniedException;
+import rs.groump.Key;
 import rs.groump.PermissionKey;
 
 public class CatalogImportController extends Controller<CatalogImportView, CatalogImportModel> {
 
   @Key(PermissionKey.ACTION_OPEN_CATALOG_IMPORT)
-  public CatalogImportController() throws PermissionKeyRequiredException {
+  public CatalogImportController() throws AccessDeniedException {
     super(new CatalogImportModel());
   }
 

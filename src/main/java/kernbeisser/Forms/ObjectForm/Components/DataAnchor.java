@@ -1,12 +1,12 @@
 package kernbeisser.Forms.ObjectForm.Components;
 
 import java.util.function.Supplier;
-import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
 import kernbeisser.Forms.ObjectForm.ObjectFormComponents.ObjectFormComponent;
 import kernbeisser.Forms.ObjectForm.Properties.BoundedWriteProperty;
 import kernbeisser.Forms.ObjectForm.Properties.PredictableModifiable;
 import kernbeisser.Security.Utils.Setter;
+import rs.groump.AccessDeniedException;
 
 public class DataAnchor<P, V>
     implements ObjectFormComponent<P>, BoundedWriteProperty<P, V>, PredictableModifiable<P> {
@@ -31,7 +31,7 @@ public class DataAnchor<P, V>
   }
 
   @Override
-  public void set(P p, V t) throws PermissionKeyRequiredException {
+  public void set(P p, V t) throws AccessDeniedException {
     setter.set(p, t);
   }
 

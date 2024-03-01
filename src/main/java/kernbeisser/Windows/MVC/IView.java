@@ -31,16 +31,15 @@ public interface IView<
         dimension.getWidth() - insets.left - insets.right,
         dimension.height - insets.top - insets.bottom);
     if (DBConnection.isInitialized()) {
-      dimension.setSize(
+      return new Dimension(
           Math.min(dimension.width, Setting.APP_DEFAULT_WIDTH.getIntValue()),
           Math.min(dimension.height, Setting.APP_DEFAULT_HEIGHT.getIntValue()));
     } else {
-      dimension.setSize(
+      return new Dimension(
           Math.min(dimension.width, Integer.parseInt(Setting.APP_DEFAULT_WIDTH.getDefaultValue())),
           Math.min(
               dimension.height, Integer.parseInt(Setting.APP_DEFAULT_HEIGHT.getDefaultValue())));
     }
-    return dimension;
   }
 
   default java.awt.Window getTopComponent() {

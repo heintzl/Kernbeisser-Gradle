@@ -24,11 +24,9 @@ import kernbeisser.CustomComponents.ObjectTree.ObjectTree;
 import kernbeisser.CustomComponents.SearchBox.Filters.ArticleFilter;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.Mode;
-import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.FormImplemetations.Article.ArticleController;
 import kernbeisser.Forms.ObjectView.ObjectViewController;
 import kernbeisser.Forms.ObjectView.ObjectViewView;
-import kernbeisser.Security.Key;
 import kernbeisser.Tasks.ArticleComparedToCatalogEntry;
 import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
@@ -38,6 +36,8 @@ import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.PrintLabels.PrintLabelsController;
 import kernbeisser.Windows.ViewContainers.SubWindow;
 import org.jetbrains.annotations.NotNull;
+import rs.groump.AccessDeniedException;
+import rs.groump.Key;
 import rs.groump.PermissionKey;
 
 public class EditArticlesController extends Controller<EditArticlesView, EditArticlesModel> {
@@ -159,7 +159,7 @@ public class EditArticlesController extends Controller<EditArticlesView, EditArt
     refreshList();
     try {
       addAdministrationTools();
-    } catch (PermissionKeyRequiredException ignored) {
+    } catch (AccessDeniedException ignored) {
     }
   }
 

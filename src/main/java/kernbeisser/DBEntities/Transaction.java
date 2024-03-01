@@ -14,10 +14,7 @@ import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.InvalidTransactionException;
 import kernbeisser.Exeptions.NoTransactionsFoundException;
 import kernbeisser.Reports.UserNameObfuscation;
-import kernbeisser.Security.Access.Access;
-import kernbeisser.Security.Access.AccessManager;
-import kernbeisser.Security.Key;
-import kernbeisser.Security.Relations.UserRelated;
+import kernbeisser.Security.Access.UserRelated;
 import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
@@ -27,6 +24,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.jetbrains.annotations.NotNull;
+import rs.groump.AccessManager;
+import rs.groump.Key;
 import rs.groump.PermissionKey;
 
 @Table(indexes = {@Index(name = "IX_transaction_date", columnList = "date")})
@@ -241,11 +240,17 @@ public class Transaction implements UserRelated {
     try {
       Method method = UserGroup.class.getDeclaredMethod("setValue", double.class);
       method.setAccessible(true);
-      Access.putException(transaction, AccessManager.NO_ACCESS_CHECKING);
-      method.invoke(transaction, Tools.roundCurrency(transaction.getValue() + value));
-      Access.removeException(transaction);
-    } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-      Tools.showUnexpectedErrorWarning(e);
+      rs.groump.Access.runWithAccessManager(
+          AccessManager.ACCESS_GRANTED,
+          () -> {
+            try {
+              method.invoke(transaction, Tools.roundCurrency(transaction.getValue() + value));
+            } catch (IllegalAccessException | InvocationTargetException e) {
+              throw Tools.showUnexpectedErrorWarning(e);
+            }
+          });
+    } catch (NoSuchMethodException e) {
+      throw Tools.showUnexpectedErrorWarning(e);
     }
   }
 

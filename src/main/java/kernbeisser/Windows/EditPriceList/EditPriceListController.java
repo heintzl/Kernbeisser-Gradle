@@ -1,15 +1,13 @@
 package kernbeisser.Windows.EditPriceList;
 
-import java.awt.*;
-import javax.swing.*;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.PriceList;
-import kernbeisser.Exeptions.PermissionKeyRequiredException;
-import kernbeisser.Security.Key;
 import kernbeisser.Windows.CollectionView.CollectionController;
 import kernbeisser.Windows.CollectionView.CollectionView;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
+import rs.groump.AccessDeniedException;
+import rs.groump.Key;
 import rs.groump.PermissionKey;
 
 public class EditPriceListController extends Controller<EditPriceListView, EditPriceListModel> {
@@ -17,7 +15,7 @@ public class EditPriceListController extends Controller<EditPriceListView, EditP
   @Linked private final CollectionController<Article> articles;
 
   @Key(PermissionKey.ACTION_OPEN_MANAGE_PRICE_LISTS)
-  public EditPriceListController(PriceList priceList) throws PermissionKeyRequiredException {
+  public EditPriceListController(PriceList priceList) throws AccessDeniedException {
     super(new EditPriceListModel(priceList));
     articles = EditPriceListModel.getArticleSource();
   }

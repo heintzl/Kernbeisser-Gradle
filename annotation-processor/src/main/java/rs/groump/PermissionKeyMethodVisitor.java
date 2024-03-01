@@ -1,4 +1,4 @@
-package kernbeisser.Security.Bytecode;
+package rs.groump;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -6,15 +6,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import kernbeisser.Security.PermissionSet;
-import kernbeisser.Useful.Tools;
-import lombok.SneakyThrows;
+
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-import rs.groump.PermissionKey;
 
 /** faster imp of the SubMethodVisitor by buffering target methods */
 public class PermissionKeyMethodVisitor extends ClassVisitor {
@@ -27,7 +24,7 @@ public class PermissionKeyMethodVisitor extends ClassVisitor {
   private final PermissionSet collected;
 
   public PermissionKeyMethodVisitor(int depth, AnalyserTarget target, PermissionSet collector) {
-    super(Opcodes.ASM7);
+    super(Opcodes.ASM9);
     this.depth = depth;
     targetMethodName = target.getTargetMethodName();
     targetDescriptor = target.getTargetDescriptor();
@@ -43,18 +40,22 @@ public class PermissionKeyMethodVisitor extends ClassVisitor {
     if (depth == 0
         || !targetMethodName.equals(name)
         || !Objects.equals(descriptor, targetDescriptor)) return null;
-    return new MethodVisitor(Opcodes.ASM7) {
+    return new MethodVisitor(Opcodes.ASM9) {
       @Override
       public void visitMethodInsn(
           int opcode, String owner, String name, String descriptor, boolean isInterface) {
-        try {
           if (owner.startsWith("[L")) {
             return;
           }
           if (visited.add(owner + name + descriptor)) {
             if (!owner.startsWith("kernbeisser")) return;
-            ClassReader cr = new ClassReader(owner);
-            String targetNameBuffer = targetMethodName;
+			  ClassReader cr;
+			  try {
+				  cr = new ClassReader(owner);
+			  } catch (IOException e) {
+				  throw new RuntimeException(e);
+			  }
+			  String targetNameBuffer = targetMethodName;
             String targetDescriptionBuffer = targetDescriptor;
             int bufferDepth = depth;
             targetMethodName = name;
@@ -65,14 +66,11 @@ public class PermissionKeyMethodVisitor extends ClassVisitor {
             targetMethodName = targetNameBuffer;
             targetDescriptor = targetDescriptionBuffer;
           }
-        } catch (Exception e) {
-          Tools.showUnexpectedErrorWarning(e);
-        }
       }
 
       @Override
       public AnnotationVisitor visitAnnotation(String descriptor, boolean visible) {
-        return new AnnotationVisitor(Opcodes.ASM7) {
+        return new AnnotationVisitor(Opcodes.ASM9) {
           @Override
           public void visitEnum(String name, String descriptor, String value) {
             if (descriptor.replace("/", ".").endsWith(PermissionKey.class.getName() + ";")) {
@@ -89,24 +87,25 @@ public class PermissionKeyMethodVisitor extends ClassVisitor {
     };
   }
 
-  @SneakyThrows
   public static PermissionSet accessedKeys(Serializable serializable) {
     return accessedKeys(serializable, new PermissionSet(), -1);
   }
 
-  @SneakyThrows
   // searches the binary class for methods look-ups which requires permission
   public static PermissionSet accessedKeys(
       Serializable serializable, PermissionSet collector, int depth) {
     return peekTargets(AnalyserTarget.ofLambda(serializable), collector, depth);
   }
 
-  @SneakyThrows
   public static PermissionSet peekTargets(
       AnalyserTarget[] analyserTargets, PermissionSet collector, int depth) {
     for (AnalyserTarget analyserTarget : analyserTargets) {
-      peekTarget(analyserTarget, collector, depth);
-    }
+		try {
+			peekTarget(analyserTarget, collector, depth);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
     return collector;
   }
 

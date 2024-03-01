@@ -35,7 +35,7 @@
         <properties>
             <property name="jakarta.persistence.schema-generation.database.action" value="update"/>
             <property name="jakarta.persistence.sql-load-script-source" value="META-INF/data.sql"/>
-            <property name="jakarta.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
+            <property name="jakarta.persistence.jdbc.driver" value="org.mariadb.jdbc.Driver"/>
             <property name="jakarta.persistence.jdbc.auto" value="create"/>
             <property name="hibernate.generate_statistics" value="false"/>
             <property name="hibernate.cache.use_second_level_cache" value="false"/>

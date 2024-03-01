@@ -1,6 +1,5 @@
 package kernbeisser.CustomComponents.ObjectTable;
 
-import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -11,7 +10,7 @@ import java.util.regex.Pattern;
 import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
-import kernbeisser.Exeptions.PermissionKeyRequiredException;
+import rs.groump.AccessDeniedException;
 
 public interface Column<T> {
   int DEFAULT_ALIGNMENT = SwingConstants.LEFT;
@@ -74,7 +73,7 @@ public interface Column<T> {
 
   String getName();
 
-  Object getValue(T t) throws PermissionKeyRequiredException;
+  Object getValue(T t) throws AccessDeniedException;
 
   default void onAction(MouseEvent e, T t) {}
 

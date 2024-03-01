@@ -6,12 +6,12 @@ import kernbeisser.Enums.SaleSessionType;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.MissingFullMemberException;
 import kernbeisser.Exeptions.NotEnoughCreditException;
-import kernbeisser.Security.Key;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskController;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskView;
+import rs.groump.Key;
 import rs.groump.PermissionKey;
 
 public class SoloShoppingMaskController

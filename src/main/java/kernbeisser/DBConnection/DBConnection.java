@@ -7,17 +7,14 @@ import javax.swing.*;
 import kernbeisser.Config.Config;
 import kernbeisser.Config.Config.DBAccess;
 import kernbeisser.Config.IgnoreThis;
-import kernbeisser.DBEntities.SystemSetting;
-import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.ClassIsSingletonException;
 import kernbeisser.Main;
-import kernbeisser.Security.Access.Access;
 import kernbeisser.StartUp.LogIn.DBLogInController;
 import kernbeisser.Useful.Tools;
-import kernbeisser.VersionIntegrationTools.Version;
 import kernbeisser.Windows.ViewContainers.JFrameWindow;
 import lombok.Cleanup;
 import org.hibernate.service.spi.ServiceException;
+import rs.groump.Access;
 
 public class DBConnection {
 
@@ -44,6 +41,7 @@ public class DBConnection {
             + (dbAccessData.getUrl().contains("?") ? "&" : "")
             + "?characterEncoding="
             + dbAccessData.getEncoding());
+    properties.put("hibernate.connection.pool_size", "50");
     properties.put("jakarta.persistence.jdbc.password", dbAccessData.getPassword());
     return Persistence.createEntityManagerFactory(name, properties);
   }
@@ -69,7 +67,8 @@ public class DBConnection {
       Main.logger.info("Login successful");
       return true;
     } catch (ServiceException e) {
-      Main.logger.warn("Log in failed");
+      Main.logger.warn("Log in failed: " + e.getMessage());
+      e.printStackTrace();
       return false;
     } catch (Exception e) {
       Tools.showUnexpectedErrorWarning(e);
@@ -103,33 +102,6 @@ public class DBConnection {
       logInWithConfig();
     }
     return entityManagerFactory.createEntityManager();
-  }
-
-  public static void updateDatabase() {
-    Main.logger.info("updating Database");
-    EntityManager em = getEntityManager();
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    em.createNativeQuery("SET FOREIGN_KEY_CHECKS = 0").executeUpdate();
-    for (Object o :
-        em.createNativeQuery(
-                "select TABLE_NAME from information_schema.TABLES where TABLE_SCHEMA = 'kernbeisser'")
-            .getResultList()) {
-      Main.logger.info("dropping DB Table " + o);
-      if (o.equals("settingvalue")) {
-        continue;
-      }
-      em.createNativeQuery("drop table " + o).executeUpdate();
-    }
-    em.createNativeQuery("SET FOREIGN_KEY_CHECKS = 1").executeUpdate();
-    em.flush();
-    et.commit();
-    em.close();
-    reload();
-    SystemSetting.setValue(SystemSetting.DB_VERSION, Version.newestVersion().name());
-    Setting.DB_INITIALIZED.changeValue(false);
-    Setting.INFO_LINE_LAST_CATALOG.changeValue(Setting.INFO_LINE_LAST_CATALOG.getDefaultValue());
-    Main.logger.info("DB update complete");
   }
 
   public static boolean isInitialized() {

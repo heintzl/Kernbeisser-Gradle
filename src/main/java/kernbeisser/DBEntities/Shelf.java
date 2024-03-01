@@ -6,7 +6,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.Security.Key;
 import kernbeisser.Useful.ActuallyCloneable;
 import kernbeisser.Useful.Tools;
 import lombok.Cleanup;
@@ -14,6 +13,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import rs.groump.Key;
 import rs.groump.PermissionKey;
 
 @Entity
@@ -41,13 +41,11 @@ public class Shelf implements ActuallyCloneable {
   @Setter(onMethod_ = {@Key(PermissionKey.SHELF_COMMENT_WRITE)})
   private String comment;
 
-  @JoinColumn
   @ManyToMany(fetch = FetchType.EAGER)
   @Getter()
   @Setter()
   private Set<PriceList> priceLists = new HashSet<>();
 
-  @JoinColumn
   @ManyToMany(fetch = FetchType.EAGER)
   @Getter()
   @Setter()

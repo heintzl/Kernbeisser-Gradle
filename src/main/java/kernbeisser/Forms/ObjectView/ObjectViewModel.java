@@ -1,12 +1,12 @@
 package kernbeisser.Forms.ObjectView;
 
 import kernbeisser.Enums.Mode;
-import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.FormController;
 import kernbeisser.Useful.ActuallyCloneable;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Data;
 import lombok.Setter;
+import rs.groump.AccessDeniedException;
 
 @Data
 public class ObjectViewModel<T extends ActuallyCloneable>
@@ -26,7 +26,7 @@ public class ObjectViewModel<T extends ActuallyCloneable>
     try {
       form.addPermission();
       return true;
-    } catch (PermissionKeyRequiredException e) {
+    } catch (AccessDeniedException e) {
       return false;
     }
   }
@@ -35,7 +35,7 @@ public class ObjectViewModel<T extends ActuallyCloneable>
     try {
       form.editPermission();
       return true;
-    } catch (PermissionKeyRequiredException e) {
+    } catch (AccessDeniedException e) {
       return false;
     }
   }
@@ -44,7 +44,7 @@ public class ObjectViewModel<T extends ActuallyCloneable>
     try {
       form.removePermission();
       return true;
-    } catch (PermissionKeyRequiredException e) {
+    } catch (AccessDeniedException e) {
       return false;
     }
   }

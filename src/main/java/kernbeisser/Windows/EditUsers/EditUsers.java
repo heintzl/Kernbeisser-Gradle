@@ -10,18 +10,18 @@ import kernbeisser.CustomComponents.SearchBox.Filters.UserFilter;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Exeptions.MissingFullMemberException;
-import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.FormImplemetations.User.UserController;
 import kernbeisser.Forms.FormImplemetations.User.UserView;
 import kernbeisser.Forms.ObjectView.ObjectViewController;
 import kernbeisser.Forms.ObjectView.ObjectViewView;
 import kernbeisser.Reports.TrialMemberReport;
-import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Useful.Users;
 import kernbeisser.Windows.EditUserGroup.EditUserGroupController;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.ViewContainers.SubWindow;
+import rs.groump.AccessDeniedException;
+import rs.groump.Key;
 import rs.groump.PermissionKey;
 
 public class EditUsers extends ObjectViewController<User> {
@@ -142,7 +142,7 @@ public class EditUsers extends ObjectViewController<User> {
     try {
       addAdministrationTools();
       addTrialMemberReport();
-    } catch (PermissionKeyRequiredException ignored) {
+    } catch (AccessDeniedException ignored) {
     }
   }
 }

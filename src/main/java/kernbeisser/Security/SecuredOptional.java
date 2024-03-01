@@ -6,7 +6,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import kernbeisser.Exeptions.PermissionKeyRequiredException;
+import rs.groump.AccessDeniedException;
 
 /**
  * same as optional but filters permission key required exceptions
@@ -159,7 +159,7 @@ public class SecuredOptional<T> {
     else {
       try {
         return SecuredOptional.ofNullable(mapper.apply(value));
-      } catch (PermissionKeyRequiredException e) {
+      } catch (AccessDeniedException e) {
         return empty();
       }
     }
@@ -185,7 +185,7 @@ public class SecuredOptional<T> {
     else {
       try {
         return Objects.requireNonNull(mapper.apply(value));
-      } catch (PermissionKeyRequiredException e) {
+      } catch (AccessDeniedException e) {
         return empty();
       }
     }

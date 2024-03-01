@@ -8,8 +8,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.VAT;
-import kernbeisser.Security.Key;
-import kernbeisser.Security.Relations.UserRelated;
+import kernbeisser.Security.Access.UserRelated;
 import kernbeisser.Useful.Tools;
 import lombok.Cleanup;
 import lombok.EqualsAndHashCode;
@@ -18,6 +17,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.jetbrains.annotations.NotNull;
+import rs.groump.Key;
 import rs.groump.PermissionKey;
 
 @Table

@@ -1,14 +1,11 @@
-package kernbeisser.Security.Bytecode;
+package rs.groump;
 
 import java.io.Serializable;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import lombok.Data;
-import lombok.SneakyThrows;
 
-@Data
 public class AnalyserTarget {
 
   private final String targetMethodName, targetDescriptor;
@@ -20,7 +17,6 @@ public class AnalyserTarget {
     this.targetClass = targetClass;
   }
 
-  @SneakyThrows
   public static AnalyserTarget[] ofLambda(Serializable serializable) {
     try {
       return new AnalyserTarget[] {getReflectedMethod(serializable)};
@@ -31,7 +27,9 @@ public class AnalyserTarget {
         analyserTargets[i] = AnalyserTarget.ofMethod(methods[i]);
       }
       return analyserTargets;
-    }
+    } catch (Exception e) {
+		throw new RuntimeException(e);
+	}
   }
 
   public static AnalyserTarget ofMethod(Method method) {
@@ -50,10 +48,14 @@ public class AnalyserTarget {
     }
   }
 
-  @SneakyThrows
   public static String getSignature(Method m) {
-    Field sig = Method.class.getDeclaredField("signature");
-    sig.setAccessible(true);
+	  Field sig;
+	  try {
+		  sig = Method.class.getDeclaredField("signature");
+	  } catch (NoSuchFieldException e) {
+		  throw new RuntimeException(e);
+	  }
+	  sig.setAccessible(true);
     return getSignature(m, sig);
   }
 
@@ -79,7 +81,19 @@ public class AnalyserTarget {
         .toString()
         .replace(".", "/");
   }
-
+  
+  public String getTargetMethodName() {
+    return targetMethodName;
+  }
+  
+  public String getTargetDescriptor() {
+    return targetDescriptor;
+  }
+  
+  public Class<?> getTargetClass() {
+    return targetClass;
+  }
+  
   // maps most of the functions
   // otherwise you can still create just a serialized lambda with the methods
   public interface FunctionR<R> extends Serializable {

@@ -1,14 +1,11 @@
 package kernbeisser.Enums;
 
 import java.awt.event.KeyEvent;
-import java.lang.reflect.Field;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.Map;
 import javax.swing.*;
 import kernbeisser.DBEntities.SettingValue;
 import kernbeisser.Main;
-import kernbeisser.Useful.DelegatingMap;
 import kernbeisser.Useful.Tools;
 import org.apache.commons.lang3.Range;
 import org.jetbrains.annotations.NotNull;
@@ -105,34 +102,6 @@ public enum Setting {
   private String value;
   private final String defaultValue;
   private final boolean requiresPersistedDefaultValue;
-
-  static {
-    ignoreDeprecatedDBSettings();
-  }
-
-  public static final void ignoreDeprecatedDBSettings() {
-    try {
-      Field field = Class.class.getDeclaredField("enumConstantDirectory");
-      field.setAccessible(true);
-      Setting.valueOf(Setting.DB_INITIALIZED.name());
-      Map<String, Setting> map = (Map<String, Setting>) field.get(Setting.class);
-      Map<String, Setting> delegatingMap =
-          new DelegatingMap<String, Setting>(map) {
-            @Override
-            public Setting get(Object key) {
-              Setting result = super.get(key);
-              if (result == null) {
-                Main.logger.info("found outdated Setting name: " + key);
-                return Setting.OUTDATED_SETTING;
-              }
-              return result;
-            }
-          };
-      field.set(Setting.class, delegatingMap);
-    } catch (NoSuchFieldException | IllegalAccessException e) {
-      throw Tools.showUnexpectedErrorWarning(e);
-    }
-  }
 
   Setting(String defaultValue) {
     this(defaultValue, false);

@@ -18,10 +18,10 @@ import kernbeisser.DBEntities.SurchargeGroup;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
-import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
 import org.hibernate.exception.ConstraintViolationException;
+import rs.groump.Key;
 import rs.groump.PermissionKey;
 
 public class EditSurchargeGroupController

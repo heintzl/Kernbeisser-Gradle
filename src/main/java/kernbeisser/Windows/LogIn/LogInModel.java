@@ -9,16 +9,16 @@ import kernbeisser.DBEntities.User;
 import kernbeisser.Exeptions.CannotLogInException;
 import kernbeisser.Exeptions.PermissionRequired;
 import kernbeisser.Main;
-import kernbeisser.Security.Access.Access;
-import kernbeisser.Security.Access.AccessManager;
+import kernbeisser.Security.Access.UserRelated;
 import kernbeisser.Security.Access.UserRelatedAccessManager;
-import kernbeisser.Security.Key;
-import kernbeisser.Security.Relations.UserRelated;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
 import lombok.Getter;
 import lombok.Setter;
+import rs.groump.Access;
+import rs.groump.AccessManager;
+import rs.groump.Key;
 import rs.groump.PermissionKey;
 
 public final class LogInModel implements IModel {
@@ -34,7 +34,7 @@ public final class LogInModel implements IModel {
 
   public static void logIn(String username, char[] password)
       throws CannotLogInException, PermissionRequired {
-    Access.setDefaultManager(AccessManager.NO_ACCESS_CHECKING);
+    Access.setAccessManager(AccessManager.ACCESS_GRANTED);
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
@@ -47,10 +47,10 @@ public final class LogInModel implements IModel {
       if (BCrypt.verifyer().verify(password, user.getPassword().toCharArray()).verified) {
         loggedInId = user.getId();
         userRelatedAccessManager = new UserRelatedAccessManager(getLoggedIn());
-        Access.setDefaultManager(userRelatedAccessManager);
+        Access.setAccessManager(userRelatedAccessManager);
         if (!Tools.canInvoke(() -> new LogInModel().canLogIn())) {
           loggedInId = -1;
-          Access.setDefaultManager(AccessManager.ACCESS_DENIED);
+          Access.setAccessManager(AccessManager.ACCESS_DENIED);
           throw new PermissionRequired();
         }
         Main.logger.info("User with user id [" + user.getId() + "] has logged in");

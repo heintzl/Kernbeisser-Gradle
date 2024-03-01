@@ -5,10 +5,10 @@ import java.util.List;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.FieldCondition;
 import kernbeisser.Enums.PostContext;
-import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Useful.Tools;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
+import rs.groump.AccessDeniedException;
 
 @Entity
 @Table
@@ -33,9 +33,9 @@ public class Post {
     this.context = context;
   }
 
-  public Post setContent(String content) throws PermissionKeyRequiredException {
+  public Post setContent(String content) throws AccessDeniedException {
     if (!context.isWriteable()) {
-      throw new PermissionKeyRequiredException("missing Permission for " + context);
+      throw new AccessDeniedException("missing Permission for " + context);
     }
     Post post = Tools.ifNull(get(), new Post(context));
     @Cleanup EntityManager em = DBConnection.getEntityManager();
@@ -47,9 +47,9 @@ public class Post {
     return post;
   }
 
-  public Post setActive(boolean active) throws PermissionKeyRequiredException {
+  public Post setActive(boolean active) throws AccessDeniedException {
     if (!context.isWriteable()) {
-      throw new PermissionKeyRequiredException("missing Permission for " + context);
+      throw new AccessDeniedException("missing Permission for " + context);
     }
     ;
     Post post = Tools.ifNull(get(), new Post(context));

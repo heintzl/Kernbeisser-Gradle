@@ -13,11 +13,9 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.Shelf;
 import kernbeisser.Enums.Setting;
-import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.FormImplemetations.Shelf.ShelfController;
 import kernbeisser.Forms.ObjectView.ObjectViewController;
 import kernbeisser.Reports.*;
-import kernbeisser.Security.Key;
 import kernbeisser.Useful.CSV;
 import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
@@ -26,6 +24,8 @@ import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import rs.groump.AccessDeniedException;
+import rs.groump.Key;
 import rs.groump.PermissionKey;
 
 public class InventoryController extends Controller<InventoryView, InventoryModel> {
@@ -33,7 +33,7 @@ public class InventoryController extends Controller<InventoryView, InventoryMode
   Setting inventoryScheduledDate = Setting.INVENTORY_SCHEDULED_DATE;
 
   @Key(PermissionKey.ACTION_OPEN_INVENTORY)
-  public InventoryController() throws PermissionKeyRequiredException {
+  public InventoryController() throws AccessDeniedException {
     super(new InventoryModel());
     this.shelfViewController =
         new ObjectViewController<>(

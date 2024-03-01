@@ -16,12 +16,21 @@ java {
     }
 }
 
-
-dependencies {
-    implementation group: 'com.google.auto.service', name: 'auto-service', version: '1.0'
-    annotationProcessor group: 'com.google.auto.service', name: 'auto-service', version: '1.0'
+jar {
+    manifest {
+        attributes(
+                "Manifest-Version": 1.0,
+                "Implementation-Title": "Agent",
+                "Premain-Class": "rs.groump.Agent",
+                "Implementation-Version": "1.0-SNAPSHOT",
+                "Agent-Class": "rs.groump.Agent",
+                "Can-Redefine-Classes": true,
+                "Can-Retransform-Classes": true,
+        )
+    }
 }
 
-test {
-    useJUnitPlatform()
+dependencies {
+    implementation group: 'org.ow2.asm', name: 'asm', version: '9.6'
+    implementation 'org.javassist:javassist:3.30.0-GA'
 }

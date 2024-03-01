@@ -15,8 +15,6 @@ import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Exeptions.NotEnoughCreditException;
 import kernbeisser.Exeptions.UndefinedInputException;
-import kernbeisser.Security.Access.Access;
-import kernbeisser.Security.Access.AccessManager;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
@@ -25,6 +23,8 @@ import kernbeisser.Windows.ShoppingMask.ArticleSelector.ArticleSelectorControlle
 import kernbeisser.Windows.UserInfo.UserInfoController;
 import kernbeisser.Windows.ViewContainers.SubWindow;
 import org.jetbrains.annotations.NotNull;
+import rs.groump.Access;
+import rs.groump.AccessManager;
 
 public class ShoppingMaskController extends Controller<ShoppingMaskView, ShoppingMaskModel> {
   @Linked private final ShoppingCartController shoppingCartController;
@@ -195,11 +195,13 @@ public class ShoppingMaskController extends Controller<ShoppingMaskView, Shoppin
       Article article, double discount, boolean preordered, boolean overwriteNetPrice)
       throws NullPointerException {
     if (overwriteNetPrice) {
-      Access.putException(article, AccessManager.NO_ACCESS_CHECKING);
-      article.setNetPrice(
-          view.getNetPrice()
-              / (Articles.getSafeAmount(article) * article.getMetricUnits().getBaseFactor()));
-      Access.removeException(article);
+      Access.runWithAccessManager(
+          AccessManager.ACCESS_GRANTED,
+          () ->
+              article.setNetPrice(
+                  view.getNetPrice()
+                      / (Articles.getSafeAmount(article)
+                          * article.getMetricUnits().getBaseFactor())));
     }
     return Articles.calculateArticleRetailPrice(article, discount, preordered)
         * (preordered && !article.isWeighable() && !overwriteNetPrice
@@ -223,15 +225,19 @@ public class ShoppingMaskController extends Controller<ShoppingMaskView, Shoppin
       article = Articles.getBySuppliersItemNumber(supplier, suppliersItemNumber).orElse(null);
     }
     if (article == null) {
-      article = new Article();
-      Access.putException(article, AccessManager.NO_ACCESS_CHECKING);
-      article.setNetPrice(netPrice);
-      article.setVat(vat);
-      article.setSupplier(supplier);
-      article.setSurchargeGroup(
-          Objects.requireNonNull(supplier).getOrPersistDefaultSurchargeGroup());
-      article.setMetricUnits(MetricUnits.PIECE);
-      Access.removeException(article);
+      article =
+          Access.runWithAccessManager(
+              AccessManager.ACCESS_GRANTED,
+              () -> {
+                Article created = new Article();
+                created.setNetPrice(netPrice);
+                created.setVat(vat);
+                created.setSupplier(supplier);
+                created.setSurchargeGroup(
+                    Objects.requireNonNull(supplier).getOrPersistDefaultSurchargeGroup());
+                created.setMetricUnits(MetricUnits.PIECE);
+                return created;
+              });
     }
     return article;
   }
@@ -248,83 +254,79 @@ public class ShoppingMaskController extends Controller<ShoppingMaskView, Shoppin
   }
 
   ShoppingItem extractShoppingItemFromUI() throws UndefinedInputException {
-    synchronized (Access.ACCESS_LOCK) {
-      AccessManager defaultManager = Access.getDefaultManager();
-      try {
-        Access.setDefaultManager(AccessManager.NO_ACCESS_CHECKING);
-        switch (view.getArticleType()) {
-          case ARTICLE_NUMBER:
-            int discount = view.getDiscount();
-            boolean preordered = view.isPreordered();
-            int kbArticleNumber = view.getKBArticleNumber();
-            if (kbArticleNumber != 0) {
-              ShoppingItem item = model.getItemByKbNumber(kbArticleNumber, discount, preordered);
-              if (item != null) {
-                return item;
+    return Access.runWithAccessManager(
+        AccessManager.ACCESS_GRANTED,
+        () -> {
+          switch (view.getArticleType()) {
+            case ARTICLE_NUMBER:
+              int discount = view.getDiscount();
+              boolean preordered = view.isPreordered();
+              int kbArticleNumber = view.getKBArticleNumber();
+              if (kbArticleNumber != 0) {
+                ShoppingItem item = model.getItemByKbNumber(kbArticleNumber, discount, preordered);
+                if (item != null) {
+                  return item;
+                }
               }
-            }
-            int suppliersNumber = view.getSuppliersNumber();
-            if (suppliersNumber != 0 && view.getSupplier() != null) {
-              return model.getItemBySupplierItemNumber(
-                  view.getSupplier(), suppliersNumber, discount, preordered);
-            }
-            throw new UndefinedInputException();
+              int suppliersNumber = view.getSuppliersNumber();
+              if (suppliersNumber != 0 && view.getSupplier() != null) {
+                return model.getItemBySupplierItemNumber(
+                    view.getSupplier(), suppliersNumber, discount, preordered);
+              }
+              throw new UndefinedInputException();
 
-          case BAKED_GOODS:
-            return ShoppingItem.createBakeryProduct(getRelevantPrice(), view.isPreordered());
+            case BAKED_GOODS:
+              return ShoppingItem.createBakeryProduct(getRelevantPrice(), view.isPreordered());
 
-          case PRODUCE:
-            return ShoppingItem.createProduce(getRelevantPrice(), view.isPreordered());
+            case PRODUCE:
+              return ShoppingItem.createProduce(getRelevantPrice(), view.isPreordered());
 
-          case CUSTOM_PRODUCT:
-            Article customArticle =
-                Articles.getCustomArticleVersion(
-                    before -> {
-                      before.setName(view.getArticleName());
-                      before.setSupplier(view.getSupplier());
-                      before.setVat(view.getVat());
-                      if (view.isPreordered()) {
-                        before.setSurchargeGroup(
-                            view.getSupplier().getOrPersistDefaultSurchargeGroup());
-                      } else {
-                        before.setSurchargeGroup(
-                            Supplier.getKKSupplier().getOrPersistDefaultSurchargeGroup());
-                      }
+            case CUSTOM_PRODUCT:
+              Article customArticle =
+                  Articles.getCustomArticleVersion(
+                      before -> {
+                        before.setName(view.getArticleName());
+                        before.setSupplier(view.getSupplier());
+                        before.setVat(view.getVat());
+                        if (view.isPreordered()) {
+                          before.setSurchargeGroup(
+                              view.getSupplier().getOrPersistDefaultSurchargeGroup());
+                        } else {
+                          before.setSurchargeGroup(
+                              Supplier.getKKSupplier().getOrPersistDefaultSurchargeGroup());
+                        }
 
-                      before.setNetPrice(
-                          view.isPreordered()
-                              ? view.getNetPrice()
-                              : view.getRetailPrice()
-                                  / (1. + view.getVat().getValue())
-                                  / (1. + before.getSurchargeGroup().getSurcharge()));
-                      before.setMetricUnits(MetricUnits.PIECE);
-                      before.setContainerSize(1.);
-                    });
+                        before.setNetPrice(
+                            view.isPreordered()
+                                ? view.getNetPrice()
+                                : view.getRetailPrice()
+                                    / (1. + view.getVat().getValue())
+                                    / (1. + before.getSurchargeGroup().getSurcharge()));
+                        before.setMetricUnits(MetricUnits.PIECE);
+                        before.setContainerSize(1.);
+                      });
 
-            return new ShoppingItem(customArticle, 0, view.isPreordered());
+              return new ShoppingItem(customArticle, 0, view.isPreordered());
 
-          case DEPOSIT:
-            if (view.getDeposit() < 0) {
-              view.messageDepositStorno();
+            case DEPOSIT:
+              if (view.getDeposit() < 0) {
+                view.messageDepositStorno();
+                return null;
+              } else {
+                return ShoppingItem.createDeposit(view.getDeposit());
+              }
+
+            case RETURN_DEPOSIT:
+              if (view.getDeposit() < 0) {
+                view.messageDepositStorno();
+                return null;
+              } else {
+                return ShoppingItem.createDeposit(view.getDeposit() * (-1));
+              }
+            default:
               return null;
-            } else {
-              return ShoppingItem.createDeposit(view.getDeposit());
-            }
-
-          case RETURN_DEPOSIT:
-            if (view.getDeposit() < 0) {
-              view.messageDepositStorno();
-              return null;
-            } else {
-              return ShoppingItem.createDeposit(view.getDeposit() * (-1));
-            }
-          default:
-            return null;
-        }
-      } finally {
-        Access.setDefaultManager(defaultManager);
-      }
-    }
+          }
+        });
   }
 
   @Override

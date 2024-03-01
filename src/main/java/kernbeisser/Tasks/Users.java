@@ -13,13 +13,13 @@ import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.StatementType;
 import kernbeisser.Exeptions.InvalidTransactionException;
 import kernbeisser.Exeptions.MissingFullMemberException;
-import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Reports.TransactionStatement;
-import kernbeisser.Security.Access.Access;
-import kernbeisser.Security.Access.AccessManager;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
 import lombok.Cleanup;
+import rs.groump.Access;
+import rs.groump.AccessDeniedException;
+import rs.groump.AccessManager;
 
 public class Users {
 
@@ -151,7 +151,7 @@ public class Users {
         Transaction.switchGroupTransaction(
             em, currentUser, current, destination, current.getValue());
         Access.runWithAccessManager(
-            AccessManager.NO_ACCESS_CHECKING,
+            AccessManager.ACCESS_GRANTED,
             () ->
                 destination.setInterestThisYear(
                     destination.getInterestThisYear() + current.getInterestThisYear()));
@@ -168,7 +168,7 @@ public class Users {
           "Gruppenwechsel",
           JOptionPane.ERROR_MESSAGE);
       return false;
-    } catch (PermissionKeyRequiredException p) {
+    } catch (AccessDeniedException p) {
       JOptionPane.showMessageDialog(
           null,
           "Fehlende Berechtigung: " + p.getMessage(),

@@ -18,8 +18,8 @@ import kernbeisser.Forms.FormController;
 import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
 import kernbeisser.Forms.ObjectForm.Exceptions.SilentParseException;
 import kernbeisser.Forms.ObjectForm.ObjectForm;
-import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
+import rs.groump.Key;
 import rs.groump.PermissionKey;
 
 public class ArticleController extends FormController<ArticleView, ArticleModel, Article> {

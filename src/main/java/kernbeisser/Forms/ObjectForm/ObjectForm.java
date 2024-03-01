@@ -8,7 +8,6 @@ import java.util.function.Predicate;
 import javax.swing.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.Mode;
-import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.ObjectForm.Exceptions.AccessNotPredictableException;
 import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
 import kernbeisser.Forms.ObjectForm.Exceptions.FieldNotUniqueException;
@@ -17,10 +16,7 @@ import kernbeisser.Forms.ObjectForm.ObjectFormComponents.ObjectFormComponent;
 import kernbeisser.Forms.ObjectForm.Properties.BoundedReadProperty;
 import kernbeisser.Forms.ObjectForm.Properties.BoundedWriteProperty;
 import kernbeisser.Forms.ObjectForm.Properties.PredictableModifiable;
-import kernbeisser.Security.Access.Access;
-import kernbeisser.Security.Access.AccessListenerManager;
-import kernbeisser.Security.Access.AccessManager;
-import kernbeisser.Security.Relations.UserRelated;
+import kernbeisser.Security.Access.UserRelated;
 import kernbeisser.Useful.ActuallyCloneable;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
@@ -28,6 +24,9 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.Session;
 import org.jetbrains.annotations.NotNull;
+import rs.groump.Access;
+import rs.groump.AccessDeniedException;
+import rs.groump.AccessManager;
 
 public class ObjectForm<P extends ActuallyCloneable> {
   private final Collection<ObjectValidator<P>> objectValidators = new ArrayList<>();
@@ -71,7 +70,7 @@ public class ObjectForm<P extends ActuallyCloneable> {
       if (component instanceof BoundedWriteProperty) {
         try {
           ((BoundedWriteProperty<P, ?>) component).set(destination);
-        } catch (PermissionKeyRequiredException e) {
+        } catch (AccessDeniedException e) {
           ((BoundedWriteProperty<?, ?>) component).setPropertyModifiable(false);
         } catch (CannotParseException e) {
           if (!(e instanceof SilentParseException)) {
@@ -102,19 +101,18 @@ public class ObjectForm<P extends ActuallyCloneable> {
 
   private <V> void setDataAndAccess(ObjectFormComponent<P> formComponent, P parent) {
     if (formComponent instanceof BoundedReadProperty) {
-      V value;
       BoundedReadProperty<P, V> boundedReadProperty = (BoundedReadProperty<P, V>) formComponent;
-      synchronized (Access.ACCESS_LOCK) {
-        AccessManager accessManager = Access.getDefaultManager();
-        AccessListenerManager listener = new AccessListenerManager(accessManager);
-        Access.setDefaultManager(listener);
-
+      V value;
+      try {
         value = readProperty(boundedReadProperty, parent);
-
-        boundedReadProperty.setReadable(listener.isSuccess());
-        Access.setDefaultManager(accessManager);
+        boundedReadProperty.setReadable(true);
+        boundedReadProperty.setData(value);
+      } catch (AccessDeniedException accessDeniedException) {
+        boundedReadProperty.setReadable(false);
+        value =
+            Access.runWithAccessManager(
+                AccessManager.ACCESS_GRANTED, () -> readProperty(boundedReadProperty, parent));
       }
-      boundedReadProperty.setData(value);
       if (formComponent instanceof BoundedWriteProperty) {
         setAccessWithData(
             (BoundedWriteProperty<? super P, ? super V>) formComponent, parent, value);
@@ -140,7 +138,7 @@ public class ObjectForm<P extends ActuallyCloneable> {
     try {
       component.set(valueParent, getterData);
       component.setPropertyModifiable(true);
-    } catch (PermissionKeyRequiredException e) {
+    } catch (AccessDeniedException e) {
       component.setPropertyModifiable(false);
     }
   }

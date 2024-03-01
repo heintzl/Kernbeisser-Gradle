@@ -1,12 +1,12 @@
 package kernbeisser.Forms.ObjectForm.Components;
 
 import java.util.function.Consumer;
-import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.ObjectForm.ObjectFormComponents.ObjectFormComponent;
 import kernbeisser.Forms.ObjectForm.Properties.BoundedReadProperty;
 import kernbeisser.Forms.ObjectForm.Properties.PredictableModifiable;
-import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.Utils.Getter;
+import rs.groump.Access;
+import rs.groump.AccessDeniedException;
 
 public class DataListener<P, V>
     implements ObjectFormComponent<P>, BoundedReadProperty<P, V>, PredictableModifiable<P> {
@@ -33,7 +33,7 @@ public class DataListener<P, V>
   }
 
   @Override
-  public V get(P p) throws PermissionKeyRequiredException {
+  public V get(P p) throws AccessDeniedException {
     return getter.get(p);
   }
 }

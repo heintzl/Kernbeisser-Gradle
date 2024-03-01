@@ -5,10 +5,10 @@ import kernbeisser.Enums.Mode;
 import kernbeisser.Forms.FormController;
 import kernbeisser.Forms.ObjectForm.Exceptions.SilentParseException;
 import kernbeisser.Forms.ObjectForm.ObjectForm;
-import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
 import org.hibernate.exception.ConstraintViolationException;
 import org.jetbrains.annotations.NotNull;
+import rs.groump.Key;
 import rs.groump.PermissionKey;
 
 public class SupplierController extends FormController<SupplierView, SupplierModel, Supplier> {

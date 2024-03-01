@@ -1,10 +1,9 @@
 package kernbeisser.Enums;
 
-import kernbeisser.Security.Access.Access;
-import kernbeisser.Security.Access.AccessManager;
-import kernbeisser.Security.Access.UserRelatedAccessManager;
 import kernbeisser.Windows.LogIn.LogInModel;
 import lombok.Getter;
+import rs.groump.Access;
+import rs.groump.AccessManager;
 import rs.groump.PermissionKey;
 
 public enum PostContext {
@@ -20,8 +19,7 @@ public enum PostContext {
 
   public boolean isWriteable() {
     return Access.runWithAccessManager(
-        AccessManager.NO_ACCESS_CHECKING,
-        () ->
-            UserRelatedAccessManager.ofUser(LogInModel.getLoggedIn()).contains(writePermissionKey));
+        AccessManager.ACCESS_GRANTED,
+        () -> LogInModel.getLoggedIn().getPermissionSet().contains(writePermissionKey));
   }
 }

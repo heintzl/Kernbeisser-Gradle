@@ -5,13 +5,13 @@ import java.time.Instant;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.ShopRange;
 import kernbeisser.Enums.VAT;
-import kernbeisser.Security.Key;
 import kernbeisser.Useful.ActuallyCloneable;
 import kernbeisser.Useful.Tools;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.envers.Audited;
+import rs.groump.Key;
 import rs.groump.PermissionKey;
 
 /*
@@ -122,6 +122,7 @@ public final class Article implements ActuallyCloneable {
   private int suppliersItemNumber;
 
   @Column(nullable = false)
+  @Enumerated
   @Getter(onMethod_ = {@Key(PermissionKey.ARTICLE_VAT_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.ARTICLE_VAT_WRITE)})
   private VAT vat;

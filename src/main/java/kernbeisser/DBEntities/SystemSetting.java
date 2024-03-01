@@ -7,13 +7,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
 import kernbeisser.VersionIntegrationTools.Version;
 import lombok.Cleanup;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import rs.groump.Key;
 import rs.groump.PermissionKey;
 
 @Entity

@@ -16,8 +16,6 @@ import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.ArticlePrintPool;
 import kernbeisser.DBEntities.Articles;
 import kernbeisser.Enums.Setting;
-import kernbeisser.Exeptions.PermissionKeyRequiredException;
-import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.CollectionView.CollectionController;
 import kernbeisser.Windows.CollectionView.CollectionView;
@@ -25,6 +23,8 @@ import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.ViewContainer;
 import kernbeisser.Windows.ViewContainers.SubWindow;
+import rs.groump.AccessDeniedException;
+import rs.groump.Key;
 import rs.groump.PermissionKey;
 
 public class PrintLabelsController extends Controller<PrintLabelsView, PrintLabelsModel> {
@@ -37,7 +37,7 @@ public class PrintLabelsController extends Controller<PrintLabelsView, PrintLabe
   private final BarcodeCapture barcodeCapture;
 
   @Key(PermissionKey.ACTION_OPEN_PRINT_LABELS)
-  public PrintLabelsController() throws PermissionKeyRequiredException {
+  public PrintLabelsController() throws AccessDeniedException {
     super(new PrintLabelsModel());
     model.setPrintPoolBefore(ArticlePrintPool.getPrintPoolAsMap());
     articles = PrintLabelsModel.getArticleSource();

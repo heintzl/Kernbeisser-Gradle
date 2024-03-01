@@ -6,7 +6,7 @@ import java.util.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
-import kernbeisser.Security.PermissionKeyOrdering;
+import kernbeisser.Security.PermissionKeyGroups;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
@@ -25,8 +25,8 @@ public class PermissionModel implements IModel<PermissionController> {
     return Permission.getAll(null);
   }
 
-  List<PermissionKeyOrdering> getAllKeyCategories() {
-    return Arrays.asList(PermissionKeyOrdering.values());
+  List<PermissionKeyGroups> getAllKeyCategories() {
+    return Arrays.asList(PermissionKeyGroups.values());
   }
 
   void deletePermission(Permission selectedObject) {

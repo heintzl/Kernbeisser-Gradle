@@ -1,18 +1,18 @@
 package kernbeisser.Tasks.Catalog.Merge;
 
 import kernbeisser.DBEntities.Article;
-import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Useful.Tools;
+import rs.groump.AccessDeniedException;
 
 public enum MappedDifference implements Difference<Article, Object> {
   PRICE("Preis") {
     @Override
-    public void set(Article article, Object t) throws PermissionKeyRequiredException {
+    public void set(Article article, Object t) throws AccessDeniedException {
       article.setNetPrice((Double) t);
     }
 
     @Override
-    public Double get(Article article) throws PermissionKeyRequiredException {
+    public Double get(Article article) throws AccessDeniedException {
       return article.getNetPrice();
     }
 
@@ -23,12 +23,12 @@ public enum MappedDifference implements Difference<Article, Object> {
   },
   CONTAINER_SIZE("Gebinde-Größe") {
     @Override
-    public void set(Article article, Object t) throws PermissionKeyRequiredException {
+    public void set(Article article, Object t) throws AccessDeniedException {
       article.setContainerSize((Double) t);
     }
 
     @Override
-    public Double get(Article article) throws PermissionKeyRequiredException {
+    public Double get(Article article) throws AccessDeniedException {
       return article.getContainerSize();
     }
 
@@ -39,12 +39,12 @@ public enum MappedDifference implements Difference<Article, Object> {
   },
   AMOUNT("Menge") {
     @Override
-    public void set(Article article, Object t) throws PermissionKeyRequiredException {
+    public void set(Article article, Object t) throws AccessDeniedException {
       article.setAmount((Integer) t);
     }
 
     @Override
-    public Integer get(Article article) throws PermissionKeyRequiredException {
+    public Integer get(Article article) throws AccessDeniedException {
       return article.getAmount();
     }
 
@@ -55,12 +55,12 @@ public enum MappedDifference implements Difference<Article, Object> {
   },
   NAME("Name") {
     @Override
-    public void set(Article article, Object t) throws PermissionKeyRequiredException {
+    public void set(Article article, Object t) throws AccessDeniedException {
       article.setName((String) t);
     }
 
     @Override
-    public Object get(Article article) throws PermissionKeyRequiredException {
+    public Object get(Article article) throws AccessDeniedException {
       return article.getName();
     }
 

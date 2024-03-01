@@ -13,16 +13,16 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import kernbeisser.Enums.Colors;
-import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
 import kernbeisser.Forms.ObjectForm.ObjectFormComponents.ObjectFormComponent;
 import kernbeisser.Forms.ObjectForm.Properties.BoundedReadProperty;
 import kernbeisser.Forms.ObjectForm.Properties.BoundedWriteProperty;
 import kernbeisser.Forms.ObjectForm.Properties.PredictableModifiable;
-import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.Utils.Getter;
 import kernbeisser.Security.Utils.Setter;
 import kernbeisser.Useful.Date;
+import rs.groump.Access;
+import rs.groump.AccessDeniedException;
 
 public class AccessCheckingField<P, V> extends JTextField
     implements ObjectFormComponent<P>,
@@ -72,7 +72,7 @@ public class AccessCheckingField<P, V> extends JTextField
   }
 
   @Override
-  public V get(P p) throws PermissionKeyRequiredException {
+  public V get(P p) throws AccessDeniedException {
     return getter.get(p);
   }
 
@@ -87,7 +87,7 @@ public class AccessCheckingField<P, V> extends JTextField
   }
 
   @Override
-  public void set(P p, V t) throws PermissionKeyRequiredException {
+  public void set(P p, V t) throws AccessDeniedException {
     if (inputChanged) setter.set(p, t);
   }
 

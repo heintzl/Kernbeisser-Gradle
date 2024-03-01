@@ -8,17 +8,17 @@ import kernbeisser.DBEntities.ArticleStock;
 import kernbeisser.DBEntities.Articles;
 import kernbeisser.DBEntities.Shelf;
 import kernbeisser.Enums.Setting;
-import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Useful.Date;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.ShoppingMask.ArticleSelector.ArticleSelectorController;
 import kernbeisser.Windows.ViewContainers.SubWindow;
+import rs.groump.AccessDeniedException;
 
 public class CountingController extends Controller<CountingView, CountingModel> {
   Setting inventoryScheduledDate = Setting.INVENTORY_SCHEDULED_DATE;
   private final Runnable runOnClose;
 
-  public CountingController(Runnable runOnClose) throws PermissionKeyRequiredException {
+  public CountingController(Runnable runOnClose) throws AccessDeniedException {
     super(new CountingModel());
     this.runOnClose = runOnClose;
   }

@@ -3,13 +3,13 @@ package kernbeisser.DBEntities;
 import jakarta.persistence.*;
 import java.util.List;
 import kernbeisser.Enums.SaleSessionType;
-import kernbeisser.Security.Key;
-import kernbeisser.Security.Relations.UserRelated;
+import kernbeisser.Security.Access.UserRelated;
 import kernbeisser.Useful.Tools;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
+import rs.groump.Key;
 import rs.groump.PermissionKey;
 
 @Entity

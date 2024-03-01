@@ -1,4 +1,4 @@
-package kernbeisser.Security.Relations;
+package kernbeisser.Security.Access;
 
 import kernbeisser.DBEntities.User;
 import org.jetbrains.annotations.NotNull;

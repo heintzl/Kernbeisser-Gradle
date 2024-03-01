@@ -11,11 +11,11 @@ import kernbeisser.DBEntities.CatalogEntry;
 import kernbeisser.Forms.FormImplemetations.CatalogEntry.CatalogEntryController;
 import kernbeisser.Forms.ObjectView.ObjectViewController;
 import kernbeisser.Forms.ObjectView.ObjectViewView;
-import kernbeisser.Security.Key;
 import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Icons;
 import kernbeisser.Windows.MVC.Controller;
 import org.jetbrains.annotations.NotNull;
+import rs.groump.Key;
 import rs.groump.PermissionKey;
 
 public class EditCatalogController extends Controller<EditCatalogView, EditCatalogModel> {

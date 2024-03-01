@@ -4,7 +4,7 @@ import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Forms.FormImplemetations.Supplier.SupplierController;
 import kernbeisser.Forms.ObjectView.ObjectViewController;
-import kernbeisser.Security.Key;
+import rs.groump.Key;
 import rs.groump.PermissionKey;
 
 public class EditSuppliers extends ObjectViewController<Supplier> {

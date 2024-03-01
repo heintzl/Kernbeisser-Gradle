@@ -3,16 +3,16 @@ package kernbeisser.Forms.FormEditor;
 import java.awt.GridLayout;
 import java.util.concurrent.atomic.AtomicReference;
 import kernbeisser.Enums.Mode;
-import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.FormController;
 import kernbeisser.Useful.ActuallyCloneable;
 import kernbeisser.Windows.MVC.Controller;
+import rs.groump.AccessDeniedException;
 
 public class FormEditorController<V extends ActuallyCloneable>
     extends Controller<FormEditorView<V>, FormEditorModel<V>> {
 
   public FormEditorController(FormController<?, ?, V> form, Runnable submit)
-      throws PermissionKeyRequiredException {
+      throws AccessDeniedException {
     super(new FormEditorModel<>(form, submit));
   }
 

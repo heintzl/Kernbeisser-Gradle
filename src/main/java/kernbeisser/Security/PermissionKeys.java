@@ -10,17 +10,18 @@ import java.util.function.Predicate;
 import kernbeisser.Enums.Setting;
 import lombok.Getter;
 import rs.groump.PermissionKey;
+import rs.groump.PermissionSet;
 
 public class PermissionKeys {
   @Getter(lazy = true)
   private static final PermissionSet allActionPermissions =
-      PermissionSet.asPermissionSet(PermissionKeyOrdering.ACTIONS.getKeys());
+      PermissionSet.asPermissionSet(PermissionKeyGroups.ACTIONS.getKeys());
 
   public static Collection<PermissionKey> find(
-      PermissionKeyOrdering permissionKeyOrdering, boolean read, boolean write) {
+      PermissionKeyGroups permissionKeyGroups, boolean read, boolean write) {
     Collection<PermissionKey> out = new ArrayList<>();
 
-    for (PermissionKey value : permissionKeyOrdering.getKeys()) {
+    for (PermissionKey value : permissionKeyGroups.getKeys()) {
       if ((read && value.name().endsWith("READ")) || (write && value.name().endsWith("WRITE"))) {
         out.add(value);
       }

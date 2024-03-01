@@ -7,13 +7,13 @@ import java.util.stream.Collectors;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Exeptions.InconsistentUserGroupValueException;
 import kernbeisser.Exeptions.MissingFullMemberException;
-import kernbeisser.Security.Key;
-import kernbeisser.Security.Relations.UserRelated;
+import kernbeisser.Security.Access.UserRelated;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
 import lombok.*;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.jetbrains.annotations.NotNull;
+import rs.groump.Key;
 import rs.groump.PermissionKey;
 
 @Table
@@ -44,15 +44,15 @@ public class UserGroup implements UserRelated {
   private double interestThisYear;
 
   @UpdateTimestamp
-  @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_GROUP_UPDATE_DATE_WRITE)})
-  @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_GROUP_UPDATE_DATE_READ)})
+  @Setter(onMethod_ = {@rs.groump.Key(PermissionKey.USER_GROUP_UPDATE_DATE_WRITE)})
+  @Getter(onMethod_ = {@rs.groump.Key(PermissionKey.USER_GROUP_UPDATE_DATE_READ)})
   private Instant updateDate;
 
   @ManyToOne
   @EqualsAndHashCode.Exclude
   @JoinColumn(nullable = true)
-  @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_GROUP_UPDATE_BY_WRITE)})
-  @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_GROUP_UPDATE_BY_READ)})
+  @Setter(onMethod_ = {@rs.groump.Key(PermissionKey.USER_GROUP_UPDATE_BY_WRITE)})
+  @Getter(onMethod_ = {@rs.groump.Key(PermissionKey.USER_GROUP_UPDATE_BY_READ)})
   private User updateBy;
 
   /* for output to Report */
@@ -67,10 +67,8 @@ public class UserGroup implements UserRelated {
   private Double transactionSum;
 
   @Column
-  @Setter(
-      onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_GROUP_SOLIDARITY_SURCHARGE_WRITE)})
-  @Getter(
-      onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_GROUP_SOLIDARITY_SURCHARGE_READ)})
+  @Setter(onMethod_ = {@rs.groump.Key(PermissionKey.USER_GROUP_SOLIDARITY_SURCHARGE_WRITE)})
+  @Getter(onMethod_ = {@rs.groump.Key(PermissionKey.USER_GROUP_SOLIDARITY_SURCHARGE_READ)})
   private double solidaritySurcharge;
 
   @Transient private Double oldSolidarity;

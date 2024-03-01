@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -12,7 +13,6 @@ import java.util.concurrent.CancellationException;
 import java.util.stream.Collectors;
 import javax.swing.filechooser.FileSystemView;
 import kernbeisser.Config.Config;
-import kernbeisser.Security.Key;
 import kernbeisser.Tasks.Catalog.Catalog;
 import kernbeisser.Tasks.Catalog.Merge.ArticleMerge;
 import kernbeisser.Tasks.Catalog.Merge.MappedDifference;
@@ -20,6 +20,7 @@ import kernbeisser.Tasks.Catalog.Merge.Solution;
 import kernbeisser.Useful.KornKraft;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
+import rs.groump.Key;
 import rs.groump.PermissionKey;
 
 public class SynchronizeArticleController
@@ -120,7 +121,7 @@ public class SynchronizeArticleController
   public void importCatalogFromInternet() {
     try {
       String urlAddress = getView().messageRequestInputURL(KornKraft.findLastValidURL().orElse(""));
-      URL url = new URL(urlAddress);
+      URL url = URI.create(urlAddress).toURL();
       BufferedReader bufferedReader =
           new BufferedReader(new InputStreamReader(url.openStream(), Catalog.DEFAULT_ENCODING));
       importCatalogSource(bufferedReader.lines().collect(Collectors.toCollection(ArrayList::new)));

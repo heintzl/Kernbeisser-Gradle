@@ -11,8 +11,6 @@ import javax.swing.SwingConstants;
 import jiconfont.IconCode;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.Exeptions.ClassIsSingletonException;
-import kernbeisser.Exeptions.PermissionKeyRequiredException;
-import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.Utils.AccessSupplier;
 import kernbeisser.Useful.Icons;
 import kernbeisser.Useful.Tools;
@@ -20,6 +18,8 @@ import kernbeisser.Windows.MVC.*;
 import kernbeisser.Windows.MVC.ComponentController.ComponentController;
 import kernbeisser.Windows.TabbedPane.TabbedPaneModel;
 import org.jetbrains.annotations.Nullable;
+import rs.groump.Access;
+import rs.groump.AccessDeniedException;
 
 public class ControllerButton extends JButton {
 
@@ -41,11 +41,6 @@ public class ControllerButton extends JButton {
           AccessSupplier<C> controllerInitializer, Class<C> clazz, Consumer<C> action) {
 
     setHorizontalAlignment(SwingConstants.LEFT);
-    // checking if the user has the required access to open up the window
-    if (!Access.expectHasActionPermission(controllerInitializer)) {
-      setEnabled(false);
-      return;
-    }
     addActionListener(
         e -> {
           Optional<Integer> tabbedPaneIndexOfView =
@@ -62,7 +57,7 @@ public class ControllerButton extends JButton {
             C controller = controllerInitializer.get();
             action.accept(controller);
           } catch (CancellationException ignored) {
-          } catch (PermissionKeyRequiredException exception) {
+          } catch (AccessDeniedException exception) {
             exception.printStackTrace();
             JOptionPane.showMessageDialog(
                 this,
@@ -73,7 +68,7 @@ public class ControllerButton extends JButton {
                 "Das Fenster kann nicht geöffnet werden, da dieses Fenster nur einmal geöffnet werden darf.");
           }
         });
-    setEnabled(true);
+    setEnabled(Access.hasPermission(controllerInitializer, this));
   }
 
   private boolean confirmConfirmMessage() {

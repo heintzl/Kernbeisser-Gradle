@@ -2,11 +2,11 @@ package kernbeisser.VersionIntegrationTools;
 
 import java.util.function.Supplier;
 import kernbeisser.DBEntities.SystemSetting;
-import kernbeisser.Security.Access.Access;
-import kernbeisser.Security.Access.AccessManager;
 import kernbeisser.VersionIntegrationTools.UpdatingTools.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import rs.groump.Access;
+import rs.groump.AccessManager;
 
 public enum Version {
   BASE_VERSION(BaseVersion::new),
@@ -35,7 +35,7 @@ public enum Version {
   private void runUpdate() {
     try {
       Access.runWithAccessManager(
-          AccessManager.NO_ACCESS_CHECKING, versionUpdatingToolSupplier.get()::runIntegration);
+          AccessManager.ACCESS_GRANTED, versionUpdatingToolSupplier.get()::runIntegration);
     } catch (NullPointerException e) {
       throw new VersionUpdatingException("Nullptr. Exception while updating version", e);
     }

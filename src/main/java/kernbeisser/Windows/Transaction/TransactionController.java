@@ -13,10 +13,10 @@ import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.InvalidTransactionException;
 import kernbeisser.Exeptions.NoSelectionException;
 import kernbeisser.Main;
-import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
+import rs.groump.Key;
 import rs.groump.PermissionKey;
 
 public class TransactionController extends Controller<TransactionView, TransactionModel> {

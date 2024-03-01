@@ -4,8 +4,8 @@ import java.util.function.Supplier;
 import kernbeisser.DBEntities.Job;
 import kernbeisser.Forms.FormController;
 import kernbeisser.Forms.ObjectForm.ObjectForm;
-import kernbeisser.Security.Key;
 import org.jetbrains.annotations.NotNull;
+import rs.groump.Key;
 import rs.groump.PermissionKey;
 
 public class JobController extends FormController<JobView, JobModel, Job> {

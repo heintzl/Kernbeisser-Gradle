@@ -1,25 +1,27 @@
 package kernbeisser.Enums;
 
+import java.util.function.Supplier;
 import kernbeisser.Useful.Named;
 
 public enum VAT implements Named {
-  LOW(
-      "Niedrig (" + Math.round(Setting.VAT_LOW.getDoubleValue() * 100) + "%)",
-      Setting.VAT_LOW.getDoubleValue()),
-  HIGH(
-      "Hoch (" + Math.round(Setting.VAT_HIGH.getDoubleValue() * 100) + "%)",
-      Setting.VAT_HIGH.getDoubleValue());
+  LOW("Niedrig (%f%%)", Setting.VAT_LOW::getDoubleValue),
+  HIGH("Hoch (%f%%)", Setting.VAT_HIGH::getDoubleValue);
 
   private final String name;
-  private final double value;
+  private Double lazy_value;
 
-  VAT(String name, double value) {
+  private final Supplier<Double> doubleSupplier;
+
+  VAT(String name, Supplier<Double> doubleSupplier) {
     this.name = name;
-    this.value = value;
+    this.doubleSupplier = doubleSupplier;
   }
 
   public double getValue() {
-    return value;
+    if (lazy_value == null) {
+      lazy_value = doubleSupplier.get();
+    }
+    return lazy_value;
   }
 
   @Override
@@ -29,6 +31,6 @@ public enum VAT implements Named {
 
   @Override
   public String getName() {
-    return name;
+    return name.formatted(getValue());
   }
 }

@@ -4,7 +4,7 @@ import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.DBEntities.Job;
 import kernbeisser.Forms.FormImplemetations.Job.JobController;
 import kernbeisser.Forms.ObjectView.ObjectViewController;
-import kernbeisser.Security.Key;
+import rs.groump.Key;
 import rs.groump.PermissionKey;
 
 public class EditJobs extends ObjectViewController<Job> {

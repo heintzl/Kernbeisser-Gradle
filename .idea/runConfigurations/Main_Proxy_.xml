@@ -4,7 +4,7 @@
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
     <option name="MAIN_CLASS_NAME" value="kernbeisser.Main" />
     <module name="Kernbeisser.kernbeisser.main" />
-    <option name="VM_PARAMETERS" value="-splash:KernbeisserSplash.png -javaagent:&quot;src/main/resources/Agent/Agent-1.0-SNAPSHOT.jar&quot;=&quot;kernbeisser$kernbeisser.Security.Key$kernbeisser.Security.Access.Access.hasAccess(this,\&quot;%s\&quot;, \&quot;%s\&quot;, %dL);&quot;" />
+    <option name="VM_PARAMETERS" value="-splash:KernbeisserSplash.png -javaagent:&quot;$PROJECT_DIR$/src/main/resources/Agent/AgentPrinter.jar&quot;" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

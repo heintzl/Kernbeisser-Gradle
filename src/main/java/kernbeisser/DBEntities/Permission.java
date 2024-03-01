@@ -4,13 +4,14 @@ import jakarta.persistence.*;
 import java.util.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.PermissionConstants;
-import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
 import lombok.Cleanup;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import rs.groump.Key;
 import rs.groump.PermissionKey;
+import rs.groump.PermissionSet;
 
 @Entity
 @Table
@@ -27,7 +28,6 @@ public class Permission {
   @Setter(onMethod_ = {@Key(PermissionKey.PERMISSION_NAME_WRITE)})
   private String name;
 
-  @JoinColumn
   @Enumerated(EnumType.STRING)
   @ElementCollection(fetch = FetchType.EAGER)
   @Setter(onMethod_ = {@Key({PermissionKey.PERMISSION_KEY_SET_WRITE})})
@@ -83,5 +83,11 @@ public class Permission {
         .createQuery("select u from User u where :p in(elements(u.permissions))", User.class)
         .setParameter("p", this)
         .getResultList();
+  }
+
+  public PermissionSet toPermissionSet() {
+    PermissionSet permissionKeys = new PermissionSet();
+    permissionKeys.addAll(keySet);
+    return permissionKeys;
   }
 }

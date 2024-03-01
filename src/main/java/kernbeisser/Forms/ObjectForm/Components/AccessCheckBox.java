@@ -1,15 +1,15 @@
 package kernbeisser.Forms.ObjectForm.Components;
 
-import java.awt.Color;
+import java.awt.*;
 import javax.swing.*;
-import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.ObjectForm.ObjectFormComponents.ObjectFormComponent;
 import kernbeisser.Forms.ObjectForm.Properties.BoundedReadProperty;
 import kernbeisser.Forms.ObjectForm.Properties.BoundedWriteProperty;
 import kernbeisser.Forms.ObjectForm.Properties.PredictableModifiable;
-import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.Utils.Getter;
 import kernbeisser.Security.Utils.Setter;
+import rs.groump.Access;
+import rs.groump.AccessDeniedException;
 
 public class AccessCheckBox<P> extends JCheckBox
     implements ObjectFormComponent<P>,
@@ -48,13 +48,13 @@ public class AccessCheckBox<P> extends JCheckBox
   }
 
   @Override
-  public Boolean get(P p) throws PermissionKeyRequiredException {
+  public Boolean get(P p) throws AccessDeniedException {
     return getter.get(p);
   }
 
   @Override
   public boolean isPropertyModifiable(P parent) {
-    return Access.hasPermission(setter, parent);
+    return Access.getAccessManager().hasAccess(parent, Access.peekPermissions(setter));
   }
 
   @Override
@@ -63,7 +63,7 @@ public class AccessCheckBox<P> extends JCheckBox
   }
 
   @Override
-  public void set(P p, Boolean t) throws PermissionKeyRequiredException {
+  public void set(P p, Boolean t) throws AccessDeniedException {
     if (inputChanged) {
       setter.set(p, t);
     }

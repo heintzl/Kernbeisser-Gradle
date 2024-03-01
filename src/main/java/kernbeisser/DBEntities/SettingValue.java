@@ -4,13 +4,14 @@ import jakarta.persistence.*;
 import java.util.HashMap;
 import java.util.List;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBEntities.Converters.SettingValueConverter;
 import kernbeisser.Enums.Setting;
-import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
 import lombok.Cleanup;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import rs.groump.Key;
 import rs.groump.PermissionKey;
 
 @Entity
@@ -35,6 +36,7 @@ public class SettingValue {
 
   @Column
   @Enumerated(value = EnumType.STRING)
+  @Convert(converter = SettingValueConverter.class)
   @Getter(onMethod_ = {@Key(PermissionKey.SETTING_VALUE_SETTING_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.SETTING_VALUE_SETTING_WRITE)})
   private Setting setting;

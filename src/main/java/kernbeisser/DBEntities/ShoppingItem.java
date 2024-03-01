@@ -11,10 +11,10 @@ import java.util.function.ToDoubleFunction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.EntityWrapper.ObjectState;
 import kernbeisser.Enums.*;
-import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
 import lombok.*;
 import org.hibernate.envers.AuditReaderFactory;
+import rs.groump.Key;
 import rs.groump.PermissionKey;
 
 @Entity

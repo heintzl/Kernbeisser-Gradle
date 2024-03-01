@@ -4,16 +4,16 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.util.Optional;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
-import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
 import kernbeisser.Forms.ObjectForm.ObjectFormComponents.ObjectFormComponent;
 import kernbeisser.Forms.ObjectForm.Properties.BoundedReadProperty;
 import kernbeisser.Forms.ObjectForm.Properties.BoundedWriteProperty;
 import kernbeisser.Forms.ObjectForm.Properties.PredictableModifiable;
-import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.Utils.Getter;
 import kernbeisser.Security.Utils.Setter;
 import org.jetbrains.annotations.Nullable;
+import rs.groump.Access;
+import rs.groump.AccessDeniedException;
 
 public class AccessCheckingComboBox<P, V> extends AdvancedComboBox<V>
     implements ObjectFormComponent<P>,
@@ -114,13 +114,13 @@ public class AccessCheckingComboBox<P, V> extends AdvancedComboBox<V>
   }
 
   @Override
-  public V get(P p) throws PermissionKeyRequiredException {
+  public V get(P p) throws AccessDeniedException {
     return getter.get(p);
   }
 
   @Override
   public boolean isPropertyModifiable(P parent) {
-    return Access.hasPermission(setter, parent);
+    return Access.getAccessManager().hasAccess(parent, Access.peekPermissions(setter));
   }
 
   @Override
@@ -130,7 +130,7 @@ public class AccessCheckingComboBox<P, V> extends AdvancedComboBox<V>
   }
 
   @Override
-  public void set(P p, V t) throws PermissionKeyRequiredException {
+  public void set(P p, V t) throws AccessDeniedException {
     if (inputChanged) setter.set(p, t);
   }
 

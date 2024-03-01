@@ -12,13 +12,13 @@ import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
-import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Useful.CSV;
 import kernbeisser.Windows.MVC.Controller;
 import lombok.SneakyThrows;
+import rs.groump.AccessDeniedException;
 
 public class DatabaseViewController extends Controller<DatabaseViewView, DatabaseViewModel> {
-  public DatabaseViewController() throws PermissionKeyRequiredException {
+  public DatabaseViewController() throws AccessDeniedException {
     super(new DatabaseViewModel());
   }
 

@@ -11,13 +11,13 @@ import kernbeisser.CustomComponents.ClipboardFilter;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
-import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.ObjectForm.Components.Source;
-import kernbeisser.Security.Key;
 import kernbeisser.Windows.CollectionView.CollectionController;
 import kernbeisser.Windows.CollectionView.CollectionView;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
+import rs.groump.AccessDeniedException;
+import rs.groump.Key;
 import rs.groump.PermissionKey;
 
 public class PermissionAssignmentController
@@ -27,13 +27,13 @@ public class PermissionAssignmentController
   private boolean onlyCashier = false;
 
   @Key(PermissionKey.ACTION_OPEN_PERMISSION_ASSIGNMENT)
-  public PermissionAssignmentController() throws PermissionKeyRequiredException {
+  public PermissionAssignmentController() throws AccessDeniedException {
     super(new PermissionAssignmentModel());
     user = getUserSource();
   }
 
   @Key(PermissionKey.ACTION_GRANT_CASHIER_PERMISSION)
-  private PermissionAssignmentController(boolean dummy) throws PermissionKeyRequiredException {
+  private PermissionAssignmentController(boolean dummy) throws AccessDeniedException {
     super(new PermissionAssignmentModel());
     this.onlyCashier = true;
     user = getUserSource();

@@ -3,11 +3,11 @@ package kernbeisser.DBEntities;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.Instant;
-import kernbeisser.Security.Key;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import rs.groump.Key;
 import rs.groump.PermissionKey;
 
 @Entity

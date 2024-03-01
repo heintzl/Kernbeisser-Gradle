@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.Optional;
 import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Column;
-import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.ObjectForm.ObjectFormComponents.ObjectFormComponent;
 import kernbeisser.Forms.ObjectForm.Properties.BoundedReadProperty;
 import kernbeisser.Forms.ObjectForm.Properties.PredictableModifiable;
@@ -14,6 +13,7 @@ import kernbeisser.Windows.CloseEvent;
 import kernbeisser.Windows.CollectionView.CollectionController;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.ViewContainers.SubWindow;
+import rs.groump.AccessDeniedException;
 
 // is only read because it performs operations on the object but the object stays the same
 public class AccessCheckingCollectionEditor<P, C extends Collection<V>, V> extends JButton
@@ -73,7 +73,7 @@ public class AccessCheckingCollectionEditor<P, C extends Collection<V>, V> exten
   }
 
   @Override
-  public C get(P p) throws PermissionKeyRequiredException {
+  public C get(P p) throws AccessDeniedException {
     return getter.get(p);
   }
 

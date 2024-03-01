@@ -14,12 +14,12 @@ import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Exeptions.CannotLogInException;
 import kernbeisser.Exeptions.MissingFullMemberException;
-import kernbeisser.Security.Key;
 import kernbeisser.Tasks.Users;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
+import rs.groump.Key;
 import rs.groump.PermissionKey;
 
 public class EditUserGroupController extends Controller<EditUserGroupView, EditUserGroupModel> {

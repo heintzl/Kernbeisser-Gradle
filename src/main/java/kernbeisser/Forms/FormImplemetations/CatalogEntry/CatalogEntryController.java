@@ -2,10 +2,10 @@ package kernbeisser.Forms.FormImplemetations.CatalogEntry;
 
 import java.util.function.Supplier;
 import kernbeisser.DBEntities.CatalogEntry;
-import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.FormController;
 import kernbeisser.Forms.ObjectForm.ObjectForm;
 import org.jetbrains.annotations.NotNull;
+import rs.groump.AccessDeniedException;
 
 public class CatalogEntryController
     extends FormController<CatalogEntryView, CatalogEntryModel, CatalogEntry> {
@@ -26,17 +26,17 @@ public class CatalogEntryController
   // currently read only!
   @Override
   public void addPermission() {
-    throw new PermissionKeyRequiredException();
+    throw new AccessDeniedException();
   }
 
   @Override
   public void editPermission() {
-    throw new PermissionKeyRequiredException();
+    throw new AccessDeniedException();
   }
 
   @Override
   public void removePermission() {
-    throw new PermissionKeyRequiredException();
+    throw new AccessDeniedException();
   }
 
   @Override

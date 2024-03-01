@@ -7,12 +7,12 @@ import javax.swing.*;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Theme;
 import kernbeisser.Enums.UserSetting;
-import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Useful.UiTools;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.TabbedPane.TabbedPaneModel;
 import org.jetbrains.annotations.NotNull;
+import rs.groump.Key;
 import rs.groump.PermissionKey;
 
 public class EditUserSettingController extends Controller<EditUserSettingView, EditUserSettingModel>

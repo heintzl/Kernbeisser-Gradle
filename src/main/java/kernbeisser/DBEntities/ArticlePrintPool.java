@@ -5,10 +5,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.Security.Key;
 import kernbeisser.Security.StaticPermissionChecks;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
+import rs.groump.Key;
 import rs.groump.PermissionKey;
 
 @Entity

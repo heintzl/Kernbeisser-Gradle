@@ -8,15 +8,14 @@ import kernbeisser.CustomComponents.ClipboardFilter;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
-import kernbeisser.Security.Access.Access;
-import kernbeisser.Security.Access.AccessManager;
-import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
 import lombok.Setter;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.util.Supplier;
+import rs.groump.Access;
+import rs.groump.AccessManager;
+import rs.groump.Key;
 import rs.groump.PermissionKey;
 
 public class PermissionAssignmentModel implements IModel<PermissionAssignmentController> {
@@ -83,21 +82,17 @@ public class PermissionAssignmentModel implements IModel<PermissionAssignmentCon
         loaded.stream().map(e -> em.find(User.class, e.getId())).collect(Collectors.toList());
     boolean skipUserAccessChecking =
         ignoreUserPermission && Tools.canInvoke(this::checkGrantCashierPermission);
-    if (skipUserAccessChecking) {
-      for (Object u : CollectionUtils.union(willGet, hadBefore)) {
-        Access.putException(u, AccessManager.NO_ACCESS_CHECKING);
-      }
-    }
-    if (!(hadBefore.isEmpty() && willGet.isEmpty()) && confirm.get()) {
-      hadBefore.stream().peek(e -> e.getPermissions().remove(permission)).forEach(em::persist);
-      willGet.stream().peek(e -> e.getPermissions().add(permission)).forEach(em::persist);
-    }
-    em.flush();
-    if (skipUserAccessChecking) {
-      for (Object u : CollectionUtils.union(willGet, hadBefore)) {
-        Access.removeException(u);
-      }
-    }
+    Access.runWithAccessManager(
+        skipUserAccessChecking ? AccessManager.ACCESS_GRANTED : Access.getAccessManager(),
+        () -> {
+          if (!(hadBefore.isEmpty() && willGet.isEmpty()) && confirm.get()) {
+            hadBefore.stream()
+                .peek(e -> e.getPermissions().remove(permission))
+                .forEach(em::persist);
+            willGet.stream().peek(e -> e.getPermissions().add(permission)).forEach(em::persist);
+          }
+          em.flush();
+        });
   }
 
   private Collection<User> getUserRowFilter(String[] rows) {

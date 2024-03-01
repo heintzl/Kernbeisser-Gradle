@@ -17,8 +17,6 @@ import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.InvalidValue;
-import kernbeisser.Exeptions.PermissionKeyRequiredException;
-import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
@@ -26,6 +24,8 @@ import kernbeisser.Windows.PreOrder.CatalogSelector.CatalogSelectorController;
 import kernbeisser.Windows.ViewContainers.SubWindow;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
+import rs.groump.AccessDeniedException;
+import rs.groump.Key;
 import rs.groump.PermissionKey;
 
 public class PreOrderController extends Controller<PreOrderView, PreOrderModel> {
@@ -246,7 +246,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     try {
       checkUserOrderContainerPermission();
       return true;
-    } catch (PermissionKeyRequiredException e) {
+    } catch (AccessDeniedException e) {
       if (restrictToLoggedIn) {
         return Tools.canInvoke(this::checkOrderOwnContainerPermission);
       }

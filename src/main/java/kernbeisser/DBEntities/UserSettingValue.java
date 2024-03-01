@@ -5,14 +5,14 @@ import java.util.Collection;
 import java.util.HashMap;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.UserSetting;
-import kernbeisser.Security.Key;
-import kernbeisser.Security.Relations.UserRelated;
+import kernbeisser.Security.Access.UserRelated;
 import kernbeisser.Useful.Tools;
 import lombok.Cleanup;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
+import rs.groump.Key;
 import rs.groump.PermissionKey;
 
 @Entity

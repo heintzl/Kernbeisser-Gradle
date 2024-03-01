@@ -5,10 +5,10 @@ import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Main;
-import kernbeisser.Security.Key;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
 import org.jetbrains.annotations.NotNull;
+import rs.groump.Key;
 import rs.groump.PermissionKey;
 
 public class SettingController extends Controller<SettingView, SettingModel> {

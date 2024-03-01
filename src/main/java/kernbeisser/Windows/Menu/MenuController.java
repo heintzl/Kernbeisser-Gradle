@@ -7,9 +7,7 @@ import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.TransactionType;
 import kernbeisser.Forms.FormEditor.FormEditorController;
 import kernbeisser.Forms.FormImplemetations.User.UserController;
-import kernbeisser.Security.Access.Access;
-import kernbeisser.Security.Access.AccessManager;
-import kernbeisser.Security.Key;
+import kernbeisser.Security.Access.UserRelatedAccessManager;
 import kernbeisser.StartUp.LogIn.DBLogInController;
 import kernbeisser.Useful.UiTools;
 import kernbeisser.Windows.DatabaseView.DatabaseViewController;
@@ -21,6 +19,9 @@ import kernbeisser.Windows.TabbedPane.TabbedPaneModel;
 import kernbeisser.Windows.Transaction.TransactionController;
 import kernbeisser.Windows.UserInfo.UserInfoController;
 import org.jetbrains.annotations.NotNull;
+import rs.groump.Access;
+import rs.groump.AccessManager;
+import rs.groump.Key;
 import rs.groump.PermissionKey;
 
 public class MenuController extends Controller<MenuView, MenuModel> {
@@ -108,7 +109,8 @@ public class MenuController extends Controller<MenuView, MenuModel> {
   @Key(PermissionKey.ACTION_ADD_TRIAL_MEMBER)
   public FormEditorController<User> generateAddBeginnerForm() {
     User beginnerUser = new User();
-    Access.putException(beginnerUser, AccessManager.NO_ACCESS_CHECKING);
+    ((UserRelatedAccessManager) Access.getAccessManager())
+        .registerException(beginnerUser, AccessManager.ACCESS_GRANTED);
     return FormEditorController.create(
         beginnerUser, UserController.getBeginnerUserController(), Mode.ADD);
   }

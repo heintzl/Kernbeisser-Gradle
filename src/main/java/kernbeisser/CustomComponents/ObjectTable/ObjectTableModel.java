@@ -4,10 +4,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
 import javax.swing.table.AbstractTableModel;
-import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import lombok.Getter;
 import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
+import rs.groump.AccessDeniedException;
 
 public class ObjectTableModel<T> extends AbstractTableModel {
 
@@ -37,7 +37,7 @@ public class ObjectTableModel<T> extends AbstractTableModel {
     T parent = objects.get(rowIndex);
     try {
       return new Property<>(parent, columns.get(columnIndex).getValue(parent));
-    } catch (PermissionKeyRequiredException e) {
+    } catch (AccessDeniedException e) {
       return new Property<>(parent, NO_ACCESS_VALUE);
     }
   }

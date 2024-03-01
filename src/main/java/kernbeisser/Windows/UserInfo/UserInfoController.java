@@ -3,7 +3,6 @@ package kernbeisser.Windows.UserInfo;
 import static kernbeisser.Useful.Tools.optional;
 
 import java.util.Arrays;
-import javax.swing.*;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Mode;
@@ -12,13 +11,13 @@ import kernbeisser.Exeptions.NoSelectionException;
 import kernbeisser.Forms.FormEditor.FormEditorController;
 import kernbeisser.Forms.FormImplemetations.User.UserController;
 import kernbeisser.Reports.TransactionStatement;
-import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.Purchase.PurchaseController;
 import kernbeisser.Windows.ViewContainers.SubWindow;
 import org.jetbrains.annotations.NotNull;
+import rs.groump.Key;
 import rs.groump.PermissionKey;
 
 public class UserInfoController extends Controller<UserInfoView, UserInfoModel> {

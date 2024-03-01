@@ -17,7 +17,6 @@ import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.Setting;
-import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.FormEditor.FormEditorController;
 import kernbeisser.Forms.FormImplemetations.Article.ArticleController;
 import kernbeisser.Reports.ProducePriceList;
@@ -29,6 +28,7 @@ import kernbeisser.Windows.Supply.SupplyController;
 import kernbeisser.Windows.ViewContainers.SubWindow;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
+import rs.groump.AccessDeniedException;
 
 public class SupplySelectorController extends Controller<SupplySelectorView, SupplySelectorModel> {
 
@@ -37,7 +37,7 @@ public class SupplySelectorController extends Controller<SupplySelectorView, Sup
   private final BarcodeCapture capture;
 
   public SupplySelectorController(BiConsumer<Supply, Collection<ShoppingItem>> consumer)
-      throws PermissionKeyRequiredException {
+      throws AccessDeniedException {
     super(new SupplySelectorModel(consumer));
     this.capture = new BarcodeCapture(this::processBarcode);
   }

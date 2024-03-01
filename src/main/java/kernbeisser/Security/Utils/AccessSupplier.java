@@ -1,8 +1,8 @@
 package kernbeisser.Security.Utils;
 
 import java.io.Serializable;
-import kernbeisser.Exeptions.PermissionKeyRequiredException;
+import rs.groump.AccessDeniedException;
 
 public interface AccessSupplier<T> extends Serializable {
-  T get() throws PermissionKeyRequiredException;
+  T get() throws AccessDeniedException;
 }

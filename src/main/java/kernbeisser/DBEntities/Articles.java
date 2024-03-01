@@ -13,8 +13,6 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.FieldCondition;
 import kernbeisser.EntityWrapper.ObjectState;
 import kernbeisser.Enums.*;
-import kernbeisser.Security.Access.Access;
-import kernbeisser.Security.Access.AccessManager;
 import kernbeisser.Tasks.ArticleComparedToCatalogEntry;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.EditArticles.EditArticlesModel;
@@ -26,6 +24,8 @@ import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.DefaultRevisionEntity;
 import org.hibernate.envers.query.AuditEntity;
 import org.hibernate.envers.query.AuditQuery;
+import rs.groump.Access;
+import rs.groump.AccessManager;
 
 public class Articles {
 
@@ -195,8 +195,8 @@ public class Articles {
       article.setVat(vat);
       article.setSupplier(supplier.get());
       article.setSuppliersItemNumber(identifierEnum.getUniqueIdentifier());
-      Access.runWithAccessManager(
-          AccessManager.NO_ACCESS_CHECKING,
+      rs.groump.Access.runWithAccessManager(
+          AccessManager.ACCESS_GRANTED,
           () -> article.setSurchargeGroup(supplier.get().getOrPersistDefaultSurchargeGroup(em)));
       article.setShopRange(ShopRange.NOT_IN_RANGE);
       em.persist(article);
@@ -222,9 +222,10 @@ public class Articles {
         .setParameter("n", Tools.tryParseInt(search))
         .setParameter(
             "bl",
-            Tools.tryParseInt(search) > 0
-                ? Math.pow(10, Math.ceil(Math.log10(Tools.tryParseInt(search))))
-                : 1)
+            (int)
+                (Tools.tryParseInt(search) > 0
+                    ? Math.pow(10, Math.ceil(Math.log10(Tools.tryParseInt(search))))
+                    : 1))
         .setParameter("l", Tools.tryParseLong(search))
         .setParameter("ds", (search.length() > 3 ? "%" + search + "%" : search + "%").toUpperCase())
         .setParameter("u", search.toUpperCase() + "%");
@@ -292,7 +293,7 @@ public class Articles {
     et.begin();
     Map<Integer, Instant> result = new HashMap<>();
     em.createQuery(
-            "select kbNumber, max(createDate) from ShoppingItem i where purchase_id is null group by i.kbNumber order by kbNumber",
+            "select kbNumber, max(createDate) from ShoppingItem i where i.purchase is null group by i.kbNumber order by kbNumber",
             Tuple.class)
         .getResultStream()
         .forEach(t -> result.put(t.get(0, Integer.class), t.get(1, Instant.class)));
@@ -418,18 +419,20 @@ public class Articles {
                 em.createQuery("select a from Article a where a.kbNumber =:kb", Article.class)
                     .setParameter("kb", ArticleConstants.CUSTOM_PRODUCT.getUniqueIdentifier()))
             .orElseGet(
-                () -> {
-                  Article out = new Article();
-                  Access.putException(out, AccessManager.NO_ACCESS_CHECKING);
-                  out.setKbNumber(ArticleConstants.CUSTOM_PRODUCT.getUniqueIdentifier());
-                  out.setSupplier(Supplier.getCustomProductSupplier());
-                  out.setSurchargeGroup(out.getSupplier().getOrPersistDefaultSurchargeGroup());
-                  out.setSuppliersItemNumber(ArticleConstants.CUSTOM_PRODUCT.getUniqueIdentifier());
-                  Access.removeException(out);
-                  return out;
-                });
-    Access.runWithAccessManager(
-        AccessManager.NO_ACCESS_CHECKING, () -> transformer.accept(article));
+                () ->
+                    Access.runWithAccessManager(
+                        AccessManager.ACCESS_GRANTED,
+                        () -> {
+                          Article out = new Article();
+                          out.setKbNumber(ArticleConstants.CUSTOM_PRODUCT.getUniqueIdentifier());
+                          out.setSupplier(Supplier.getCustomProductSupplier());
+                          out.setSurchargeGroup(
+                              out.getSupplier().getOrPersistDefaultSurchargeGroup());
+                          out.setSuppliersItemNumber(
+                              ArticleConstants.CUSTOM_PRODUCT.getUniqueIdentifier());
+                          return out;
+                        }));
+    Access.runWithAccessManager(AccessManager.ACCESS_GRANTED, () -> transformer.accept(article));
     em.persist(article);
     return article;
   }

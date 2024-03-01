@@ -9,11 +9,11 @@ import kernbeisser.CustomComponents.ObjectTree.CachedNode;
 import kernbeisser.CustomComponents.ObjectTree.Node;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.Setting;
-import kernbeisser.Security.Key;
 import kernbeisser.Useful.ActuallyCloneable;
 import kernbeisser.Useful.Tools;
 import lombok.*;
 import org.hibernate.envers.Audited;
+import rs.groump.Key;
 import rs.groump.PermissionKey;
 
 @Table

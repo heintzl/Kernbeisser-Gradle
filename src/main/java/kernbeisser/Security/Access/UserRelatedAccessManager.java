@@ -2,36 +2,51 @@ package kernbeisser.Security.Access;
 
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionConstants;
-import kernbeisser.Security.PermissionSet;
-import kernbeisser.Security.Relations.UserRelated;
+import kernbeisser.Useful.WeakReferenceMap;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
+import rs.groump.AccessManager;
+import rs.groump.PermissionSet;
 
-public class UserRelatedAccessManager extends PermissionSetAccessManager {
+public class UserRelatedAccessManager implements AccessManager {
 
   @Setter private User targetUser;
 
   private final PermissionSet inRelation;
 
-  public static PermissionSet ofUser(User user) {
-    PermissionSet ps = new PermissionSet();
-    ps.loadPermission(user.getPermissions());
-    return ps;
-  }
+  private final WeakReferenceMap<Object, AccessManager> exceptions = new WeakReferenceMap<>();
+
+  private final PermissionSet userPermissions;
 
   public UserRelatedAccessManager(@NotNull User targetUser) {
-    super(ofUser(targetUser));
     this.targetUser = targetUser;
-    inRelation =
-        PermissionSet.ofPermission(PermissionConstants.IN_RELATION_TO_OWN_USER.getPermission());
+    userPermissions = targetUser.getPermissionSet();
+    inRelation = PermissionConstants.IN_RELATION_TO_OWN_USER.getPermission().toPermissionSet();
   }
 
   @Override
-  public boolean hasAccess(Object object, String methodName, String signature, PermissionSet keys) {
-    return super.hasAccess(object, methodName, signature, keys)
-        || (object instanceof UserRelated
-            && targetUser != null
-            && ((UserRelated) object).isInRelation(targetUser)
-            && inRelation.contains(keys));
+  public boolean hasAccess(Object object, PermissionSet keys) {
+    return userPermissions.contains(keys)
+        || checkUserRelatedPermission(object, keys)
+        || checkException(object, keys);
+  }
+
+  private boolean checkUserRelatedPermission(Object object, PermissionSet keys) {
+    return object instanceof UserRelated
+        && ((UserRelated) object).isInRelation(targetUser)
+        && inRelation.contains(keys);
+  }
+
+  private boolean checkException(Object object, PermissionSet keys) {
+    AccessManager exceptionAccessManager = exceptions.get(object);
+    return exceptionAccessManager != null && exceptionAccessManager.hasAccess(object, keys);
+  }
+
+  public void registerException(Object o, AccessManager accessManager) {
+    exceptions.put(o, accessManager);
+  }
+
+  public void removeException(Object o) {
+    exceptions.remove(o);
   }
 }

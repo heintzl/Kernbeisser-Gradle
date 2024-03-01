@@ -9,20 +9,18 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.*;
 import java.util.stream.Collectors;
 import javax.swing.JOptionPane;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.Setting;
-import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.CloseEvent;
 import kernbeisser.Windows.TabbedPane.TabbedPaneModel;
 import kernbeisser.Windows.ViewContainer;
 import lombok.Getter;
 import org.objenesis.ObjenesisStd;
+import rs.groump.AccessDeniedException;
 
 public abstract class Controller<
     V extends IView<? extends Controller<? extends V, ? extends M>>,
@@ -39,7 +37,7 @@ public abstract class Controller<
 
   @Getter protected final M model;
 
-  public Controller(M model) throws PermissionKeyRequiredException {
+  public Controller(M model) throws AccessDeniedException {
     this.model = model;
   }
 
@@ -149,8 +147,7 @@ public abstract class Controller<
     try {
       return (Controller<?, ?>) field.get(this);
     } catch (IllegalAccessException e) {
-      Tools.showUnexpectedErrorWarning(e);
-      throw new RuntimeException(e);
+      throw Tools.showUnexpectedErrorWarning(e);
     }
   }
 
@@ -173,7 +170,7 @@ public abstract class Controller<
             declaredField.set(view, controller);
             continue;
           } catch (IllegalAccessException e) {
-            Tools.showUnexpectedErrorWarning(e);
+            throw Tools.showUnexpectedErrorWarning(e);
           }
         }
         for (Field field : fields) {
@@ -181,7 +178,7 @@ public abstract class Controller<
             try {
               declaredField.set(view, field.get(controller));
             } catch (IllegalAccessException e) {
-              Tools.showUnexpectedErrorWarning(e);
+              throw Tools.showUnexpectedErrorWarning(e);
             }
           }
         }
@@ -194,10 +191,8 @@ public abstract class Controller<
       Method initMethod = view.getClass().getDeclaredMethod("initialize", Controller.class);
       initMethod.setAccessible(true);
       initMethod.invoke(view, controller);
-    } catch (NoSuchMethodException | IllegalAccessException e) {
-      Tools.showUnexpectedErrorWarning(e);
-    } catch (InvocationTargetException e) {
-      e.getCause().printStackTrace();
+    } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+      throw Tools.showUnexpectedErrorWarning(e);
     }
   }
 
@@ -207,11 +202,8 @@ public abstract class Controller<
       setUpUiComponents.setAccessible(true);
       setUpUiComponents.invoke(view);
     } catch (NoSuchMethodException ignored) {
-    } catch (IllegalAccessException e) {
-      e.printStackTrace();
-      Tools.showUnexpectedErrorWarning(e);
-    } catch (InvocationTargetException e) {
-      e.getCause().printStackTrace();
+    } catch (IllegalAccessException | InvocationTargetException e) {
+      throw Tools.showUnexpectedErrorWarning(e);
     }
   }
 

@@ -3,9 +3,10 @@ package kernbeisser.Security.Access;
 import static org.junit.jupiter.api.Assertions.*;
 
 import kernbeisser.DBEntities.Article;
-import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import rs.groump.AccessDeniedException;
+import rs.groump.AccessManager;
 
 class AccessTest {
 
@@ -17,7 +18,7 @@ class AccessTest {
   @Test
   void accessDeniedTest() {
     assertThrows(
-        PermissionKeyRequiredException.class,
+        AccessDeniedException.class,
         () ->
             Access.runWithAccessManager(
                 AccessManager.ACCESS_DENIED, () -> new Article().getName()));

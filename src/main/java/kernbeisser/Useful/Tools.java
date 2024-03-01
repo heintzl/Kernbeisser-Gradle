@@ -25,7 +25,6 @@ import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.SurchargeGroup;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.UserSetting;
-import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Main;
 import kernbeisser.Security.SecuredOptional;
 import kernbeisser.Security.Utils.*;
@@ -35,8 +34,8 @@ import kernbeisser.Windows.ViewContainers.SubWindow;
 import lombok.Cleanup;
 import org.hibernate.envers.AuditReader;
 import org.hibernate.envers.AuditReaderFactory;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import rs.groump.AccessDeniedException;
 
 public class Tools {
   public static <A extends Annotation> Collection<Field> getWithAnnotation(
@@ -173,9 +172,9 @@ public class Tools {
   public static <T> void edit(Object key, T to) {
     runInSession(
         em -> {
-          Object db = em.find(to.getClass(), key);
-          Tools.copyInto(to, db);
-          em.persist(db);
+          em.detach(to);
+          setId(to, key);
+          em.merge(to);
         });
   }
 
@@ -416,28 +415,6 @@ public class Tools {
     }
   }
 
-  public static void copyInto(@NotNull Object source, @NotNull Object destination) {
-    Class<?> clazz = source.getClass();
-    while (!clazz.equals(Object.class)) {
-      for (Field field : clazz.getDeclaredFields()) {
-        if (Modifier.isStatic(field.getModifiers())) {
-          continue;
-        }
-        if (Modifier.isFinal(field.getModifiers())) {
-          throw new UnsupportedOperationException(
-              "cannot copy into field " + field.getName() + " it is final");
-        }
-        field.setAccessible(true);
-        try {
-          field.set(destination, field.get(source));
-        } catch (IllegalAccessException e) {
-          e.printStackTrace();
-        }
-      }
-      clazz = clazz.getSuperclass();
-    }
-  }
-
   public static StackTraceElement getCallerStackTraceElement(int above) {
     return Thread.currentThread().getStackTrace()[2 + above];
   }
@@ -670,7 +647,7 @@ public class Tools {
   public static <T> SecuredOptional<T> optional(AccessSupplier<T> supplier) {
     try {
       return SecuredOptional.ofNullable(supplier.get());
-    } catch (PermissionKeyRequiredException e) {
+    } catch (AccessDeniedException e) {
       return SecuredOptional.empty();
     }
   }
@@ -687,7 +664,7 @@ public class Tools {
     try {
       runnable.run();
       return true;
-    } catch (PermissionKeyRequiredException e) {
+    } catch (AccessDeniedException e) {
       return false;
     }
   }

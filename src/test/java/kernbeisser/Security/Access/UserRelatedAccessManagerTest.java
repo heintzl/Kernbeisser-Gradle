@@ -8,8 +8,9 @@ import java.util.HashSet;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserSettingValue;
-import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import org.junit.jupiter.api.Test;
+import rs.groump.AccessDeniedException;
+import rs.groump.AccessManager;
 
 class UserRelatedAccessManagerTest {
 
@@ -26,7 +27,7 @@ class UserRelatedAccessManagerTest {
               accessManager,
               () -> {
                 assertDoesNotThrow(() -> new UserSettingValue(mocked).getValue());
-                assertThrows(PermissionKeyRequiredException.class, () -> new Article().getName());
+                assertThrows(AccessDeniedException.class, () -> new Article().getName());
               });
         });
   }

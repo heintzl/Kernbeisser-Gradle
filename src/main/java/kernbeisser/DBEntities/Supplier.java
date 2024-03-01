@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.List;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.Setting;
-import kernbeisser.Security.Key;
 import kernbeisser.Useful.ActuallyCloneable;
 import kernbeisser.Useful.Tools;
 import lombok.Cleanup;
@@ -17,6 +16,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.envers.Audited;
+import rs.groump.Key;
 import rs.groump.PermissionKey;
 
 @Entity

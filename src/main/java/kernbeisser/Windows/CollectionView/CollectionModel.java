@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.Forms.ObjectForm.Components.Source;
-import kernbeisser.Security.Access.Access;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Getter;
 import lombok.Setter;
+import rs.groump.Access;
 
 public class CollectionModel<T> implements IModel<CollectionController<T>> {
 

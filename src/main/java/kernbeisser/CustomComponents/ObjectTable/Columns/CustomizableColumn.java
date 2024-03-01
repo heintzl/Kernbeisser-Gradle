@@ -16,11 +16,11 @@ import kernbeisser.CustomComponents.ObjectTable.Adjustors.TableCellAdjustor;
 import kernbeisser.CustomComponents.ObjectTable.Adjustors.TableColumnAdjustor;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Renderer.AdjustableTableCellRenderer;
-import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Security.Utils.Getter;
 import kernbeisser.Useful.Tools;
 import org.intellij.lang.annotations.MagicConstant;
 import org.jetbrains.annotations.NotNull;
+import rs.groump.AccessDeniedException;
 
 public class CustomizableColumn<T> extends DefaultColumn<T> {
 
@@ -95,7 +95,7 @@ public class CustomizableColumn<T> extends DefaultColumn<T> {
   }
 
   @Override
-  public Object getValue(T t) throws PermissionKeyRequiredException {
+  public Object getValue(T t) throws AccessDeniedException {
     return propertyFactory.get(t);
   }
 

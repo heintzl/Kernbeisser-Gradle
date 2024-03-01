@@ -17,8 +17,7 @@ import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.InvalidValue;
 import kernbeisser.Exeptions.MissingFullMemberException;
-import kernbeisser.Security.Key;
-import kernbeisser.Security.Relations.UserRelated;
+import kernbeisser.Security.Access.UserRelated;
 import kernbeisser.Useful.ActuallyCloneable;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
@@ -26,7 +25,9 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.jetbrains.annotations.NotNull;
+import rs.groump.Key;
 import rs.groump.PermissionKey;
+import rs.groump.PermissionSet;
 
 @Entity
 @Table(
@@ -40,13 +41,12 @@ public class User implements Serializable, UserRelated, ActuallyCloneable {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   @Column(updatable = false, insertable = false, nullable = false)
-  @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_ID_WRITE)})
-  @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_ID_READ)})
+  @Setter(onMethod_ = {@rs.groump.Key(PermissionKey.USER_ID_WRITE)})
+  @Getter(onMethod_ = {@rs.groump.Key(PermissionKey.USER_ID_READ)})
   private int id;
 
-  @JoinColumn
   @ManyToMany(fetch = FetchType.EAGER)
-  @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_PERMISSIONS_WRITE)})
+  @Setter(onMethod_ = {@rs.groump.Key(PermissionKey.USER_PERMISSIONS_WRITE)})
   @Getter(
       onMethod_ = {
         @Key({PermissionKey.USER_PERMISSIONS_READ, PermissionKey.USER_PERMISSIONS_WRITE})
@@ -54,120 +54,119 @@ public class User implements Serializable, UserRelated, ActuallyCloneable {
   private Set<Permission> permissions = new HashSet<>();
 
   @Column
-  @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_SHARES_WRITE)})
-  @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_SHARES_READ)})
+  @Setter(onMethod_ = {@rs.groump.Key(PermissionKey.USER_SHARES_WRITE)})
+  @Getter(onMethod_ = {@rs.groump.Key(PermissionKey.USER_SHARES_READ)})
   private int shares;
 
-  @JoinColumn
   @ManyToMany(fetch = FetchType.EAGER)
   @Getter(onMethod_ = {@Key({PermissionKey.USER_JOBS_READ, PermissionKey.USER_JOBS_WRITE})})
   @Setter(onMethod_ = {@Key({PermissionKey.USER_JOBS_WRITE})})
   private Set<Job> jobs = new HashSet<>();
 
   @Column
-  @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_KERNBEISSER_KEY_WRITE)})
-  @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_KERNBEISSER_KEY_READ)})
+  @Setter(onMethod_ = {@rs.groump.Key(PermissionKey.USER_KERNBEISSER_KEY_WRITE)})
+  @Getter(onMethod_ = {@rs.groump.Key(PermissionKey.USER_KERNBEISSER_KEY_READ)})
   private int kernbeisserKey;
 
   @Column
-  @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_EMPLOYEE_WRITE)})
-  @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_EMPLOYEE_READ)})
+  @Setter(onMethod_ = {@rs.groump.Key(PermissionKey.USER_EMPLOYEE_WRITE)})
+  @Getter(onMethod_ = {@rs.groump.Key(PermissionKey.USER_EMPLOYEE_READ)})
   private boolean employee;
 
   @Column(unique = true, nullable = false)
-  @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_USERNAME_WRITE)})
-  @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_USERNAME_READ)})
+  @Setter(onMethod_ = {@rs.groump.Key(PermissionKey.USER_USERNAME_WRITE)})
+  @Getter(onMethod_ = {@rs.groump.Key(PermissionKey.USER_USERNAME_READ)})
   private String username;
 
   @Column(nullable = false)
-  @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_PASSWORD_READ)})
+  @Getter(onMethod_ = {@rs.groump.Key(PermissionKey.USER_PASSWORD_READ)})
   private String password;
 
   @Column
-  @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_FIRST_NAME_WRITE)})
-  @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_FIRST_NAME_READ)})
+  @Setter(onMethod_ = {@rs.groump.Key(PermissionKey.USER_FIRST_NAME_WRITE)})
+  @Getter(onMethod_ = {@rs.groump.Key(PermissionKey.USER_FIRST_NAME_READ)})
   private String firstName;
 
   @Column
-  @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_SURNAME_WRITE)})
-  @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_SURNAME_READ)})
+  @Setter(onMethod_ = {@rs.groump.Key(PermissionKey.USER_SURNAME_WRITE)})
+  @Getter(onMethod_ = {@rs.groump.Key(PermissionKey.USER_SURNAME_READ)})
   private String surname;
 
   @Column
-  @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_PHONE_NUMBER1_WRITE)})
-  @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_PHONE_NUMBER1_READ)})
+  @Setter(onMethod_ = {@rs.groump.Key(PermissionKey.USER_PHONE_NUMBER1_WRITE)})
+  @Getter(onMethod_ = {@rs.groump.Key(PermissionKey.USER_PHONE_NUMBER1_READ)})
   private String phoneNumber1;
 
   @Column
-  @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_PHONE_NUMBER2_WRITE)})
-  @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_PHONE_NUMBER2_READ)})
+  @Setter(onMethod_ = {@rs.groump.Key(PermissionKey.USER_PHONE_NUMBER2_WRITE)})
+  @Getter(onMethod_ = {@rs.groump.Key(PermissionKey.USER_PHONE_NUMBER2_READ)})
   private String phoneNumber2;
 
   @Column
-  @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_STREET_WRITE)})
-  @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_STREET_READ)})
+  @Setter(onMethod_ = {@rs.groump.Key(PermissionKey.USER_STREET_WRITE)})
+  @Getter(onMethod_ = {@rs.groump.Key(PermissionKey.USER_STREET_READ)})
   private String street;
 
   @Column
-  @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_TOWN_WRITE)})
-  @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_TOWN_READ)})
+  @Setter(onMethod_ = {@rs.groump.Key(PermissionKey.USER_TOWN_WRITE)})
+  @Getter(onMethod_ = {@rs.groump.Key(PermissionKey.USER_TOWN_READ)})
   private String town;
 
   @Column
-  @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_TOWN_CODE_WRITE)})
-  @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_TOWN_CODE_READ)})
+  @Setter(onMethod_ = {@rs.groump.Key(PermissionKey.USER_TOWN_CODE_WRITE)})
+  @Getter(onMethod_ = {@rs.groump.Key(PermissionKey.USER_TOWN_CODE_READ)})
   private String townCode;
 
   @Column
-  @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_EMAIL_WRITE)})
-  @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_EMAIL_READ)})
+  @Setter(onMethod_ = {@rs.groump.Key(PermissionKey.USER_EMAIL_WRITE)})
+  @Getter(onMethod_ = {@rs.groump.Key(PermissionKey.USER_EMAIL_READ)})
   private String email;
 
   @CreationTimestamp
-  @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_CREATE_DATE_WRITE)})
-  @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_CREATE_DATE_READ)})
+  @Setter(onMethod_ = {@rs.groump.Key(PermissionKey.USER_CREATE_DATE_WRITE)})
+  @Getter(onMethod_ = {@rs.groump.Key(PermissionKey.USER_CREATE_DATE_READ)})
   private Instant createDate;
 
   @UpdateTimestamp
-  @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_UPDATE_DATE_WRITE)})
-  @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_UPDATE_DATE_READ)})
+  @Setter(onMethod_ = {@rs.groump.Key(PermissionKey.USER_UPDATE_DATE_WRITE)})
+  @Getter(onMethod_ = {@rs.groump.Key(PermissionKey.USER_UPDATE_DATE_READ)})
   private Instant updateDate;
 
   @ManyToOne
   @EqualsAndHashCode.Exclude
   @JoinColumn(nullable = true)
-  @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_UPDATE_BY_WRITE)})
-  @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_UPDATE_BY_READ)})
+  @Setter(onMethod_ = {@rs.groump.Key(PermissionKey.USER_UPDATE_BY_WRITE)})
+  @Getter(onMethod_ = {@rs.groump.Key(PermissionKey.USER_UPDATE_BY_READ)})
   private User updateBy;
 
   @ManyToOne
   @JoinColumn(nullable = false)
-  @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_USER_GROUP_READ)})
+  @Getter(onMethod_ = {@rs.groump.Key(PermissionKey.USER_USER_GROUP_READ)})
   private UserGroup userGroup;
 
   @Column
-  @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_UNREADABLE_WRITE)})
-  @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_UNREADABLE_READ)})
+  @Setter(onMethod_ = {@rs.groump.Key(PermissionKey.USER_UNREADABLE_WRITE)})
+  @Getter(onMethod_ = {@rs.groump.Key(PermissionKey.USER_UNREADABLE_READ)})
   private boolean unreadable = false;
 
   @Column
-  @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_LAST_PASSWORD_CHANGE_WRITE)})
-  @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_LAST_PASSWORD_CHANGE_READ)})
+  @Setter(onMethod_ = {@rs.groump.Key(PermissionKey.USER_LAST_PASSWORD_CHANGE_WRITE)})
+  @Getter(onMethod_ = {@rs.groump.Key(PermissionKey.USER_LAST_PASSWORD_CHANGE_READ)})
   private Instant lastPasswordChange;
 
   @Column
-  @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_FORCE_PASSWORD_CHANGE_WRITE)})
-  @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_FORCE_PASSWORD_CHANGE_READ)})
+  @Setter(onMethod_ = {@rs.groump.Key(PermissionKey.USER_FORCE_PASSWORD_CHANGE_WRITE)})
+  @Getter(onMethod_ = {@rs.groump.Key(PermissionKey.USER_FORCE_PASSWORD_CHANGE_READ)})
   private boolean forcePasswordChange = false;
 
   @Column
-  @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_ID_READ)})
-  @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_ID_READ)})
+  @Getter(onMethod_ = {@rs.groump.Key(PermissionKey.USER_ID_READ)})
+  @Setter(onMethod_ = {@rs.groump.Key(PermissionKey.USER_ID_READ)})
   private boolean active = true;
 
   @Column
-  @Getter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_ID_READ)})
-  @Setter(onMethod_ = {@kernbeisser.Security.Key(PermissionKey.USER_ID_READ)})
+  @Getter(onMethod_ = {@rs.groump.Key(PermissionKey.USER_ID_READ)})
+  @Setter(onMethod_ = {@rs.groump.Key(PermissionKey.USER_ID_READ)})
   private boolean testOnly = false;
 
   // primary only required during data import
@@ -348,7 +347,7 @@ public class User implements Serializable, UserRelated, ActuallyCloneable {
     return em.find(User.class, parseInt);
   }
 
-  @kernbeisser.Security.Key(PermissionKey.USER_PASSWORD_WRITE)
+  @rs.groump.Key(PermissionKey.USER_PASSWORD_WRITE)
   public void setPassword(String password) {
     if (!password.equals(this.password)) {
       this.password = password;
@@ -547,10 +546,10 @@ public class User implements Serializable, UserRelated, ActuallyCloneable {
     et.begin();
     List<User> result =
         em.createQuery(
-                "select u from User u where  u.unreadable = false and not "
+                "select u from User u where u.unreadable = false and not "
                     + GENERIC_USERS_CONDITION
                     + " order by "
-                    + (orderSurname ? "surName, firstname" : "firstname, surName")
+                    + (orderSurname ? "surname, firstName" : "firstName, surname")
                     + " asc",
                 User.class)
             .getResultList();
@@ -599,6 +598,14 @@ public class User implements Serializable, UserRelated, ActuallyCloneable {
 
   public boolean verifyPassword(char[] password) {
     return BCrypt.verifyer().verify(password, this.password.toCharArray()).verified;
+  }
+
+  public PermissionSet getPermissionSet() {
+    PermissionSet permissionKeys = new PermissionSet();
+    for (Permission permission : permissions) {
+      permissionKeys.addAll(permission.getKeySet());
+    }
+    return permissionKeys;
   }
 
   @Override

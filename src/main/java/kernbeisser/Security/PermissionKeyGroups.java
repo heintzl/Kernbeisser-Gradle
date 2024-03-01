@@ -9,7 +9,7 @@ import lombok.Getter;
 import rs.groump.PermissionKey;
 
 @Getter
-public enum PermissionKeyOrdering {
+public enum PermissionKeyGroups {
   ACTIONS(
       GO_UNDER_MIN,
       ACTION_OPEN_PERMISSION_ASSIGNMENT,
@@ -419,12 +419,12 @@ public enum PermissionKeyOrdering {
 
   private final PermissionKey[] keys;
 
-  PermissionKeyOrdering(PermissionKey... keys) {
+  PermissionKeyGroups(PermissionKey... keys) {
     this.keys = keys;
   }
 
-  public static Optional<PermissionKeyOrdering> getGroup(PermissionKey targetPermissionKey) {
-    for (PermissionKeyOrdering group : values()) {
+  public static Optional<PermissionKeyGroups> getGroup(PermissionKey targetPermissionKey) {
+    for (PermissionKeyGroups group : values()) {
       if (Arrays.stream(group.keys).anyMatch(Predicate.isEqual(targetPermissionKey))) {
         return Optional.of(group);
       }
@@ -432,7 +432,7 @@ public enum PermissionKeyOrdering {
     return Optional.empty();
   }
 
-  public static boolean isInGroup(PermissionKey target, PermissionKeyOrdering ordering) {
+  public static boolean isInGroup(PermissionKey target, PermissionKeyGroups ordering) {
     return Arrays.asList(ordering.getKeys()).contains(target);
   }
 }

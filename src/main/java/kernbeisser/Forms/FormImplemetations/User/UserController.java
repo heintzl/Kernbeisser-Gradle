@@ -8,15 +8,15 @@ import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.MissingFullMemberException;
-import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.FormController;
 import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
 import kernbeisser.Forms.ObjectForm.ObjectForm;
-import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Useful.Users;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
+import rs.groump.AccessDeniedException;
+import rs.groump.Key;
 import rs.groump.PermissionKey;
 
 public class UserController extends FormController<UserView, UserModel, User> {
@@ -56,7 +56,7 @@ public class UserController extends FormController<UserView, UserModel, User> {
             user.getPermissions().remove(PermissionConstants.FULL_MEMBER.getPermission());
           }
         }
-      } catch (PermissionKeyRequiredException ignored) {
+      } catch (AccessDeniedException ignored) {
       }
     }
     if (mode == Mode.ADD) {
@@ -139,7 +139,7 @@ public class UserController extends FormController<UserView, UserModel, User> {
   public void removePermission() {
     try {
       generalRemovePermission();
-    } catch (PermissionKeyRequiredException e) {
+    } catch (AccessDeniedException e) {
       beginnerRemovePermission();
     }
   }

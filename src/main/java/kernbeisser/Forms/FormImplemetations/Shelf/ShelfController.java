@@ -15,18 +15,18 @@ import kernbeisser.DBEntities.Articles;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.Shelf;
 import kernbeisser.Enums.Mode;
-import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.FormController;
 import kernbeisser.Forms.ObjectForm.Components.Source;
 import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
 import kernbeisser.Forms.ObjectForm.ObjectForm;
 import lombok.Cleanup;
+import rs.groump.AccessDeniedException;
 
 public class ShelfController extends FormController<ShelfView, ShelfModel, Shelf> {
 
   private BarcodeCapture barcodeCapture;
 
-  public ShelfController() throws PermissionKeyRequiredException {
+  public ShelfController() throws AccessDeniedException {
     super(new ShelfModel());
   }
 

@@ -12,10 +12,10 @@ import kernbeisser.Enums.StatementType;
 import kernbeisser.Exeptions.IncorrectInput;
 import kernbeisser.Exeptions.NoTransactionsFoundException;
 import kernbeisser.Reports.*;
-import kernbeisser.Security.Key;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.CashierShoppingMask.CashierShoppingMaskModel;
 import kernbeisser.Windows.MVC.Controller;
+import rs.groump.Key;
 import rs.groump.PermissionKey;
 
 public class AccountingReportsController
