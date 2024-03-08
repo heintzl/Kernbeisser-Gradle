@@ -106,13 +106,13 @@ task copyAgent(type: Copy){
 }
 
 task copyProductionFolderContent(type: Copy){
-    from 'production'
+    from '../production'
     into getLayout().getBuildDirectory().dir("libs")
 //    fileMode 750
 }
 
 task copyReportsFolder(type: Copy){
-    from 'reports'
+    from '../reports'
     into getLayout().getBuildDirectory().dir("libs/reports")
 //    fileMode 750
 }
