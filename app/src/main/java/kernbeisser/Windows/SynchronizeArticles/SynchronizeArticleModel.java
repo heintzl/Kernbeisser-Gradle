@@ -1,0 +1,82 @@
+package kernbeisser.Windows.SynchronizeArticles;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Stream;
+import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBEntities.Article;
+import kernbeisser.DBEntities.Supplier;
+import kernbeisser.DBEntities.SurchargeGroup;
+import kernbeisser.Tasks.Catalog.CatalogDataInterpreter;
+import kernbeisser.Tasks.Catalog.Merge.ArticleMerge;
+import kernbeisser.Tasks.Catalog.Merge.CatalogMergeSession;
+import kernbeisser.Tasks.DTO.Catalog;
+import kernbeisser.Tasks.DTO.KornkraftGroup;
+import kernbeisser.Windows.MVC.IModel;
+import lombok.Cleanup;
+
+public class SynchronizeArticleModel implements IModel<SynchronizeArticleController> {
+
+  private CatalogMergeSession mergeSession;
+
+  private void refresh(
+      HashMap<KornkraftGroup, SurchargeGroup> surchargeGroupHashMap, EntityManager em) {
+    HashMap<String, SurchargeGroup> nameRef = new HashMap<>();
+    em.createQuery("select s from SurchargeGroup s where supplier = :s", SurchargeGroup.class)
+        .setParameter("s", Supplier.getKKSupplier())
+        .getResultStream()
+        .forEach(e -> nameRef.put(e.pathString(), e));
+    surchargeGroupHashMap.replaceAll((a, b) -> nameRef.get(b.pathString()));
+  }
+
+  public void load(Collection<String> source) {
+    mergeSession = new CatalogMergeSession(source);
+  }
+
+  public boolean isCatalogLoaded() {
+    return mergeSession != null;
+  }
+
+  void setProductGroups(Stream<String> source) {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    Catalog catalog = Catalog.read(source);
+    HashMap<KornkraftGroup, SurchargeGroup> surchargeGroupHashMap =
+        CatalogDataInterpreter.extractSurchargeGroups(
+            CatalogDataInterpreter.extractGroupsTree(catalog));
+    refresh(surchargeGroupHashMap, em);
+    HashMap<Long, SurchargeGroup> kornkraftGroupHashMap =
+        CatalogDataInterpreter.createNumberRefMap(catalog, surchargeGroupHashMap);
+    List<Article> articleBases =
+        em.createQuery("select a from Article a where supplier = :s", Article.class)
+            .setParameter("s", Supplier.getKKSupplier())
+            .getResultList();
+    CatalogDataInterpreter.linkArticles(articleBases, kornkraftGroupHashMap);
+    CatalogDataInterpreter.autoLinkArticle(
+        articleBases, Supplier.getKKSupplier().getOrPersistDefaultSurchargeGroup(em));
+    articleBases.forEach(em::persist);
+    em.flush();
+  }
+
+  public Collection<ArticleMerge> getAllDiffs() {
+    return mergeSession.getArticleMerges();
+  }
+
+  public void pushToDB() {
+    mergeSession.pushToDB();
+  }
+
+  public void checkDiffs() {
+    mergeSession.checkMergeStatus();
+  }
+
+  public void kill() {
+    if (mergeSession != null) mergeSession.kill();
+    mergeSession = null;
+  }
+}

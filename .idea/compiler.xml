@@ -12,8 +12,29 @@
         <module name="kernbeisser.main" />
         <module name="kernbeisser.test" />
       </profile>
+      <profile name="Gradle Imported" enabled="true">
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.30/f195ee86e6c896ea47a1d39defbe20eb59cd149d/lombok-1.18.30.jar" />
+        </processorPath>
+        <module name="kernbeisser.app.main" />
+        <module name="kernbeisser.app.test" />
+      </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel target="1.8" />
+    <bytecodeTargetLevel target="1.8">
+      <module name="kernbeisser.annotation-processor" target="21" />
+      <module name="kernbeisser.annotation-processor.main" target="21" />
+      <module name="kernbeisser.annotation-processor.test" target="21" />
+      <module name="kernbeisser.app" target="21" />
+      <module name="kernbeisser.app.main" target="21" />
+      <module name="kernbeisser.app.test" target="21" />
+      <module name="Kernbeisser.kernbeisser" target="21" />
+      <module name="Kernbeisser.kernbeisser.main" target="21" />
+      <module name="Kernbeisser.kernbeisser.test" target="21" />
+      <module name="kernbeisser.security" target="21" />
+      <module name="kernbeisser.security.main" target="21" />
+      <module name="kernbeisser.security.test" target="21" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_STRING" value="-Xdiags:verbose" />

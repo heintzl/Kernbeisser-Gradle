@@ -3,9 +3,9 @@
     <output-path>$PROJECT_DIR$/out/artifacts/kernbeisser_jar</output-path>
     <root id="root">
       <element id="directory" name="reports">
-        <element id="dir-copy" path="$PROJECT_DIR$/reports" />
+        <element id="dir-copy" path="$PROJECT_DIR$/app/reports" />
       </element>
-      <element id="dir-copy" path="$PROJECT_DIR$/production" />
+      <element id="dir-copy" path="$PROJECT_DIR$/app/production" />
       <element id="archive" name="kernbeisser.jar">
         <element id="directory" name="META-INF">
           <element id="file-copy" path="$PROJECT_DIR$/src/main/resources/META-INF/MANIFEST.MF" />

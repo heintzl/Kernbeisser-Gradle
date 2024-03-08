@@ -1,7 +1,5 @@
 src/main/resources/DBConfiguration/
 
-config.json
-
 # Created by https://www.gitignore.io/api/java,linux,gradle,windows,intellij
 # Edit at https://www.gitignore.io/?templates=java,linux,gradle,windows,intellij
 
@@ -10,7 +8,7 @@ config.json
 config.json
 
 ##DATA
-production/Data
+app/production/Data
 
 ### Intellij ###
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio and WebStorm
@@ -33,11 +31,14 @@ production/Data
 # Sensitive or high-churn files
 .idea/**/dataSources/
 .idea/**/dataSources.ids
+.idea/**/dataSources.xml
+.idea/**/compiler.xml
 .idea/**/dataSources.local.xml
 .idea/**/sqlDataSources.xml
 .idea/**/dynamic.xml
 .idea/**/uiDesigner.xml
 .idea/**/dbnavigator.xml
+.idea/**/modules.xml
 
 # Gradle
 .idea/**/gradle.xml
@@ -196,7 +197,7 @@ gradle-app.setting
 #misc
 /importPath.txt
 /testUser.txt
-/src/main/java/kernbeisser/Config/IgnoreThis.java
+*/IgnoreThis.java
 
 # End of https://www.gitignore.io/api/java,linux,gradle,windows,intellij
 /output/
