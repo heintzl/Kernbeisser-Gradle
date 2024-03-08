@@ -20,7 +20,6 @@ import kernbeisser.VersionIntegrationTools.Version;
 import kernbeisser.Windows.LogIn.SimpleLogIn.SimpleLogInController;
 import kernbeisser.Windows.TabbedPane.TabbedPaneModel;
 import lombok.extern.log4j.Log4j2;
-import rs.groump.Access;
 import rs.groump.Agent;
 
 @Log4j2
@@ -53,7 +52,7 @@ public class Main {
     buildEnvironment();
     splashScreenHandler.setSplashComment("Prüfe Datenbankversion");
     checkVersion();
-    openLogIn();
+    SwingUtilities.invokeLater(() -> openLogIn());
   }
 
   public static String getPath() {
