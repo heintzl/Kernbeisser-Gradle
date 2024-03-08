@@ -20,6 +20,8 @@ import kernbeisser.VersionIntegrationTools.Version;
 import kernbeisser.Windows.LogIn.SimpleLogIn.SimpleLogInController;
 import kernbeisser.Windows.TabbedPane.TabbedPaneModel;
 import lombok.extern.log4j.Log4j2;
+import rs.groump.Access;
+import rs.groump.Agent;
 
 @Log4j2
 public class Main {
@@ -33,6 +35,10 @@ public class Main {
   }
 
   public static void main(String[] args) throws UnsupportedLookAndFeelException {
+    if (!Agent.agentInitialized) {
+      System.out.println("cannot run, security.jar is not linked as a java-agent");
+      System.exit(-1);
+    }
     Thread.setDefaultUncaughtExceptionHandler(Main::logUncaughtException);
     Config.safeFile(args);
     Locale.setDefault(Locale.GERMAN);

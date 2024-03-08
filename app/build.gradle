@@ -1,5 +1,3 @@
-
-
 plugins {
     id 'java'
     id 'idea'
@@ -49,7 +47,7 @@ dependencies {
     def hibernateVersion = '6.4.4.Final'
     implementation 'org.hibernate:hibernate-core:'+hibernateVersion
     implementation "org.hibernate:hibernate-envers:"+hibernateVersion
-    implementation files("${rootDir}/libs/forms_rt.jar")
+    implementation files("libs/forms_rt.jar")
     implementation 'org.mariadb.jdbc:mariadb-java-client:3.3.3'
     implementation 'at.favre.lib:bcrypt:0.9.0'
     implementation "com.github.jiconfont:jiconfont-font_awesome:4.7.0.1"
@@ -82,41 +80,43 @@ dependencies {
     //Tests
     testCompileOnly 'org.projectlombok:lombok:1.18.30'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.30'
-    testImplementation 'org.mockito:mockito-inline:3.7.7'
-    testImplementation 'org.mockito:mockito-junit-jupiter:3.7.7'
-    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.7.0'
-    testImplementation 'org.assertj:assertj-core:3.24.2'
+    testImplementation 'org.mockito:mockito-inline:5.2.0'
+    testImplementation 'org.mockito:mockito-junit-jupiter:5.11.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.10.2'
+    testImplementation 'org.assertj:assertj-core:3.25.3'
 }
 
 jar {
     manifest {
         attributes 'Main-Class': 'kernbeisser.Main'
     }
- //   fileMode 750
+    archiveFileName = "kernbeisser.jar"
+    //   fileMode 750
 }
 
 shadowJar {
     append 'jasperreports_extension.properties'
+    archiveFileName = "kernbeisser.jar"
 }
 
 task copyAgent(type: Copy){
-    from 'src/main/resources/Agent/Agent-1.0-SNAPSHOT.jar'
-    into "$buildDir/libs"
+    from '../security/build/libs/security.jar'
+    into getLayout().getBuildDirectory().dir("libs")
  //   fileMode 750
 }
 
 task copyProductionFolderContent(type: Copy){
     from 'production'
-    into "$buildDir/libs"
+    into getLayout().getBuildDirectory().dir("libs")
 //    fileMode 750
 }
 
 task copyReportsFolder(type: Copy){
     from 'reports'
-    into "$buildDir/libs/reports"
+    into getLayout().getBuildDirectory().dir("libs/reports")
 //    fileMode 750
 }
-
+copyAgent.dependsOn project(":security").getTasksByName("jar",false)
 copyProductionFolderContent.dependsOn copyAgent
 processResources.dependsOn copyProductionFolderContent, copyReportsFolder//, chmodRecursively
 

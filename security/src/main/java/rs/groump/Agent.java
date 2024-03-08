@@ -6,15 +6,14 @@ import javassist.bytecode.annotation.Annotation;
 import javassist.bytecode.annotation.LongMemberValue;
 
 import java.lang.instrument.Instrumentation;
-import java.util.Arrays;
 
 public class Agent {
-	private static boolean runned = false;
+	public static boolean agentInitialized = false;
 	public static void premain(String args, Instrumentation instrumentation) {
-		if(runned)return;
+		if(agentInitialized)return;
 		instrumentation.addTransformer(new AnnotationCodeInjector<>(Key.class, "kernbeisser", Agent::generateCode, Agent::modifyAnnotation), true);
 		System.out.println("added AnnotationCodeInjector for @Key");
-		runned = true;
+		agentInitialized = true;
 	}
 	
 	private static void modifyAnnotation(Annotation annotation, CtBehavior ctBehavior, long uniqueId) {

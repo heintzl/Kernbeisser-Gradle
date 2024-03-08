@@ -1,34 +1,46 @@
 package kernbeisser.Security.Access;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
-import java.util.HashSet;
-import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.User;
-import kernbeisser.DBEntities.UserSettingValue;
+import kernbeisser.Enums.PermissionConstants;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
-import rs.groump.AccessDeniedException;
-import rs.groump.AccessManager;
+import rs.groump.*;
 
 class UserRelatedAccessManagerTest {
 
-  User mocked = mock(User.class);
-
   @Test
   void userRelatedAccess() {
+    User execute =
+        new User() {
+          @Override
+          public PermissionSet getPermissionSet() {
+            PermissionSet ps = new PermissionSet();
+            ps.setAllBits(false);
+            return ps;
+          }
+        };
+    User related =
+        new User() {
+          @Override
+          public boolean isInRelation(@NotNull User user) {
+            return execute == user;
+          }
+        };
+    UserRelatedAccessManager userRelatedAccessManager = new UserRelatedAccessManager(execute);
+    PermissionSet userRelated =
+        Access.runUnchecked(
+            PermissionConstants.IN_RELATION_TO_OWN_USER.getPermission()::toPermissionSet);
     Access.runWithAccessManager(
-        AccessManager.NO_ACCESS_CHECKING,
+        userRelatedAccessManager,
         () -> {
-          when(mocked.getPermissions()).thenReturn(new HashSet<>());
-          UserRelatedAccessManager accessManager = new UserRelatedAccessManager(mocked);
-          Access.runWithAccessManager(
-              accessManager,
-              () -> {
-                assertDoesNotThrow(() -> new UserSettingValue(mocked).getValue());
-                assertThrows(AccessDeniedException.class, () -> new Article().getName());
-              });
+          AccessManager accessManager = Access.getAccessManager();
+          assertTrue(accessManager.hasAccess(related, userRelated));
+          PermissionSet full = new PermissionSet();
+          full.setAllBits(true);
+          PermissionSet allOtherThanUserRelated = full.minus(userRelated);
+          assertFalse(accessManager.hasAccess(related, allOtherThanUserRelated));
         });
   }
 }
