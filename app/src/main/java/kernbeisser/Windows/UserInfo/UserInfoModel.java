@@ -13,19 +13,18 @@ import lombok.Cleanup;
 import lombok.Getter;
 
 public class UserInfoModel implements IModel<UserInfoController> {
-
-  private final int userId;
+  
+  @Getter private final User user;
   @Getter private final Collection<Transaction> userTransactions;
   @Getter private final Map<Long, Double> transactionSums = new HashMap<>();
 
   public UserInfoModel(User user) {
-    this.userId = user.getId();
+    this.user = user;
     userTransactions = user.getAllValueChanges();
     collectTranscationSums(user);
   }
 
   private void collectTranscationSums(User user) {
-
     UserGroup userGroup = user.getUserGroup();
     double sum = 0.0;
     for (Transaction t : userTransactions) {
@@ -35,15 +34,11 @@ public class UserInfoModel implements IModel<UserInfoController> {
     }
   }
 
-  public User getUser() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    return em.find(User.class, userId);
-  }
-
   public boolean incoming(Transaction transaction) {
     return (transaction.getToUser() != null
-        && getUser().getAllGroupMembers().contains(transaction.getToUser()));
+        && getUser().getUserGroup().containsUser(transaction.getToUser()));
   }
+  
 
   public double getSignedTransactionValue(Transaction transaction) {
     if (incoming(transaction)) {
