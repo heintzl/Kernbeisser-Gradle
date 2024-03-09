@@ -8,7 +8,6 @@ import javax.swing.*;
 import kernbeisser.DataImport.GenericCSVImport;
 import kernbeisser.Exeptions.ClassIsSingletonException;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
-import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
 import org.apache.commons.collections.KeyValue;
 import org.jetbrains.annotations.NotNull;

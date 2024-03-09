@@ -1,19 +1,16 @@
 package kernbeisser.Windows.UserInfo;
 
-import jakarta.persistence.EntityManager;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Windows.MVC.IModel;
-import lombok.Cleanup;
 import lombok.Getter;
 
 public class UserInfoModel implements IModel<UserInfoController> {
-  
+
   @Getter private final User user;
   @Getter private final Collection<Transaction> userTransactions;
   @Getter private final Map<Long, Double> transactionSums = new HashMap<>();
@@ -38,7 +35,6 @@ public class UserInfoModel implements IModel<UserInfoController> {
     return (transaction.getToUser() != null
         && getUser().getUserGroup().containsUser(transaction.getToUser()));
   }
-  
 
   public double getSignedTransactionValue(Transaction transaction) {
     if (incoming(transaction)) {
