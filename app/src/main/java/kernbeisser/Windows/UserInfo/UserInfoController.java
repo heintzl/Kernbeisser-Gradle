@@ -43,7 +43,7 @@ public class UserInfoController extends Controller<UserInfoView, UserInfoModel> 
             .ifPresent(view::setUserGroupMembers);
         return;
       case 1:
-        optional(model.getUser()::getAllPurchases).ifPresent(view::setShoppingHistory);
+        optional(model::getUserPurchases).ifPresent(view::setShoppingHistory);
         return;
       case 2:
         view.setValueHistory(model.getUserTransactions());
