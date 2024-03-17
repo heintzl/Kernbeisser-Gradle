@@ -7,13 +7,21 @@
       <profile name="Gradle Imported" enabled="true">
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.16/6dc192c7f93ec1853f70d59d8a6dcf94eb42866/lombok-1.18.16.jar" />
+        </processorPath>
+        <module name="kernbeisser.main" />
+        <module name="kernbeisser.test" />
+      </profile>
+      <profile name="Gradle Imported" enabled="true">
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
           <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.30/f195ee86e6c896ea47a1d39defbe20eb59cd149d/lombok-1.18.30.jar" />
         </processorPath>
         <module name="kernbeisser.app.main" />
         <module name="kernbeisser.app.test" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel target="21" />
+    <bytecodeTargetLevel target="1.8" />
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_STRING" value="-Xdiags:verbose" />

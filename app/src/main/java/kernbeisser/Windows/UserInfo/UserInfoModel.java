@@ -1,10 +1,12 @@
 package kernbeisser.Windows.UserInfo;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
@@ -14,42 +16,48 @@ import lombok.Getter;
 
 public class UserInfoModel implements IModel<UserInfoController> {
 
-  private final int userId;
-  @Getter private final Collection<Transaction> userTransactions;
-  @Getter private final Map<Long, Double> transactionSums = new HashMap<>();
+  @Getter private final User user;
+
+  @Getter(lazy = true)
+  private final Collection<Transaction> userTransactions = user.getAllValueChanges();
+
+  @Getter(lazy = true)
+  private final Collection<Purchase> userPurchases = user.getAllPurchases();
+
+  @Getter private final Map<Long, Double> transactionSums;
 
   public UserInfoModel(User user) {
-    this.userId = user.getId();
-    userTransactions = user.getAllValueChanges();
-    collectTranscationSums(user);
+    this.user = user;
+    transactionSums = createTransactionSums(user.getUserGroup());
   }
 
-  private void collectTranscationSums(User user) {
-
-    UserGroup userGroup = user.getUserGroup();
-    double sum = 0.0;
-    for (Transaction t : userTransactions) {
-      double v = t.getValue();
-      sum += getSignedTransactionValue(t);
-      transactionSums.put(t.getId(), sum);
-    }
-  }
-
-  public User getUser() {
+  public Map<Long, Double> createTransactionSums(UserGroup userGroup) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-    return em.find(User.class, userId);
+    @Cleanup("commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return em.createQuery(
+            """
+			SELECT t.id,
+			       (select sum(
+			       case when sumTr.toUserGroup.id = :ug then sumTr.value
+			       when sumTr.fromUserGroup.id = :ug then -sumTr.value else 0 end) from Transaction sumTr where sumTr.date <= t.date and (sumTr.fromUserGroup.id = :ug OR sumTr.toUserGroup.id = :ug))
+			FROM Transaction t
+			WHERE t.fromUserGroup.id = :ug OR t.toUserGroup.id = :ug
+			GROUP BY t.date
+			ORDER BY t.date
+			""",
+            Object[].class)
+        .setParameter("ug", userGroup.getId())
+        .getResultStream()
+        .collect(
+            Collectors.toMap(
+                resultColumns -> (Long) resultColumns[0],
+                resultColumns -> (Double) resultColumns[1]));
   }
 
   public boolean incoming(Transaction transaction) {
     return (transaction.getToUser() != null
-        && getUser().getAllGroupMembers().contains(transaction.getToUser()));
-  }
-
-  public double getSignedTransactionValue(Transaction transaction) {
-    if (incoming(transaction)) {
-      return transaction.getValue();
-    } else {
-      return -transaction.getValue();
-    }
+        && getUser().getUserGroup().containsUser(transaction.getToUser()));
   }
 }

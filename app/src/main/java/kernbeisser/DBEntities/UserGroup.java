@@ -263,6 +263,10 @@ public class UserGroup implements UserRelated {
     return params;
   }
 
+  public boolean containsUser(User u) {
+    return u.getUserGroup().id == id;
+  }
+
   @Override
   public boolean isInRelation(@NotNull User user) {
     return user.userGroupEquals(this);
