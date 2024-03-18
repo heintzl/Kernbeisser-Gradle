@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBConnection.FieldCondition;
+import kernbeisser.DBEntities.Types.FieldIdentifier;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
@@ -213,7 +213,7 @@ public class CatalogEntry implements ActuallyCloneable {
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    String queryString = "SELECT c FROM CatalogEntry c WHERE ArtikelNr = :n";
+    String queryString = "SELECT c FROM CatalogEntry c WHERE c.artikelNr = :n";
     if (!withInactive) {
       queryString += " AND NOT aenderungskennung IN ('V', 'X')";
     }
@@ -235,7 +235,7 @@ public class CatalogEntry implements ActuallyCloneable {
 
   public static Optional<CatalogEntry> getByBarcode(String barcode) {
     return DBConnection.getConditioned(
-            CatalogEntry.class, new FieldCondition("EanLadenEinheit", barcode))
+            CatalogEntry.class, new FieldIdentifier<>(CatalogEntry.class,"EanLadenEinheit").eq(barcode))
         .stream()
         .findFirst();
   }

@@ -1,7 +1,6 @@
 package kernbeisser.Windows.UserInfo;
 
 import static java.lang.String.format;
-import static kernbeisser.Useful.Tools.optional;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
@@ -260,9 +259,9 @@ public class UserInfoView implements IView<UserInfoController> {
   @Override
   public String getTitle() {
     return "Benutzerinformationen von "
-        + optional(controller.getModel().getUser()::getFirstName).orElse(ACCESS_DENIED)
+        + Tools.runIfPossible(controller.getModel().getUser()::getFirstName).orElse(ACCESS_DENIED)
         + ", "
-        + optional(controller.getModel().getUser()::getSurname).orElse(ACCESS_DENIED);
+        + Tools.runIfPossible(controller.getModel().getUser()::getSurname).orElse(ACCESS_DENIED);
   }
 
   public void setOptCurrentSelected(boolean b) {

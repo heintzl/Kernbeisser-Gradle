@@ -380,7 +380,7 @@ public class User implements Serializable, UserRelated, ActuallyCloneable {
   }
 
   public String toString() {
-    return Tools.optional(this::getUsername).orElse("Benutzer[" + id + "]");
+    return Tools.runIfPossible(this::getUsername).orElse("Benutzer[" + id + "]");
   }
 
   public Collection<User> getAllGroupMembers() {
@@ -405,8 +405,8 @@ public class User implements Serializable, UserRelated, ActuallyCloneable {
     EntityTransaction et = em.getTransaction();
     et.begin();
     return em.createQuery(
-            "select p from Purchase p where p.session.customer.id = :id", Purchase.class)
-        .setParameter("id", id)
+            "select p from Purchase p where p.session.customer.userGroup.id = :id", Purchase.class)
+        .setParameter("id", userGroup.getId())
         .getResultList();
   }
 

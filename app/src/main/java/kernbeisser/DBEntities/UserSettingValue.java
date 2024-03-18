@@ -98,7 +98,7 @@ public class UserSettingValue implements UserRelated {
     EntityTransaction et = em.getTransaction();
     et.begin();
     UserSettingValue usv =
-        Tools.optional(
+        Tools.runIfPossible(
                 em.createQuery(
                         "select u from UserSettingValue u where u.user = :u and u.userSetting =:us",
                         UserSettingValue.class)

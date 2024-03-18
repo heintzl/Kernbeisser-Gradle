@@ -67,7 +67,8 @@ public class EditUserGroupController extends Controller<EditUserGroupView, EditU
   private void select(UserGroup userGroup) {
     getView()
         .setUsername(
-            Tools.optional(() -> getUserGroupText(userGroup)).orElse("[Keine Leseberechtigung]"));
+            Tools.runIfPossible(() -> getUserGroupText(userGroup))
+                .orElse("[Keine Leseberechtigung]"));
   }
 
   @Override

@@ -1,7 +1,5 @@
 package kernbeisser.Windows.EditUserGroup;
 
-import static kernbeisser.Useful.Tools.optional;
-
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import java.awt.*;
@@ -61,15 +59,18 @@ public class EditUserGroupView implements IView<EditUserGroupController> {
   }
 
   void setCurrentUserGroup(UserGroup userGroup) {
-    currentUserGroup.setObjects(optional(userGroup::getMembers).orElse(Collections.emptyList()));
+    currentUserGroup.setObjects(
+        Tools.runIfPossible(userGroup::getMembers).orElse(Collections.emptyList()));
     value.setText(
-        optional(userGroup::getValue).map(this::toEuro).orElse("[Keine Leseberechtigung]"));
+        Tools.runIfPossible(userGroup::getValue)
+            .map(this::toEuro)
+            .orElse("[Keine Leseberechtigung]"));
     interestThisYear.setText(
-        optional(userGroup::getInterestThisYear)
+        Tools.runIfPossible(userGroup::getInterestThisYear)
             .map(this::toEuro)
             .orElse("[Keine Leseberechtigung]"));
     solidaritySurcharge.setText(
-        optional(userGroup::getSolidaritySurcharge)
+        Tools.runIfPossible(userGroup::getSolidaritySurcharge)
             .map(e -> String.format("%.2f%%", e * 100))
             .orElse("[Keine Leseberechtigung]"));
     updateInfo.setText(getUpdateInfo(userGroup));

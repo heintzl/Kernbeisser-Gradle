@@ -584,10 +584,10 @@ public class Tools {
   }
 
   public static String accessString(AccessSupplier<String> supplier) {
-    return optional(supplier).orElse("[Keine Leseberechtigung]");
+    return runIfPossible(supplier).orElse("[Keine Leseberechtigung]");
   }
 
-  public static <T> SecuredOptional<T> optional(AccessSupplier<T> supplier) {
+  public static <T> SecuredOptional<T> runIfPossible(AccessSupplier<T> supplier) {
     try {
       return SecuredOptional.ofNullable(supplier.get());
     } catch (AccessDeniedException e) {
@@ -595,7 +595,7 @@ public class Tools {
     }
   }
 
-  public static <T> Optional<T> optional(TypedQuery<T> supplier) {
+  public static <T> Optional<T> runIfPossible(TypedQuery<T> supplier) {
     try {
       return Optional.of(supplier.getSingleResult());
     } catch (NoResultException e) {
@@ -620,7 +620,7 @@ public class Tools {
   }
 
   public static <T> T or(AccessSupplier<T> supplier, T v) {
-    return optional(supplier).orElse(v);
+    return runIfPossible(supplier).orElse(v);
   }
 
   public static boolean isPartOfNumb(char c) {

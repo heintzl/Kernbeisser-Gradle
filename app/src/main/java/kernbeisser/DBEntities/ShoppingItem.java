@@ -498,7 +498,7 @@ public class ShoppingItem implements Serializable {
 
   @Override
   public String toString() {
-    return Tools.optional(this::getName).orElse("Einkaufsartikel[" + id + "]");
+    return Tools.runIfPossible(this::getName).orElse("Einkaufsartikel[" + id + "]");
   }
 
   public static ShoppingItem displayOnlyShoppingItem(

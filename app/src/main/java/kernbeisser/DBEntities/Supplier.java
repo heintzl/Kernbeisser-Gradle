@@ -181,7 +181,7 @@ public class Supplier implements Serializable, ActuallyCloneable {
 
   @Override
   public String toString() {
-    return Tools.optional(() -> getName() + "[" + getShortName() + "]")
+    return Tools.runIfPossible(() -> getName() + "[" + getShortName() + "]")
         .orElse("Lieferant[" + id + "]");
   }
 

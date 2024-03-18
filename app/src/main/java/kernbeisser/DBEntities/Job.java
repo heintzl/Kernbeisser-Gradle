@@ -72,7 +72,7 @@ public class Job implements ActuallyCloneable {
 
   @Override
   public String toString() {
-    return Tools.optional(this::getName).orElse("Job[" + id + "]");
+    return Tools.runIfPossible(this::getName).orElse("Job[" + id + "]");
   }
 
   @Override

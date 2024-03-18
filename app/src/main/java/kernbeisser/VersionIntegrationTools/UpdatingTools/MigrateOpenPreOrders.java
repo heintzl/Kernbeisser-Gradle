@@ -6,12 +6,15 @@ import java.util.Collection;
 import java.util.Optional;
 import javax.swing.*;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBConnection.FieldCondition;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.CatalogEntry;
 import kernbeisser.DBEntities.PreOrder;
+import kernbeisser.DBEntities.Types.CatalogEntryField;
+import kernbeisser.DBEntities.Types.FieldIdentifier;
 import kernbeisser.VersionIntegrationTools.VersionUpdatingTool;
 import lombok.Cleanup;
+
+import static kernbeisser.DBEntities.Types.PreOrderField.delivery;
 
 public class MigrateOpenPreOrders implements VersionUpdatingTool {
   @Override
@@ -21,14 +24,14 @@ public class MigrateOpenPreOrders implements VersionUpdatingTool {
     EntityTransaction et = em.getTransaction();
     et.begin();
     Collection<PreOrder> relevantPreorders =
-        DBConnection.getConditioned(PreOrder.class, FieldCondition.isNull("delivery")).stream()
+        DBConnection.getConditioned(PreOrder.class, delivery.isNull()).stream()
             .filter(p -> p.getCatalogEntry() == null)
             .toList();
     for (PreOrder preOrder : relevantPreorders) {
       int kkNUmber = preOrder.getArticle().getSuppliersItemNumber();
       Optional<CatalogEntry> entry =
           DBConnection.getConditioned(
-                  CatalogEntry.class, new FieldCondition("artikelNr", Integer.toString(kkNUmber)))
+                  CatalogEntry.class,  new FieldIdentifier<>(CatalogEntry.class, "artikelNr").eq(Integer.toString(kkNUmber)))
               .stream()
               .filter(e -> !e.getAktionspreis())
               .findFirst();

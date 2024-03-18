@@ -1,5 +1,6 @@
 package kernbeisser.DBEntities;
 
+
 import jakarta.persistence.*;
 import java.text.DecimalFormat;
 import java.time.Instant;
@@ -9,8 +10,12 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBConnection.FieldCondition;
+
+import jakarta.persistence.criteria.Root;
+import kernbeisser.DBConnection.*;
+import kernbeisser.DBEntities.Types.ArticleField;
+import kernbeisser.DBEntities.Types.OfferField;
+import kernbeisser.DBEntities.Types.PriceListField;
 import kernbeisser.EntityWrapper.ObjectState;
 import kernbeisser.Enums.*;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
@@ -25,6 +30,12 @@ import org.hibernate.envers.query.AuditEntity;
 import org.hibernate.envers.query.AuditQuery;
 import rs.groump.Access;
 import rs.groump.AccessManager;
+
+import static kernbeisser.DBConnection.CombinedCondition.or;
+import static kernbeisser.DBConnection.Condition.like;
+import static kernbeisser.DBConnection.Field.mod;
+import static kernbeisser.DBConnection.Field.upper;
+import static kernbeisser.DBEntities.Types.ArticleField.*;
 
 @Log4j2
 public class Articles {
@@ -61,9 +72,8 @@ public class Articles {
   public static Optional<ObjectState<Article>> getByKbNumber(
       EntityManager em, int kbNumber, boolean filterShopRange) {
     return Optional.ofNullable(
-        em.createQuery("select i from Article i where kbNumber = :n", Article.class)
-            .setParameter("n", kbNumber)
-            .getResultStream()
+        DBConnection.getConditioned(Article.class, ArticleField.kbNumber.eq(kbNumber))
+            .stream()
             .filter(a -> !(filterShopRange && !a.getShopRange().isVisible()))
             .findAny()
             .map(ObjectState::currentState)
@@ -111,29 +121,20 @@ public class Articles {
   }
 
   public static Optional<Article> getBySuppliersItemNumber(
-      Supplier supplier, int suppliersNumber, EntityManager em) {
-    try {
-      return Optional.of(
-          em.createQuery(
-                  "select i from Article i where suppliersItemNumber = :n and supplier  = :s",
-                  Article.class)
-              .setParameter("s", supplier)
-              .setParameter("n", suppliersNumber)
-              .getSingleResult());
-    } catch (NoResultException e) {
-      return Optional.empty();
-    }
+      Supplier targetSupplier, int suppliersNumber, EntityManager em) {
+    return DBConnection.getConditioned(
+            em, Article.class, suppliersItemNumber.eq(suppliersNumber), supplier.eq(targetSupplier))
+        .stream()
+        .findFirst();
   }
 
-  public static Optional<Article> getByBarcode(long barcode) throws NoResultException {
+  public static Optional<Article> getByBarcode(long targetBarcode) throws NoResultException {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    Collection<Article> articles =
-        em.createQuery("select a from Article a where barcode = :b", Article.class)
-            .setParameter("b", barcode)
-            .getResultList();
+    List<Article> articles =
+        DBConnection.getConditioned(em, Article.class, barcode.eq(targetBarcode));
     return Optional.ofNullable(
         articles.stream()
             .filter(Articles::articleIsActiveOffer)
@@ -152,11 +153,10 @@ public class Articles {
       @Cleanup(value = "commit")
       EntityTransaction et = em.getTransaction();
       et.begin();
-      return em.createQuery(
-              "select  i from Article i where name = :n and kbNumber IN (:c)", Article.class)
-          .setParameter("n", rawPrice.getName())
-          .setParameter("c", rawPriceIdentifiers)
-          .getSingleResult();
+      return QueryBuilder.queryTable(Article.class).where(
+              name.eq(rawPrice.getName()),
+              kbNumber.in(rawPriceIdentifiers)
+      ).getSingleResult(em);
     } catch (NoResultException e) {
       ArticleConstants identifierEnum = ArticleConstants.CUSTOM_PRODUCT;
       AtomicReference<Supplier> supplier = new AtomicReference<>();
@@ -206,25 +206,23 @@ public class Articles {
   }
 
   private static TypedQuery<Article> createQuery(EntityManager em, String search) {
-    return em.createQuery(
-            "select i from Article i where kbNumber = :n"
-                + " or suppliersItemNumber = :n"
-                + " or UPPER(i.name) like :ds"
-                + " or barcode = :l"
-                + " or MOD(barcode,:bl) = :n"
-                + " or UPPER( i.priceList.name) like :u"
-                + " order by i.name asc",
-            Article.class)
-        .setParameter("n", Tools.tryParseInt(search))
-        .setParameter(
-            "bl",
-            (int)
-                (Tools.tryParseInt(search) > 0
-                    ? Math.pow(10, Math.ceil(Math.log10(Tools.tryParseInt(search))))
-                    : 1))
-        .setParameter("l", Tools.tryParseLong(search))
-        .setParameter("ds", (search.length() > 3 ? "%" + search + "%" : search + "%").toUpperCase())
-        .setParameter("u", search.toUpperCase() + "%");
+    int n = Tools.tryParseInt(search);
+    String ds =  (search.length() > 3 ? "%" + search + "%" : search + "%").toUpperCase();
+    long l = Tools.tryParseLong(search);
+    return QueryBuilder.queryTable(
+            Article.class
+    ).where(
+            or(
+                    kbNumber.eq(n),
+                    suppliersItemNumber.eq(Tools.tryParseInt(search)),
+                    like(upper(name), ds),
+                    barcode.eq(l),
+                    like(barcode.as(String.class), "%"+search),
+                    like(upper(priceList.child(PriceListField.name)), search.toUpperCase())
+            )
+    ).orderBy(
+            name.asc()
+    ).buildQuery(em);
   }
 
   public static int nextFreeKBNumber(EntityManager em) {
@@ -268,15 +266,9 @@ public class Articles {
   }
 
   public static Optional<Offer> findOfferOn(Article article) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup("commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em
-        .createQuery("select o from Offer o where o.offerArticle = :o", Offer.class)
-        .setParameter("o", article)
-        .getResultList()
-        .stream()
+    return QueryBuilder.queryTable(Offer.class)
+        .where(OfferField.offerArticle.eq(article))
+        .getResultStream()
         .filter(e -> e.getFromDate().isBefore(Instant.now()))
         .filter(e -> e.getToDate().isAfter(Instant.now()))
         .findAny();
@@ -338,31 +330,6 @@ public class Articles {
     return barcodeString.substring(Math.max(barcodeString.length() - 4, 0));
   }
 
-  public static Article createOfferArticle(
-      Article base, double specialNetPrice, Instant from, Instant to) {
-    if (base.isOffer()) throw new IllegalArgumentException("article is already a offer");
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup("commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    Optional<Article> offerArticle =
-        Tools.optional(
-            em.createQuery(
-                "select a from Article a where a.suppliersItemNumber = :s and offer = true",
-                Article.class));
-    Article newOfferArticle = offerArticle.orElseGet(() -> withValidKBNumber(base.clone(), em));
-    newOfferArticle.setNetPrice(specialNetPrice);
-    newOfferArticle.setOffer(true);
-    Offer offer = new Offer();
-    offer.setOfferArticle(newOfferArticle);
-    offer.setParentArticle(base);
-    offer.setFromDate(from);
-    offer.setToDate(to);
-    em.persist(newOfferArticle);
-    em.persist(offer);
-    return newOfferArticle;
-  }
-
   public static Article withValidKBNumber(Article article, EntityManager em) {
     article.setKbNumber(Articles.nextFreeKBNumber(em));
     return article;
@@ -410,27 +377,31 @@ public class Articles {
     @Cleanup("commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    Article article =
-        Tools.optional(
-                em.createQuery("select a from Article a where a.kbNumber =:kb", Article.class)
-                    .setParameter("kb", ArticleConstants.CUSTOM_PRODUCT.getUniqueIdentifier()))
-            .orElseGet(
-                () ->
-                    Access.runWithAccessManager(
-                        AccessManager.ACCESS_GRANTED,
-                        () -> {
-                          Article out = new Article();
-                          out.setKbNumber(ArticleConstants.CUSTOM_PRODUCT.getUniqueIdentifier());
-                          out.setSupplier(Supplier.getCustomProductSupplier());
-                          out.setSurchargeGroup(
-                              out.getSupplier().getOrPersistDefaultSurchargeGroup());
-                          out.setSuppliersItemNumber(
-                              ArticleConstants.CUSTOM_PRODUCT.getUniqueIdentifier());
-                          return out;
-                        }));
-    Access.runWithAccessManager(AccessManager.ACCESS_GRANTED, () -> transformer.accept(article));
-    em.persist(article);
-    return article;
+    return Access.runWithAccessManager(
+        AccessManager.ACCESS_GRANTED,
+        () -> {
+          Article article =
+              DBConnection.getConditioned(
+                      em,
+                      Article.class,
+                      kbNumber.eq(ArticleConstants.CUSTOM_PRODUCT.getUniqueIdentifier()))
+                  .stream()
+                  .findFirst()
+                  .orElseGet(Articles::createCustomArticlePreset);
+          Access.runWithAccessManager(
+              AccessManager.ACCESS_GRANTED, () -> transformer.accept(article));
+          em.persist(article);
+          return article;
+        });
+  }
+
+  private static Article createCustomArticlePreset() {
+    Article out = new Article();
+    out.setKbNumber(ArticleConstants.CUSTOM_PRODUCT.getUniqueIdentifier());
+    out.setSupplier(Supplier.getCustomProductSupplier());
+    out.setSurchargeGroup(out.getSupplier().getOrPersistDefaultSurchargeGroup());
+    out.setSuppliersItemNumber(ArticleConstants.CUSTOM_PRODUCT.getUniqueIdentifier());
+    return out;
   }
 
   public static int getSafeAmount(Article article) {
@@ -507,7 +478,7 @@ public class Articles {
         .forEach(articleNos::add);
 
     return DBConnection.getConditioned(
-            CatalogEntry.class, new FieldCondition("artikelNr", articleNos))
+            CatalogEntry.class, kbNumber.eq(articleNos))
         .stream()
         .filter(
             e ->

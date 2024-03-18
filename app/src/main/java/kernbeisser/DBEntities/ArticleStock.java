@@ -33,7 +33,7 @@ public class ArticleStock {
   @CreationTimestamp private Instant createDate;
 
   public static Optional<ArticleStock> ofArticle(EntityManager em, Article article, Shelf shelf) {
-    return Tools.optional(
+    return Tools.runIfPossible(
         em.createQuery(
                 "select a from ArticleStock a where a.article = :a and a.shelf = :s and a.inventoryDate = :d",
                 ArticleStock.class)
