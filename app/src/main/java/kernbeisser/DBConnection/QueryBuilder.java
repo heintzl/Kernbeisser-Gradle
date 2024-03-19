@@ -25,7 +25,7 @@ public class QueryBuilder<P> {
     return new QueryBuilder<>(tableClass);
   }
 
-  public QueryBuilder<P> where(PredicateFactory<P> ... conditions) {
+  public QueryBuilder<P> where(PredicateFactory<P>... conditions) {
     return where(Arrays.stream(conditions).toList());
   }
 
@@ -116,7 +116,8 @@ public class QueryBuilder<P> {
                     .toArray(Predicate[]::new))
             .orderBy(
                 orders.stream()
-                    .map(fieldIdentifier -> fieldIdentifier.createOrder(Source.rootSource(root), cb))
+                    .map(
+                        fieldIdentifier -> fieldIdentifier.createOrder(Source.rootSource(root), cb))
                     .toArray(Order[]::new)));
   }
 }

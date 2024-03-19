@@ -124,9 +124,10 @@ public class PriceList implements Serializable {
   }
 
   public List<PriceList> getAllPriceLists() {
-    return QueryBuilder.queryTable(PriceList.class).where(PriceListField.superPriceList.eq(this)).orderBy(
-            PriceListField.name.asc()
-    ).getResultList();
+    return QueryBuilder.queryTable(PriceList.class)
+        .where(PriceListField.superPriceList.eq(this))
+        .orderBy(PriceListField.name.asc())
+        .getResultList();
   }
 
   @Override
@@ -143,7 +144,9 @@ public class PriceList implements Serializable {
   }
 
   public List<Article> getAllArticles(EntityManager em) {
-    return QueryBuilder.queryTable(Article.class).where(ArticleField.priceList.eq(this)).getResultList(em);
+    return QueryBuilder.queryTable(Article.class)
+        .where(ArticleField.priceList.eq(this))
+        .getResultList(em);
   }
 
   public static Node<PriceList> asNode(Node<PriceList> parent, PriceList priceList) {

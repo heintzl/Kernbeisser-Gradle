@@ -136,7 +136,7 @@ public class DBConnection {
     return em.createQuery(
             cr.where(
                     Arrays.stream(conditions)
-                        .map(e -> e.createPredicate(Source.rootSource(root),cb))
+                        .map(e -> e.createPredicate(Source.rootSource(root), cb))
                         .toArray(Predicate[]::new))
                 .orderBy())
         .getResultList();

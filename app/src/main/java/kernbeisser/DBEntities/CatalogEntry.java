@@ -1,5 +1,7 @@
 package kernbeisser.DBEntities;
 
+import static kernbeisser.DBConnection.PredicateFactory.between;
+
 import com.google.common.collect.ImmutableMap;
 import jakarta.persistence.*;
 import java.time.Instant;
@@ -7,7 +9,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBConnection.FieldIdentifier;
 import kernbeisser.DBConnection.PredicateFactory;
 import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Types.CatalogEntryField;
@@ -18,8 +19,6 @@ import kernbeisser.Tasks.Catalog.BoolValues;
 import kernbeisser.Useful.ActuallyCloneable;
 import lombok.*;
 import org.apache.commons.lang3.StringUtils;
-
-import static kernbeisser.DBConnection.PredicateFactory.between;
 
 @Data
 @Table(
@@ -214,18 +213,22 @@ public class CatalogEntry implements ActuallyCloneable {
 
   public static List<CatalogEntry> getByArticleNo(
       String articleNo, boolean withActions, boolean withInactive) {
-    var queryBuilder = QueryBuilder.queryTable(CatalogEntry.class)
+    var queryBuilder =
+        QueryBuilder.queryTable(CatalogEntry.class)
             .where(CatalogEntryField.artikelNr.eq(articleNo));
     if (!withInactive) {
-      queryBuilder.where(CatalogEntryField.aenderungskennung.in("V","X").not());
+      queryBuilder.where(CatalogEntryField.aenderungskennung.in("V", "X").not());
     }
     if (withActions) {
-      queryBuilder.where(
+      queryBuilder
+          .where(
               PredicateFactory.or(
-                      CatalogEntryField.aktionspreis.eq(1).not(),
-                      between(Instant.now(), CatalogEntryField.aktionspreisGueltigAb, CatalogEntryField.aktionspreisGueltigBis)
-              )
-      ).orderBy(CatalogEntryField.aktionspreis.desc());
+                  CatalogEntryField.aktionspreis.eq(1).not(),
+                  between(
+                      Instant.now(),
+                      CatalogEntryField.aktionspreisGueltigAb,
+                      CatalogEntryField.aktionspreisGueltigBis)))
+          .orderBy(CatalogEntryField.aktionspreis.desc());
     } else {
       queryBuilder.where(CatalogEntryField.aktionspreis.eq(1).not());
     }
@@ -238,8 +241,7 @@ public class CatalogEntry implements ActuallyCloneable {
 
   public static Optional<CatalogEntry> getByBarcode(String barcode) {
     return DBConnection.getConditioned(
-            CatalogEntry.class,
-            CatalogEntryField.eanLadenEinheit.eq(barcode))
+            CatalogEntry.class, CatalogEntryField.eanLadenEinheit.eq(barcode))
         .stream()
         .findFirst();
   }

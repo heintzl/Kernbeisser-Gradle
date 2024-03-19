@@ -8,7 +8,6 @@ import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Types.UserSettingValueField;
 import kernbeisser.Enums.UserSetting;
 import kernbeisser.Security.Access.UserRelated;
-import kernbeisser.Useful.Tools;
 import lombok.Cleanup;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -99,10 +98,12 @@ public class UserSettingValue implements UserRelated {
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    UserSettingValue usv = QueryBuilder.queryTable(UserSettingValue.class).where(
-            UserSettingValueField.user.eq(user),
-            UserSettingValueField.userSetting.eq(setting)
-    ).getSingleResultOptional(em).orElseGet(
+    UserSettingValue usv =
+        QueryBuilder.queryTable(UserSettingValue.class)
+            .where(
+                UserSettingValueField.user.eq(user), UserSettingValueField.userSetting.eq(setting))
+            .getSingleResultOptional(em)
+            .orElseGet(
                 () -> {
                   UserSettingValue newUsv = new UserSettingValue();
                   newUsv.user = user;

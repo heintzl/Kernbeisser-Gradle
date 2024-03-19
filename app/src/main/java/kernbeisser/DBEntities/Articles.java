@@ -1,8 +1,8 @@
 package kernbeisser.DBEntities;
 
 import static kernbeisser.DBConnection.ExpressionFactory.*;
-import static kernbeisser.DBConnection.PredicateFactory.or;
 import static kernbeisser.DBConnection.PredicateFactory.like;
+import static kernbeisser.DBConnection.PredicateFactory.or;
 import static kernbeisser.DBEntities.Types.ArticleField.*;
 
 import jakarta.persistence.*;
@@ -227,11 +227,10 @@ public class Articles {
 
   public static Article nextArticleTo(
       EntityManager em, int suppliersItemNumber, Supplier supplier) {
-    return QueryBuilder.queryTable(Article.class).where(
-            ArticleField.supplier.eq(supplier)
-    ).orderBy(
-            diff(ArticleField.suppliersItemNumber, asExpression(suppliersItemNumber)).asc()
-    ).buildQuery(em)
+    return QueryBuilder.queryTable(Article.class)
+        .where(ArticleField.supplier.eq(supplier))
+        .orderBy(diff(ArticleField.suppliersItemNumber, asExpression(suppliersItemNumber)).asc())
+        .buildQuery(em)
         .setMaxResults(1)
         .getResultStream()
         .findAny()
@@ -240,12 +239,12 @@ public class Articles {
 
   public static Article nextArticleTo(
       EntityManager em, int suppliersItemNumber, Supplier supplier, PriceList excludedPriceList) {
-    return QueryBuilder.queryTable(Article.class).where(
-            ArticleField.supplier.eq(supplier),
-            priceList.eq(excludedPriceList).not()
-    ).orderBy(
-            diff(ArticleField.suppliersItemNumber, asExpression(suppliersItemNumber)).asc()
-    ).getResultStream(em).findFirst().orElse(null);
+    return QueryBuilder.queryTable(Article.class)
+        .where(ArticleField.supplier.eq(supplier), priceList.eq(excludedPriceList).not())
+        .orderBy(diff(ArticleField.suppliersItemNumber, asExpression(suppliersItemNumber)).asc())
+        .getResultStream(em)
+        .findFirst()
+        .orElse(null);
   }
 
   public static boolean articleIsActiveOffer(Article article) {
@@ -255,7 +254,8 @@ public class Articles {
   public static Optional<Offer> findOfferOn(Article article) {
     return QueryBuilder.queryTable(Offer.class)
         .where(OfferField.offerArticle.eq(article))
-        .getResultList().stream()
+        .getResultList()
+        .stream()
         .filter(e -> e.getFromDate().isBefore(Instant.now()))
         .filter(e -> e.getToDate().isAfter(Instant.now()))
         .findAny();
@@ -464,7 +464,9 @@ public class Articles {
         .mapToInt(Article::getSuppliersItemNumber)
         .forEach(articleNos::add);
 
-    return DBConnection.getConditioned(CatalogEntry.class, CatalogEntryField.artikelNr.eq(articleNos)).stream()
+    return DBConnection.getConditioned(
+            CatalogEntry.class, CatalogEntryField.artikelNr.eq(articleNos))
+        .stream()
         .filter(
             e ->
                 Boolean.FALSE == e.getAktionspreis()

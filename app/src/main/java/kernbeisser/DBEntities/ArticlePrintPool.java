@@ -74,8 +74,8 @@ public class ArticlePrintPool {
   }
 
   public static Map<Article, Integer> getPrintPoolAsMap() {
-    return QueryBuilder.queryTable(ArticlePrintPool.class)
-        .getResultList().stream().collect(Collectors.toMap(e -> e.article, e -> e.number));
+    return QueryBuilder.queryTable(ArticlePrintPool.class).getResultList().stream()
+        .collect(Collectors.toMap(e -> e.article, e -> e.number));
   }
 
   public static void setPrintPoolFromMap(Map<Article, Integer> newPrintPool) {

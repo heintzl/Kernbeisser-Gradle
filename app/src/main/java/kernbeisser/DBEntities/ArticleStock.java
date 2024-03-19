@@ -9,7 +9,6 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Types.ArticleStockField;
 import kernbeisser.Enums.Setting;
-import kernbeisser.Useful.Tools;
 import lombok.Cleanup;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -35,11 +34,12 @@ public class ArticleStock {
   @CreationTimestamp private Instant createDate;
 
   public static Optional<ArticleStock> ofArticle(EntityManager em, Article article, Shelf shelf) {
-    return QueryBuilder.queryTable(ArticleStock.class).where(
-                    ArticleStockField.article.eq(article),
-                    ArticleStockField.shelf.eq(shelf),
-                    ArticleStockField.inventoryDate.eq(Setting.INVENTORY_SCHEDULED_DATE.getDateValue())
-            ).getSingleResultOptional(em);
+    return QueryBuilder.queryTable(ArticleStock.class)
+        .where(
+            ArticleStockField.article.eq(article),
+            ArticleStockField.shelf.eq(shelf),
+            ArticleStockField.inventoryDate.eq(Setting.INVENTORY_SCHEDULED_DATE.getDateValue()))
+        .getSingleResultOptional(em);
   }
 
   public static ArticleStock newFromArticle(Article e, Shelf shelf) {

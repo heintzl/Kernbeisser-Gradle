@@ -5,7 +5,7 @@ import jakarta.persistence.criteria.Expression;
 import lombok.Getter;
 
 @Getter
-public class FieldIdentifier<P, V>  implements ExpressionFactory<P,V> {
+public class FieldIdentifier<P, V> implements ExpressionFactory<P, V> {
   private final String name;
 
   private final Class<P> tableClass;
@@ -16,7 +16,7 @@ public class FieldIdentifier<P, V>  implements ExpressionFactory<P,V> {
   }
 
   public <N> FieldIdentifier<P, N> child(FieldIdentifier<V, N> childField) {
-    return new FieldIdentifier<P,N>(tableClass, name) {
+    return new FieldIdentifier<P, N>(tableClass, name) {
       @Override
       public Expression<N> createExpression(Source<P> source, CriteriaBuilder cb) {
         return childField.createExpression(source.join(FieldIdentifier.this), cb);
