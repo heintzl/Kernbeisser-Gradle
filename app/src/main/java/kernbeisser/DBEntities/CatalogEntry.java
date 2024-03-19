@@ -7,7 +7,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntities.Types.FieldIdentifier;
+import kernbeisser.DBConnection.FieldIdentifier;
+import kernbeisser.DBConnection.PredicateFactory;
+import kernbeisser.DBConnection.QueryBuilder;
+import kernbeisser.DBEntities.Types.CatalogEntryField;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
@@ -15,6 +18,8 @@ import kernbeisser.Tasks.Catalog.BoolValues;
 import kernbeisser.Useful.ActuallyCloneable;
 import lombok.*;
 import org.apache.commons.lang3.StringUtils;
+
+import static kernbeisser.DBConnection.PredicateFactory.between;
 
 @Data
 @Table(
@@ -208,25 +213,23 @@ public class CatalogEntry implements ActuallyCloneable {
   }
 
   public static List<CatalogEntry> getByArticleNo(
-      String ArticleNo, boolean withActions, boolean withInactive) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    String queryString = "SELECT c FROM CatalogEntry c WHERE c.artikelNr = :n";
+      String articleNo, boolean withActions, boolean withInactive) {
+    var queryBuilder = QueryBuilder.queryTable(CatalogEntry.class)
+            .where(CatalogEntryField.artikelNr.eq(articleNo));
     if (!withInactive) {
-      queryString += " AND NOT aenderungskennung IN ('V', 'X')";
+      queryBuilder.where(CatalogEntryField.aenderungskennung.in("V","X").not());
     }
     if (withActions) {
-      queryString +=
-          " AND (NOT aktionspreis = 1 OR :d BETWEEN aktionspreisGueltigAb AND aktionspreisGueltigBis)  ORDER BY aktionspreis DESC";
+      queryBuilder.where(
+              PredicateFactory.or(
+                      CatalogEntryField.aktionspreis.eq(1).not(),
+                      between(Instant.now(), CatalogEntryField.aktionspreisGueltigAb, CatalogEntryField.aktionspreisGueltigBis)
+              )
+      ).orderBy(CatalogEntryField.aktionspreis.desc());
     } else {
-      queryString += " AND NOT aktionspreis = 1";
+      queryBuilder.where(CatalogEntryField.aktionspreis.eq(1).not());
     }
-    return em.createQuery(queryString, CatalogEntry.class)
-        .setParameter("n", ArticleNo)
-        .setParameter("d", Instant.now())
-        .getResultList();
+    return queryBuilder.getResultList();
   }
 
   public static List<CatalogEntry> getByArticleNo(String ArticleNo) {
@@ -235,17 +238,14 @@ public class CatalogEntry implements ActuallyCloneable {
 
   public static Optional<CatalogEntry> getByBarcode(String barcode) {
     return DBConnection.getConditioned(
-            CatalogEntry.class, new FieldIdentifier<>(CatalogEntry.class,"EanLadenEinheit").eq(barcode))
+            CatalogEntry.class,
+            CatalogEntryField.eanLadenEinheit.eq(barcode))
         .stream()
         .findFirst();
   }
 
   public static List<CatalogEntry> getCatalog() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery("SELECT c FROM CatalogEntry c", CatalogEntry.class).getResultList();
+    return QueryBuilder.queryTable(CatalogEntry.class).getResultList();
   }
 
   public static void clearCatalog() {

@@ -1,5 +1,9 @@
 package kernbeisser.DBEntities;
 
+import static kernbeisser.DBConnection.ExpressionFactory.*;
+import static kernbeisser.DBConnection.PredicateFactory.or;
+import static kernbeisser.DBConnection.PredicateFactory.like;
+import static kernbeisser.DBEntities.Types.ArticleField.*;
 
 import jakarta.persistence.*;
 import java.text.DecimalFormat;
@@ -10,10 +14,9 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import jakarta.persistence.criteria.Root;
 import kernbeisser.DBConnection.*;
 import kernbeisser.DBEntities.Types.ArticleField;
+import kernbeisser.DBEntities.Types.CatalogEntryField;
 import kernbeisser.DBEntities.Types.OfferField;
 import kernbeisser.DBEntities.Types.PriceListField;
 import kernbeisser.EntityWrapper.ObjectState;
@@ -30,12 +33,6 @@ import org.hibernate.envers.query.AuditEntity;
 import org.hibernate.envers.query.AuditQuery;
 import rs.groump.Access;
 import rs.groump.AccessManager;
-
-import static kernbeisser.DBConnection.CombinedCondition.or;
-import static kernbeisser.DBConnection.Condition.like;
-import static kernbeisser.DBConnection.Field.mod;
-import static kernbeisser.DBConnection.Field.upper;
-import static kernbeisser.DBEntities.Types.ArticleField.*;
 
 @Log4j2
 public class Articles {
@@ -72,8 +69,7 @@ public class Articles {
   public static Optional<ObjectState<Article>> getByKbNumber(
       EntityManager em, int kbNumber, boolean filterShopRange) {
     return Optional.ofNullable(
-        DBConnection.getConditioned(Article.class, ArticleField.kbNumber.eq(kbNumber))
-            .stream()
+        DBConnection.getConditioned(Article.class, ArticleField.kbNumber.eq(kbNumber)).stream()
             .filter(a -> !(filterShopRange && !a.getShopRange().isVisible()))
             .findAny()
             .map(ObjectState::currentState)
@@ -153,10 +149,9 @@ public class Articles {
       @Cleanup(value = "commit")
       EntityTransaction et = em.getTransaction();
       et.begin();
-      return QueryBuilder.queryTable(Article.class).where(
-              name.eq(rawPrice.getName()),
-              kbNumber.in(rawPriceIdentifiers)
-      ).getSingleResult(em);
+      return QueryBuilder.queryTable(Article.class)
+          .where(name.eq(rawPrice.getName()), kbNumber.in(rawPriceIdentifiers))
+          .getSingleResult(em);
     } catch (NoResultException e) {
       ArticleConstants identifierEnum = ArticleConstants.CUSTOM_PRODUCT;
       AtomicReference<Supplier> supplier = new AtomicReference<>();
@@ -207,22 +202,19 @@ public class Articles {
 
   private static TypedQuery<Article> createQuery(EntityManager em, String search) {
     int n = Tools.tryParseInt(search);
-    String ds =  (search.length() > 3 ? "%" + search + "%" : search + "%").toUpperCase();
+    String ds = (search.length() > 3 ? "%" + search + "%" : search + "%").toUpperCase();
     long l = Tools.tryParseLong(search);
-    return QueryBuilder.queryTable(
-            Article.class
-    ).where(
+    return QueryBuilder.queryTable(Article.class)
+        .where(
             or(
-                    kbNumber.eq(n),
-                    suppliersItemNumber.eq(Tools.tryParseInt(search)),
-                    like(upper(name), ds),
-                    barcode.eq(l),
-                    like(barcode.as(String.class), "%"+search),
-                    like(upper(priceList.child(PriceListField.name)), search.toUpperCase())
-            )
-    ).orderBy(
-            name.asc()
-    ).buildQuery(em);
+                kbNumber.eq(n),
+                suppliersItemNumber.eq(Tools.tryParseInt(search)),
+                like(upper(name), ds),
+                barcode.eq(l),
+                like(barcode.as(String.class), "%" + search),
+                like(upper(priceList.child(PriceListField.name)), search.toUpperCase())))
+        .orderBy(name.asc())
+        .buildQuery(em);
   }
 
   public static int nextFreeKBNumber(EntityManager em) {
@@ -235,11 +227,11 @@ public class Articles {
 
   public static Article nextArticleTo(
       EntityManager em, int suppliersItemNumber, Supplier supplier) {
-    return em.createQuery(
-            "select a from Article a where supplier = :s order by abs(a.suppliersItemNumber - :sn) asc",
-            Article.class)
-        .setParameter("s", supplier)
-        .setParameter("sn", suppliersItemNumber)
+    return QueryBuilder.queryTable(Article.class).where(
+            ArticleField.supplier.eq(supplier)
+    ).orderBy(
+            diff(ArticleField.suppliersItemNumber, asExpression(suppliersItemNumber)).asc()
+    ).buildQuery(em)
         .setMaxResults(1)
         .getResultStream()
         .findAny()
@@ -248,17 +240,12 @@ public class Articles {
 
   public static Article nextArticleTo(
       EntityManager em, int suppliersItemNumber, Supplier supplier, PriceList excludedPriceList) {
-    return em.createQuery(
-            "select a from Article a where supplier = :s and priceList != :pl "
-                + "order by abs(a.suppliersItemNumber - :sn) asc",
-            Article.class)
-        .setParameter("s", supplier)
-        .setParameter("sn", suppliersItemNumber)
-        .setParameter("pl", excludedPriceList)
-        .setMaxResults(1)
-        .getResultStream()
-        .findAny()
-        .orElse(null);
+    return QueryBuilder.queryTable(Article.class).where(
+            ArticleField.supplier.eq(supplier),
+            priceList.eq(excludedPriceList).not()
+    ).orderBy(
+            diff(ArticleField.suppliersItemNumber, asExpression(suppliersItemNumber)).asc()
+    ).getResultStream(em).findFirst().orElse(null);
   }
 
   public static boolean articleIsActiveOffer(Article article) {
@@ -268,7 +255,7 @@ public class Articles {
   public static Optional<Offer> findOfferOn(Article article) {
     return QueryBuilder.queryTable(Offer.class)
         .where(OfferField.offerArticle.eq(article))
-        .getResultStream()
+        .getResultList().stream()
         .filter(e -> e.getFromDate().isBefore(Instant.now()))
         .filter(e -> e.getToDate().isAfter(Instant.now()))
         .findAny();
@@ -477,9 +464,7 @@ public class Articles {
         .mapToInt(Article::getSuppliersItemNumber)
         .forEach(articleNos::add);
 
-    return DBConnection.getConditioned(
-            CatalogEntry.class, kbNumber.eq(articleNos))
-        .stream()
+    return DBConnection.getConditioned(CatalogEntry.class, CatalogEntryField.artikelNr.eq(articleNos)).stream()
         .filter(
             e ->
                 Boolean.FALSE == e.getAktionspreis()

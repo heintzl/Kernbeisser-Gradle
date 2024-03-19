@@ -2,14 +2,11 @@ package kernbeisser.DBEntities;
 
 import jakarta.persistence.*;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
-
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Types.ArticlePrintPoolField;
-import kernbeisser.DBEntities.Types.Constants;
 import kernbeisser.Security.StaticPermissionChecks;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
@@ -49,9 +46,10 @@ public class ArticlePrintPool {
   public static int get(Article article) {
     StaticPermissionChecks.getStaticInstance().checkShouldReadArticlePrintPoolAgain();
     return QueryBuilder.queryTable(ArticlePrintPool.class)
-            .where(
-              ArticlePrintPoolField.article.eq(article)
-      ).getSingleResultOptional().map(ArticlePrintPool::getNumber).orElse(0);
+        .where(ArticlePrintPoolField.article.eq(article))
+        .getSingleResultOptional()
+        .map(ArticlePrintPool::getNumber)
+        .orElse(0);
   }
 
   private static void deleteAll(EntityManager em) {
@@ -68,14 +66,16 @@ public class ArticlePrintPool {
   }
 
   private static Long getArticlePrintPoolId(Article article) {
-    return QueryBuilder.queryTable(ArticlePrintPool.class).where(
-            ArticlePrintPoolField.article.eq(article)
-    ).getSingleResultOptional().map(ArticlePrintPool::getId).orElse(null);
+    return QueryBuilder.queryTable(ArticlePrintPool.class)
+        .where(ArticlePrintPoolField.article.eq(article))
+        .getSingleResultOptional()
+        .map(ArticlePrintPool::getId)
+        .orElse(null);
   }
 
   public static Map<Article, Integer> getPrintPoolAsMap() {
-    return QueryBuilder.queryTable(ArticlePrintPool.class).getResultStream()
-            .collect(Collectors.toMap(e -> e.article, e -> e.number));
+    return QueryBuilder.queryTable(ArticlePrintPool.class)
+        .getResultList().stream().collect(Collectors.toMap(e -> e.article, e -> e.number));
   }
 
   public static void setPrintPoolFromMap(Map<Article, Integer> newPrintPool) {

@@ -595,14 +595,6 @@ public class Tools {
     }
   }
 
-  public static <T> Optional<T> runIfPossible(TypedQuery<T> supplier) {
-    try {
-      return Optional.of(supplier.getSingleResult());
-    } catch (NoResultException e) {
-      return Optional.empty();
-    }
-  }
-
   public static boolean canInvoke(AccessRunnable runnable) {
     try {
       runnable.run();

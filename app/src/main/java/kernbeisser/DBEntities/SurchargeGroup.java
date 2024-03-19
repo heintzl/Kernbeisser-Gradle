@@ -135,7 +135,7 @@ public class SurchargeGroup implements Serializable, ActuallyCloneable {
             EntityTransaction et = em.getTransaction();
             et.begin();
             return em.createQuery(
-                    "select s from SurchargeGroup s where supplier.id = :sid and parent = NULL",
+                    "select s from SurchargeGroup s where supplier.id = :sid and parent is NULL",
                     SurchargeGroup.class)
                 .setParameter("sid", s.getId())
                 .getResultList();

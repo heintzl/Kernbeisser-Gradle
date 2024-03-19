@@ -6,7 +6,10 @@ import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.NoResultException;
 import java.util.Set;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.PredicateFactory;
+import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Permission;
+import kernbeisser.DBEntities.Types.PermissionField;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Security.PermissionKeyGroups;
 import kernbeisser.Security.PermissionKeys;
@@ -76,10 +79,9 @@ public enum PermissionConstants {
             @Cleanup(value = "commit")
             EntityTransaction et = em.getTransaction();
             et.begin();
-            return em.createQuery(
-                    "select p from Permission p where name like :pcn", Permission.class)
-                .setParameter("pcn", "@" + constants.name())
-                .getSingleResult();
+            return QueryBuilder.queryTable(Permission.class).where(
+                      PredicateFactory.like(PermissionField.name, "@"+constants.name())
+              ).getSingleResult(em);
           } catch (NoResultException e) {
             EntityTransaction et = em.getTransaction();
             et.begin();

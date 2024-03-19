@@ -6,6 +6,8 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Optional;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.QueryBuilder;
+import kernbeisser.DBEntities.Types.ArticleStockField;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Useful.Tools;
 import lombok.Cleanup;
@@ -33,14 +35,11 @@ public class ArticleStock {
   @CreationTimestamp private Instant createDate;
 
   public static Optional<ArticleStock> ofArticle(EntityManager em, Article article, Shelf shelf) {
-    return Tools.runIfPossible(
-        em.createQuery(
-                "select a from ArticleStock a where a.article = :a and a.shelf = :s and a.inventoryDate = :d",
-                ArticleStock.class)
-            .setMaxResults(1)
-            .setParameter("a", article)
-            .setParameter("s", shelf)
-            .setParameter("d", Setting.INVENTORY_SCHEDULED_DATE.getDateValue()));
+    return QueryBuilder.queryTable(ArticleStock.class).where(
+                    ArticleStockField.article.eq(article),
+                    ArticleStockField.shelf.eq(shelf),
+                    ArticleStockField.inventoryDate.eq(Setting.INVENTORY_SCHEDULED_DATE.getDateValue())
+            ).getSingleResultOptional(em);
   }
 
   public static ArticleStock newFromArticle(Article e, Shelf shelf) {

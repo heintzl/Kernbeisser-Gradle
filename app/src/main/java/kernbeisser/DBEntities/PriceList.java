@@ -18,6 +18,9 @@ import java.util.Collection;
 import java.util.List;
 import kernbeisser.CustomComponents.ObjectTree.Node;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.QueryBuilder;
+import kernbeisser.DBEntities.Types.ArticleField;
+import kernbeisser.DBEntities.Types.PriceListField;
 import kernbeisser.Forms.ObjectForm.Components.Source;
 import kernbeisser.Useful.Tools;
 import lombok.*;
@@ -116,21 +119,14 @@ public class PriceList implements Serializable {
     EntityTransaction et = em.getTransaction();
     et.begin();
     return em.createQuery(
-            "select p from PriceList p where p.superPriceList = null", PriceList.class)
+            "select p from PriceList p where p.superPriceList is null", PriceList.class)
         .getResultList();
   }
 
   public List<PriceList> getAllPriceLists() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery(
-            "select p from PriceList p where p.superPriceList = "
-                + getId()
-                + " order by p.name asc",
-            PriceList.class)
-        .getResultList();
+    return QueryBuilder.queryTable(PriceList.class).where(PriceListField.superPriceList.eq(this)).orderBy(
+            PriceListField.name.asc()
+    ).getResultList();
   }
 
   @Override
@@ -147,9 +143,7 @@ public class PriceList implements Serializable {
   }
 
   public List<Article> getAllArticles(EntityManager em) {
-    return em.createQuery("select a from Article a where a.priceList = :p", Article.class)
-        .setParameter("p", this)
-        .getResultList();
+    return QueryBuilder.queryTable(Article.class).where(ArticleField.priceList.eq(this)).getResultList(em);
   }
 
   public static Node<PriceList> asNode(Node<PriceList> parent, PriceList priceList) {

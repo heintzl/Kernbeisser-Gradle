@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import java.util.Collection;
 import java.util.HashMap;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.QueryBuilder;
+import kernbeisser.DBEntities.Types.UserSettingValueField;
 import kernbeisser.Enums.UserSetting;
 import kernbeisser.Security.Access.UserRelated;
 import kernbeisser.Useful.Tools;
@@ -97,14 +99,10 @@ public class UserSettingValue implements UserRelated {
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    UserSettingValue usv =
-        Tools.runIfPossible(
-                em.createQuery(
-                        "select u from UserSettingValue u where u.user = :u and u.userSetting =:us",
-                        UserSettingValue.class)
-                    .setParameter("u", user)
-                    .setParameter("us", setting))
-            .orElseGet(
+    UserSettingValue usv = QueryBuilder.queryTable(UserSettingValue.class).where(
+            UserSettingValueField.user.eq(user),
+            UserSettingValueField.userSetting.eq(setting)
+    ).getSingleResultOptional(em).orElseGet(
                 () -> {
                   UserSettingValue newUsv = new UserSettingValue();
                   newUsv.user = user;

@@ -12,7 +12,7 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBConnection.FieldCondition;
+import kernbeisser.DBConnection.FieldIdentifier;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.Setting;
@@ -74,7 +74,7 @@ public class LineContent {
       String currentLine = lines.get(i);
       if (isComment(currentLine)) {
         if (contents.isEmpty()) continue;
-        LineContent before = contents.get(contents.size() - 1);
+        LineContent before = contents.getLast();
         before.setMessage(extractMessage(currentLine));
         continue;
       }
@@ -110,8 +110,8 @@ public class LineContent {
           fileName + ": Fehlerhafte Zeilen wurden übersprungen:",
           JOptionPane.WARNING_MESSAGE);
     }
-    FieldCondition articleCondition = new FieldCondition("artikelNr", kkNumbers);
-    FieldCondition actionCondition = new FieldCondition("aktionspreis", 1).not();
+    var articleCondition = new FieldIdentifier<>(CatalogEntry.class, "artikelNr").in(kkNumbers);
+    var actionCondition = new FieldIdentifier<>(CatalogEntry.class, "aktionspreis").eq(1).not();
     Map<String, CatalogEntry> catalogEntries =
         DBConnection.getConditioned(CatalogEntry.class, articleCondition, actionCondition).stream()
             .collect(Collectors.toMap(CatalogEntry::getArtikelNr, e -> e));

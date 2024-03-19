@@ -9,11 +9,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBConnection.FieldCondition;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.ArticleStock;
 import kernbeisser.DBEntities.Articles;
 import kernbeisser.DBEntities.Shelf;
+import kernbeisser.DBEntities.Types.ArticleStockField;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Useful.Tools;
@@ -87,7 +87,7 @@ public class InventoryArticleStock {
     LocalDate currentInventoryDate = Setting.INVENTORY_SCHEDULED_DATE.getDateValue();
     List<InventoryArticleStock> stocksWithoutSums =
         DBConnection.getConditioned(
-                ArticleStock.class, new FieldCondition("inventoryDate", currentInventoryDate))
+                ArticleStock.class, ArticleStockField.inventoryDate.eq(currentInventoryDate))
             .stream()
             .filter(s -> s.getCounted() != 0.0)
             .map(InventoryArticleStock::new)

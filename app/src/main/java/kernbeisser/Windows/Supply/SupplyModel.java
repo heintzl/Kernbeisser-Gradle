@@ -4,8 +4,8 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import java.util.*;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBConnection.FieldCondition;
 import kernbeisser.DBEntities.*;
+import kernbeisser.DBEntities.Types.PreOrderField;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
@@ -109,8 +109,8 @@ public class SupplyModel implements IModel<SupplyController> {
     List<PreOrder> userPreorders =
         DBConnection.getConditioned(
             PreOrder.class,
-            FieldCondition.isNull("delivery"),
-            new FieldCondition("user", User.getKernbeisserUser()).not());
+            PreOrderField.delivery.isNull(),
+            PreOrderField.user.eq(User.getKernbeisserUser()).not());
     Map<CatalogEntry, Integer> entryCounts = new HashMap<>(userPreorders.size());
     for (PreOrder preorder : userPreorders) {
       CatalogEntry entry = preorder.getCatalogEntry();
@@ -177,7 +177,7 @@ public class SupplyModel implements IModel<SupplyController> {
       item.setItemMultiplier(item.getItemMultiplier() + articleBefore.getItemMultiplier());
       shoppingItems.remove(existingItemIndex);
     }
-    shoppingItems.add(0, item);
+    shoppingItems.addFirst(item);
   }
 
   public List<ShoppingItem> getShoppingItems() {

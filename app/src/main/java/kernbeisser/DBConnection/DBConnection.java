@@ -113,7 +113,8 @@ public class DBConnection {
     return cb.createQuery(clazz);
   }
 
-  public static <T> List<T> getConditioned(Class<T> clazz, Condition... conditions) {
+  @SafeVarargs
+  public static <T> List<T> getConditioned(Class<T> clazz, PredicateFactory<T>... conditions) {
     @Cleanup EntityManager em = getEntityManager();
     @Cleanup("commit")
     EntityTransaction et = em.getTransaction();
@@ -121,8 +122,9 @@ public class DBConnection {
     return getConditioned(em, clazz, conditions);
   }
 
+  @SafeVarargs
   public static <T> List<T> getConditioned(
-      EntityManager em, Class<T> clazz, Condition... conditions) {
+      EntityManager em, Class<T> clazz, PredicateFactory<T>... conditions) {
     CriteriaBuilder cb = em.getCriteriaBuilder();
     CriteriaQuery<T> cr = cb.createQuery(clazz);
     Root<T> root = cr.from(clazz);
@@ -134,7 +136,7 @@ public class DBConnection {
     return em.createQuery(
             cr.where(
                     Arrays.stream(conditions)
-                        .map(e -> e.buildPredicate(cb, root))
+                        .map(e -> e.createPredicate(Source.rootSource(root),cb))
                         .toArray(Predicate[]::new))
                 .orderBy())
         .getResultList();

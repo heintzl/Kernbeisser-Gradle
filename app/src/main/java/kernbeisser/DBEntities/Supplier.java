@@ -99,7 +99,7 @@ public class Supplier implements Serializable, ActuallyCloneable {
   public SurchargeGroup getOrPersistDefaultSurchargeGroup(EntityManager em) {
     try {
       return em.createQuery(
-              "select sg from SurchargeGroup sg where sg.parent = NULL and sg.supplier = :s and name = :n",
+              "select sg from SurchargeGroup sg where sg.parent is NULL and sg.supplier = :s and name = :n",
               SurchargeGroup.class)
           .setParameter("s", this)
           .setParameter("n", SurchargeGroup.defaultListNameQualifier(this))

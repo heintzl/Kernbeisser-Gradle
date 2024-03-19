@@ -7,10 +7,10 @@ import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBConnection.FieldCondition;
 import kernbeisser.DBEntities.ArticleStock;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.Shelf;
+import kernbeisser.DBEntities.Types.ArticleStockField;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
 import kernbeisser.Windows.MVC.IModel;
@@ -83,7 +83,7 @@ public class InventoryModel implements IModel<InventoryController> {
     }
     List<ArticleStock> stocksToRemove =
         DBConnection.getConditioned(
-                ArticleStock.class, new FieldCondition("inventoryDate", inventoryDate))
+                ArticleStock.class, ArticleStockField.inventoryDate.eq(inventoryDate))
             .stream()
             .filter(
                 s ->
@@ -91,7 +91,7 @@ public class InventoryModel implements IModel<InventoryController> {
                         .atZone(ZoneId.systemDefault())
                         .toLocalDate()
                         .isBefore(inventoryDate))
-            .collect(Collectors.toList());
+            .toList();
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();

@@ -6,6 +6,8 @@ import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
 import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Stream;
 import lombok.Cleanup;
 import lombok.RequiredArgsConstructor;
@@ -13,40 +15,40 @@ import org.jetbrains.annotations.NotNull;
 
 @RequiredArgsConstructor
 @SuppressWarnings("unchecked")
-public class QueryBuilder<T> {
+public class QueryBuilder<P> {
 
-  private final Class<T> tableClass;
-  @NotNull private final Collection<Condition> conditions = new ArrayList<>();
-  @NotNull private final Collection<FieldOrder<T>> orders = new ArrayList<>();
+  private final Class<P> tableClass;
+  @NotNull private final Collection<PredicateFactory<P>> conditions = new ArrayList<>();
+  @NotNull private final Collection<OrderFactory<P>> orders = new ArrayList<>();
 
-  public static <T> QueryBuilder<T> queryTable(Class<T> tableClass) {
+  public static <P> QueryBuilder<P> queryTable(Class<P> tableClass) {
     return new QueryBuilder<>(tableClass);
   }
 
-  public QueryBuilder<T> where(Condition... conditions) {
+  public QueryBuilder<P> where(PredicateFactory<P> ... conditions) {
     return where(Arrays.stream(conditions).toList());
   }
 
-  public QueryBuilder<T> where(Collection<Condition> conditions) {
+  public QueryBuilder<P> where(Collection<PredicateFactory<P>> conditions) {
     this.conditions.addAll(conditions);
     return this;
   }
 
-  public QueryBuilder<T> orderBy(Collection<FieldOrder<T>> fieldIdentifiers) {
+  public QueryBuilder<P> orderBy(Collection<OrderFactory<P>> fieldIdentifiers) {
     this.orders.addAll(fieldIdentifiers);
     return this;
   }
 
   @SuppressWarnings("unchecked")
-  public QueryBuilder<T> orderBy(FieldOrder<T>... fieldIdentifiers) {
+  public QueryBuilder<P> orderBy(OrderFactory<P>... fieldIdentifiers) {
     return orderBy(Arrays.stream(fieldIdentifiers).toList());
   }
 
-  public List<T> getResultList(EntityManager em) {
+  public List<P> getResultList(EntityManager em) {
     return buildQuery(em).getResultList();
   }
 
-  public List<T> getResultList() {
+  public List<P> getResultList() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup("commit")
     EntityTransaction et = em.getTransaction();
@@ -54,40 +56,47 @@ public class QueryBuilder<T> {
     return getResultList(em);
   }
 
-  public Stream<T> getResultStream(EntityManager em) {
+  public Stream<P> getResultStream(EntityManager em) {
     return buildQuery(em).getResultStream();
   }
 
-  public Stream<T> getResultStream() {
+  public <R> R consumeSteam(Function<Stream<P>, R> streamConsumer) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup("commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    return buildQuery(em).getResultStream();
+    return streamConsumer.apply(buildQuery(em).getResultStream());
   }
 
-  public T getSingleResult(EntityManager em) {
+  public <R> void consumeSteam(Consumer<Stream<P>> streamConsumer) {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup("commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    streamConsumer.accept(buildQuery(em).getResultStream());
+  }
+
+  public P getSingleResult(EntityManager em) {
     return buildQuery(em).getSingleResult();
   }
 
-  public T getSingleResult() {
+  public P getSingleResult() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup("commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
     return getSingleResult(em);
   }
-  
-  public Optional<T> getSingleResultOptional(EntityManager em) {
+
+  public Optional<P> getSingleResultOptional(EntityManager em) {
     try {
       return Optional.of(buildQuery(em).getSingleResult());
-    }catch (NoResultException noResultException){
+    } catch (NoResultException noResultException) {
       return Optional.empty();
     }
-    
   }
-  
-  public Optional<T> getSingleResultOptional() {
+
+  public Optional<P> getSingleResultOptional() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup("commit")
     EntityTransaction et = em.getTransaction();
@@ -95,16 +104,19 @@ public class QueryBuilder<T> {
     return getSingleResultOptional(em);
   }
 
-  public TypedQuery<T> buildQuery(EntityManager em) {
+  public TypedQuery<P> buildQuery(EntityManager em) {
     CriteriaBuilder cb = em.getCriteriaBuilder();
-    CriteriaQuery<T> cr = cb.createQuery(tableClass);
-    Root<T> root = cr.from(tableClass);
+    CriteriaQuery<P> cr = cb.createQuery(tableClass);
+    Root<P> root = cr.from(tableClass);
     cr.select(root);
     return em.createQuery(
-        cr.where(conditions.stream().map(e -> e.buildPredicate(cb, root)).toArray(Predicate[]::new))
+        cr.where(
+                conditions.stream()
+                    .map(e -> e.createPredicate(Source.rootSource(root), cb))
+                    .toArray(Predicate[]::new))
             .orderBy(
                 orders.stream()
-                    .map(fieldIdentifier -> fieldIdentifier.toOrder(root, cb))
+                    .map(fieldIdentifier -> fieldIdentifier.createOrder(Source.rootSource(root), cb))
                     .toArray(Order[]::new)));
   }
 }
