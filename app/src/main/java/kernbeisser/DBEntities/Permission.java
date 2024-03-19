@@ -1,8 +1,12 @@
 package kernbeisser.DBEntities;
 
+import static kernbeisser.DBConnection.PredicateFactory.like;
+
 import jakarta.persistence.*;
 import java.util.*;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.QueryBuilder;
+import kernbeisser.DBEntities.Types.PermissionField;
 import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Useful.Tools;
 import lombok.Cleanup;
@@ -51,13 +55,9 @@ public class Permission {
   }
 
   public static Collection<Permission> defaultSearch(String s, int max) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery("select p from Permission p where p.name like :s", Permission.class)
-        .setParameter("s", s + "%")
-        .setMaxResults(max)
+    return QueryBuilder.queryTable(Permission.class)
+        .where(like(PermissionField.name, s + "%"))
+        .limit(max)
         .getResultList();
   }
 

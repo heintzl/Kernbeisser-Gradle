@@ -18,6 +18,8 @@ import org.jetbrains.annotations.NotNull;
 public class QueryBuilder<P> {
 
   private final Class<P> tableClass;
+
+  private int maxResults = Integer.MAX_VALUE;
   @NotNull private final Collection<PredicateFactory<P>> conditions = new ArrayList<>();
   @NotNull private final Collection<OrderFactory<P>> orders = new ArrayList<>();
 
@@ -42,6 +44,11 @@ public class QueryBuilder<P> {
   @SuppressWarnings("unchecked")
   public QueryBuilder<P> orderBy(OrderFactory<P>... fieldIdentifiers) {
     return orderBy(Arrays.stream(fieldIdentifiers).toList());
+  }
+
+  public QueryBuilder<P> limit(int maxResults) {
+    this.maxResults = maxResults;
+    return this;
   }
 
   public List<P> getResultList(EntityManager em) {
@@ -110,14 +117,16 @@ public class QueryBuilder<P> {
     Root<P> root = cr.from(tableClass);
     cr.select(root);
     return em.createQuery(
-        cr.where(
-                conditions.stream()
-                    .map(e -> e.createPredicate(Source.rootSource(root), cb))
-                    .toArray(Predicate[]::new))
-            .orderBy(
-                orders.stream()
-                    .map(
-                        fieldIdentifier -> fieldIdentifier.createOrder(Source.rootSource(root), cb))
-                    .toArray(Order[]::new)));
+            cr.where(
+                    conditions.stream()
+                        .map(e -> e.createPredicate(Source.rootSource(root), cb))
+                        .toArray(Predicate[]::new))
+                .orderBy(
+                    orders.stream()
+                        .map(
+                            fieldIdentifier ->
+                                fieldIdentifier.createOrder(Source.rootSource(root), cb))
+                        .toArray(Order[]::new)))
+        .setMaxResults(maxResults);
   }
 }

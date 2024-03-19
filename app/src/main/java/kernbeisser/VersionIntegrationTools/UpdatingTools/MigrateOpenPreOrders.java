@@ -8,10 +8,11 @@ import java.util.Collection;
 import java.util.Optional;
 import javax.swing.*;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBConnection.FieldIdentifier;
+import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.CatalogEntry;
 import kernbeisser.DBEntities.PreOrder;
+import kernbeisser.DBEntities.Types.CatalogEntryField;
 import kernbeisser.VersionIntegrationTools.VersionUpdatingTool;
 import lombok.Cleanup;
 
@@ -29,12 +30,11 @@ public class MigrateOpenPreOrders implements VersionUpdatingTool {
     for (PreOrder preOrder : relevantPreorders) {
       int kkNUmber = preOrder.getArticle().getSuppliersItemNumber();
       Optional<CatalogEntry> entry =
-          DBConnection.getConditioned(
-                  CatalogEntry.class,
-                  new FieldIdentifier<>(CatalogEntry.class, "artikelNr")
-                      .eq(Integer.toString(kkNUmber)))
-              .stream()
-              .filter(e -> !e.getAktionspreis())
+          QueryBuilder.queryTable(CatalogEntry.class)
+              .where(
+                  CatalogEntryField.artikelNr.eq(Integer.toString(kkNUmber)),
+                  CatalogEntryField.aktionspreis.eq(false))
+              .getResultStream(em)
               .findFirst();
       PreOrder existingPreOrder = em.find(PreOrder.class, preOrder.getId());
       if (entry.isPresent()) {
