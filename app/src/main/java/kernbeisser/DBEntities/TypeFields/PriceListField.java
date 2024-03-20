@@ -1,16 +1,13 @@
 package kernbeisser.DBEntities.TypeFields;
 
 import kernbeisser.DBConnection.FieldIdentifier;
-import kernbeisser.DBEntities.*;
-
-import java.time.Instant;
 
 public class PriceListField {
-public static FieldIdentifier<PriceList,Integer> id = new FieldIdentifier<>(PriceList.class, Integer.class, "id");
-public static FieldIdentifier<PriceList,String> name = new FieldIdentifier<>(PriceList.class, String.class, "name");
-public static FieldIdentifier<PriceList,PriceList> superPriceList = new FieldIdentifier<>(PriceList.class, PriceList.class, "superPriceList");
-public static FieldIdentifier<PriceList,Instant> lastPrint = new FieldIdentifier<>(PriceList.class, Instant.class, "lastPrint");
-public static FieldIdentifier<PriceList,Instant> updateDate = new FieldIdentifier<>(PriceList.class, Instant.class, "updateDate");
-public static FieldIdentifier<PriceList,Instant> createDate = new FieldIdentifier<>(PriceList.class, Instant.class, "createDate");
+public static FieldIdentifier<kernbeisser.DBEntities.PriceList,Integer> id = new FieldIdentifier<>(kernbeisser.DBEntities.PriceList.class, Integer.class, "id");
+public static FieldIdentifier<kernbeisser.DBEntities.PriceList,java.lang.String> name = new FieldIdentifier<>(kernbeisser.DBEntities.PriceList.class, java.lang.String.class, "name");
+public static FieldIdentifier<kernbeisser.DBEntities.PriceList,kernbeisser.DBEntities.PriceList> superPriceList = new FieldIdentifier<>(kernbeisser.DBEntities.PriceList.class, kernbeisser.DBEntities.PriceList.class, "superPriceList");
+public static FieldIdentifier<kernbeisser.DBEntities.PriceList,java.time.Instant> lastPrint = new FieldIdentifier<>(kernbeisser.DBEntities.PriceList.class, java.time.Instant.class, "lastPrint");
+public static FieldIdentifier<kernbeisser.DBEntities.PriceList,java.time.Instant> updateDate = new FieldIdentifier<>(kernbeisser.DBEntities.PriceList.class, java.time.Instant.class, "updateDate");
+public static FieldIdentifier<kernbeisser.DBEntities.PriceList,java.time.Instant> createDate = new FieldIdentifier<>(kernbeisser.DBEntities.PriceList.class, java.time.Instant.class, "createDate");
 
 }

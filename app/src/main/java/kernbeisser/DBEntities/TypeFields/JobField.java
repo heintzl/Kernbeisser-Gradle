@@ -1,15 +1,12 @@
 package kernbeisser.DBEntities.TypeFields;
 
 import kernbeisser.DBConnection.FieldIdentifier;
-import kernbeisser.DBEntities.*;
-
-import java.time.Instant;
 
 public class JobField {
-public static FieldIdentifier<Job,Integer> id = new FieldIdentifier<>(Job.class, Integer.class, "id");
-public static FieldIdentifier<Job,String> name = new FieldIdentifier<>(Job.class, String.class, "name");
-public static FieldIdentifier<Job,String> description = new FieldIdentifier<>(Job.class, String.class, "description");
-public static FieldIdentifier<Job,Instant> createDate = new FieldIdentifier<>(Job.class, Instant.class, "createDate");
-public static FieldIdentifier<Job,Instant> updateDate = new FieldIdentifier<>(Job.class, Instant.class, "updateDate");
+public static FieldIdentifier<kernbeisser.DBEntities.Job,Integer> id = new FieldIdentifier<>(kernbeisser.DBEntities.Job.class, Integer.class, "id");
+public static FieldIdentifier<kernbeisser.DBEntities.Job,java.lang.String> name = new FieldIdentifier<>(kernbeisser.DBEntities.Job.class, java.lang.String.class, "name");
+public static FieldIdentifier<kernbeisser.DBEntities.Job,java.lang.String> description = new FieldIdentifier<>(kernbeisser.DBEntities.Job.class, java.lang.String.class, "description");
+public static FieldIdentifier<kernbeisser.DBEntities.Job,java.time.Instant> createDate = new FieldIdentifier<>(kernbeisser.DBEntities.Job.class, java.time.Instant.class, "createDate");
+public static FieldIdentifier<kernbeisser.DBEntities.Job,java.time.Instant> updateDate = new FieldIdentifier<>(kernbeisser.DBEntities.Job.class, java.time.Instant.class, "updateDate");
 
 }

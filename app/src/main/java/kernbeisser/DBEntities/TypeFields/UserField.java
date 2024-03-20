@@ -1,38 +1,35 @@
 package kernbeisser.DBEntities.TypeFields;
 
 import kernbeisser.DBConnection.FieldIdentifier;
-import kernbeisser.DBEntities.*;
-
-import java.time.Instant;
-import java.util.Set;
 
 public class UserField {
-public static FieldIdentifier<User,Integer> id = new FieldIdentifier<>(User.class, Integer.class, "id");
-public static FieldIdentifier<User,Set> permissions = new FieldIdentifier<>(User.class, Set.class, "permissions");
-public static FieldIdentifier<User,Integer> shares = new FieldIdentifier<>(User.class, Integer.class, "shares");
-public static FieldIdentifier<User,Set> jobs = new FieldIdentifier<>(User.class, Set.class, "jobs");
-public static FieldIdentifier<User,Integer> kernbeisserKey = new FieldIdentifier<>(User.class, Integer.class, "kernbeisserKey");
-public static FieldIdentifier<User,Boolean> employee = new FieldIdentifier<>(User.class, Boolean.class, "employee");
-public static FieldIdentifier<User,String> username = new FieldIdentifier<>(User.class, String.class, "username");
-public static FieldIdentifier<User,String> password = new FieldIdentifier<>(User.class, String.class, "password");
-public static FieldIdentifier<User,String> firstName = new FieldIdentifier<>(User.class, String.class, "firstName");
-public static FieldIdentifier<User,String> surname = new FieldIdentifier<>(User.class, String.class, "surname");
-public static FieldIdentifier<User,String> phoneNumber1 = new FieldIdentifier<>(User.class, String.class, "phoneNumber1");
-public static FieldIdentifier<User,String> phoneNumber2 = new FieldIdentifier<>(User.class, String.class, "phoneNumber2");
-public static FieldIdentifier<User,String> street = new FieldIdentifier<>(User.class, String.class, "street");
-public static FieldIdentifier<User,String> town = new FieldIdentifier<>(User.class, String.class, "town");
-public static FieldIdentifier<User,String> townCode = new FieldIdentifier<>(User.class, String.class, "townCode");
-public static FieldIdentifier<User,String> email = new FieldIdentifier<>(User.class, String.class, "email");
-public static FieldIdentifier<User,Instant> createDate = new FieldIdentifier<>(User.class, Instant.class, "createDate");
-public static FieldIdentifier<User,Instant> updateDate = new FieldIdentifier<>(User.class, Instant.class, "updateDate");
-public static FieldIdentifier<User,User> updateBy = new FieldIdentifier<>(User.class, User.class, "updateBy");
-public static FieldIdentifier<User,UserGroup> userGroup = new FieldIdentifier<>(User.class, UserGroup.class, "userGroup");
-public static FieldIdentifier<User,Boolean> unreadable = new FieldIdentifier<>(User.class, Boolean.class, "unreadable");
-public static FieldIdentifier<User,Instant> lastPasswordChange = new FieldIdentifier<>(User.class, Instant.class, "lastPasswordChange");
-public static FieldIdentifier<User,Boolean> forcePasswordChange = new FieldIdentifier<>(User.class, Boolean.class, "forcePasswordChange");
-public static FieldIdentifier<User,Boolean> active = new FieldIdentifier<>(User.class, Boolean.class, "active");
-public static FieldIdentifier<User,Boolean> testOnly = new FieldIdentifier<>(User.class, Boolean.class, "testOnly");
-public static FieldIdentifier<User,Boolean> primary = new FieldIdentifier<>(User.class, Boolean.class, "primary");
-public static FieldIdentifier<User,Boolean> setUpdatedBy = new FieldIdentifier<>(User.class, Boolean.class, "setUpdatedBy");
+public static FieldIdentifier<kernbeisser.DBEntities.User,Integer> id = new FieldIdentifier<>(kernbeisser.DBEntities.User.class, Integer.class, "id");
+public static FieldIdentifier<kernbeisser.DBEntities.User,java.util.Set> permissions = new FieldIdentifier<>(kernbeisser.DBEntities.User.class, java.util.Set.class, "permissions");
+public static FieldIdentifier<kernbeisser.DBEntities.User,Integer> shares = new FieldIdentifier<>(kernbeisser.DBEntities.User.class, Integer.class, "shares");
+public static FieldIdentifier<kernbeisser.DBEntities.User,java.util.Set> jobs = new FieldIdentifier<>(kernbeisser.DBEntities.User.class, java.util.Set.class, "jobs");
+public static FieldIdentifier<kernbeisser.DBEntities.User,Integer> kernbeisserKey = new FieldIdentifier<>(kernbeisser.DBEntities.User.class, Integer.class, "kernbeisserKey");
+public static FieldIdentifier<kernbeisser.DBEntities.User,Boolean> employee = new FieldIdentifier<>(kernbeisser.DBEntities.User.class, Boolean.class, "employee");
+public static FieldIdentifier<kernbeisser.DBEntities.User,java.lang.String> username = new FieldIdentifier<>(kernbeisser.DBEntities.User.class, java.lang.String.class, "username");
+public static FieldIdentifier<kernbeisser.DBEntities.User,java.lang.String> password = new FieldIdentifier<>(kernbeisser.DBEntities.User.class, java.lang.String.class, "password");
+public static FieldIdentifier<kernbeisser.DBEntities.User,java.lang.String> firstName = new FieldIdentifier<>(kernbeisser.DBEntities.User.class, java.lang.String.class, "firstName");
+public static FieldIdentifier<kernbeisser.DBEntities.User,java.lang.String> surname = new FieldIdentifier<>(kernbeisser.DBEntities.User.class, java.lang.String.class, "surname");
+public static FieldIdentifier<kernbeisser.DBEntities.User,java.lang.String> phoneNumber1 = new FieldIdentifier<>(kernbeisser.DBEntities.User.class, java.lang.String.class, "phoneNumber1");
+public static FieldIdentifier<kernbeisser.DBEntities.User,java.lang.String> phoneNumber2 = new FieldIdentifier<>(kernbeisser.DBEntities.User.class, java.lang.String.class, "phoneNumber2");
+public static FieldIdentifier<kernbeisser.DBEntities.User,java.lang.String> street = new FieldIdentifier<>(kernbeisser.DBEntities.User.class, java.lang.String.class, "street");
+public static FieldIdentifier<kernbeisser.DBEntities.User,java.lang.String> town = new FieldIdentifier<>(kernbeisser.DBEntities.User.class, java.lang.String.class, "town");
+public static FieldIdentifier<kernbeisser.DBEntities.User,java.lang.String> townCode = new FieldIdentifier<>(kernbeisser.DBEntities.User.class, java.lang.String.class, "townCode");
+public static FieldIdentifier<kernbeisser.DBEntities.User,java.lang.String> email = new FieldIdentifier<>(kernbeisser.DBEntities.User.class, java.lang.String.class, "email");
+public static FieldIdentifier<kernbeisser.DBEntities.User,java.time.Instant> createDate = new FieldIdentifier<>(kernbeisser.DBEntities.User.class, java.time.Instant.class, "createDate");
+public static FieldIdentifier<kernbeisser.DBEntities.User,java.time.Instant> updateDate = new FieldIdentifier<>(kernbeisser.DBEntities.User.class, java.time.Instant.class, "updateDate");
+public static FieldIdentifier<kernbeisser.DBEntities.User,kernbeisser.DBEntities.User> updateBy = new FieldIdentifier<>(kernbeisser.DBEntities.User.class, kernbeisser.DBEntities.User.class, "updateBy");
+public static FieldIdentifier<kernbeisser.DBEntities.User,kernbeisser.DBEntities.UserGroup> userGroup = new FieldIdentifier<>(kernbeisser.DBEntities.User.class, kernbeisser.DBEntities.UserGroup.class, "userGroup");
+public static FieldIdentifier<kernbeisser.DBEntities.User,Boolean> unreadable = new FieldIdentifier<>(kernbeisser.DBEntities.User.class, Boolean.class, "unreadable");
+public static FieldIdentifier<kernbeisser.DBEntities.User,java.time.Instant> lastPasswordChange = new FieldIdentifier<>(kernbeisser.DBEntities.User.class, java.time.Instant.class, "lastPasswordChange");
+public static FieldIdentifier<kernbeisser.DBEntities.User,Boolean> forcePasswordChange = new FieldIdentifier<>(kernbeisser.DBEntities.User.class, Boolean.class, "forcePasswordChange");
+public static FieldIdentifier<kernbeisser.DBEntities.User,Boolean> active = new FieldIdentifier<>(kernbeisser.DBEntities.User.class, Boolean.class, "active");
+public static FieldIdentifier<kernbeisser.DBEntities.User,Boolean> testOnly = new FieldIdentifier<>(kernbeisser.DBEntities.User.class, Boolean.class, "testOnly");
+public static FieldIdentifier<kernbeisser.DBEntities.User,Boolean> primary = new FieldIdentifier<>(kernbeisser.DBEntities.User.class, Boolean.class, "primary");
+public static FieldIdentifier<kernbeisser.DBEntities.User,Boolean> setUpdatedBy = new FieldIdentifier<>(kernbeisser.DBEntities.User.class, Boolean.class, "setUpdatedBy");
+public static FieldIdentifier<kernbeisser.DBEntities.User,java.util.concurrent.atomic.AtomicReference> ignoredDialogs = new FieldIdentifier<>(kernbeisser.DBEntities.User.class, java.util.concurrent.atomic.AtomicReference.class, "ignoredDialogs");
 
 }

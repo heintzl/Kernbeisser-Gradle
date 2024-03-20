@@ -1,13 +1,11 @@
 package kernbeisser.DBEntities.TypeFields;
 
 import kernbeisser.DBConnection.FieldIdentifier;
-import kernbeisser.DBEntities.*;
-import kernbeisser.Enums.UserSetting;
 
 public class UserSettingValueField {
-public static FieldIdentifier<UserSettingValue,Integer> id = new FieldIdentifier<>(UserSettingValue.class, Integer.class, "id");
-public static FieldIdentifier<UserSettingValue,User> user = new FieldIdentifier<>(UserSettingValue.class, User.class, "user");
-public static FieldIdentifier<UserSettingValue, UserSetting> userSetting = new FieldIdentifier<>(UserSettingValue.class, UserSetting.class, "userSetting");
-public static FieldIdentifier<UserSettingValue,String> value = new FieldIdentifier<>(UserSettingValue.class, String.class, "value");
+public static FieldIdentifier<kernbeisser.DBEntities.UserSettingValue,Integer> id = new FieldIdentifier<>(kernbeisser.DBEntities.UserSettingValue.class, Integer.class, "id");
+public static FieldIdentifier<kernbeisser.DBEntities.UserSettingValue,kernbeisser.DBEntities.User> user = new FieldIdentifier<>(kernbeisser.DBEntities.UserSettingValue.class, kernbeisser.DBEntities.User.class, "user");
+public static FieldIdentifier<kernbeisser.DBEntities.UserSettingValue,kernbeisser.Enums.UserSetting> userSetting = new FieldIdentifier<>(kernbeisser.DBEntities.UserSettingValue.class, kernbeisser.Enums.UserSetting.class, "userSetting");
+public static FieldIdentifier<kernbeisser.DBEntities.UserSettingValue,java.lang.String> value = new FieldIdentifier<>(kernbeisser.DBEntities.UserSettingValue.class, java.lang.String.class, "value");
 
 }

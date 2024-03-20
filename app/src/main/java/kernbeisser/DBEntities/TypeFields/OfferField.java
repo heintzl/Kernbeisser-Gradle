@@ -1,16 +1,13 @@
 package kernbeisser.DBEntities.TypeFields;
 
 import kernbeisser.DBConnection.FieldIdentifier;
-import kernbeisser.DBEntities.*;
-
-import java.time.Instant;
 
 public class OfferField {
-public static FieldIdentifier<Offer,Integer> id = new FieldIdentifier<>(Offer.class, Integer.class, "id");
-public static FieldIdentifier<Offer,Instant> fromDate = new FieldIdentifier<>(Offer.class, Instant.class, "fromDate");
-public static FieldIdentifier<Offer,Instant> toDate = new FieldIdentifier<>(Offer.class, Instant.class, "toDate");
-public static FieldIdentifier<Offer,Article> offerArticle = new FieldIdentifier<>(Offer.class, Article.class, "offerArticle");
-public static FieldIdentifier<Offer,Article> parentArticle = new FieldIdentifier<>(Offer.class, Article.class, "parentArticle");
-public static FieldIdentifier<Offer,Instant> createDate = new FieldIdentifier<>(Offer.class, Instant.class, "createDate");
+public static FieldIdentifier<kernbeisser.DBEntities.Offer,Integer> id = new FieldIdentifier<>(kernbeisser.DBEntities.Offer.class, Integer.class, "id");
+public static FieldIdentifier<kernbeisser.DBEntities.Offer,java.time.Instant> fromDate = new FieldIdentifier<>(kernbeisser.DBEntities.Offer.class, java.time.Instant.class, "fromDate");
+public static FieldIdentifier<kernbeisser.DBEntities.Offer,java.time.Instant> toDate = new FieldIdentifier<>(kernbeisser.DBEntities.Offer.class, java.time.Instant.class, "toDate");
+public static FieldIdentifier<kernbeisser.DBEntities.Offer,kernbeisser.DBEntities.Article> offerArticle = new FieldIdentifier<>(kernbeisser.DBEntities.Offer.class, kernbeisser.DBEntities.Article.class, "offerArticle");
+public static FieldIdentifier<kernbeisser.DBEntities.Offer,kernbeisser.DBEntities.Article> parentArticle = new FieldIdentifier<>(kernbeisser.DBEntities.Offer.class, kernbeisser.DBEntities.Article.class, "parentArticle");
+public static FieldIdentifier<kernbeisser.DBEntities.Offer,java.time.Instant> createDate = new FieldIdentifier<>(kernbeisser.DBEntities.Offer.class, java.time.Instant.class, "createDate");
 
 }

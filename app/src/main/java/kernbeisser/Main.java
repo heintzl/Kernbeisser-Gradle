@@ -23,6 +23,8 @@ import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import rs.groump.Agent;
 
+import static kernbeisser.DBEntities.TypeFields.FieldUtils.printClassToFile;
+
 @Log4j2
 public class Main {
 
@@ -35,33 +37,6 @@ public class Main {
   }
 
   public static void main(String[] args) throws UnsupportedLookAndFeelException {
-    printClassToFile(
-            Article.class,
-            ArticlePrintPool.class,
-            Articles.class,
-            ArticleStock.class,
-            CatalogEntry.class,
-            IgnoredDialog.class,
-            IgnoredDifference.class,
-            Job.class,
-            Offer.class,
-            Permission.class,
-            Post.class,
-            PreOrder.class,
-            PriceList.class,
-            Purchase.class,
-            SaleSession.class,
-            SettingValue.class,
-            Shelf.class,
-            ShoppingItem.class,
-            Supplier.class,
-            SurchargeGroup.class,
-            SystemSetting.class,
-            Transaction.class,
-            User.class,
-            UserGroup.class,
-            UserSettingValue.class
-    );
     if (!Agent.agentInitialized) {
       System.out.println("cannot run, security.jar is not linked as a java-agent");
       System.exit(-1);
@@ -82,77 +57,7 @@ public class Main {
     checkVersion();
     SwingUtilities.invokeLater(() -> openLogIn());
   }
-
-  @SneakyThrows
-  public static void printClassToFile(Class<?>... classes) {
-    for (Class<?> clazz : classes) {
-      FileWriter fw = new FileWriter(new File("gen/" + clazz.getSimpleName() + "Field.java"));
-      String header =
-          """
-              package kernbeisser.DBEntities.Types;
-
-              import kernbeisser.DBConnection.FieldIdentifier;
-              import kernbeisser.DBEntities.*;
-
-              import java.time.Instant;
-              import java.util.Set;
-              import java.util.Collection;
-              import java.util.List;
-              """;
-      fw.write(header);
-      fw.write("public class " + clazz.getSimpleName() + "Field {\n");
-      for (Field declaredField : clazz.getDeclaredFields()) {
-        if (Modifier.isStatic(declaredField.getModifiers())) {
-          continue;
-        }
-        String statement =
-            "public static FieldIdentifier<"
-                + clazz.getSimpleName()
-                + ","
-                + getTypeName(declaredField.getType())
-                + "> "
-                + declaredField.getName()
-                + " = new FieldIdentifier<>("
-                + clazz.getSimpleName()
-                + ".class, "
-                    + getTypeName(declaredField.getType())
-                    + ".class, \""
-                + declaredField.getName()
-                + "\");\n";
-        fw.write(statement);
-      }
-      fw.write("\n}");
-      fw.flush();
-      fw.close();
-    }
-  }
-
-  public static void printClass(Class<?> clazz) {}
-
-  public static String getTypeName(Class<?> clazz) {
-    if (!clazz.isPrimitive()) return clazz.getSimpleName();
-    return switch (clazz.getSimpleName()) {
-      case "double":
-        yield "Double";
-      case "int":
-        yield "Integer";
-      case "long":
-        yield "Long";
-      case "byte":
-        yield "Byte";
-      case "char":
-        yield "Character";
-      case "short":
-        yield "Short";
-      case "boolean":
-        yield "Boolean";
-      case "float":
-        yield "Float";
-      default:
-        throw new UnsupportedOperationException("Type not supported");
-    };
-  }
-
+  
   public static String getPath() {
     try {
       return Main.class

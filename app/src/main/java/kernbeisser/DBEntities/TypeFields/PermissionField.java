@@ -1,13 +1,10 @@
 package kernbeisser.DBEntities.TypeFields;
 
 import kernbeisser.DBConnection.FieldIdentifier;
-import kernbeisser.DBEntities.*;
-
-import java.util.Set;
 
 public class PermissionField {
-public static FieldIdentifier<Permission,Integer> id = new FieldIdentifier<>(Permission.class, Integer.class, "id");
-public static FieldIdentifier<Permission,String> name = new FieldIdentifier<>(Permission.class, String.class, "name");
-public static FieldIdentifier<Permission,Set> keySet = new FieldIdentifier<>(Permission.class, Set.class, "keySet");
+public static FieldIdentifier<kernbeisser.DBEntities.Permission,Integer> id = new FieldIdentifier<>(kernbeisser.DBEntities.Permission.class, Integer.class, "id");
+public static FieldIdentifier<kernbeisser.DBEntities.Permission,java.lang.String> name = new FieldIdentifier<>(kernbeisser.DBEntities.Permission.class, java.lang.String.class, "name");
+public static FieldIdentifier<kernbeisser.DBEntities.Permission,java.util.Set> keySet = new FieldIdentifier<>(kernbeisser.DBEntities.Permission.class, java.util.Set.class, "keySet");
 
 }

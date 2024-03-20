@@ -1,17 +1,13 @@
 package kernbeisser.DBEntities.TypeFields;
 
 import kernbeisser.DBConnection.FieldIdentifier;
-import kernbeisser.DBEntities.*;
-
-import java.time.Instant;
-import java.time.LocalDate;
 
 public class ArticleStockField {
-public static FieldIdentifier<ArticleStock,Long> id = new FieldIdentifier<>(ArticleStock.class, Long.class, "id");
-public static FieldIdentifier<ArticleStock,Article> article = new FieldIdentifier<>(ArticleStock.class, Article.class, "article");
-public static FieldIdentifier<ArticleStock,Shelf> shelf = new FieldIdentifier<>(ArticleStock.class, Shelf.class, "shelf");
-public static FieldIdentifier<ArticleStock,Double> counted = new FieldIdentifier<>(ArticleStock.class, Double.class, "counted");
-public static FieldIdentifier<ArticleStock, LocalDate> inventoryDate = new FieldIdentifier<>(ArticleStock.class, LocalDate.class, "inventoryDate");
-public static FieldIdentifier<ArticleStock,Instant> createDate = new FieldIdentifier<>(ArticleStock.class, Instant.class, "createDate");
+public static FieldIdentifier<kernbeisser.DBEntities.ArticleStock,Long> id = new FieldIdentifier<>(kernbeisser.DBEntities.ArticleStock.class, Long.class, "id");
+public static FieldIdentifier<kernbeisser.DBEntities.ArticleStock,kernbeisser.DBEntities.Article> article = new FieldIdentifier<>(kernbeisser.DBEntities.ArticleStock.class, kernbeisser.DBEntities.Article.class, "article");
+public static FieldIdentifier<kernbeisser.DBEntities.ArticleStock,kernbeisser.DBEntities.Shelf> shelf = new FieldIdentifier<>(kernbeisser.DBEntities.ArticleStock.class, kernbeisser.DBEntities.Shelf.class, "shelf");
+public static FieldIdentifier<kernbeisser.DBEntities.ArticleStock,Double> counted = new FieldIdentifier<>(kernbeisser.DBEntities.ArticleStock.class, Double.class, "counted");
+public static FieldIdentifier<kernbeisser.DBEntities.ArticleStock,java.time.LocalDate> inventoryDate = new FieldIdentifier<>(kernbeisser.DBEntities.ArticleStock.class, java.time.LocalDate.class, "inventoryDate");
+public static FieldIdentifier<kernbeisser.DBEntities.ArticleStock,java.time.Instant> createDate = new FieldIdentifier<>(kernbeisser.DBEntities.ArticleStock.class, java.time.Instant.class, "createDate");
 
 }

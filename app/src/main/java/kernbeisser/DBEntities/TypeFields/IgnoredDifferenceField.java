@@ -1,14 +1,12 @@
 package kernbeisser.DBEntities.TypeFields;
 
 import kernbeisser.DBConnection.FieldIdentifier;
-import kernbeisser.DBEntities.*;
-import kernbeisser.Tasks.Catalog.Merge.MappedDifference;
 
 public class IgnoredDifferenceField {
-public static FieldIdentifier<IgnoredDifference,Long> id = new FieldIdentifier<>(IgnoredDifference.class, Long.class, "id");
-public static FieldIdentifier<IgnoredDifference,Article> article = new FieldIdentifier<>(IgnoredDifference.class, Article.class, "article");
-public static FieldIdentifier<IgnoredDifference, MappedDifference> difference = new FieldIdentifier<>(IgnoredDifference.class, MappedDifference.class, "difference");
-public static FieldIdentifier<IgnoredDifference,String> original = new FieldIdentifier<>(IgnoredDifference.class, String.class, "original");
-public static FieldIdentifier<IgnoredDifference,String> ignoredChange = new FieldIdentifier<>(IgnoredDifference.class, String.class, "ignoredChange");
+public static FieldIdentifier<kernbeisser.DBEntities.IgnoredDifference,Long> id = new FieldIdentifier<>(kernbeisser.DBEntities.IgnoredDifference.class, Long.class, "id");
+public static FieldIdentifier<kernbeisser.DBEntities.IgnoredDifference,kernbeisser.DBEntities.Article> article = new FieldIdentifier<>(kernbeisser.DBEntities.IgnoredDifference.class, kernbeisser.DBEntities.Article.class, "article");
+public static FieldIdentifier<kernbeisser.DBEntities.IgnoredDifference,kernbeisser.Tasks.Catalog.Merge.MappedDifference> difference = new FieldIdentifier<>(kernbeisser.DBEntities.IgnoredDifference.class, kernbeisser.Tasks.Catalog.Merge.MappedDifference.class, "difference");
+public static FieldIdentifier<kernbeisser.DBEntities.IgnoredDifference,java.lang.String> original = new FieldIdentifier<>(kernbeisser.DBEntities.IgnoredDifference.class, java.lang.String.class, "original");
+public static FieldIdentifier<kernbeisser.DBEntities.IgnoredDifference,java.lang.String> ignoredChange = new FieldIdentifier<>(kernbeisser.DBEntities.IgnoredDifference.class, java.lang.String.class, "ignoredChange");
 
 }
