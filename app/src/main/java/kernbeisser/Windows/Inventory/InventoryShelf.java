@@ -12,7 +12,7 @@ import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.ArticleStock;
 import kernbeisser.DBEntities.Articles;
 import kernbeisser.DBEntities.Shelf;
-import kernbeisser.DBEntities.Types.ArticleStockField;
+import kernbeisser.DBEntities.TypeFields.ArticleStockField;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Useful.Tools;
 import lombok.Getter;

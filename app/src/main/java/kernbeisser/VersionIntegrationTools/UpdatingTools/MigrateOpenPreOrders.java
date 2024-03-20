@@ -1,7 +1,7 @@
 package kernbeisser.VersionIntegrationTools.UpdatingTools;
 
-import static kernbeisser.DBEntities.Types.PreOrderField.catalogEntry;
-import static kernbeisser.DBEntities.Types.PreOrderField.delivery;
+import static kernbeisser.DBEntities.TypeFields.PreOrderField.catalogEntry;
+import static kernbeisser.DBEntities.TypeFields.PreOrderField.delivery;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
@@ -13,7 +13,7 @@ import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.CatalogEntry;
 import kernbeisser.DBEntities.PreOrder;
-import kernbeisser.DBEntities.Types.CatalogEntryField;
+import kernbeisser.DBEntities.TypeFields.CatalogEntryField;
 import kernbeisser.VersionIntegrationTools.VersionUpdatingTool;
 import lombok.Cleanup;
 

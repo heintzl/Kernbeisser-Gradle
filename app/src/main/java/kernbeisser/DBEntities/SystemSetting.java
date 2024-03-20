@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Objects;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.QueryBuilder;
-import kernbeisser.DBEntities.Types.SystemSettingField;
+import kernbeisser.DBEntities.TypeFields.SystemSettingField;
 import kernbeisser.Useful.Tools;
 import kernbeisser.VersionIntegrationTools.Version;
 import lombok.Cleanup;

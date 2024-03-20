@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import kernbeisser.DBConnection.QueryBuilder;
-import kernbeisser.DBEntities.Types.JobField;
+import kernbeisser.DBEntities.TypeFields.JobField;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
 import kernbeisser.Useful.ActuallyCloneable;
 import kernbeisser.Useful.Tools;

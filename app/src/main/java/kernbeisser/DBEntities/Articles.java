@@ -2,10 +2,10 @@ package kernbeisser.DBEntities;
 
 import static kernbeisser.DBConnection.ExpressionFactory.*;
 import static kernbeisser.DBConnection.PredicateFactory.*;
-import static kernbeisser.DBEntities.Types.ArticleField.*;
+import static kernbeisser.DBEntities.TypeFields.ArticleField.*;
 
 import jakarta.persistence.*;
-import java.text.DecimalFormat;
+
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -14,7 +14,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import kernbeisser.DBConnection.*;
-import kernbeisser.DBEntities.Types.*;
+import kernbeisser.DBEntities.TypeFields.*;
 import kernbeisser.EntityWrapper.ObjectState;
 import kernbeisser.Enums.*;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;

@@ -10,7 +10,7 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.ArticleStock;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.Shelf;
-import kernbeisser.DBEntities.Types.ArticleStockField;
+import kernbeisser.DBEntities.TypeFields.ArticleStockField;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
 import kernbeisser.Windows.MVC.IModel;

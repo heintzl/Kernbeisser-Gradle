@@ -7,7 +7,7 @@ import java.time.ZoneId;
 import java.util.Optional;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.QueryBuilder;
-import kernbeisser.DBEntities.Types.ArticleStockField;
+import kernbeisser.DBEntities.TypeFields.ArticleStockField;
 import kernbeisser.Enums.Setting;
 import lombok.Cleanup;
 import lombok.Data;

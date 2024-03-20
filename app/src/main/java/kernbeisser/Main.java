@@ -18,6 +18,7 @@ import kernbeisser.Useful.UiTools;
 import kernbeisser.VersionIntegrationTools.Version;
 import kernbeisser.Windows.LogIn.SimpleLogIn.SimpleLogInController;
 import kernbeisser.Windows.TabbedPane.TabbedPaneModel;
+import kernbeisser.DBEntities.*;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import rs.groump.Agent;
@@ -34,6 +35,33 @@ public class Main {
   }
 
   public static void main(String[] args) throws UnsupportedLookAndFeelException {
+    printClassToFile(
+            Article.class,
+            ArticlePrintPool.class,
+            Articles.class,
+            ArticleStock.class,
+            CatalogEntry.class,
+            IgnoredDialog.class,
+            IgnoredDifference.class,
+            Job.class,
+            Offer.class,
+            Permission.class,
+            Post.class,
+            PreOrder.class,
+            PriceList.class,
+            Purchase.class,
+            SaleSession.class,
+            SettingValue.class,
+            Shelf.class,
+            ShoppingItem.class,
+            Supplier.class,
+            SurchargeGroup.class,
+            SystemSetting.class,
+            Transaction.class,
+            User.class,
+            UserGroup.class,
+            UserSettingValue.class
+    );
     if (!Agent.agentInitialized) {
       System.out.println("cannot run, security.jar is not linked as a java-agent");
       System.exit(-1);
@@ -86,7 +114,9 @@ public class Main {
                 + declaredField.getName()
                 + " = new FieldIdentifier<>("
                 + clazz.getSimpleName()
-                + ".class, \""
+                + ".class, "
+                    + getTypeName(declaredField.getType())
+                    + ".class, \""
                 + declaredField.getName()
                 + "\");\n";
         fw.write(statement);

@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 import java.util.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.QueryBuilder;
-import kernbeisser.DBEntities.Types.PermissionField;
+import kernbeisser.DBEntities.TypeFields.PermissionField;
 import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Useful.Tools;
 import lombok.*;

@@ -6,7 +6,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
 import kernbeisser.DBConnection.QueryBuilder;
-import kernbeisser.DBEntities.Types.ShoppingItemField;
+import kernbeisser.DBEntities.TypeFields.ShoppingItemField;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Security.Access.UserRelated;
 import kernbeisser.Useful.Tools;

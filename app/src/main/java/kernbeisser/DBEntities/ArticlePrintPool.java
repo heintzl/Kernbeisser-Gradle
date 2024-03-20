@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.QueryBuilder;
-import kernbeisser.DBEntities.Types.ArticlePrintPoolField;
+import kernbeisser.DBEntities.TypeFields.ArticlePrintPoolField;
 import kernbeisser.Security.StaticPermissionChecks;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;

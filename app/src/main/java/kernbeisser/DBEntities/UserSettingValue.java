@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.QueryBuilder;
-import kernbeisser.DBEntities.Types.UserSettingValueField;
+import kernbeisser.DBEntities.TypeFields.UserSettingValueField;
 import kernbeisser.Enums.UserSetting;
 import kernbeisser.Security.Access.UserRelated;
 import lombok.Cleanup;

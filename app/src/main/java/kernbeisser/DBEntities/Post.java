@@ -3,7 +3,7 @@ package kernbeisser.DBEntities;
 import jakarta.persistence.*;
 import java.util.List;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntities.Types.PostField;
+import kernbeisser.DBEntities.TypeFields.PostField;
 import kernbeisser.Enums.PostContext;
 import kernbeisser.Useful.Tools;
 import lombok.*;

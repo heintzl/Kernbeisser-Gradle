@@ -5,7 +5,7 @@ import jakarta.persistence.EntityTransaction;
 import java.util.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.*;
-import kernbeisser.DBEntities.Types.PreOrderField;
+import kernbeisser.DBEntities.TypeFields.PreOrderField;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;

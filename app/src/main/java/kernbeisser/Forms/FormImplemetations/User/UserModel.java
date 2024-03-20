@@ -4,9 +4,14 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import java.util.HashSet;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.ExpressionFactory;
+import kernbeisser.DBConnection.QueryBuilder;
+import kernbeisser.DBEntities.TypeFields.UserField;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
+
+import static kernbeisser.DBConnection.ExpressionFactory.concat;
 
 public class UserModel implements IModel<UserController> {
 
@@ -18,11 +23,11 @@ public class UserModel implements IModel<UserController> {
     EntityTransaction et = em.getTransaction();
     et.begin();
     @SuppressWarnings("unchecked")
-    HashSet<String> usernames =
-        new HashSet<String>(
-            em.createQuery("select u.username from User u where firstName = :firstName")
-                .setParameter("firstName", firstName)
-                .getResultList());
+    
+    HashSet<String> usernames = new HashSet<>(
+            QueryBuilder.select(UserField.username).where(
+                    UserField.firstName.eq(firstName)
+            ).getResultList());
     for (int i = 1; i < surname.length() + 1; i++) {
       String generated = firstName + "." + surname.substring(0, i);
       if (!usernames.contains(generated)) {
@@ -37,29 +42,14 @@ public class UserModel implements IModel<UserController> {
   }
 
   boolean usernameExists(String username) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery("select id from User where username like :username")
-            .setParameter("username", username)
-            .getResultList()
-            .size()
-        > 0;
+    return QueryBuilder.propertyWithThatValueExists(UserField.username,username);
   }
 
   boolean fullNameExists(User user) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery(
-                "select id from User where id <> :currentId and concat(firstName, ' ', surname) = :fullName")
-            .setParameter("fullName", user.getFullName().trim())
-            .setParameter("currentId", user.getId())
-            .getResultList()
-            .size()
-        > 0;
+    return QueryBuilder.select(UserField.id).where(
+            concat(concat(UserField.firstName, ExpressionFactory.asExpression(" ")), UserField.surname).eq(user.getFullName().trim()),
+            UserField.id.eq(user.getId()).not()
+    ).hasResult();
   }
 
   public boolean invalidMembershipRoles(User user) {

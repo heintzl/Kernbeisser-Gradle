@@ -15,25 +15,28 @@ public class QueryBuilder<P, R> {
   private final Class<P> tableClass;
 
   private final Class<R> resultClass;
-
+  
+  @NotNull private final Collection<? extends SelectionFactory<P>> selections;
+  
+  private final boolean multiselect;
   private int maxResults = Integer.MAX_VALUE;
   @NotNull private final Collection<PredicateFactory<P>> conditions = new ArrayList<>();
   @NotNull private final Collection<OrderFactory<P>> orders = new ArrayList<>();
 
   @NotNull private final Collection<ExpressionFactory<P, ?>> groupBy = new ArrayList<>();
 
-  @NotNull private final Collection<? extends SelectionFactory<P>> selections;
+  
 
   public static <P> QueryBuilder<P, P> selectAll(Class<P> tableClass) {
     return new QueryBuilder<>(
-        tableClass, tableClass, Collections.emptyList());
+        tableClass, tableClass, Collections.emptyList(), false);
   }
 
   public static <P> QueryBuilder<P, Tuple> select(
       Class<P> sourceClass, Collection<? extends SelectionFactory<P>> selections) {
     if (selections.isEmpty())
       throw new IllegalArgumentException("query without selection is not allowed!");
-    return new QueryBuilder<>(sourceClass, Tuple.class, selections);
+    return new QueryBuilder<>(sourceClass, Tuple.class, selections, true);
   }
 
   public static <P, S extends SelectionFactory<P>> QueryBuilder<P, Tuple> select(
@@ -42,9 +45,15 @@ public class QueryBuilder<P, R> {
   }
 
   public static <P> QueryBuilder<P, Tuple> select(FieldIdentifier<P, ?>... selections) {
+    if(selections.length == 0) throw new IllegalArgumentException("query without selection is not allowed!");
     return select(
         selections[0].getTableClass(),
         Arrays.stream(selections).map(e -> (SelectionFactory<P>) e).toList());
+  }
+  
+  
+  public static <P,R> QueryBuilder<P, R> select(FieldIdentifier<P, R> selection) {
+    return new QueryBuilder<>(selection.getTableClass(), selection.getPropertyClass(), Collections.singleton(selection), true);
   }
 
   public QueryBuilder<P, R> where(PredicateFactory<P>... conditions) {
@@ -141,11 +150,11 @@ public class QueryBuilder<P, R> {
     var orderBy = orders.stream()
             .map(fieldIdentifier -> fieldIdentifier.createOrder(source, cb))
             .toArray(Order[]::new);
-    if(resultClass.equals(tableClass)) {
-      cr.select((Root<R>)root);
+    if(multiselect) {
+      cr.multiselect(selection);
     }
     else {
-      cr.multiselect(selection);
+      cr.select((Root<R>)root);
     }
     return em.createQuery(
             cr.where(whereConditions)
@@ -181,7 +190,13 @@ public class QueryBuilder<P, R> {
         .where(property.eq(eq))
         .getSingleResult();
   }
-
+  
+  public boolean hasResult() {
+    return consumeStream(
+            stream -> stream.findAny().isPresent()
+    );
+  }
+  
   public interface ThrowableFunction<I, O, X extends Exception> {
     O apply(I input) throws X;
   }
