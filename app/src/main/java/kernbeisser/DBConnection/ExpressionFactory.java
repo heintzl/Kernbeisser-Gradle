@@ -91,10 +91,12 @@ public interface ExpressionFactory<P, V> extends SelectionFactory<P> {
     return ((source, cb) -> cb.least(a.createExpression(source, cb)));
   }
 
-  static <P> ExpressionFactory<P, String> concat(ExpressionFactory<P,String> a, ExpressionFactory<P,String> b){
-    return ((source, cb) -> cb.concat(a.createExpression(source,cb), b.createExpression(source,cb)));
+  static <P> ExpressionFactory<P, String> concat(
+      ExpressionFactory<P, String> a, ExpressionFactory<P, String> b) {
+    return ((source, cb) ->
+        cb.concat(a.createExpression(source, cb), b.createExpression(source, cb)));
   }
-  
+
   static <P, V> ExpressionFactory<P, V> asExpression(V v) {
     return ((source, cb) -> cb.literal(v));
   }

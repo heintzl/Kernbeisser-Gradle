@@ -12,7 +12,6 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBConnection.FieldIdentifier;
 import kernbeisser.DBEntities.*;
 import kernbeisser.DBEntities.TypeFields.CatalogEntryField;
 import kernbeisser.Enums.MetricUnits;

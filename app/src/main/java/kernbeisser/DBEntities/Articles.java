@@ -5,7 +5,6 @@ import static kernbeisser.DBConnection.PredicateFactory.*;
 import static kernbeisser.DBEntities.TypeFields.ArticleField.*;
 
 import jakarta.persistence.*;
-
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;

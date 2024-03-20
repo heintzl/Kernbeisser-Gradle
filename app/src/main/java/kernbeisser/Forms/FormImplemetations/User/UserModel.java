@@ -1,5 +1,7 @@
 package kernbeisser.Forms.FormImplemetations.User;
 
+import static kernbeisser.DBConnection.ExpressionFactory.concat;
+
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import java.util.HashSet;
@@ -11,8 +13,6 @@ import kernbeisser.DBEntities.User;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
 
-import static kernbeisser.DBConnection.ExpressionFactory.concat;
-
 public class UserModel implements IModel<UserController> {
 
   public UserModel() {}
@@ -23,11 +23,11 @@ public class UserModel implements IModel<UserController> {
     EntityTransaction et = em.getTransaction();
     et.begin();
     @SuppressWarnings("unchecked")
-    
-    HashSet<String> usernames = new HashSet<>(
-            QueryBuilder.select(UserField.username).where(
-                    UserField.firstName.eq(firstName)
-            ).getResultList());
+    HashSet<String> usernames =
+        new HashSet<>(
+            QueryBuilder.select(UserField.username)
+                .where(UserField.firstName.eq(firstName))
+                .getResultList());
     for (int i = 1; i < surname.length() + 1; i++) {
       String generated = firstName + "." + surname.substring(0, i);
       if (!usernames.contains(generated)) {
@@ -42,14 +42,18 @@ public class UserModel implements IModel<UserController> {
   }
 
   boolean usernameExists(String username) {
-    return QueryBuilder.propertyWithThatValueExists(UserField.username,username);
+    return QueryBuilder.propertyWithThatValueExists(UserField.username, username);
   }
 
   boolean fullNameExists(User user) {
-    return QueryBuilder.select(UserField.id).where(
-            concat(concat(UserField.firstName, ExpressionFactory.asExpression(" ")), UserField.surname).eq(user.getFullName().trim()),
-            UserField.id.eq(user.getId()).not()
-    ).hasResult();
+    return QueryBuilder.select(UserField.id)
+        .where(
+            concat(
+                    concat(UserField.firstName, ExpressionFactory.asExpression(" ")),
+                    UserField.surname)
+                .eq(user.getFullName().trim()),
+            UserField.id.eq(user.getId()).not())
+        .hasResult();
   }
 
   public boolean invalidMembershipRoles(User user) {

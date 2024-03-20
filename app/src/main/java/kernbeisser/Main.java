@@ -2,8 +2,6 @@ package kernbeisser;
 
 import java.awt.*;
 import java.io.*;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.net.URISyntaxException;
 import java.util.Locale;
 import javax.swing.*;
@@ -11,6 +9,7 @@ import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.Config.Config;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.Theme;
 import kernbeisser.StartUp.SplashScreenHandler;
@@ -18,12 +17,8 @@ import kernbeisser.Useful.UiTools;
 import kernbeisser.VersionIntegrationTools.Version;
 import kernbeisser.Windows.LogIn.SimpleLogIn.SimpleLogInController;
 import kernbeisser.Windows.TabbedPane.TabbedPaneModel;
-import kernbeisser.DBEntities.*;
-import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import rs.groump.Agent;
-
-import static kernbeisser.DBEntities.TypeFields.FieldUtils.printClassToFile;
 
 @Log4j2
 public class Main {
@@ -57,7 +52,7 @@ public class Main {
     checkVersion();
     SwingUtilities.invokeLater(() -> openLogIn());
   }
-  
+
   public static String getPath() {
     try {
       return Main.class

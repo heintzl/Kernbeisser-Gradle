@@ -15,9 +15,9 @@ public class QueryBuilder<P, R> {
   private final Class<P> tableClass;
 
   private final Class<R> resultClass;
-  
+
   @NotNull private final Collection<? extends SelectionFactory<P>> selections;
-  
+
   private final boolean multiselect;
   private int maxResults = Integer.MAX_VALUE;
   @NotNull private final Collection<PredicateFactory<P>> conditions = new ArrayList<>();
@@ -25,11 +25,8 @@ public class QueryBuilder<P, R> {
 
   @NotNull private final Collection<ExpressionFactory<P, ?>> groupBy = new ArrayList<>();
 
-  
-
   public static <P> QueryBuilder<P, P> selectAll(Class<P> tableClass) {
-    return new QueryBuilder<>(
-        tableClass, tableClass, Collections.emptyList(), false);
+    return new QueryBuilder<>(tableClass, tableClass, Collections.emptyList(), false);
   }
 
   public static <P> QueryBuilder<P, Tuple> select(
@@ -45,15 +42,19 @@ public class QueryBuilder<P, R> {
   }
 
   public static <P> QueryBuilder<P, Tuple> select(FieldIdentifier<P, ?>... selections) {
-    if(selections.length == 0) throw new IllegalArgumentException("query without selection is not allowed!");
+    if (selections.length == 0)
+      throw new IllegalArgumentException("query without selection is not allowed!");
     return select(
         selections[0].getTableClass(),
         Arrays.stream(selections).map(e -> (SelectionFactory<P>) e).toList());
   }
-  
-  
-  public static <P,R> QueryBuilder<P, R> select(FieldIdentifier<P, R> selection) {
-    return new QueryBuilder<>(selection.getTableClass(), selection.getPropertyClass(), Collections.singleton(selection), true);
+
+  public static <P, R> QueryBuilder<P, R> select(FieldIdentifier<P, R> selection) {
+    return new QueryBuilder<>(
+        selection.getTableClass(),
+        selection.getPropertyClass(),
+        Collections.singleton(selection),
+        true);
   }
 
   public QueryBuilder<P, R> where(PredicateFactory<P>... conditions) {
@@ -138,28 +139,22 @@ public class QueryBuilder<P, R> {
     CriteriaQuery<R> cr = cb.createQuery(resultClass);
     Root<P> root = cr.from(tableClass);
     Source<P> source = Source.rootSource(root);
-    var selection = this.selections.stream()
-            .map(e -> e.createSelection(source, cb))
-            .toArray(Selection[]::new);
-    var whereConditions = conditions.stream()
-            .map(e -> e.createPredicate(source, cb))
-            .toArray(Predicate[]::new);
-    var groupByExpressions = groupBy.stream()
-            .map(e -> e.createExpression(source, cb))
-            .toArray(Expression[]::new);
-    var orderBy = orders.stream()
+    var selection =
+        this.selections.stream().map(e -> e.createSelection(source, cb)).toArray(Selection[]::new);
+    var whereConditions =
+        conditions.stream().map(e -> e.createPredicate(source, cb)).toArray(Predicate[]::new);
+    var groupByExpressions =
+        groupBy.stream().map(e -> e.createExpression(source, cb)).toArray(Expression[]::new);
+    var orderBy =
+        orders.stream()
             .map(fieldIdentifier -> fieldIdentifier.createOrder(source, cb))
             .toArray(Order[]::new);
-    if(multiselect) {
+    if (multiselect) {
       cr.multiselect(selection);
+    } else {
+      cr.select((Root<R>) root);
     }
-    else {
-      cr.select((Root<R>)root);
-    }
-    return em.createQuery(
-            cr.where(whereConditions)
-                .groupBy(groupByExpressions)
-                .orderBy(orderBy))
+    return em.createQuery(cr.where(whereConditions).groupBy(groupByExpressions).orderBy(orderBy))
         .setMaxResults(maxResults);
   }
 
@@ -190,13 +185,11 @@ public class QueryBuilder<P, R> {
         .where(property.eq(eq))
         .getSingleResult();
   }
-  
+
   public boolean hasResult() {
-    return consumeStream(
-            stream -> stream.findAny().isPresent()
-    );
+    return consumeStream(stream -> stream.findAny().isPresent());
   }
-  
+
   public interface ThrowableFunction<I, O, X extends Exception> {
     O apply(I input) throws X;
   }
