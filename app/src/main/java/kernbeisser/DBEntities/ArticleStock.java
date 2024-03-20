@@ -34,7 +34,7 @@ public class ArticleStock {
   @CreationTimestamp private Instant createDate;
 
   public static Optional<ArticleStock> ofArticle(EntityManager em, Article article, Shelf shelf) {
-    return QueryBuilder.queryTable(ArticleStock.class)
+    return QueryBuilder.selectAll(ArticleStock.class)
         .where(
             ArticleStockField.article.eq(article),
             ArticleStockField.shelf.eq(shelf),

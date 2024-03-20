@@ -1,5 +1,6 @@
 package kernbeisser.VersionIntegrationTools.UpdatingTools;
 
+import static kernbeisser.DBEntities.Types.PreOrderField.catalogEntry;
 import static kernbeisser.DBEntities.Types.PreOrderField.delivery;
 
 import jakarta.persistence.EntityManager;
@@ -24,13 +25,13 @@ public class MigrateOpenPreOrders implements VersionUpdatingTool {
     EntityTransaction et = em.getTransaction();
     et.begin();
     Collection<PreOrder> relevantPreorders =
-        DBConnection.getConditioned(PreOrder.class, delivery.isNull()).stream()
-            .filter(p -> p.getCatalogEntry() == null)
-            .toList();
+        QueryBuilder.selectAll(PreOrder.class)
+            .where(delivery.isNull(), catalogEntry.isNull())
+            .getResultList(em);
     for (PreOrder preOrder : relevantPreorders) {
       int kkNUmber = preOrder.getArticle().getSuppliersItemNumber();
       Optional<CatalogEntry> entry =
-          QueryBuilder.queryTable(CatalogEntry.class)
+          QueryBuilder.selectAll(CatalogEntry.class)
               .where(
                   CatalogEntryField.artikelNr.eq(Integer.toString(kkNUmber)),
                   CatalogEntryField.aktionspreis.eq(false))

@@ -12,6 +12,8 @@ import java.util.*;
 import java.util.function.Predicate;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.QueryBuilder;
+import kernbeisser.DBEntities.Types.UserField;
 import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.TransactionType;
@@ -247,13 +249,7 @@ public class User implements Serializable, UserRelated, ActuallyCloneable {
   }
 
   public static User getByUsername(String username) throws NoResultException {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery("select u from User u where u.username = :username", User.class)
-        .setParameter("username", username)
-        .getSingleResult();
+    return QueryBuilder.getByProperty(UserField.username, username);
   }
 
   private void makeUserUnreadable() {

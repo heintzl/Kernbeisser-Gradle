@@ -214,8 +214,7 @@ public class CatalogEntry implements ActuallyCloneable {
   public static List<CatalogEntry> getByArticleNo(
       String articleNo, boolean withActions, boolean withInactive) {
     var queryBuilder =
-        QueryBuilder.queryTable(CatalogEntry.class)
-            .where(CatalogEntryField.artikelNr.eq(articleNo));
+        QueryBuilder.selectAll(CatalogEntry.class).where(CatalogEntryField.artikelNr.eq(articleNo));
     if (!withInactive) {
       queryBuilder.where(CatalogEntryField.aenderungskennung.in("V", "X").not());
     }
@@ -247,7 +246,7 @@ public class CatalogEntry implements ActuallyCloneable {
   }
 
   public static List<CatalogEntry> getCatalog() {
-    return QueryBuilder.queryTable(CatalogEntry.class).getResultList();
+    return QueryBuilder.selectAll(CatalogEntry.class).getResultList();
   }
 
   public static void clearCatalog() {

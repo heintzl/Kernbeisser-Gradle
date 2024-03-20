@@ -1,5 +1,8 @@
 package kernbeisser.DBEntities;
 
+import static kernbeisser.DBConnection.PredicateFactory.like;
+import static kernbeisser.DBConnection.PredicateFactory.or;
+
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.Collection;
@@ -7,7 +10,10 @@ import java.util.List;
 import java.util.Objects;
 import kernbeisser.CustomComponents.ObjectTree.CachedNode;
 import kernbeisser.CustomComponents.ObjectTree.Node;
-import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.QueryBuilder;
+import kernbeisser.DBEntities.Types.ArticleField;
+import kernbeisser.DBEntities.Types.SupplierField;
+import kernbeisser.DBEntities.Types.SurchargeGroupField;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
 import kernbeisser.Useful.ActuallyCloneable;
@@ -56,15 +62,14 @@ public class SurchargeGroup implements Serializable, ActuallyCloneable {
   }
 
   public static Collection<SurchargeGroup> defaultSearch(String s, int max) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery(
-            "select s from SurchargeGroup s where s.name like :search or s.supplier.name like :search or s.supplier.shortName like :search",
-            SurchargeGroup.class)
-        .setParameter("search", s + "%")
-        .setMaxResults(max)
+    String searchPattern = s + "%";
+    return QueryBuilder.selectAll(SurchargeGroup.class)
+        .where(
+            or(
+                like(SurchargeGroupField.name, searchPattern),
+                like(SurchargeGroupField.supplier.child(SupplierField.name), searchPattern),
+                like(SurchargeGroupField.supplier.child(SupplierField.shortName), searchPattern)))
+        .limit(max)
         .getResultList();
   }
 
@@ -81,10 +86,6 @@ public class SurchargeGroup implements Serializable, ActuallyCloneable {
 
   public String getNameWithSurcharge() {
     return getName() + String.format(" (%.0f%%)", getSurcharge() * 100);
-  }
-
-  public boolean isSurchargeExtracted() {
-    return surcharge == null;
   }
 
   @Override
@@ -115,29 +116,18 @@ public class SurchargeGroup implements Serializable, ActuallyCloneable {
   }
 
   public List<SurchargeGroup> getSubGroups() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery(
-            "select s from SurchargeGroup s where s.parent.id = :id", SurchargeGroup.class)
-        .setParameter("id", this.id)
+    return QueryBuilder.selectAll(SurchargeGroup.class)
+        .where(SurchargeGroupField.parent.eq(this))
         .getResultList();
   }
 
-  public static Node<SurchargeGroup> asMappedNode(Supplier s) {
+  public static Node<SurchargeGroup> allSurchargeGroupsFromSupplierAsNode(Supplier s) {
     SurchargeGroup head =
         new SurchargeGroup() {
           @Override
           public List<SurchargeGroup> getSubGroups() {
-            @Cleanup EntityManager em = DBConnection.getEntityManager();
-            @Cleanup(value = "commit")
-            EntityTransaction et = em.getTransaction();
-            et.begin();
-            return em.createQuery(
-                    "select s from SurchargeGroup s where supplier.id = :sid and parent is NULL",
-                    SurchargeGroup.class)
-                .setParameter("sid", s.getId())
+            return QueryBuilder.selectAll(SurchargeGroup.class)
+                .where(SurchargeGroupField.supplier.eq(s), SurchargeGroupField.parent.isNull())
                 .getResultList();
           }
         };
@@ -150,12 +140,8 @@ public class SurchargeGroup implements Serializable, ActuallyCloneable {
   }
 
   public Collection<Article> getArticles() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery("select a from Article a where a.surchargeGroup.id = :sg", Article.class)
-        .setParameter("sg", getId())
+    return QueryBuilder.selectAll(Article.class)
+        .where(ArticleField.surchargeGroup.eq(this))
         .getResultList();
   }
 

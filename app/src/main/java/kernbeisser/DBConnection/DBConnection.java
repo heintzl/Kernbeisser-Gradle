@@ -1,7 +1,6 @@
 package kernbeisser.DBConnection;
 
 import jakarta.persistence.*;
-import jakarta.persistence.criteria.*;
 import java.util.*;
 import javax.swing.*;
 import kernbeisser.Config.Config;
@@ -11,7 +10,6 @@ import kernbeisser.Exeptions.ClassIsSingletonException;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
 import kernbeisser.StartUp.LogIn.DBLogInController;
 import kernbeisser.Windows.ViewContainers.JFrameWindow;
-import lombok.Cleanup;
 import lombok.extern.log4j.Log4j2;
 import org.hibernate.service.spi.ServiceException;
 import rs.groump.Access;
@@ -108,41 +106,18 @@ public class DBConnection {
     return entityManagerFactory != null;
   }
 
-  public static <T> CriteriaQuery<T> getCriteriaQuery(EntityManager em, Class<T> clazz) {
-    CriteriaBuilder cb = em.getCriteriaBuilder();
-    return cb.createQuery(clazz);
-  }
-
   @SafeVarargs
   public static <T> List<T> getConditioned(Class<T> clazz, PredicateFactory<T>... conditions) {
-    @Cleanup EntityManager em = getEntityManager();
-    @Cleanup("commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return getConditioned(em, clazz, conditions);
+    return QueryBuilder.selectAll(clazz).where(conditions).getResultList();
   }
 
   @SafeVarargs
   public static <T> List<T> getConditioned(
       EntityManager em, Class<T> clazz, PredicateFactory<T>... conditions) {
-    CriteriaBuilder cb = em.getCriteriaBuilder();
-    CriteriaQuery<T> cr = cb.createQuery(clazz);
-    Root<T> root = cr.from(clazz);
-    cr.select(root);
-    if (conditions.length == 0) {
-      return em.createQuery(cr).getResultList();
-    }
-
-    return em.createQuery(
-            cr.where(
-                    Arrays.stream(conditions)
-                        .map(e -> e.createPredicate(Source.rootSource(root), cb))
-                        .toArray(Predicate[]::new))
-                .orderBy())
-        .getResultList();
+    return QueryBuilder.selectAll(clazz).where(conditions).getResultList(em);
   }
 
   public static <T> List<T> getAll(Class<T> clazz) {
-    return getConditioned(clazz);
+    return QueryBuilder.selectAll(clazz).getResultList();
   }
 }

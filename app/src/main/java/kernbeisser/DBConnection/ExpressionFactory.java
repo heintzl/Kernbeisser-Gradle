@@ -2,9 +2,11 @@ package kernbeisser.DBConnection;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Expression;
+import jakarta.persistence.criteria.Selection;
+import java.util.Arrays;
 import java.util.Collection;
 
-public interface ExpressionFactory<P, V> {
+public interface ExpressionFactory<P, V> extends SelectionFactory<P> {
   Expression<V> createExpression(Source<P> source, CriteriaBuilder cb);
 
   default PredicateFactory<P> isNull() {
@@ -23,6 +25,10 @@ public interface ExpressionFactory<P, V> {
     return PredicateFactory.in(this, objects);
   }
 
+  default PredicateFactory<P> inExpression(ExpressionFactory<P, V>... expressionFactories) {
+    return PredicateFactory.inExpression(this, Arrays.stream(expressionFactories).toList());
+  }
+
   default <N> ExpressionFactory<P, N> as(Class<N> newClass) {
     return ((source, cb) -> this.createExpression(source, cb).as(newClass));
   }
@@ -33,6 +39,11 @@ public interface ExpressionFactory<P, V> {
 
   default OrderFactory<P> desc() {
     return ((source, cb) -> cb.desc(this.createExpression(source, cb)));
+  }
+
+  @Override
+  default Selection<?> createSelection(Source<P> source, CriteriaBuilder cb) {
+    return createExpression(source, cb);
   }
 
   static <P> ExpressionFactory<P, String> upper(
@@ -65,6 +76,19 @@ public interface ExpressionFactory<P, V> {
   static <P, V extends Number> ExpressionFactory<P, V> plus(
       ExpressionFactory<P, V> a, ExpressionFactory<P, V> b) {
     return ((source, cb) -> cb.sum(a.createExpression(source, cb), b.createExpression(source, cb)));
+  }
+
+  static <P, V extends Number> ExpressionFactory<P, V> moreOrEq(
+      ExpressionFactory<P, V> a, ExpressionFactory<P, V> b) {
+    return ((source, cb) -> cb.sum(a.createExpression(source, cb), b.createExpression(source, cb)));
+  }
+
+  static <P, V extends Comparable<V>> ExpressionFactory<P, V> max(ExpressionFactory<P, V> a) {
+    return ((source, cb) -> cb.greatest(a.createExpression(source, cb)));
+  }
+
+  static <P, V extends Comparable<V>> ExpressionFactory<P, V> min(ExpressionFactory<P, V> a) {
+    return ((source, cb) -> cb.least(a.createExpression(source, cb)));
   }
 
   static <P, V> ExpressionFactory<P, V> asExpression(V v) {

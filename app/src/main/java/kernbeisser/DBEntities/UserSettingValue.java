@@ -99,7 +99,7 @@ public class UserSettingValue implements UserRelated {
     EntityTransaction et = em.getTransaction();
     et.begin();
     UserSettingValue usv =
-        QueryBuilder.queryTable(UserSettingValue.class)
+        QueryBuilder.selectAll(UserSettingValue.class)
             .where(
                 UserSettingValueField.user.eq(user), UserSettingValueField.userSetting.eq(setting))
             .getSingleResultOptional(em)

@@ -23,7 +23,7 @@ public class IgnoredDialog {
   @Column @Getter private String origin;
 
   public static Collection<IgnoredDialog> getAllFor(User user) {
-    return QueryBuilder.queryTable(IgnoredDialog.class)
+    return QueryBuilder.selectAll(IgnoredDialog.class)
         .where(IgnoredDialogField.user.eq(user))
         .getResultList();
   }

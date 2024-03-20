@@ -45,7 +45,7 @@ public class ArticlePrintPool {
 
   public static int get(Article article) {
     StaticPermissionChecks.getStaticInstance().checkShouldReadArticlePrintPoolAgain();
-    return QueryBuilder.queryTable(ArticlePrintPool.class)
+    return QueryBuilder.selectAll(ArticlePrintPool.class)
         .where(ArticlePrintPoolField.article.eq(article))
         .getSingleResultOptional()
         .map(ArticlePrintPool::getNumber)
@@ -66,7 +66,7 @@ public class ArticlePrintPool {
   }
 
   private static Long getArticlePrintPoolId(Article article) {
-    return QueryBuilder.queryTable(ArticlePrintPool.class)
+    return QueryBuilder.selectAll(ArticlePrintPool.class)
         .where(ArticlePrintPoolField.article.eq(article))
         .getSingleResultOptional()
         .map(ArticlePrintPool::getId)
@@ -74,7 +74,7 @@ public class ArticlePrintPool {
   }
 
   public static Map<Article, Integer> getPrintPoolAsMap() {
-    return QueryBuilder.queryTable(ArticlePrintPool.class).getResultList().stream()
+    return QueryBuilder.selectAll(ArticlePrintPool.class).getResultList().stream()
         .collect(Collectors.toMap(e -> e.article, e -> e.number));
   }
 

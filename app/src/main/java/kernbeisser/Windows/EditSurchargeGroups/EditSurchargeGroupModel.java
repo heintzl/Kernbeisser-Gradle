@@ -20,7 +20,7 @@ public class EditSurchargeGroupModel implements IModel<EditSurchargeGroupControl
   }
 
   Node<SurchargeGroup> getSurchargeGroupTree(Supplier supplier) {
-    return SurchargeGroup.asMappedNode(supplier);
+    return SurchargeGroup.allSurchargeGroupsFromSupplierAsNode(supplier);
   }
 
   Collection<SurchargeGroup> getAllFromSupplier(Supplier supplier) {

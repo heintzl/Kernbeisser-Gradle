@@ -1,5 +1,6 @@
 package kernbeisser.DBConnection;
 
+import jakarta.persistence.criteria.From;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Root;
@@ -15,6 +16,8 @@ public interface Source<X> {
 
   <Y> Path<Y> get(FieldIdentifier<X, Y> futureExpressionIdentifier);
 
+  From<?, X> getFrom();
+
   public static <X> Source<X> rootSource(@NotNull Root<X> root) {
     return new Source<X>() {
       @Override
@@ -25,6 +28,11 @@ public interface Source<X> {
       @Override
       public <Y> Path<Y> get(FieldIdentifier<X, Y> futureExpressionIdentifier) {
         return root.get(futureExpressionIdentifier.getName());
+      }
+
+      @Override
+      public From<?, X> getFrom() {
+        return root;
       }
     };
   }
@@ -39,6 +47,11 @@ public interface Source<X> {
       @Override
       public <Y> Path<Y> get(FieldIdentifier<X, Y> futureExpressionIdentifier) {
         return join.get(futureExpressionIdentifier.getName());
+      }
+
+      @Override
+      public From<?, X> getFrom() {
+        return join;
       }
     };
   }

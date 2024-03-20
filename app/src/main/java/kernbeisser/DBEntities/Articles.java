@@ -1,8 +1,7 @@
 package kernbeisser.DBEntities;
 
 import static kernbeisser.DBConnection.ExpressionFactory.*;
-import static kernbeisser.DBConnection.PredicateFactory.like;
-import static kernbeisser.DBConnection.PredicateFactory.or;
+import static kernbeisser.DBConnection.PredicateFactory.*;
 import static kernbeisser.DBEntities.Types.ArticleField.*;
 
 import jakarta.persistence.*;
@@ -15,10 +14,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import kernbeisser.DBConnection.*;
-import kernbeisser.DBEntities.Types.ArticleField;
-import kernbeisser.DBEntities.Types.CatalogEntryField;
-import kernbeisser.DBEntities.Types.OfferField;
-import kernbeisser.DBEntities.Types.PriceListField;
+import kernbeisser.DBEntities.Types.*;
 import kernbeisser.EntityWrapper.ObjectState;
 import kernbeisser.Enums.*;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
@@ -68,12 +64,12 @@ public class Articles {
 
   public static Optional<ObjectState<Article>> getByKbNumber(
       EntityManager em, int kbNumber, boolean filterShopRange) {
-    return Optional.ofNullable(
-        DBConnection.getConditioned(Article.class, ArticleField.kbNumber.eq(kbNumber)).stream()
-            .filter(a -> !(filterShopRange && !a.getShopRange().isVisible()))
-            .findAny()
-            .map(ObjectState::currentState)
-            .orElseGet(() -> searchInArticleHistoryForKbNumber(em, kbNumber).orElse(null)));
+    var qb = QueryBuilder.selectAll(Article.class).where(ArticleField.kbNumber.eq(kbNumber));
+    if (filterShopRange) qb.where(shopRange.in(ShopRange.visibleRanges()));
+    return qb.getResultStream(em)
+        .findAny()
+        .map(ObjectState::currentState)
+        .or(() -> searchInArticleHistoryForKbNumber(em, kbNumber));
   }
 
   public static Optional<ObjectState<Article>> getByKbNumber(
@@ -149,7 +145,7 @@ public class Articles {
       @Cleanup(value = "commit")
       EntityTransaction et = em.getTransaction();
       et.begin();
-      return QueryBuilder.queryTable(Article.class)
+      return QueryBuilder.selectAll(Article.class)
           .where(name.eq(rawPrice.getName()), kbNumber.in(rawPriceIdentifiers))
           .getSingleResult(em);
     } catch (NoResultException e) {
@@ -204,7 +200,7 @@ public class Articles {
     int n = Tools.tryParseInt(search);
     String ds = (search.length() > 3 ? "%" + search + "%" : search + "%").toUpperCase();
     long l = Tools.tryParseLong(search);
-    return QueryBuilder.queryTable(Article.class)
+    return QueryBuilder.selectAll(Article.class)
         .where(
             or(
                 kbNumber.eq(n),
@@ -227,7 +223,7 @@ public class Articles {
 
   public static Article nextArticleTo(
       EntityManager em, int suppliersItemNumber, Supplier supplier) {
-    return QueryBuilder.queryTable(Article.class)
+    return QueryBuilder.selectAll(Article.class)
         .where(ArticleField.supplier.eq(supplier))
         .orderBy(diff(ArticleField.suppliersItemNumber, asExpression(suppliersItemNumber)).asc())
         .buildQuery(em)
@@ -239,7 +235,7 @@ public class Articles {
 
   public static Article nextArticleTo(
       EntityManager em, int suppliersItemNumber, Supplier supplier, PriceList excludedPriceList) {
-    return QueryBuilder.queryTable(Article.class)
+    return QueryBuilder.selectAll(Article.class)
         .where(ArticleField.supplier.eq(supplier), priceList.eq(excludedPriceList).not())
         .orderBy(diff(ArticleField.suppliersItemNumber, asExpression(suppliersItemNumber)).asc())
         .getResultStream(em)
@@ -252,7 +248,7 @@ public class Articles {
   }
 
   public static Optional<Offer> findOfferOn(Article article) {
-    return QueryBuilder.queryTable(Offer.class)
+    return QueryBuilder.selectAll(Offer.class)
         .where(OfferField.offerArticle.eq(article))
         .getResultList()
         .stream()
@@ -262,17 +258,16 @@ public class Articles {
   }
 
   public static Map<Integer, Instant> getLastDeliveries() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    Map<Integer, Instant> result = new HashMap<>();
-    em.createQuery(
-            "select kbNumber, max(createDate) from ShoppingItem i where i.purchase is null group by i.kbNumber order by kbNumber",
-            Tuple.class)
-        .getResultStream()
-        .forEach(t -> result.put(t.get(0, Integer.class), t.get(1, Instant.class)));
-    return result;
+    return QueryBuilder.select(
+            ShoppingItem.class, ShoppingItemField.kbNumber, max(ShoppingItemField.createDate))
+        .where(ShoppingItemField.purchase.isNull())
+        .groupBy(ShoppingItemField.kbNumber)
+        .orderBy(ShoppingItemField.kbNumber.asc())
+        .getResultList()
+        .stream()
+        .collect(
+            Collectors.toMap(
+                tuple -> tuple.get(0, Integer.class), tuple -> tuple.get(1, Instant.class)));
   }
 
   public static double getContainerSurchargeReduction() {
@@ -315,11 +310,6 @@ public class Articles {
     }
     String barcodeString = Long.toString(barcode);
     return barcodeString.substring(Math.max(barcodeString.length() - 4, 0));
-  }
-
-  public static Article withValidKBNumber(Article article, EntityManager em) {
-    article.setKbNumber(Articles.nextFreeKBNumber(em));
-    return article;
   }
 
   public static Collection<Article> getPrintPool() {
@@ -425,23 +415,6 @@ public class Articles {
 
   public static String getPieceAmount(Article article) {
     return String.format("%,1d", getSafeAmount(article)) + article.getMetricUnits().getShortName();
-  }
-
-  public static String getContentAmount(Article article) {
-    String containerInfo = new DecimalFormat("0.###").format(article.getContainerSize());
-    if (article.isWeighable()) {
-      return containerInfo + " " + article.getMetricUnits().getDisplayUnit().getShortName();
-    } else if (article.getMetricUnits() == MetricUnits.NONE
-        || article.getMetricUnits() == MetricUnits.PIECE
-        || !(article.getAmount() > 0)) {
-      return containerInfo;
-    } else {
-      return containerInfo
-          + " x "
-          + article.getAmount()
-          + " "
-          + article.getMetricUnits().getShortName();
-    }
   }
 
   public static PriceList getValidPriceList(EntityManager em, Article article) {

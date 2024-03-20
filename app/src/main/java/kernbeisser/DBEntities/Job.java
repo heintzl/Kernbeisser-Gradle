@@ -57,7 +57,7 @@ public class Job implements ActuallyCloneable {
   }
 
   public static Collection<Job> defaultSearch(String s, int max) {
-    return QueryBuilder.queryTable(Job.class)
+    return QueryBuilder.selectAll(Job.class)
         .where(or(like(JobField.name, s + "%"), like(JobField.description, "%" + s + "%")))
         .limit(max)
         .getResultList();

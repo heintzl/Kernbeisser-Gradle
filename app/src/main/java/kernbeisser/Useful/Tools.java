@@ -537,7 +537,7 @@ public class Tools {
     return result;
   }
 
-  public static int calculate(String x, String y) {
+  public static int calculateStringDifference(String x, String y) {
     int[][] dp = new int[x.length() + 1][y.length() + 1];
     for (int i = 0; i <= x.length(); i++) {
       for (int j = 0; j <= y.length(); j++) {

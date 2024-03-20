@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.QueryBuilder;
+import kernbeisser.DBEntities.Types.SystemSettingField;
 import kernbeisser.Useful.Tools;
 import kernbeisser.VersionIntegrationTools.Version;
 import lombok.Cleanup;
@@ -70,10 +72,9 @@ public class SystemSetting {
     et.begin();
     try {
       SystemSetting settingValue =
-          em.createQuery(
-                  "select s from SystemSetting s where s.setting = :key", SystemSetting.class)
-              .setParameter("key", key)
-              .getSingleResult();
+          QueryBuilder.selectAll(SystemSetting.class)
+              .where(SystemSettingField.setting.eq(key))
+              .getSingleResult(em);
       settingValue.value = value;
       em.persist(settingValue);
     } catch (NoResultException noResultException) {

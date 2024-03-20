@@ -79,7 +79,7 @@ public enum PermissionConstants {
             @Cleanup(value = "commit")
             EntityTransaction et = em.getTransaction();
             et.begin();
-            return QueryBuilder.queryTable(Permission.class)
+            return QueryBuilder.selectAll(Permission.class)
                 .where(PredicateFactory.like(PermissionField.name, "@" + constants.name()))
                 .getSingleResult(em);
           } catch (NoResultException e) {

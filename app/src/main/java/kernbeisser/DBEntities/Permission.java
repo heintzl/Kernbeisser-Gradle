@@ -9,10 +9,7 @@ import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Types.PermissionField;
 import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Useful.Tools;
-import lombok.Cleanup;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import rs.groump.Key;
 import rs.groump.PermissionKey;
 import rs.groump.PermissionSet;
@@ -55,7 +52,7 @@ public class Permission {
   }
 
   public static Collection<Permission> defaultSearch(String s, int max) {
-    return QueryBuilder.queryTable(Permission.class)
+    return QueryBuilder.selectAll(Permission.class)
         .where(like(PermissionField.name, s + "%"))
         .limit(max)
         .getResultList();

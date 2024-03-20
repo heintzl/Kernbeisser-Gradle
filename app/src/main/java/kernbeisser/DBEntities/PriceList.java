@@ -87,12 +87,8 @@ public class PriceList implements Serializable {
   }
 
   private static PriceList getPriceList(String name) throws NoResultException {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery("select p from PriceList p where name = :n", PriceList.class)
-        .setParameter("n", name)
+    return QueryBuilder.selectAll(PriceList.class)
+        .where(PriceListField.name.eq(name))
         .getSingleResult();
   }
 
@@ -114,17 +110,13 @@ public class PriceList implements Serializable {
   }
 
   public static Collection<PriceList> getAllHeadPriceLists() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery(
-            "select p from PriceList p where p.superPriceList is null", PriceList.class)
+    return QueryBuilder.selectAll(PriceList.class)
+        .where(PriceListField.superPriceList.isNull())
         .getResultList();
   }
 
   public List<PriceList> getAllPriceLists() {
-    return QueryBuilder.queryTable(PriceList.class)
+    return QueryBuilder.selectAll(PriceList.class)
         .where(PriceListField.superPriceList.eq(this))
         .orderBy(PriceListField.name.asc())
         .getResultList();
@@ -144,7 +136,7 @@ public class PriceList implements Serializable {
   }
 
   public List<Article> getAllArticles(EntityManager em) {
-    return QueryBuilder.queryTable(Article.class)
+    return QueryBuilder.selectAll(Article.class)
         .where(ArticleField.priceList.eq(this))
         .getResultList(em);
   }
