@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.*;
+import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.EntityWrapper.ObjectState;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
@@ -77,7 +78,7 @@ public class PreOrderModel implements IModel<PreOrderController> {
 
   public Optional<CatalogEntry> findEntriesByShopNumber(int shopNumber) {
     Optional<Article> article =
-        Articles.getByKbNumber(shopNumber, false).map(ObjectState::getValue);
+        ArticleRepository.getByKbNumber(shopNumber, false).map(ObjectState::getValue);
     if (article.isPresent()) {
       if (article.get().getSupplier().equals(Supplier.getKKSupplier())) {
         return getEntryByKkNumber(article.get().getSuppliersItemNumber());

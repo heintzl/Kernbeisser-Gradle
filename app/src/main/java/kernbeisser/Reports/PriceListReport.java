@@ -6,8 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 import kernbeisser.DBEntities.Article;
-import kernbeisser.DBEntities.Articles;
 import kernbeisser.DBEntities.PriceList;
+import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.Reports.ReportDTO.PriceListReportArticle;
 
 public class PriceListReport extends Report {
@@ -21,7 +21,7 @@ public class PriceListReport extends Report {
   public PriceListReport(Collection<Article> articles, String priceListName) {
     super(ReportFileNames.PRICELIST_REPORT_FILENAME);
     setDuplexPrint(false);
-    Map<Integer, Instant> lastDeliveries = Articles.getLastDeliveries();
+    Map<Integer, Instant> lastDeliveries = ArticleRepository.getLastDeliveries();
     this.priceListReportArticles =
         articles.stream()
             .map(a -> PriceListReportArticle.ofArticle(a, lastDeliveries))

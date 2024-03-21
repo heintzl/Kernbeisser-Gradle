@@ -5,6 +5,7 @@ import jakarta.persistence.EntityTransaction;
 import java.util.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.*;
+import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.DBEntities.TypeFields.PreOrderField;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Useful.Tools;
@@ -42,16 +43,12 @@ public class SupplyModel implements IModel<SupplyController> {
     em.flush();
   }
 
-  Collection<Supplier> getAllSuppliers() {
-    return Tools.getAll(Supplier.class, null);
-  }
-
   public Optional<Article> findBySuppliersItemNumber(Supplier supplier, int suppliersItemNumber) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup("commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    return Articles.getBySuppliersItemNumber(supplier, suppliersItemNumber, em);
+    return ArticleRepository.getBySuppliersItemNumber(supplier, suppliersItemNumber, em);
   }
 
   void print() {
@@ -101,7 +98,7 @@ public class SupplyModel implements IModel<SupplyController> {
   }
 
   public Article getBySuppliersItemNumber(Supplier selected, int suppliersItemNumber) {
-    return Articles.getBySuppliersItemNumber(selected, suppliersItemNumber)
+    return ArticleRepository.getBySuppliersItemNumber(selected, suppliersItemNumber)
         .orElseThrow(NoSuchElementException::new);
   }
 
@@ -190,5 +187,9 @@ public class SupplyModel implements IModel<SupplyController> {
 
   public void removeShoppingItem(ShoppingItem item) {
     shoppingItems.remove(item);
+  }
+
+  public List<Supplier> getAllSuppliers() {
+    return Tools.getAll(Supplier.class);
   }
 }

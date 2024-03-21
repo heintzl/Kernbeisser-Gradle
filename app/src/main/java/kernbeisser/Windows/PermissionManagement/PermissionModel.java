@@ -22,7 +22,7 @@ public class PermissionModel implements IModel<PermissionController> {
   }
 
   Collection<Permission> getAllPermissions() {
-    return Permission.getAll(null);
+    return Tools.getAll(Permission.class);
   }
 
   List<PermissionKeyGroups> getAllKeyCategories() {

@@ -1,12 +1,14 @@
 package kernbeisser.DBEntities;
 
+import static kernbeisser.DBConnection.PredicateFactory.isMember;
 import static kernbeisser.DBConnection.PredicateFactory.like;
 
 import jakarta.persistence.*;
 import java.util.*;
-import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.ExpressionFactory;
 import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.TypeFields.PermissionField;
+import kernbeisser.DBEntities.TypeFields.UserField;
 import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Useful.Tools;
 import lombok.*;
@@ -43,10 +45,6 @@ public class Permission {
     return Tools.or(this::getKeySet, Collections.unmodifiableSet(keySet));
   }
 
-  public static List<Permission> getAll(String condition) {
-    return Tools.getAll(Permission.class, condition);
-  }
-
   public boolean contains(PermissionKey key) {
     return getKeySetAsAvailable().contains(key);
   }
@@ -72,13 +70,8 @@ public class Permission {
   }
 
   public Collection<User> getAllUsers() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return DBConnection.getEntityManager()
-        .createQuery("select u from User u where :p in(elements(u.permissions))", User.class)
-        .setParameter("p", this)
+    return QueryBuilder.selectAll(User.class)
+        .where(isMember(ExpressionFactory.asExpression(this), UserField.permissions))
         .getResultList();
   }
 

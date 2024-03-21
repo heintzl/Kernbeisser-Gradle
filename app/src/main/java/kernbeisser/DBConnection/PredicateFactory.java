@@ -83,4 +83,10 @@ public interface PredicateFactory<P> {
     return ((source, cb) ->
         cb.greaterThanOrEqualTo(a.createExpression(source, cb), b.createExpression(source, cb)));
   }
+
+  static <P, C extends Collection<E>, E> PredicateFactory<P> isMember(
+      ExpressionFactory<P, E> member, ExpressionFactory<P, C> collection) {
+    return (source, cb) ->
+        cb.isMember(member.createExpression(source, cb), collection.createExpression(source, cb));
+  }
 }

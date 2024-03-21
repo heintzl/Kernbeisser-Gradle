@@ -7,10 +7,8 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.TemporalAdjusters;
-import java.util.List;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Security.Access.UserRelated;
-import kernbeisser.Useful.Tools;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -71,10 +69,6 @@ public class PreOrder implements Serializable, UserRelated {
   @Getter(onMethod_ = {@Key(PermissionKey.CONTAINER_DELIVERY_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.CONTAINER_DELIVERY_WRITE)})
   private Instant orderedOn;
-
-  public static List<PreOrder> getAll(String condition) {
-    return Tools.getAll(PreOrder.class, condition);
-  }
 
   public LocalDate getDueDate() {
     Instant orderDate = orderedOn == null ? Instant.now() : orderedOn;

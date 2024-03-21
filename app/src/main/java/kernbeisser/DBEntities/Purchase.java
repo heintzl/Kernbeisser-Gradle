@@ -3,13 +3,11 @@ package kernbeisser.DBEntities;
 import jakarta.persistence.*;
 import java.time.Instant;
 import java.util.Collection;
-import java.util.List;
 import java.util.function.Predicate;
 import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.TypeFields.ShoppingItemField;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Security.Access.UserRelated;
-import kernbeisser.Useful.Tools;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -50,10 +48,6 @@ public class Purchase implements UserRelated {
   @Column @Transient @Getter private String sellerIdentification;
 
   @Column @Transient @Getter private String customerIdentification;
-
-  public static List<Purchase> getAll(String condition) {
-    return Tools.getAll(Purchase.class, condition);
-  }
 
   public Purchase withUserIdentification(boolean withNames) {
 

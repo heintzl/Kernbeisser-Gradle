@@ -10,7 +10,7 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
-import kernbeisser.DBEntities.Articles;
+import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.Enums.ShopRange;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
 import kernbeisser.Forms.ObjectForm.Components.Source;
@@ -28,7 +28,7 @@ public class PrintLabelsModel implements IModel<PrintLabelsController> {
   @Getter private Map<Article, Integer> printPoolMap;
 
   public static CollectionController<Article> getArticleSource() {
-    Map<Integer, Instant> lastDeliveries = Articles.getLastDeliveries();
+    Map<Integer, Instant> lastDeliveries = ArticleRepository.getLastDeliveries();
     return new CollectionController<>(
         new ArrayList<>(),
         Source.empty(),
@@ -97,6 +97,6 @@ public class PrintLabelsModel implements IModel<PrintLabelsController> {
   }
 
   public static Article getByBarcode(String s) throws NoResultException {
-    return Articles.getByBarcode(Long.parseLong(s)).orElseThrow(NoResultException::new);
+    return ArticleRepository.getByBarcode(Long.parseLong(s)).orElseThrow(NoResultException::new);
   }
 }

@@ -30,7 +30,8 @@ public class SoloShoppingMaskController
               + Setting.STORE_NAME.getStringValue()
               + "-Mitglied bist.");
     }
-    user.validateGroupMemberships(
+    User.validateGroupMemberships(
+        user,
         "Du darfst nicht selbst einkaufen, weil weder du, noch die Mitglieder deiner Benutzergruppe "
             + Setting.STORE_NAME.getStringValue()
             + "-Mitglied sind.");

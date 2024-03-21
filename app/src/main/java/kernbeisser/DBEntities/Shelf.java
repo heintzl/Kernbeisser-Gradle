@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
 import kernbeisser.Useful.ActuallyCloneable;
 import lombok.Cleanup;
@@ -68,7 +69,7 @@ public class Shelf implements ActuallyCloneable {
   public Collection<Article> getAllArticles(EntityManager em) {
     return Stream.concat(
             priceLists.stream()
-                .map(e -> Articles.getAllActiveArticlesFromPriceList(em, e))
+                .map(e -> ArticleRepository.getAllActiveArticlesFromPriceList(em, e))
                 .flatMap(Collection::stream)
                 .sorted(Comparator.comparingInt(Article::getKbNumber)),
             articles.stream())

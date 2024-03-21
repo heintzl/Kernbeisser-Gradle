@@ -54,14 +54,9 @@ public class UserSettingValue implements UserRelated {
   private String value;
 
   private static Collection<UserSettingValue> getAllForUser(User user) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery(
-            "select u from UserSettingValue u where u.user.id = :uid", UserSettingValue.class)
-        .setParameter("uid", user.getId())
-        .getResultList();
+    return QueryBuilder.selectAll(UserSettingValue.class).where(
+            UserSettingValueField.user.eq(user)
+    ).getResultList();
   }
 
   public static String getValueFor(User user, UserSetting setting) {

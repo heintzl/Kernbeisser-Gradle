@@ -10,13 +10,14 @@ import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.DBEntities.SurchargeGroup;
 import kernbeisser.Tasks.Catalog.CatalogDataInterpreter;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
 
 public class EditSurchargeGroupModel implements IModel<EditSurchargeGroupController> {
 
   Collection<Supplier> getAllSuppliers() {
-    return Supplier.getAll(null);
+    return Tools.getAll(Supplier.class);
   }
 
   Node<SurchargeGroup> getSurchargeGroupTree(Supplier supplier) {

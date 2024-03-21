@@ -36,7 +36,7 @@ public class PermissionAssignmentModel implements IModel<PermissionAssignmentCon
   }
 
   public Collection<User> allUsers() {
-    List<User> c = User.getAll(null);
+    List<User> c = Tools.getAll(User.class);
     c.removeAll(User.getGenericUsers());
     c.sort(Comparator.comparing(User::getFullName));
     return c;

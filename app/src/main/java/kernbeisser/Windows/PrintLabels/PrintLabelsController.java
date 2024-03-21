@@ -14,7 +14,7 @@ import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.ArticlePrintPool;
-import kernbeisser.DBEntities.Articles;
+import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.CollectionView.CollectionController;
@@ -79,7 +79,7 @@ public class PrintLabelsController extends Controller<PrintLabelsView, PrintLabe
   }
 
   public static void setLabelPrintText(JButton button) {
-    boolean pendingLabels = Articles.getArticlePrintPoolSize() > 0;
+    boolean pendingLabels = ArticleRepository.getArticlePrintPoolSize() > 0;
     button.setText("Etiketten drucken" + (pendingLabels ? " *" : ""));
   }
 
@@ -158,7 +158,7 @@ public class PrintLabelsController extends Controller<PrintLabelsView, PrintLabe
 
   @Override
   public void fillView(PrintLabelsView printLabelsView) {
-    articles.setLoadedAndSource(Articles.getPrintPool(), PrintLabelsModel::getAllArticles);
+    articles.setLoadedAndSource(ArticleRepository.getPrintPool(), PrintLabelsModel::getAllArticles);
     articles.getView().addSearchbox(CollectionView.BOTH);
   }
 

@@ -17,7 +17,6 @@ import kernbeisser.DBEntities.TypeFields.SurchargeGroupField;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
 import kernbeisser.Useful.ActuallyCloneable;
-import kernbeisser.Useful.Tools;
 import lombok.*;
 import org.hibernate.envers.Audited;
 import rs.groump.Key;
@@ -56,10 +55,6 @@ public class SurchargeGroup implements Serializable, ActuallyCloneable {
   private SurchargeGroup parent;
 
   public SurchargeGroup() {}
-
-  public static List<SurchargeGroup> getAll(String condition) {
-    return Tools.getAll(SurchargeGroup.class, condition);
-  }
 
   public static Collection<SurchargeGroup> defaultSearch(String s, int max) {
     String searchPattern = s + "%";

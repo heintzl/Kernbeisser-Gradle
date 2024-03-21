@@ -11,8 +11,8 @@ import java.util.stream.Collectors;
 import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
-import kernbeisser.DBEntities.Articles;
 import kernbeisser.DBEntities.PriceList;
+import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.DBEntities.Shelf;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Forms.FormController;
@@ -55,7 +55,7 @@ public class ShelfController extends FormController<ShelfView, ShelfModel, Shelf
     try {
       long barcode = Long.parseLong(s);
       Shelf shelf = getView().getObjectForm().getData(Mode.EDIT);
-      Optional<Article> article = Articles.getByBarcode(barcode);
+      Optional<Article> article = ArticleRepository.getByBarcode(barcode);
       if (!article.isPresent()) {
         return;
       }

@@ -6,7 +6,6 @@ import static kernbeisser.DBConnection.PredicateFactory.or;
 import jakarta.persistence.*;
 import java.time.Instant;
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import kernbeisser.DBConnection.QueryBuilder;
@@ -51,10 +50,6 @@ public class Job implements ActuallyCloneable {
   @Getter(onMethod_ = {@Key(PermissionKey.JOB_UPDATE_DATE_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.JOB_UPDATE_DATE_WRITE)})
   private Instant updateDate;
-
-  public static List<Job> getAll(String condition) {
-    return Tools.getAll(Job.class, condition);
-  }
 
   public static Collection<Job> defaultSearch(String s, int max) {
     return QueryBuilder.selectAll(Job.class)

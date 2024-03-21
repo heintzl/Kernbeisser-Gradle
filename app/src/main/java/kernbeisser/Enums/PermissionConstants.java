@@ -57,15 +57,15 @@ public enum PermissionConstants {
   public static String getTranslation(String permissionName) {
     ImmutableMap<String, String> nameTranslations =
         ImmutableMap.<String, String>builder()
-            .put("@KEY_PERMISSION", "<Schlüssel Inhaber>")
-            .put("@IMPORT", "<Aus alter Version übernommen>")
-            .put("@FULL_MEMBER", "<Vollmitglied>")
-            .put("@APPLICATION", "<Applikation>")
-            .put("@ADMIN", "<Administration>")
-            .put("@IN_RELATION_TO_OWN_USER", "<eigene Daten>")
-            .put("@CASHIER", "<Ladendienst>")
-            .put("@BASIC_ACCESS", "<Basis-Anwender>")
-            .put("@TRIAL_MEMBER", "<Probemitglied>")
+            .put(KEY_PERMISSION.nameId(), "<Schlüssel Inhaber>")
+            .put(IMPORT.nameId(), "<Aus alter Version übernommen>")
+            .put(FULL_MEMBER.nameId(), "<Vollmitglied>")
+            .put(APPLICATION.nameId(), "<Applikation>")
+            .put(ADMIN.nameId(), "<Administration>")
+            .put(IN_RELATION_TO_OWN_USER.nameId(), "<eigene Daten>")
+            .put(CASHIER.nameId(), "<Ladendienst>")
+            .put(BASIC_ACCESS.nameId(), "<Basis-Anwender>")
+            .put(TRIAL_MEMBER.nameId(), "<Probemitglied>")
             .build();
     return nameTranslations.getOrDefault(permissionName, permissionName);
   }
@@ -120,5 +120,9 @@ public enum PermissionConstants {
           em.merge(currentUser);
           em.flush();
         });
+  }
+
+  public String nameId() {
+    return "@" + name();
   }
 }

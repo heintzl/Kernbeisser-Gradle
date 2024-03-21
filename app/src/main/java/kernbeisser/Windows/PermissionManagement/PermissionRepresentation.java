@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.swing.*;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Useful.Tools;
@@ -98,11 +99,9 @@ public class PermissionRepresentation {
 
     List<Permission> permissions;
     if (onlyUserPermissions.isSelected()) {
-      permissions = Permission.getAll(null);
+      permissions = Tools.getAll(Permission.class);
     } else {
-      em.createQuery("select p from Permission p", Permission.class)
-          .getResultList()
-          .forEach(em::remove);
+      QueryBuilder.selectAll(Permission.class).getResultList().forEach(em::remove);
       em.flush();
       permissions = parsePermissions(representation);
       permissions.forEach(em::persist);

@@ -7,6 +7,7 @@ import java.time.ZoneId;
 import java.util.Optional;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.QueryBuilder;
+import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.DBEntities.TypeFields.ArticleStockField;
 import kernbeisser.Enums.Setting;
 import lombok.Cleanup;
@@ -62,7 +63,7 @@ public class ArticleStock {
             .atStartOfDay()
             .atZone(ZoneId.systemDefault())
             .toInstant();
-    Article articleAtDate = Articles.getArticleStateAtDate(article, date);
+    Article articleAtDate = ArticleRepository.getArticleStateAtDate(article, date);
     if (articleAtDate == null) {
       return article;
     }

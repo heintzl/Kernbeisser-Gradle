@@ -5,6 +5,8 @@ import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.QueryBuilder;
+import kernbeisser.DBEntities.TypeFields.UserGroupField;
 import kernbeisser.Exeptions.InconsistentUserGroupValueException;
 import kernbeisser.Exeptions.MissingFullMemberException;
 import kernbeisser.Security.Access.UserRelated;
@@ -116,10 +118,6 @@ public class UserGroup implements UserRelated {
     return result;
   }
 
-  public static List<UserGroup> getAll(String condition) {
-    return Tools.getAll(UserGroup.class, condition);
-  }
-
   public Collection<User> getMembers() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
@@ -213,15 +211,12 @@ public class UserGroup implements UserRelated {
     if (!getInvalidUserGroupTransactionSums().isEmpty()) {
       throw new InconsistentUserGroupValueException();
     }
-    for (UserGroup ug : UserGroup.getAll(null)) {
-      User.validateGroupMemberships(
-          ug.getMembers(),
-          "Benutzergruppe(n) ohne Vollmitglied gefunden. Bitte den Vorstand informieren.");
-    }
+    User.checkValidUserGroupMemberships();
   }
 
   private static UserGroup getWithTransactionSum(int id, double sum) {
-    UserGroup userGroup = getAll("where id = " + id).get(0);
+    UserGroup userGroup =
+        QueryBuilder.selectAll(UserGroup.class).where(UserGroupField.id.eq(id)).getSingleResult();
     userGroup.transactionSum = sum;
     return userGroup;
   }

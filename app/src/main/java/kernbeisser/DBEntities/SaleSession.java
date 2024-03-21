@@ -1,10 +1,8 @@
 package kernbeisser.DBEntities;
 
 import jakarta.persistence.*;
-import java.util.List;
 import kernbeisser.Enums.SaleSessionType;
 import kernbeisser.Security.Access.UserRelated;
-import kernbeisser.Useful.Tools;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -56,10 +54,6 @@ public class SaleSession implements UserRelated {
   // default constructor just for Hibernate. don't use it
   private SaleSession() {
     this.sessionType = null;
-  }
-
-  public static List<SaleSession> getAll(String condition) {
-    return Tools.getAll(SaleSession.class, condition);
   }
 
   public String getSessionTypeName() {

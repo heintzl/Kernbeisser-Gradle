@@ -7,6 +7,7 @@ import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.CustomComponents.KeyCapture;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
 import kernbeisser.DBEntities.*;
+import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.Dialogs.RememberDialog;
 import kernbeisser.EntityWrapper.ObjectState;
 import kernbeisser.Enums.ArticleType;
@@ -187,7 +188,7 @@ public class ShoppingMaskController extends Controller<ShoppingMaskView, Shoppin
   }
 
   public double getUnitNetPrice(Article article, boolean preordered) throws NullPointerException {
-    return Articles.calculateArticleNetPrice(article, preordered)
+    return ArticleRepository.calculateArticleNetPrice(article, preordered)
         * (preordered && !article.isWeighable() ? article.getContainerSize() : 1.0);
   }
 
@@ -200,10 +201,10 @@ public class ShoppingMaskController extends Controller<ShoppingMaskView, Shoppin
           () ->
               article.setNetPrice(
                   view.getNetPrice()
-                      / (Articles.getSafeAmount(article)
+                      / (ArticleRepository.getSafeAmount(article)
                           * article.getMetricUnits().getBaseFactor())));
     }
-    return Articles.calculateArticleRetailPrice(article, discount, preordered)
+    return ArticleRepository.calculateArticleRetailPrice(article, discount, preordered)
         * (preordered && !article.isWeighable() && !overwriteNetPrice
             ? article.getContainerSize()
             : 1.0);
@@ -218,11 +219,14 @@ public class ShoppingMaskController extends Controller<ShoppingMaskView, Shoppin
     VAT vat = view.getVat();
     if (kbNumber > 0 && view.getArticleType() == ArticleType.ARTICLE_NUMBER) {
       article =
-          Articles.getByKbNumber(kbNumber, false).orElse(ObjectState.wrap(null, 0)).getValue();
+          ArticleRepository.getByKbNumber(kbNumber, false)
+              .orElse(ObjectState.wrap(null, 0))
+              .getValue();
     } else if (supplier != null
         && suppliersItemNumber > 0
         && view.getArticleType() == ArticleType.ARTICLE_NUMBER) {
-      article = Articles.getBySuppliersItemNumber(supplier, suppliersItemNumber).orElse(null);
+      article =
+          ArticleRepository.getBySuppliersItemNumber(supplier, suppliersItemNumber).orElse(null);
     }
     if (article == null) {
       article =
@@ -283,7 +287,7 @@ public class ShoppingMaskController extends Controller<ShoppingMaskView, Shoppin
 
             case CUSTOM_PRODUCT:
               Article customArticle =
-                  Articles.getCustomArticleVersion(
+                  ArticleRepository.getCustomArticleVersion(
                       before -> {
                         before.setName(view.getArticleName());
                         before.setSupplier(view.getSupplier());

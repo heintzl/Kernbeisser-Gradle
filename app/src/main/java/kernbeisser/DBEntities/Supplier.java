@@ -7,7 +7,6 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Collection;
-import java.util.List;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.TypeFields.SupplierField;
@@ -175,10 +174,6 @@ public class Supplier implements Serializable, ActuallyCloneable {
 
   public static Supplier getCustomProductSupplier() {
     return getOrCreateSupplierByShortName("CP", "Kennung Benutzerdefiniert", 0);
-  }
-
-  public static List<Supplier> getAll(String condition) {
-    return Tools.getAll(Supplier.class, condition);
   }
 
   @Override

@@ -1,8 +1,7 @@
-package kernbeisser.DBEntities;
+package kernbeisser.DBEntities.Repositories;
 
 import static kernbeisser.DBConnection.ExpressionFactory.*;
 import static kernbeisser.DBConnection.PredicateFactory.*;
-import static kernbeisser.DBEntities.TypeFields.ArticleField.*;
 
 import jakarta.persistence.*;
 import java.time.Instant;
@@ -13,6 +12,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import kernbeisser.DBConnection.*;
+import kernbeisser.DBEntities.*;
 import kernbeisser.DBEntities.TypeFields.*;
 import kernbeisser.EntityWrapper.ObjectState;
 import kernbeisser.Enums.*;
@@ -30,10 +30,10 @@ import rs.groump.Access;
 import rs.groump.AccessManager;
 
 @Log4j2
-public class Articles {
+public class ArticleRepository {
   public static final Supplier KK_SUPPLIER = Supplier.getKKSupplier();
 
-  private Articles() {}
+  private ArticleRepository() {}
 
   public static Collection<Article> defaultSearch(String search, int maxResults) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
@@ -64,7 +64,7 @@ public class Articles {
   public static Optional<ObjectState<Article>> getByKbNumber(
       EntityManager em, int kbNumber, boolean filterShopRange) {
     var qb = QueryBuilder.selectAll(Article.class).where(ArticleField.kbNumber.eq(kbNumber));
-    if (filterShopRange) qb.where(shopRange.in(ShopRange.visibleRanges()));
+    if (filterShopRange) qb.where(ArticleField.shopRange.in(ShopRange.visibleRanges()));
     return qb.getResultStream(em)
         .findAny()
         .map(ObjectState::currentState)
@@ -114,7 +114,10 @@ public class Articles {
   public static Optional<Article> getBySuppliersItemNumber(
       Supplier targetSupplier, int suppliersNumber, EntityManager em) {
     return DBConnection.getConditioned(
-            em, Article.class, suppliersItemNumber.eq(suppliersNumber), supplier.eq(targetSupplier))
+            em,
+            Article.class,
+            ArticleField.suppliersItemNumber.eq(suppliersNumber),
+            ArticleField.supplier.eq(targetSupplier))
         .stream()
         .findFirst();
   }
@@ -125,10 +128,10 @@ public class Articles {
     EntityTransaction et = em.getTransaction();
     et.begin();
     List<Article> articles =
-        DBConnection.getConditioned(em, Article.class, barcode.eq(targetBarcode));
+        DBConnection.getConditioned(em, Article.class, ArticleField.barcode.eq(targetBarcode));
     return Optional.ofNullable(
         articles.stream()
-            .filter(Articles::articleIsActiveOffer)
+            .filter(ArticleRepository::articleIsActiveOffer)
             .findAny()
             .orElse(articles.stream().findFirst().orElse(null)));
   }
@@ -145,7 +148,9 @@ public class Articles {
       EntityTransaction et = em.getTransaction();
       et.begin();
       return QueryBuilder.selectAll(Article.class)
-          .where(name.eq(rawPrice.getName()), kbNumber.in(rawPriceIdentifiers))
+          .where(
+              ArticleField.name.eq(rawPrice.getName()),
+              ArticleField.kbNumber.in(rawPriceIdentifiers))
           .getSingleResult(em);
     } catch (NoResultException e) {
       ArticleConstants identifierEnum = ArticleConstants.CUSTOM_PRODUCT;
@@ -202,13 +207,15 @@ public class Articles {
     return QueryBuilder.selectAll(Article.class)
         .where(
             or(
-                kbNumber.eq(n),
-                suppliersItemNumber.eq(Tools.tryParseInt(search)),
-                like(upper(name), ds),
-                barcode.eq(l),
-                like(barcode.as(String.class), "%" + search),
-                like(upper(priceList.child(PriceListField.name)), search.toUpperCase())))
-        .orderBy(name.asc())
+                ArticleField.kbNumber.eq(n),
+                ArticleField.suppliersItemNumber.eq(Tools.tryParseInt(search)),
+                like(upper(ArticleField.name), ds),
+                ArticleField.barcode.eq(l),
+                like(ArticleField.barcode.as(String.class), "%" + search),
+                like(
+                    upper(ArticleField.priceList.child(PriceListField.name)),
+                    search.toUpperCase())))
+        .orderBy(ArticleField.name.asc())
         .buildQuery(em);
   }
 
@@ -235,7 +242,8 @@ public class Articles {
   public static Article nextArticleTo(
       EntityManager em, int suppliersItemNumber, Supplier supplier, PriceList excludedPriceList) {
     return QueryBuilder.selectAll(Article.class)
-        .where(ArticleField.supplier.eq(supplier), priceList.eq(excludedPriceList).not())
+        .where(
+            ArticleField.supplier.eq(supplier), ArticleField.priceList.eq(excludedPriceList).not())
         .orderBy(diff(ArticleField.suppliersItemNumber, asExpression(suppliersItemNumber)).asc())
         .getResultStream(em)
         .findFirst()
@@ -360,10 +368,11 @@ public class Articles {
               DBConnection.getConditioned(
                       em,
                       Article.class,
-                      kbNumber.eq(ArticleConstants.CUSTOM_PRODUCT.getUniqueIdentifier()))
+                      ArticleField.kbNumber.eq(
+                          ArticleConstants.CUSTOM_PRODUCT.getUniqueIdentifier()))
                   .stream()
                   .findFirst()
-                  .orElseGet(Articles::createCustomArticlePreset);
+                  .orElseGet(ArticleRepository::createCustomArticlePreset);
           Access.runWithAccessManager(
               AccessManager.ACCESS_GRANTED, () -> transformer.accept(article));
           em.persist(article);

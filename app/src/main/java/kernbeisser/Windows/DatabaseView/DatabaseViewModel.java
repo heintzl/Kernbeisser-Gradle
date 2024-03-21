@@ -1,15 +1,19 @@
 package kernbeisser.Windows.DatabaseView;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import java.util.Collection;
-import kernbeisser.Useful.Tools;
+import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.Windows.MVC.IModel;
+import lombok.Cleanup;
 
 public class DatabaseViewModel implements IModel<DatabaseViewController> {
   public static final Class<?>[] DATA_ENTITIES =
       new Class[] {
         kernbeisser.DBEntities.Article.class,
         kernbeisser.DBEntities.ArticlePrintPool.class,
-        kernbeisser.DBEntities.Articles.class,
+        ArticleRepository.class,
         kernbeisser.DBEntities.ArticleStock.class,
         kernbeisser.DBEntities.CatalogEntry.class,
         kernbeisser.DBEntities.IgnoredDialog.class,
@@ -34,7 +38,12 @@ public class DatabaseViewModel implements IModel<DatabaseViewController> {
         kernbeisser.DBEntities.UserSettingValue.class,
       };
 
-  public Collection<?> getAllOfClass(Class<?> clazz, String condition) {
-    return Tools.getAll(clazz, condition);
+  public <T> Collection<T> getAllOfClass(Class<T> clazz, String condition) {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup("commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return em.createQuery("select o from " + clazz.getSimpleName() + " o " + condition, clazz)
+        .getResultList();
   }
 }

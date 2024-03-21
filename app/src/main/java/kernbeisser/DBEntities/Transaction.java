@@ -108,10 +108,6 @@ public class Transaction implements UserRelated {
 
   @Column @Transient @Getter private String toIdentification;
 
-  public static List<Transaction> getAll(String condition) {
-    return Tools.getAll(Transaction.class, condition);
-  }
-
   public Transaction withUserIdentifications(UserNameObfuscation withNames) {
 
     Transaction out = this;

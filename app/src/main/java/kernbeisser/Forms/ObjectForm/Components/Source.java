@@ -3,7 +3,7 @@ package kernbeisser.Forms.ObjectForm.Components;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
-import kernbeisser.Useful.Tools;
+import kernbeisser.DBConnection.QueryBuilder;
 
 public interface Source<T> {
   Collection<T> query();
@@ -13,7 +13,7 @@ public interface Source<T> {
   }
 
   public static <T> Source<T> of(Class<T> clazz) {
-    return () -> Tools.getAll(clazz, null);
+    return () -> QueryBuilder.selectAll(clazz).getResultList();
   }
 
   public static <T> Source<T> empty() {

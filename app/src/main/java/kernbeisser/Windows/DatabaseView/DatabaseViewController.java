@@ -59,8 +59,6 @@ public class DatabaseViewController extends Controller<DatabaseViewView, Databas
             .peek(e -> e.withColumnAdjustor(c -> c.setPreferredWidth(150)))
             .collect(Collectors.toList());
     getView().setColumns(columnList);
-    getView()
-        .setEntities(
-            (Collection<Object>) model.getAllOfClass(clazz, getView().getFilter().orElse(null)));
+    getView().setEntities((Collection<Object>) model.getAllOfClass(clazz, getView().getFilter()));
   }
 }

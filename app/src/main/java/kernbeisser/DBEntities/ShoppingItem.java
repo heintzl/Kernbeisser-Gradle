@@ -4,11 +4,11 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.function.ToDoubleFunction;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.EntityWrapper.ObjectState;
 import kernbeisser.Enums.*;
 import kernbeisser.Useful.Tools;
@@ -198,7 +198,7 @@ public class ShoppingItem implements Serializable {
    */
   public ShoppingItem(Article article, int articleRev, int discount, boolean hasContainerDiscount) {
     this.containerDiscount = hasContainerDiscount;
-    this.amount = Articles.getSafeAmount(article);
+    this.amount = ArticleRepository.getSafeAmount(article);
     this.specialOffer = article.isOffer();
     this.name = (specialOffer ? getOfferPrefix() : "") + article.getName();
     this.metricUnits = article.getMetricUnits();
@@ -213,7 +213,7 @@ public class ShoppingItem implements Serializable {
                 // is unsafe call
                 ? Supplier.getKKSupplier().getOrPersistDefaultSurchargeGroup().getSurcharge()
                 : article.getSurchargeGroup().getSurcharge())
-            * (hasContainerDiscount ? Articles.getContainerSurchargeReduction() : 1);
+            * (hasContainerDiscount ? ArticleRepository.getContainerSurchargeReduction() : 1);
     if (supplier != null) {
       this.suppliersShortName = article.getSupplier().getShortName();
     }
@@ -223,7 +223,8 @@ public class ShoppingItem implements Serializable {
     this.containerSize = article.getContainerSize();
     this.kbNumber = article.getKbNumber();
     this.weighAble = article.isWeighable();
-    this.itemNetPrice = Articles.calculateUnroundedArticleNetPrice(article, hasContainerDiscount);
+    this.itemNetPrice =
+        ArticleRepository.calculateUnroundedArticleNetPrice(article, hasContainerDiscount);
     setItemRetailPriceFromNetPrice();
     this.articleId = article.getId();
     this.articleRev = articleRev;
@@ -233,7 +234,7 @@ public class ShoppingItem implements Serializable {
       RawPrice rawPrice, double price, boolean hasContainerDiscount) {
     ShoppingItem out =
         new ShoppingItem(
-            ObjectState.currentState(Articles.getOrCreateRawPriceArticle(rawPrice)),
+            ObjectState.currentState(ArticleRepository.getOrCreateRawPriceArticle(rawPrice)),
             0,
             hasContainerDiscount);
     if (hasContainerDiscount) {
@@ -279,10 +280,6 @@ public class ShoppingItem implements Serializable {
     deposit.name += price < 0 ? " zurück" : "";
     deposit.depositItem = true;
     return deposit;
-  }
-
-  public static List<ShoppingItem> getAll(String condition) {
-    return Tools.getAll(ShoppingItem.class, condition);
   }
 
   @Key(PermissionKey.SHOPPING_ITEM_ITEM_RETAIL_PRICE_READ)
@@ -375,7 +372,7 @@ public class ShoppingItem implements Serializable {
 
   @Key(PermissionKey.SHOPPING_ITEM_ITEM_RETAIL_PRICE_READ)
   public double calculatePreciseRetailPrice(double netPrice) throws NullPointerException {
-    return Articles.calculateRetailPrice(netPrice, vat, surcharge, discount, false);
+    return ArticleRepository.calculateRetailPrice(netPrice, vat, surcharge, discount, false);
   }
 
   @Key(PermissionKey.SHOPPING_ITEM_ITEM_RETAIL_PRICE_READ)

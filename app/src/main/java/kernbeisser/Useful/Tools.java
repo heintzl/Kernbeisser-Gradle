@@ -19,6 +19,8 @@ import java.util.stream.Collectors;
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.PredicateFactory;
+import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.SurchargeGroup;
 import kernbeisser.Enums.Setting;
@@ -32,7 +34,6 @@ import kernbeisser.Windows.ViewContainers.SubWindow;
 import lombok.Cleanup;
 import org.hibernate.envers.AuditReader;
 import org.hibernate.envers.AuditReaderFactory;
-import org.jetbrains.annotations.Nullable;
 import rs.groump.AccessDeniedException;
 
 public class Tools {
@@ -112,16 +113,6 @@ public class Tools {
       out.add(s.get());
     }
     return out;
-  }
-
-  public static <T> List<T> getAll(Class<T> c, @Nullable String condition) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery(
-            "select c from " + c.getName() + " c " + (condition != null ? condition : ""), c)
-        .getResultList();
   }
 
   public static <T> T setId(T t, Object id) {
@@ -687,6 +678,11 @@ public class Tools {
     } else {
       return defaultValue;
     }
+  }
+
+  @SafeVarargs
+  public static <T> List<T> getAll(Class<T> tableClass, PredicateFactory<T>... whereCondition) {
+    return QueryBuilder.selectAll(tableClass).where(whereCondition).getResultList();
   }
 
   public static String capitalize1st(String s) {
