@@ -43,7 +43,10 @@ public final class LogInModel implements IModel {
     EntityTransaction et = em.getTransaction();
     et.begin();
     try {
-      User user = QueryBuilder.selectAll(User.class).where(UserField.username.eq(username)).getSingleResult();
+      User user =
+          QueryBuilder.selectAll(User.class)
+              .where(UserField.username.eq(username))
+              .getSingleResult();
       if (BCrypt.verifyer().verify(password, user.getPassword().toCharArray()).verified) {
         loggedInId = user.getId();
         userRelatedAccessManager = new UserRelatedAccessManager(getLoggedIn());

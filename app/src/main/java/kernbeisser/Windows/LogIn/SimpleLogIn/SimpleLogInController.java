@@ -3,7 +3,6 @@ package kernbeisser.Windows.LogIn.SimpleLogIn;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Locale;
-import java.util.concurrent.Executors;
 import javax.swing.*;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
@@ -83,8 +82,7 @@ public class SimpleLogInController extends Controller<SimpleLogInView, SimpleLog
         .start();
   }
 
-  
-  private void checkValidDataOnDB(){
+  private void checkValidDataOnDB() {
     User.refreshActivity();
     try {
       User.checkAdminConsistency();
@@ -96,20 +94,20 @@ public class SimpleLogInController extends Controller<SimpleLogInView, SimpleLog
     } catch (AccessDeniedException ignored) {
     } catch (InconsistentUserGroupValueException e) {
       JOptionPane.showMessageDialog(
-              getView().getTopComponent(),
-              "Die Transaktionsdaten weichen von den Kontoständen ab.\n"
-                      + "Bitte den Vorstand oder die Buchhaltung informieren!",
-              "Inkonsistenter Datenbestand",
-              JOptionPane.WARNING_MESSAGE);
+          getView().getTopComponent(),
+          "Die Transaktionsdaten weichen von den Kontoständen ab.\n"
+              + "Bitte den Vorstand oder die Buchhaltung informieren!",
+          "Inkonsistenter Datenbestand",
+          JOptionPane.WARNING_MESSAGE);
     } catch (MissingFullMemberException f) {
       JOptionPane.showMessageDialog(
-              getView().getTopComponent(),
-              f.getMessage(),
-              "Benutzergruppe ohne Vollmitglied",
-              JOptionPane.WARNING_MESSAGE);
+          getView().getTopComponent(),
+          f.getMessage(),
+          "Benutzergruppe ohne Vollmitglied",
+          JOptionPane.WARNING_MESSAGE);
     }
   }
-  
+
   private static void loadUserSettings() {
     try {
       UIManager.setLookAndFeel(

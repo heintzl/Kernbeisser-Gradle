@@ -10,9 +10,8 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.function.Predicate;
+import javax.swing.*;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
-import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
-import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.ExpressionFactory;
 import kernbeisser.DBConnection.PredicateFactory;
@@ -29,8 +28,6 @@ import kernbeisser.Security.Access.UserRelated;
 import kernbeisser.Useful.ActuallyCloneable;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
-import kernbeisser.Windows.TabbedPane.TabbedPaneController;
-import kernbeisser.Windows.TabbedPane.TabbedPaneModel;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -38,8 +35,6 @@ import org.jetbrains.annotations.NotNull;
 import rs.groump.Key;
 import rs.groump.PermissionKey;
 import rs.groump.PermissionSet;
-
-import javax.swing.*;
 
 @Entity
 @Table(
@@ -203,16 +198,20 @@ public class User implements Serializable, UserRelated, ActuallyCloneable {
   }
 
   public static void checkValidUserGroupMemberships() throws MissingFullMemberException {
-    @Cleanup
-    EntityManager em = DBConnection.getEntityManager();
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup("commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    Permission fullMemberPermission = em.find(Permission.class,PermissionConstants.FULL_MEMBER.getPermission().getId());
-    List<UserGroup> userGroupsMissingFullMember = em.createQuery("select ug from UserGroup ug where not exists (select u from User u where u.userGroup = ug and :fmp in(elements(u.permissions))) and ((select count(*) from User u where u.userGroup = ug) > 1)")
-            .setParameter("fmp",fullMemberPermission).getResultList();
-    if(userGroupsMissingFullMember.isEmpty())return;
-    throw new MissingFullMemberException("Benutzergruppe(n) ohne Vollmitglied gefunden. Bitte den Vorstand informieren.");
+    Permission fullMemberPermission =
+        em.find(Permission.class, PermissionConstants.FULL_MEMBER.getPermission().getId());
+    List<UserGroup> userGroupsMissingFullMember =
+        em.createQuery(
+                "select ug from UserGroup ug where not exists (select u from User u where u.userGroup = ug and :fmp in(elements(u.permissions))) and ((select count(*) from User u where u.userGroup = ug) > 1)")
+            .setParameter("fmp", fullMemberPermission)
+            .getResultList();
+    if (userGroupsMissingFullMember.isEmpty()) return;
+    throw new MissingFullMemberException(
+        "Benutzergruppe(n) ohne Vollmitglied gefunden. Bitte den Vorstand informieren.");
   }
 
   public static User getByUsername(String username) throws NoResultException {

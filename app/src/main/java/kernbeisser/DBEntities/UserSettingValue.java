@@ -54,9 +54,9 @@ public class UserSettingValue implements UserRelated {
   private String value;
 
   private static Collection<UserSettingValue> getAllForUser(User user) {
-    return QueryBuilder.selectAll(UserSettingValue.class).where(
-            UserSettingValueField.user.eq(user)
-    ).getResultList();
+    return QueryBuilder.selectAll(UserSettingValue.class)
+        .where(UserSettingValueField.user.eq(user))
+        .getResultList();
   }
 
   public static String getValueFor(User user, UserSetting setting) {
