@@ -3,6 +3,7 @@ package kernbeisser.Windows.DatabaseView;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -54,6 +55,9 @@ public class DatabaseViewController extends Controller<DatabaseViewView, Databas
     getView().setEntities(new ArrayList<>());
     List<Column<Object>> columnList =
         Arrays.stream(clazz.getDeclaredFields())
+                .filter(
+                        field -> !Modifier.isStatic(field.getModifiers())
+                )
             .peek(e -> e.setAccessible(true))
             .map(field -> Columns.create(field.getName(), e -> getValueOfField(field, e)))
             .peek(e -> e.withColumnAdjustor(c -> c.setPreferredWidth(150)))
