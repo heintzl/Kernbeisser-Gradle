@@ -16,6 +16,8 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.ExpressionFactory;
 import kernbeisser.DBConnection.PredicateFactory;
 import kernbeisser.DBConnection.QueryBuilder;
+import kernbeisser.DBEntities.TypeFields.PurchaseField;
+import kernbeisser.DBEntities.TypeFields.SaleSessionField;
 import kernbeisser.DBEntities.TypeFields.TransactionField;
 import kernbeisser.DBEntities.TypeFields.UserField;
 import kernbeisser.Enums.PermissionConstants;
@@ -499,14 +501,9 @@ public class User implements Serializable, UserRelated, ActuallyCloneable {
   }
 
   public Collection<Purchase> getAllPurchases() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery(
-            "select p from Purchase p where p.session.customer.userGroup.id = :id", Purchase.class)
-        .setParameter("id", userGroup.getId())
-        .getResultList();
+    return QueryBuilder.selectAll(Purchase.class).where(
+            PurchaseField.session.child(SaleSessionField.customer.child(UserField.userGroup)).eq(userGroup)
+    ).getResultList();
   }
 
   public double valueAt(Instant instant) {
