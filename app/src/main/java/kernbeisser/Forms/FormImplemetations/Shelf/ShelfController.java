@@ -1,25 +1,20 @@
 package kernbeisser.Forms.FormImplemetations.Shelf;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityTransaction;
 import java.awt.event.KeyEvent;
-import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import kernbeisser.CustomComponents.BarcodeCapture;
-import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Article;
-import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.DBEntities.Shelf;
+import kernbeisser.DBEntities.TypeFields.ArticleField;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Forms.FormController;
 import kernbeisser.Forms.ObjectForm.Components.Source;
 import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
 import kernbeisser.Forms.ObjectForm.ObjectForm;
-import lombok.Cleanup;
 import rs.groump.AccessDeniedException;
 
 public class ShelfController extends FormController<ShelfView, ShelfModel, Shelf> {
@@ -30,20 +25,9 @@ public class ShelfController extends FormController<ShelfView, ShelfModel, Shelf
     super(new ShelfModel());
   }
 
-  public static Source<Article> articlesNotInPriceLists(
-      Supplier<Collection<PriceList>> priceListSupplier) {
-
-    return () -> {
-      Collection<PriceList> ignoredPriceLists = priceListSupplier.get();
-      @Cleanup EntityManager em = DBConnection.getEntityManager();
-      @Cleanup("commit")
-      EntityTransaction et = em.getTransaction();
-      et.begin();
-      return em.createQuery("select a from Article a order by a.name", Article.class)
-          .getResultStream()
-          .filter(a -> ignoredPriceLists == null || !ignoredPriceLists.contains(a.getPriceList()))
-          .collect(Collectors.toList());
-    };
+  public static Source<Article> getAllArticleSource() {
+    return () ->
+        QueryBuilder.selectAll(Article.class).orderBy(ArticleField.name.asc()).getResultList();
   }
 
   @Override

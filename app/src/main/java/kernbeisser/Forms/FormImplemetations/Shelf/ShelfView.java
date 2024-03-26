@@ -83,7 +83,7 @@ public class ShelfView implements IView<ShelfController> {
     extraArticles =
         new AccessCheckingCollectionEditor<>(
                 Shelf::getArticles,
-                ShelfController.articlesNotInPriceLists(() -> null),
+                ShelfController.getAllArticleSource(),
                 Columns.create("Artikelname", Article::getName),
                 Columns.create("Artikelnummer", Article::getKbNumber)
                     .withSorter(Column.NUMBER_SORTER),

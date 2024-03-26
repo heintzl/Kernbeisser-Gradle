@@ -30,7 +30,6 @@ public class InventoryShelf {
   }
 
   private void updateValues() {
-
     LocalDate localDate = Setting.INVENTORY_SCHEDULED_DATE.getDateValue();
     List<ArticleStock> shelfStocks =
         DBConnection.getConditioned(

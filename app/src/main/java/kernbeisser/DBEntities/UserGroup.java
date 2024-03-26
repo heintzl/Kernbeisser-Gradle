@@ -1,11 +1,17 @@
 package kernbeisser.DBEntities;
 
+import static kernbeisser.DBConnection.ExpressionFactory.asExpression;
+import static kernbeisser.DBConnection.PredicateFactory.*;
+
 import jakarta.persistence.*;
 import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.PredicateFactory;
 import kernbeisser.DBConnection.QueryBuilder;
+import kernbeisser.DBEntities.TypeFields.TransactionField;
+import kernbeisser.DBEntities.TypeFields.UserField;
 import kernbeisser.DBEntities.TypeFields.UserGroupField;
 import kernbeisser.Exeptions.InconsistentUserGroupValueException;
 import kernbeisser.Exeptions.MissingFullMemberException;
@@ -93,25 +99,33 @@ public class UserGroup implements UserRelated {
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    return em.createQuery(
-            "select ug from UserGroup ug where ug in "
-                + "(select u.userGroup from User u where u.unreadable = false and not "
-                + User.GENERIC_USERS_CONDITION
-                + ")",
-            UserGroup.class)
-        .getResultList();
+    Collection<Integer> userGroupIds =
+        QueryBuilder.select(UserField.userGroup.child(UserGroupField.id))
+            .where(UserField.unreadable.eq(false), User.GENERIC_USERS_PREDICATE.not())
+            .getResultList(em);
+    HashSet<Integer> ugIdSet = new HashSet<>(userGroupIds);
+    return QueryBuilder.selectAll(UserGroup.class)
+        .where(in(UserGroupField.id, ugIdSet))
+        .getResultList(em);
   }
 
   public UserGroup withMembersAsStyledString(
       boolean withNames, Map<UserGroup, Double> overrideValues) {
     UserGroup result = new UserGroup();
     result.membersAsString =
-        getMembers().stream()
+        QueryBuilder.select(
+                User.class, UserField.id, UserField.firstName, UserField.surname, User.IS_FULL_USER)
+            .where(UserField.userGroup.eq(this))
+            .getResultList()
+            .stream()
             .map(
-                m ->
+                tuple ->
                     Tools.jasperTaggedStyling(
-                        withNames ? m.getFullName() : String.valueOf(m.getId()),
-                        m.isFullMember() ? "" : "i"))
+                        withNames
+                            ? User.getFullName(
+                                tuple.get(1, String.class), tuple.get(2, String.class), false)
+                            : String.valueOf(tuple.get(0, Integer.class)),
+                        tuple.get(3, Boolean.class) ? "" : "i"))
             .collect(Collectors.joining(", "));
     result.id = getId();
     result.value = overrideValues.getOrDefault(this, getValue());
@@ -119,12 +133,7 @@ public class UserGroup implements UserRelated {
   }
 
   public Collection<User> getMembers() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery("select u from User u where userGroup.id = " + id, User.class)
-        .getResultList();
+    return QueryBuilder.selectAll(User.class).where(UserField.userGroup.eq(this)).getResultList();
   }
 
   public double calculateValue() {
@@ -169,24 +178,49 @@ public class UserGroup implements UserRelated {
     return sb.toString();
   }
 
-  public static Map<UserGroup, Double> getValueMapAtTransactionId(
-      Long tId, boolean withUnreadables) {
+  public static Map<Integer, Double> getValueMapAt(
+      Instant dataOfLastTransaction, boolean withUnreadables) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    return em.createQuery(
-            "SELECT ug AS ug, SUM(CASE WHEN ug = t.fromUserGroup THEN -t.value ELSE t.value END) AS tSum "
-                + "FROM UserGroup ug INNER JOIN Transaction t ON ug IN (t.fromUserGroup, t.toUserGroup) "
-                + "WHERE t.id <= :tid AND ug in (select u.userGroup from User u where (:all = true OR u.unreadable = false) and not "
-                + User.GENERIC_USERS_CONDITION
-                + ") "
-                + "GROUP BY ug",
-            Tuple.class)
-        .setParameter("tid", tId)
-        .setParameter("all", withUnreadables)
-        .getResultStream()
-        .collect(Collectors.toMap(t -> (UserGroup) t.get("ug"), t -> (Double) t.get("tSum")));
+    List<Tuple> transactionsUntilDate =
+        QueryBuilder.select(
+                TransactionField.fromUserGroup.child(UserGroupField.id),
+                TransactionField.toUserGroup.child(UserGroupField.id),
+                TransactionField.value)
+            .where(
+                PredicateFactory.lessOrEq(
+                    TransactionField.date, asExpression(dataOfLastTransaction)))
+            .getResultList(em);
+    Map<Integer, Double> userGroupIdValueMap = new HashMap<>(200);
+    for (Tuple tuple : transactionsUntilDate) {
+      Integer fromUserGroupId = tuple.get(0, Integer.class);
+      Integer toUserGroupId = tuple.get(1, Integer.class);
+      Double value = tuple.get(2, Double.class);
+      Double oldValueFrom = userGroupIdValueMap.getOrDefault(fromUserGroupId, 0.0);
+      Double oldValueTo = userGroupIdValueMap.getOrDefault(toUserGroupId, 0.0);
+      userGroupIdValueMap.put(fromUserGroupId, oldValueFrom - value);
+      userGroupIdValueMap.put(toUserGroupId, oldValueTo + value);
+    }
+    QueryBuilder.select(UserField.userGroup.child(UserGroupField.id))
+        .where(
+            or(
+                User.GENERIC_USERS_PREDICATE,
+                and(UserField.unreadable.eq(true), UserField.unreadable.eq(!withUnreadables))))
+        .getResultList(em)
+        .forEach(userGroupIdValueMap::remove);
+    return userGroupIdValueMap;
+  }
+
+  // replaces id to V mapping with UserGroup to V mapping
+  public static <V> Map<UserGroup, V> populateWithEntities(Map<Integer, V> map) {
+    Map<Integer, UserGroup> ugIdMap =
+        QueryBuilder.selectAll(UserGroup.class).getResultList().stream()
+            .collect(Collectors.toMap(ug -> ug.id, ug -> ug));
+    Map<UserGroup, V> resultMap = new HashMap<>(map.size());
+    map.forEach((key, val) -> resultMap.put(ugIdMap.get(key), val));
+    return resultMap;
   }
 
   private static Map<Integer, Double> getInvalidUserGroupTransactionSums() {
@@ -227,30 +261,26 @@ public class UserGroup implements UserRelated {
         .collect(Collectors.toList());
   }
 
-  public static Map<String, Object> getValueAggregatesAtTransactionId(long transactionId)
+  public static Map<String, Object> getValueAggregatesAt(Instant transactionTimeStamp)
       throws NoResultException {
-    return getValueAggregatesAtTransactionId(transactionId, true);
+    return getValueAggregatesAt(transactionTimeStamp, true);
   }
 
   public static Map<String, Object> getValueAggregates() {
-    return getValueAggregatesAtTransactionId(Long.MAX_VALUE, false);
+    return getValueAggregatesAt(Instant.now(), false);
   }
 
-  private static Map<String, Object> getValueAggregatesAtTransactionId(
-      Long tId, boolean withUnreadables) {
+  private static Map<String, Object> getValueAggregatesAt(
+      Instant transactionTimeStamp, boolean withUnreadables) {
     Map<String, Object> params = new HashMap<>();
     double sum = 0;
     double sum_negative = 0;
     double sum_positive = 0;
-    Map<UserGroup, Double> historicGroups = getValueMapAtTransactionId(tId, withUnreadables);
-    for (UserGroup ug : historicGroups.keySet()) {
-      double value = historicGroups.get(ug);
+    Map<Integer, Double> historicGroups = getValueMapAt(transactionTimeStamp, withUnreadables);
+    for (Double value : historicGroups.values()) {
+      if (value < 0) sum_negative += value;
+      else sum_positive += value;
       sum += value;
-      if (value < 0) {
-        sum_negative += value;
-      } else {
-        sum_positive += value;
-      }
     }
     params.put("sum", sum);
     params.put("sum_negative", sum_negative);

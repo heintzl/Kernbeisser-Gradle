@@ -275,13 +275,13 @@ public class Transaction implements UserRelated {
         .orElse(0L);
   }
 
-  public static long getLastIdOfReportNo(long reportNo) throws NoResultException {
-    return QueryBuilder.select(Transaction.class, max(TransactionField.id))
+  public static Instant getLastOfReportNo(long reportNo) throws NoResultException {
+    return QueryBuilder.select(Transaction.class, max(TransactionField.date))
         .where(
             PredicateFactory.lessOrEq(
                 TransactionField.accountingReportNo, ExpressionFactory.asExpression(reportNo)))
         .getSingleResult()
-        .get(0, Long.class);
+        .get(0, Instant.class);
   }
 
   public static void writeAccountingReportNo(Collection<Transaction> transactions, long no) {

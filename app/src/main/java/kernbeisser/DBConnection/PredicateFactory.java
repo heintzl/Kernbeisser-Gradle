@@ -6,7 +6,7 @@ import jakarta.persistence.criteria.Predicate;
 import java.util.Arrays;
 import java.util.Collection;
 
-public interface PredicateFactory<P> {
+public interface PredicateFactory<P> extends ExpressionFactory<P, Boolean> {
   Predicate createPredicate(Source<P> source, CriteriaBuilder cb);
 
   default PredicateFactory<P> not() {
@@ -88,5 +88,10 @@ public interface PredicateFactory<P> {
       ExpressionFactory<P, E> member, ExpressionFactory<P, C> collection) {
     return (source, cb) ->
         cb.isMember(member.createExpression(source, cb), collection.createExpression(source, cb));
+  }
+
+  @Override
+  default Expression<Boolean> createExpression(Source<P> source, CriteriaBuilder cb) {
+    return createPredicate(source, cb);
   }
 }

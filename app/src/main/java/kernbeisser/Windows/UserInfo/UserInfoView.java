@@ -161,12 +161,13 @@ public class UserInfoView implements IView<UserInfoController> {
 
     shoppingHistory =
         new ObjectTable<Purchase>(
-            Columns.<Purchase>create("Datum", e -> Date.INSTANT_DATE_TIME.format(e.getCreateDate()))
-                .withSorter(Column.DATE_SORTER(Date.INSTANT_DATE_TIME)),
-            Columns.create("Verkäufer", e -> e.getSession().getSeller()),
-            Columns.create("Käufer", e -> e.getSession().getCustomer()),
-            Columns.create("Summe", e -> format("%.2f€", e.getSum()), SwingConstants.RIGHT))
-                .allowCaching();
+                Columns.<Purchase>create(
+                        "Datum", e -> Date.INSTANT_DATE_TIME.format(e.getCreateDate()))
+                    .withSorter(Column.DATE_SORTER(Date.INSTANT_DATE_TIME)),
+                Columns.create("Verkäufer", e -> e.getSession().getSeller()),
+                Columns.create("Käufer", e -> e.getSession().getCustomer()),
+                Columns.create("Summe", e -> format("%.2f€", e.getSum()), SwingConstants.RIGHT))
+            .allowCaching();
 
     phoneNumber1 = new AccessCheckingLabel<>(User::getPhoneNumber1);
     username = new AccessCheckingLabel<>(User::getUsername);

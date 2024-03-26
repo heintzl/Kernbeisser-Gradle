@@ -18,7 +18,6 @@ public class QueryBuilder<P, R> {
 
   @NotNull private final Collection<? extends SelectionFactory<P>> selections;
 
-  private final boolean multiselect;
   private int maxResults = Integer.MAX_VALUE;
   @NotNull private final Collection<PredicateFactory<P>> conditions = new ArrayList<>();
   @NotNull private final Collection<OrderFactory<P>> orders = new ArrayList<>();
@@ -26,14 +25,15 @@ public class QueryBuilder<P, R> {
   @NotNull private final Collection<ExpressionFactory<P, ?>> groupBy = new ArrayList<>();
 
   public static <P> QueryBuilder<P, P> selectAll(Class<P> tableClass) {
-    return new QueryBuilder<>(tableClass, tableClass, Collections.emptyList(), false);
+    return new QueryBuilder<>(
+        tableClass, tableClass, Collections.singleton((source, cb) -> source.getFrom()));
   }
 
   public static <P> QueryBuilder<P, Tuple> select(
       Class<P> sourceClass, Collection<? extends SelectionFactory<P>> selections) {
     if (selections.isEmpty())
       throw new IllegalArgumentException("query without selection is not allowed!");
-    return new QueryBuilder<>(sourceClass, Tuple.class, selections, true);
+    return new QueryBuilder<>(sourceClass, Tuple.class, selections);
   }
 
   public static <P, S extends SelectionFactory<P>> QueryBuilder<P, Tuple> select(
@@ -51,10 +51,7 @@ public class QueryBuilder<P, R> {
 
   public static <P, R> QueryBuilder<P, R> select(FieldIdentifier<P, R> selection) {
     return new QueryBuilder<>(
-        selection.getTableClass(),
-        selection.getPropertyClass(),
-        Collections.singleton(selection),
-        true);
+        selection.getTableClass(), selection.getPropertyClass(), Collections.singleton(selection));
   }
 
   public QueryBuilder<P, R> where(PredicateFactory<P>... conditions) {
@@ -149,10 +146,13 @@ public class QueryBuilder<P, R> {
         orders.stream()
             .map(fieldIdentifier -> fieldIdentifier.createOrder(source, cb))
             .toArray(Order[]::new);
-    if (multiselect) {
+    if (resultClass.equals(Tuple.class)) {
       cr.multiselect(selection);
     } else {
-      cr.select((Root<R>) root);
+      if (selection.length != 1)
+        throw new UnsupportedOperationException(
+            "A Query with result type can only have one result! Use Tuple to obtain multiple results!");
+      cr.select(selection[0]);
     }
     return em.createQuery(cr.where(whereConditions).groupBy(groupByExpressions).orderBy(orderBy))
         .setMaxResults(maxResults);
@@ -184,6 +184,13 @@ public class QueryBuilder<P, R> {
     return QueryBuilder.selectAll(property.getTableClass())
         .where(property.eq(eq))
         .getSingleResult();
+  }
+
+  public static <P, V> P getByProperty(EntityManager em, FieldIdentifier<P, V> property, V eq)
+      throws NoResultException {
+    return QueryBuilder.selectAll(property.getTableClass())
+        .where(property.eq(eq))
+        .getSingleResult(em);
   }
 
   public boolean hasResult() {

@@ -55,9 +55,7 @@ public class DatabaseViewController extends Controller<DatabaseViewView, Databas
     getView().setEntities(new ArrayList<>());
     List<Column<Object>> columnList =
         Arrays.stream(clazz.getDeclaredFields())
-                .filter(
-                        field -> !Modifier.isStatic(field.getModifiers())
-                )
+            .filter(field -> !Modifier.isStatic(field.getModifiers()))
             .peek(e -> e.setAccessible(true))
             .map(field -> Columns.create(field.getName(), e -> getValueOfField(field, e)))
             .peek(e -> e.withColumnAdjustor(c -> c.setPreferredWidth(150)))

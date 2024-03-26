@@ -1,5 +1,6 @@
 package kernbeisser.DBEntities;
 
+import static kernbeisser.DBConnection.ExpressionFactory.asExpression;
 import static kernbeisser.DBConnection.ExpressionFactory.upper;
 import static kernbeisser.DBConnection.PredicateFactory.*;
 
@@ -49,6 +50,10 @@ import rs.groump.PermissionSet;
 public class User implements Serializable, UserRelated, ActuallyCloneable {
   public static final PredicateFactory<User> GENERIC_USERS_PREDICATE =
       in(upper(UserField.username), "KERNBEISSER", "ADMIN");
+
+  public static final PredicateFactory<User> IS_FULL_USER =
+      isMember(
+          asExpression(PermissionConstants.FULL_MEMBER.getPermission()), UserField.permissions);
   public static final String GENERIC_USERS_CONDITION =
       "upper(username) IN ('KERNBEISSER', 'ADMIN')";
 
@@ -473,9 +478,12 @@ public class User implements Serializable, UserRelated, ActuallyCloneable {
     if (isKernbeisser()) {
       return surname;
     }
-    return firstSurname
-        ? Tools.accessString(this::getSurname) + ", " + Tools.accessString(this::getFirstName)
-        : Tools.accessString(this::getFirstName) + " " + Tools.accessString(this::getSurname);
+    return getFullName(
+        Tools.accessString(this::getFirstName), Tools.accessString(this::getSurname), firstSurname);
+  }
+
+  public static String getFullName(String firstName, String surname, boolean firstSurname) {
+    return firstSurname ? surname + ", " + firstName : firstName + " " + surname;
   }
 
   public String getJobsAsString() {
@@ -501,9 +509,12 @@ public class User implements Serializable, UserRelated, ActuallyCloneable {
   }
 
   public Collection<Purchase> getAllPurchases() {
-    return QueryBuilder.selectAll(Purchase.class).where(
-            PurchaseField.session.child(SaleSessionField.customer.child(UserField.userGroup)).eq(userGroup)
-    ).getResultList();
+    return QueryBuilder.selectAll(Purchase.class)
+        .where(
+            PurchaseField.session
+                .child(SaleSessionField.customer.child(UserField.userGroup))
+                .eq(userGroup))
+        .getResultList();
   }
 
   public double valueAt(Instant instant) {
