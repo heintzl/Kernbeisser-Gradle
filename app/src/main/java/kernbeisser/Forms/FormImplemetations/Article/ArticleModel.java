@@ -9,6 +9,7 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.PriceList;
+import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.DBEntities.SurchargeGroup;
 import kernbeisser.DBEntities.TypeFields.ArticleField;
@@ -51,16 +52,10 @@ public class ArticleModel implements IModel<ArticleController> {
 
   public int nextUnusedArticleNumber(int kbNumber) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
+    @Cleanup("commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    return em.createQuery(
-                "select i.kbNumber from Article i where i.kbNumber >= :last and Not exists (select k from Article k where kbNumber = i.kbNumber+1)",
-                Integer.class)
-            .setMaxResults(1)
-            .setParameter("last", kbNumber)
-            .getSingleResult()
-        + 1;
+    return ArticleRepository.nextFreeKBNumber(em, kbNumber);
   }
 
   public static boolean nameExists(String name) {

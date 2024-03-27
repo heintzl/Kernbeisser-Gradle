@@ -11,16 +11,12 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.function.Predicate;
-import javax.swing.*;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.ExpressionFactory;
 import kernbeisser.DBConnection.PredicateFactory;
 import kernbeisser.DBConnection.QueryBuilder;
-import kernbeisser.DBEntities.TypeFields.PurchaseField;
-import kernbeisser.DBEntities.TypeFields.SaleSessionField;
-import kernbeisser.DBEntities.TypeFields.TransactionField;
-import kernbeisser.DBEntities.TypeFields.UserField;
+import kernbeisser.DBEntities.TypeFields.*;
 import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.TransactionType;
@@ -54,6 +50,9 @@ public class User implements Serializable, UserRelated, ActuallyCloneable {
   public static final PredicateFactory<User> IS_FULL_USER =
       isMember(
           asExpression(PermissionConstants.FULL_MEMBER.getPermission()), UserField.permissions);
+  public static final PredicateFactory<User> IS_TRAIL_USER =
+      isMember(
+          asExpression(PermissionConstants.TRIAL_MEMBER.getPermission()), UserField.permissions);
   public static final String GENERIC_USERS_CONDITION =
       "upper(username) IN ('KERNBEISSER', 'ADMIN')";
 
@@ -205,18 +204,33 @@ public class User implements Serializable, UserRelated, ActuallyCloneable {
   }
 
   public static void checkValidUserGroupMemberships() throws MissingFullMemberException {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup("commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    Permission fullMemberPermission =
-        em.find(Permission.class, PermissionConstants.FULL_MEMBER.getPermission().getId());
-    List<UserGroup> userGroupsMissingFullMember =
-        em.createQuery(
-                "select ug from UserGroup ug where not exists (select u from User u where u.userGroup = ug and :fmp in(elements(u.permissions))) and ((select count(*) from User u where u.userGroup = ug) > 1)")
-            .setParameter("fmp", fullMemberPermission)
-            .getResultList();
-    if (userGroupsMissingFullMember.isEmpty()) return;
+    int lastUgId = -1;
+    boolean hasFullMember = true;
+    int memberCount = 1;
+    // orders all users by ug, then looks for invalid userGroups
+    for (Tuple tuple :
+        QueryBuilder.select(
+                User.class, UserField.userGroup.child(UserGroupField.id), User.IS_FULL_USER)
+            .orderBy(UserField.userGroup.child(UserGroupField.id).asc())
+            .getResultList()) {
+      int ugId = Objects.requireNonNull(tuple.get(0, Integer.class));
+      boolean isFullMember = Objects.requireNonNull(tuple.get(1, Boolean.class));
+      if (ugId != lastUgId) {
+        checkValidUserGroup(lastUgId, memberCount, hasFullMember);
+        hasFullMember = false;
+        memberCount = 0;
+        lastUgId = ugId;
+      }
+      hasFullMember = hasFullMember | isFullMember;
+      memberCount++;
+    }
+    checkValidUserGroup(lastUgId, memberCount, hasFullMember);
+  }
+
+  private static void checkValidUserGroup(int ugId, int memberCount, boolean hasFullMember)
+      throws MissingFullMemberException {
+    if (memberCount <= 1) return;
+    if (hasFullMember) return;
     throw new MissingFullMemberException(
         "Benutzergruppe(n) ohne Vollmitglied gefunden. Bitte den Vorstand informieren.");
   }

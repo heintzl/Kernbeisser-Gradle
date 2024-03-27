@@ -78,10 +78,22 @@ public interface PredicateFactory<P> extends ExpressionFactory<P, Boolean> {
         cb.lessThanOrEqualTo(a.createExpression(source, cb), b.createExpression(source, cb)));
   }
 
+  static <P, V extends Comparable<V>> PredicateFactory<P> lessThan(
+      ExpressionFactory<P, V> a, ExpressionFactory<P, V> b) {
+    return ((source, cb) ->
+        cb.lessThan(a.createExpression(source, cb), b.createExpression(source, cb)));
+  }
+
   static <P, V extends Comparable<V>> PredicateFactory<P> greaterOrEq(
       ExpressionFactory<P, V> a, ExpressionFactory<P, V> b) {
     return ((source, cb) ->
         cb.greaterThanOrEqualTo(a.createExpression(source, cb), b.createExpression(source, cb)));
+  }
+
+  static <P, V extends Comparable<V>> PredicateFactory<P> greaterThan(
+      ExpressionFactory<P, V> a, ExpressionFactory<P, V> b) {
+    return ((source, cb) ->
+        cb.greaterThan(a.createExpression(source, cb), b.createExpression(source, cb)));
   }
 
   static <P, C extends Collection<E>, E> PredicateFactory<P> isMember(

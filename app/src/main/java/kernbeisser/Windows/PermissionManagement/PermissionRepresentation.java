@@ -86,8 +86,8 @@ public class PermissionRepresentation {
     et.begin();
     HashMap<String, User> userHashMap = new HashMap<>();
     HashMap<User, Set<String>> userPermissionMap = new HashMap<>();
-    em.createQuery("select u from User u", User.class)
-        .getResultList()
+    QueryBuilder.selectAll(User.class)
+        .getResultList(em)
         .forEach(
             e -> {
               userHashMap.put(e.getUsername(), e);

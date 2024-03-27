@@ -1,17 +1,18 @@
 package kernbeisser.Windows.UserInfo;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityTransaction;
+import static kernbeisser.DBConnection.PredicateFactory.or;
+
+import jakarta.persistence.Tuple;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
-import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.Transaction;
+import kernbeisser.DBEntities.TypeFields.TransactionField;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Windows.MVC.IModel;
-import lombok.Cleanup;
 import lombok.Getter;
 
 public class UserInfoModel implements IModel<UserInfoController> {
@@ -32,28 +33,32 @@ public class UserInfoModel implements IModel<UserInfoController> {
   }
 
   public Map<Long, Double> createTransactionSums(UserGroup userGroup) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup("commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery(
-            """
-			SELECT t.id,
-			       (select sum(
-			       case when sumTr.toUserGroup.id = :ug then sumTr.value
-			       when sumTr.fromUserGroup.id = :ug then -sumTr.value else 0 end) from Transaction sumTr where sumTr.date <= t.date and (sumTr.fromUserGroup.id = :ug OR sumTr.toUserGroup.id = :ug))
-			FROM Transaction t
-			WHERE t.fromUserGroup.id = :ug OR t.toUserGroup.id = :ug
-			GROUP BY t.date
-			ORDER BY t.date
-			""",
-            Object[].class)
-        .setParameter("ug", userGroup.getId())
-        .getResultStream()
-        .collect(
-            Collectors.toMap(
-                resultColumns -> (Long) resultColumns[0],
-                resultColumns -> (Double) resultColumns[1]));
+    double sum = 0.0;
+    var resultList =
+        QueryBuilder.select(
+                Transaction.class,
+                TransactionField.id,
+                TransactionField.value,
+                TransactionField.toUserGroup.eq(userGroup))
+            .where(
+                or(
+                    TransactionField.fromUserGroup.eq(userGroup),
+                    TransactionField.toUserGroup.eq(userGroup)))
+            .orderBy(TransactionField.date.asc())
+            .getResultList();
+    Map<Long, Double> idValueAfterMap = new HashMap<>(resultList.size());
+    for (Tuple tuple : resultList) {
+      long id = tuple.get(0, Long.class);
+      double value = tuple.get(1, Double.class);
+      boolean incoming = tuple.get(2, Boolean.class);
+      if (incoming) {
+        sum += value;
+      } else {
+        sum -= value;
+      }
+      idValueAfterMap.put(id, sum);
+    }
+    return idValueAfterMap;
   }
 
   public boolean incoming(Transaction transaction) {

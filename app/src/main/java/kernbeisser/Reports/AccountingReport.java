@@ -11,7 +11,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import javax.swing.*;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.*;
+import kernbeisser.DBEntities.TypeFields.PurchaseField;
+import kernbeisser.DBEntities.TypeFields.SaleSessionField;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Exeptions.InvalidVATValueException;
 import kernbeisser.Exeptions.NoTransactionsFoundException;
@@ -40,15 +43,9 @@ public class AccountingReport extends Report {
   }
 
   private List<Purchase> getPurchases() throws NoResultException {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
     List<Purchase> purchases =
-        em.createQuery(
-                "select p from Purchase p where p.session in (select s from SaleSession s where s.transaction in (:transactions))",
-                Purchase.class)
-            .setParameter("transactions", transactions)
+        QueryBuilder.selectAll(Purchase.class)
+            .where(PurchaseField.session.child(SaleSessionField.transaction).in(transactions))
             .getResultList();
     if (purchases.isEmpty()) {
       throw new NoTransactionsFoundException();

@@ -221,12 +221,20 @@ public class ArticleRepository {
         .buildQuery(em);
   }
 
+  // TODO find better solution this one only makes sense when trying to find hundreds of free ids...
+  public static int nextFreeKBNumber(EntityManager em, int min) {
+    List<Integer> usedKbNumbers =
+        QueryBuilder.select(ArticleField.kbNumber)
+            .where(greaterOrEq(ArticleField.kbNumber, asExpression(min)))
+            .orderBy(ArticleField.kbNumber.asc())
+            .getResultList(em);
+    for (int id = min; ; id++) {
+      if (!usedKbNumbers.contains(id)) return id;
+    }
+  }
+
   public static int nextFreeKBNumber(EntityManager em) {
-    return em.createQuery(
-            "select a.kbNumber+1 from Article a where not exists (select b from Article b where b.kbNumber = a.kbNumber+1)",
-            Integer.class)
-        .setMaxResults(1)
-        .getSingleResult();
+    return nextFreeKBNumber(em, 1);
   }
 
   public static Article nextArticleTo(

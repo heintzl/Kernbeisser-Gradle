@@ -8,8 +8,10 @@ import java.util.function.BiFunction;
 import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.PriceList;
+import kernbeisser.DBEntities.TypeFields.ArticleField;
 import kernbeisser.Enums.ShopRange;
 import kernbeisser.Forms.ObjectForm.Components.Source;
 import kernbeisser.Windows.CollectionView.CollectionController;
@@ -40,15 +42,8 @@ public class EditPriceListModel implements IModel<EditPriceListController> {
   }
 
   public Collection<Article> getAllArticles() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery(
-            "select a from Article a where shopRange <> "
-                + ShopRange.NOT_IN_RANGE.ordinal()
-                + " order by name",
-            Article.class)
+    return QueryBuilder.selectAll(Article.class)
+        .where(ArticleField.shopRange.eq(ShopRange.NOT_IN_RANGE).not())
         .getResultList();
   }
 

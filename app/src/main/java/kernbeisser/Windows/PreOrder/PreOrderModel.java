@@ -10,8 +10,12 @@ import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.*;
 import kernbeisser.DBEntities.Repositories.ArticleRepository;
+import kernbeisser.DBEntities.TypeFields.CatalogEntryField;
+import kernbeisser.DBEntities.TypeFields.PreOrderField;
+import kernbeisser.DBEntities.TypeFields.UserField;
 import kernbeisser.EntityWrapper.ObjectState;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
@@ -93,23 +97,24 @@ public class PreOrderModel implements IModel<PreOrderController> {
 
   Collection<PreOrder> getAllPreOrders(boolean restricted) {
     if (restricted) {
-      return em.createQuery(
-              "select p from PreOrder p where delivery IS NULL AND p.user = :u order by p.catalogEntry.artikelNr",
-              PreOrder.class)
-          .setParameter("u", LogInModel.getLoggedIn())
+      return QueryBuilder.selectAll(PreOrder.class)
+          .where(PreOrderField.delivery.isNull(), PreOrderField.user.eq(LogInModel.getLoggedIn()))
+          .orderBy(PreOrderField.catalogEntry.child(CatalogEntryField.artikelNr).asc())
           .getResultList();
     } else {
-      return em.createQuery(
-              "select p from PreOrder p where delivery IS NULL order by p.user.username, p.catalogEntry.artikelNr",
-              PreOrder.class)
+      return QueryBuilder.selectAll(PreOrder.class)
+          .where(PreOrderField.delivery.isNull())
+          .orderBy(
+              PreOrderField.user.child(UserField.username).asc(),
+              PreOrderField.catalogEntry.child(CatalogEntryField.artikelNr).asc())
           .getResultList();
     }
   }
 
   Collection<PreOrder> getUnorderedPreOrders() {
-    return em.createQuery(
-            "select p from PreOrder p where delivery is null and orderedOn is null order by p.catalogEntry.artikelNr",
-            PreOrder.class)
+    return QueryBuilder.selectAll(PreOrder.class)
+        .where(PreOrderField.delivery.isNull(), PreOrderField.orderedOn.isNull())
+        .orderBy(PreOrderField.catalogEntry.child(CatalogEntryField.artikelNr).asc())
         .getResultList();
   }
 

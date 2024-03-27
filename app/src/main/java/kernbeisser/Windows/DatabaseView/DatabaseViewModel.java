@@ -43,6 +43,8 @@ public class DatabaseViewModel implements IModel<DatabaseViewController> {
     @Cleanup("commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
+    // this is unsafe, but we want the user to specify the where filter, so this the easiest option
+    // for now!
     return em.createQuery("select o from " + clazz.getSimpleName() + " o " + condition, clazz)
         .getResultList();
   }

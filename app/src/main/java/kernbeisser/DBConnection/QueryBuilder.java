@@ -3,6 +3,8 @@ package kernbeisser.DBConnection;
 import jakarta.persistence.*;
 import jakarta.persistence.criteria.*;
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.Cleanup;
 import lombok.RequiredArgsConstructor;
@@ -112,6 +114,19 @@ public class QueryBuilder<P, R> {
 
   public Stream<R> getResultStream(EntityManager em) {
     return buildQuery(em).getResultStream();
+  }
+
+  public <K, V> Map<K, V> getResultMap(Function<R, K> keyMapper, Function<R, V> valueMapper) {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup("commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    return getResultMap(em, keyMapper, valueMapper);
+  }
+
+  public <K, V> Map<K, V> getResultMap(
+      EntityManager em, Function<R, K> keyMapper, Function<R, V> valueMapper) {
+    return getResultStream(em).collect(Collectors.toMap(keyMapper, valueMapper));
   }
 
   public R getSingleResult(EntityManager em) {

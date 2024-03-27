@@ -1,5 +1,9 @@
 package kernbeisser.Windows.Inventory;
 
+import static kernbeisser.DBConnection.ExpressionFactory.lower;
+import static kernbeisser.DBConnection.PredicateFactory.like;
+import static kernbeisser.DBConnection.PredicateFactory.or;
+
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import java.time.LocalDate;
@@ -7,10 +11,12 @@ import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.ArticleStock;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.Shelf;
 import kernbeisser.DBEntities.TypeFields.ArticleStockField;
+import kernbeisser.DBEntities.TypeFields.ShelfField;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
 import kernbeisser.Windows.MVC.IModel;
@@ -44,23 +50,21 @@ public class InventoryModel implements IModel<InventoryController> {
   }
 
   Collection<Shelf> searchShelf(String search, int max) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup("commit")
-    EntityTransaction et = em.getTransaction();
     int searchInt = Integer.MIN_VALUE;
-    ;
     try {
       searchInt = Integer.parseInt(search);
-    } catch (NumberFormatException n) {
+    } catch (NumberFormatException ignored) {
     } catch (Exception e) {
       UnexpectedExceptionHandler.showUnexpectedErrorWarning(e);
     }
-    et.begin();
-    return em.createQuery(
-            "select s from Shelf s where upper(s.location) like :s or upper(s.comment) like :s or shelfNo = :i order by shelfNo",
-            Shelf.class)
-        .setParameter("s", "%" + search.toUpperCase(Locale.ROOT))
-        .setParameter("i", searchInt)
+    String searchPattern = "%" + search.toLowerCase(Locale.ROOT);
+    return QueryBuilder.selectAll(Shelf.class)
+        .where(
+            or(
+                like(lower(ShelfField.location), searchPattern),
+                like(lower(ShelfField.comment), searchPattern),
+                ShelfField.shelfNo.eq(searchInt)))
+        .orderBy(ShelfField.shelfNo.asc())
         .getResultList();
   }
 

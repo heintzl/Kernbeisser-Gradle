@@ -5,11 +5,15 @@ import jakarta.persistence.EntityTransaction;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.DBEntities.SurchargeGroup;
+import kernbeisser.DBEntities.TypeFields.ArticleField;
+import kernbeisser.DBEntities.TypeFields.SurchargeGroupField;
 import kernbeisser.Tasks.Catalog.CatalogDataInterpreter;
 import kernbeisser.Tasks.Catalog.Merge.ArticleMerge;
 import kernbeisser.Tasks.Catalog.Merge.CatalogMergeSession;
@@ -24,11 +28,10 @@ public class SynchronizeArticleModel implements IModel<SynchronizeArticleControl
 
   private void refresh(
       HashMap<KornkraftGroup, SurchargeGroup> surchargeGroupHashMap, EntityManager em) {
-    HashMap<String, SurchargeGroup> nameRef = new HashMap<>();
-    em.createQuery("select s from SurchargeGroup s where supplier = :s", SurchargeGroup.class)
-        .setParameter("s", Supplier.getKKSupplier())
-        .getResultStream()
-        .forEach(e -> nameRef.put(e.pathString(), e));
+    Map<String, SurchargeGroup> nameRef =
+        QueryBuilder.selectAll(SurchargeGroup.class)
+            .where(SurchargeGroupField.supplier.eq(Supplier.getKKSupplier()))
+            .getResultMap(em, SurchargeGroup::pathString, sg -> sg);
     surchargeGroupHashMap.replaceAll((a, b) -> nameRef.get(b.pathString()));
   }
 
@@ -53,9 +56,9 @@ public class SynchronizeArticleModel implements IModel<SynchronizeArticleControl
     HashMap<Long, SurchargeGroup> kornkraftGroupHashMap =
         CatalogDataInterpreter.createNumberRefMap(catalog, surchargeGroupHashMap);
     List<Article> articleBases =
-        em.createQuery("select a from Article a where supplier = :s", Article.class)
-            .setParameter("s", Supplier.getKKSupplier())
-            .getResultList();
+        QueryBuilder.selectAll(Article.class)
+            .where(ArticleField.supplier.eq(Supplier.getKKSupplier()))
+            .getResultList(em);
     CatalogDataInterpreter.linkArticles(articleBases, kornkraftGroupHashMap);
     CatalogDataInterpreter.autoLinkArticle(
         articleBases, Supplier.getKKSupplier().getOrPersistDefaultSurchargeGroup(em));

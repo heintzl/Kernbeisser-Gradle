@@ -6,9 +6,12 @@ import java.util.Collection;
 import java.util.List;
 import kernbeisser.CustomComponents.ObjectTree.Node;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.DBEntities.SurchargeGroup;
+import kernbeisser.DBEntities.TypeFields.ArticleField;
+import kernbeisser.DBEntities.TypeFields.SurchargeGroupField;
 import kernbeisser.Tasks.Catalog.CatalogDataInterpreter;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
@@ -25,14 +28,8 @@ public class EditSurchargeGroupModel implements IModel<EditSurchargeGroupControl
   }
 
   Collection<SurchargeGroup> getAllFromSupplier(Supplier supplier) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery(
-            "select s from SurchargeGroup s where s.supplier = :s order by s.name asc",
-            SurchargeGroup.class)
-        .setParameter("s", supplier)
+    return QueryBuilder.selectAll(SurchargeGroup.class)
+        .where(SurchargeGroupField.surcharge.eq(supplier))
         .getResultList();
   }
 
@@ -43,9 +40,9 @@ public class EditSurchargeGroupModel implements IModel<EditSurchargeGroupControl
     et.begin();
     SurchargeGroup surchargeGroup = em.find(SurchargeGroup.class, surchargeGroupId);
     List<Article> allArticles =
-        em.createQuery("select a from Article a where supplier = :sid", Article.class)
-            .setParameter("sid", surchargeGroup.getSupplier())
-            .getResultList();
+        QueryBuilder.selectAll(Article.class)
+            .where(ArticleField.supplier.eq(surchargeGroup.getSupplier()))
+            .getResultList(em);
     if (!allArticles.stream().allMatch(e -> e.getSurchargeGroup().equals(surchargeGroup))) {
       CatalogDataInterpreter.autoLinkArticle(allArticles, surchargeGroup);
       allArticles.forEach(em::persist);
