@@ -239,10 +239,9 @@ public class CatalogEntry implements ActuallyCloneable {
   }
 
   public static Optional<CatalogEntry> getByBarcode(String barcode) {
-    return DBConnection.getConditioned(
-            CatalogEntry.class, CatalogEntryField.eanLadenEinheit.eq(barcode))
-        .stream()
-        .findFirst();
+    return QueryBuilder.selectAll(CatalogEntry.class)
+        .where(CatalogEntryField.eanLadenEinheit.eq(barcode))
+        .getSingleResultOptional();
   }
 
   public static List<CatalogEntry> getCatalog() {

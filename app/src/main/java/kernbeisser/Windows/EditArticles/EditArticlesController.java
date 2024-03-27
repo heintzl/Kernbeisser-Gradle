@@ -176,7 +176,7 @@ public class EditArticlesController extends Controller<EditArticlesView, EditArt
     ObjectTree<PriceList> priceListObjectTree = new ObjectTree<>(PriceList.getPriceListsAsNode());
     priceListObjectTree.addSelectionListener(
         e -> {
-          objectViewController.setSearch(e.toString());
+          objectViewController.setSearch("PL:" + e.getValue().getName());
           objectViewController.search();
           IView.traceViewContainer(priceListObjectTree.getParent()).requestClose();
         });

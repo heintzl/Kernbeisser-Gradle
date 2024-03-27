@@ -83,6 +83,10 @@ public interface ExpressionFactory<P, V> extends SelectionFactory<P> {
     return ((source, cb) -> cb.sum(a.createExpression(source, cb), b.createExpression(source, cb)));
   }
 
+  static <P, V extends Number> ExpressionFactory<P, V> sum(ExpressionFactory<P, V> a) {
+    return ((source, cb) -> cb.sum(a.createExpression(source, cb)));
+  }
+
   static <P, V extends Comparable<V>> ExpressionFactory<P, V> max(ExpressionFactory<P, V> a) {
     return ((source, cb) -> cb.greatest(a.createExpression(source, cb)));
   }

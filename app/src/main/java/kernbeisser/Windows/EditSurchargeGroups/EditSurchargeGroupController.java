@@ -72,9 +72,7 @@ public class EditSurchargeGroupController
   }
 
   private SurchargeGroup defaultSurchargeGroupFor(Supplier s) {
-    SurchargeGroup surchargeGroup = new SurchargeGroup();
-    surchargeGroup.setSupplier(s);
-    return surchargeGroup;
+    return s.getOrPersistDefaultSurchargeGroup();
   }
 
   void editSurchargeGroup() {

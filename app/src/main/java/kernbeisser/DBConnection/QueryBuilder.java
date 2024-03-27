@@ -24,6 +24,8 @@ public class QueryBuilder<P, R> {
 
   @NotNull private final Collection<ExpressionFactory<P, ?>> groupBy = new ArrayList<>();
 
+  private boolean distinct = false;
+
   public static <P> QueryBuilder<P, P> selectAll(Class<P> tableClass) {
     return new QueryBuilder<>(
         tableClass, tableClass, Collections.singleton((source, cb) -> source.getFrom()));
@@ -87,6 +89,15 @@ public class QueryBuilder<P, R> {
     return this;
   }
 
+  public QueryBuilder<P, R> distinct(boolean distinct) {
+    this.distinct = distinct;
+    return this;
+  }
+
+  public QueryBuilder<P, R> distinct() {
+    return distinct(true);
+  }
+
   public List<R> getResultList(EntityManager em) {
     return buildQuery(em).getResultList();
   }
@@ -117,7 +128,7 @@ public class QueryBuilder<P, R> {
 
   public Optional<R> getSingleResultOptional(EntityManager em) {
     try {
-      return Optional.of(buildQuery(em).getSingleResult());
+      return Optional.ofNullable(buildQuery(em).getSingleResult());
     } catch (NoResultException noResultException) {
       return Optional.empty();
     }
@@ -154,7 +165,11 @@ public class QueryBuilder<P, R> {
             "A Query with result type can only have one result! Use Tuple to obtain multiple results!");
       cr.select(selection[0]);
     }
-    return em.createQuery(cr.where(whereConditions).groupBy(groupByExpressions).orderBy(orderBy))
+    return em.createQuery(
+            cr.where(whereConditions)
+                .groupBy(groupByExpressions)
+                .orderBy(orderBy)
+                .distinct(distinct))
         .setMaxResults(maxResults);
   }
 

@@ -201,20 +201,22 @@ public class ArticleRepository {
   }
 
   private static TypedQuery<Article> createQuery(EntityManager em, String search) {
+    if (search.startsWith("PL:")) {
+      return QueryBuilder.selectAll(Article.class)
+          .where(ArticleField.priceList.child(PriceListField.name).eq(search.replace("PL:", "")))
+          .buildQuery(em);
+    }
     int n = Tools.tryParseInt(search);
-    String ds = (search.length() > 3 ? "%" + search + "%" : search + "%").toUpperCase();
+    String ds = (search.length() > 3 ? "%" + search + "%" : search + "%").toLowerCase();
     long l = Tools.tryParseLong(search);
     return QueryBuilder.selectAll(Article.class)
         .where(
             or(
                 ArticleField.kbNumber.eq(n),
                 ArticleField.suppliersItemNumber.eq(Tools.tryParseInt(search)),
-                like(upper(ArticleField.name), ds),
+                like(lower(ArticleField.name), ds),
                 ArticleField.barcode.eq(l),
-                like(ArticleField.barcode.as(String.class), "%" + search),
-                like(
-                    upper(ArticleField.priceList.child(PriceListField.name)),
-                    search.toUpperCase())))
+                like(ArticleField.barcode.as(String.class), "%" + search)))
         .orderBy(ArticleField.name.asc())
         .buildQuery(em);
   }
@@ -320,25 +322,14 @@ public class ArticleRepository {
   }
 
   public static Collection<Article> getPrintPool() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup("commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery(
-            "select a from Article a where a in (select ap.article from ArticlePrintPool ap)",
-            Article.class)
-        .getResultList();
+    return QueryBuilder.select(ArticlePrintPoolField.article).distinct().getResultList();
   }
 
-  public static long getArticlePrintPoolSize() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup("commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    Long result =
-        em.createQuery("select sum (number) from ArticlePrintPool ap", Long.class)
-            .getSingleResult();
-    return Tools.ifNull(result, 0L);
+  public static int getArticlePrintPoolSize() {
+    return QueryBuilder.select(ArticlePrintPool.class, sum(ArticlePrintPoolField.number))
+        .getSingleResultOptional()
+        .map(tuple -> tuple.get(0, Integer.class))
+        .orElse(0);
   }
 
   public static Collection<Article> getAllActiveArticlesFromPriceList(
@@ -348,12 +339,16 @@ public class ArticleRepository {
     }
     Instant expireDate =
         Instant.now().minus(Setting.INVENTORY_INACTIVE_ARTICLE.getIntValue(), ChronoUnit.DAYS);
-    return em.createQuery(
-            "select a from Article a where a.priceList = :p and a.kbNumber in (select s.kbNumber from ShoppingItem s where s.createDate > :expireDate)",
-            Article.class)
-        .setParameter("p", priceList)
-        .setParameter("expireDate", expireDate)
-        .getResultList();
+    List<Integer> articleIds =
+        QueryBuilder.select(ShoppingItemField.articleId)
+            .where(greaterOrEq(ShoppingItemField.createDate, asExpression(expireDate)))
+            .distinct()
+            .getResultStream(em)
+            .map(e -> e.intValue())
+            .toList();
+    return QueryBuilder.selectAll(Article.class)
+        .where(ArticleField.id.in(articleIds))
+        .getResultList(em);
   }
 
   public static Article getCustomArticleVersion(Consumer<Article> transformer) {
@@ -438,22 +433,22 @@ public class ArticleRepository {
 
   public static Map<String, CatalogEntry> getArticleCatalogMap(
       Collection<Article> articles, Supplier supplier) {
-
-    Collection<Integer> articleNos = new ArrayList<>();
-    articles.stream()
-        .filter(e -> e.getSupplier().equals(supplier))
-        .mapToInt(Article::getSuppliersItemNumber)
-        .forEach(articleNos::add);
-
-    return DBConnection.getConditioned(
-            CatalogEntry.class, CatalogEntryField.artikelNr.eq(articleNos))
+    Collection<String> articleNos =
+        articles.stream()
+            .filter(e -> e.getSupplier().equals(supplier))
+            .mapToInt(Article::getSuppliersItemNumber)
+            .mapToObj(Integer::toString)
+            .collect(Collectors.toList());
+    return QueryBuilder.selectAll(CatalogEntry.class)
+        .where(
+            CatalogEntryField.aktionspreis.eq(false),
+            CatalogEntryField.artikelNr.in(articleNos),
+            or(
+                CatalogEntryField.ladeneinheit.isNull().not(),
+                CatalogEntryField.gebindePfand.eq(0.0).not(),
+                CatalogEntryField.einzelPfand.eq(0.0).not()))
+        .getResultList()
         .stream()
-        .filter(
-            e ->
-                Boolean.FALSE == e.getAktionspreis()
-                    && (e.getEanLadenEinheit() != null
-                        || e.getGebindePfand() != 0.0
-                        || e.getEinzelPfand() != 0.0))
         .collect(Collectors.toMap(CatalogEntry::getArtikelNr, c -> c));
   }
 

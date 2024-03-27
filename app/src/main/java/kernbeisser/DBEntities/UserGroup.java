@@ -136,43 +136,26 @@ public class UserGroup implements UserRelated {
     return QueryBuilder.selectAll(User.class).where(UserField.userGroup.eq(this)).getResultList();
   }
 
-  public double calculateValue() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    double v = 0;
-    for (Transaction transaction :
-        em.createQuery(
-                "select t from Transaction t where t.fromUser = (select u from User u where u.userGroup.id = :ugid) or t.toUser = (select u from User u where u.userGroup.id = :ugid)",
-                Transaction.class)
-            .getResultList()) {
-      v =
-          transaction.getFromUser().getUserGroup().id == id
-              ? v + transaction.getValue()
-              : v - transaction.getValue();
-    }
-    return v;
-  }
-
   public static Collection<UserGroup> defaultSearch(String s, int i) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery(
-            "select usergroup from UserGroup usergroup where usergroup.id in (select user.userGroup.id from User user where username like :s or firstName like :s or surname like :s)",
-            UserGroup.class)
-        .setParameter("s", s + "%")
-        .setMaxResults(i)
+    String userSearchPattern = s + "%";
+    return QueryBuilder.select(UserField.userGroup)
+        .where(
+            or(
+                like(UserField.username, userSearchPattern),
+                like(UserField.firstName, userSearchPattern),
+                like(UserField.surname, userSearchPattern)))
+        .distinct()
         .getResultList();
   }
 
   public String getMemberString() {
-    Collection<User> members = getMembers();
     StringBuilder sb = new StringBuilder();
-    for (User member : members) {
-      sb.append(member.getFullName()).append(", ");
+    for (Tuple tuple :
+        QueryBuilder.select(UserField.firstName, UserField.surname)
+            .where(UserField.userGroup.eq(this))
+            .getResultList()) {
+      sb.append(User.getFullName(tuple.get(0, String.class), tuple.get(1, String.class), false))
+          .append(", ");
     }
     sb.delete(sb.length() - 2, sb.length());
     return sb.toString();
@@ -184,6 +167,19 @@ public class UserGroup implements UserRelated {
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
+    Map<Integer, Double> userGroupIdValueMap = getValueMapAt(em, dataOfLastTransaction);
+    QueryBuilder.select(UserField.userGroup.child(UserGroupField.id))
+        .where(
+            or(
+                User.GENERIC_USERS_PREDICATE,
+                and(UserField.unreadable.eq(true), UserField.unreadable.eq(!withUnreadables))))
+        .getResultList(em)
+        .forEach(userGroupIdValueMap::remove);
+    return userGroupIdValueMap;
+  }
+
+  public static Map<Integer, Double> getValueMapAt(
+      EntityManager em, Instant dateOfLastTransaction) {
     List<Tuple> transactionsUntilDate =
         QueryBuilder.select(
                 TransactionField.fromUserGroup.child(UserGroupField.id),
@@ -191,7 +187,7 @@ public class UserGroup implements UserRelated {
                 TransactionField.value)
             .where(
                 PredicateFactory.lessOrEq(
-                    TransactionField.date, asExpression(dataOfLastTransaction)))
+                    TransactionField.date, asExpression(dateOfLastTransaction)))
             .getResultList(em);
     Map<Integer, Double> userGroupIdValueMap = new HashMap<>(200);
     for (Tuple tuple : transactionsUntilDate) {
@@ -203,13 +199,6 @@ public class UserGroup implements UserRelated {
       userGroupIdValueMap.put(fromUserGroupId, oldValueFrom - value);
       userGroupIdValueMap.put(toUserGroupId, oldValueTo + value);
     }
-    QueryBuilder.select(UserField.userGroup.child(UserGroupField.id))
-        .where(
-            or(
-                User.GENERIC_USERS_PREDICATE,
-                and(UserField.unreadable.eq(true), UserField.unreadable.eq(!withUnreadables))))
-        .getResultList(em)
-        .forEach(userGroupIdValueMap::remove);
     return userGroupIdValueMap;
   }
 
@@ -228,16 +217,18 @@ public class UserGroup implements UserRelated {
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    return em.createQuery(
-            "SELECT ug.id As ugid, SUM(CASE WHEN ug = t.fromUserGroup THEN -t.value ELSE t.value END) AS tSum, ug.value "
-                + "FROM UserGroup ug INNER JOIN Transaction t ON ug IN (t.fromUserGroup, t.toUserGroup) "
-                + "GROUP BY ug.id "
-                + "HAVING ABS(ug.value - SUM(CASE WHEN ug = t.fromUserGroup THEN -t.value ELSE t.value END)) > 0.004",
-            Tuple.class)
-        .getResultStream()
-        .collect(
-            Collectors.toMap(
-                tuple -> ((Integer) tuple.get("ugid")), tuple -> ((Double) tuple.get("tSum"))));
+    Map<Integer, Double> overValueTransactionSumThreshold = new HashMap<>();
+    Map<Integer, Double> valueMap = getValueMapAt(em, Instant.now());
+    for (Tuple tuple :
+        QueryBuilder.select(UserGroupField.id, UserGroupField.value).getResultList()) {
+      Integer id = tuple.get(0, Integer.class);
+      Double value = tuple.get(1, Double.class);
+      Double transactionSum = valueMap.getOrDefault(id, 0.0);
+      if (Math.abs(transactionSum - value) > 0.004) {
+        overValueTransactionSumThreshold.put(id, transactionSum);
+      }
+    }
+    return overValueTransactionSumThreshold;
   }
 
   public static void checkUserGroupConsistency()

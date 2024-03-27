@@ -190,15 +190,10 @@ public class PriceList implements Serializable {
   }
 
   public static Source<PriceList> onlyWithContent() {
-    return () -> {
-      @Cleanup EntityManager em = DBConnection.getEntityManager();
-      @Cleanup("commit")
-      EntityTransaction et = em.getTransaction();
-      et.begin();
-      return em.createQuery(
-              "select p from PriceList p where exists (select a from Article a where a.priceList = p) order by name",
-              PriceList.class)
-          .getResultList();
-    };
+    return () ->
+        QueryBuilder.select(ArticleField.priceList)
+            .orderBy(ArticleField.priceList.child(PriceListField.name).asc())
+            .distinct()
+            .getResultList();
   }
 }

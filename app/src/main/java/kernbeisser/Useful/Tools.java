@@ -664,7 +664,7 @@ public class Tools {
     et.begin();
     AuditReader auditReaderFactory = AuditReaderFactory.get(em);
     List<Number> revisions = auditReaderFactory.getRevisions(o.getClass(), Tools.getId(o));
-    return revisions.get(revisions.size() - 1).intValue();
+    return revisions.getLast().intValue();
   }
 
   public static String jasperTaggedStyling(String text, String markup) {

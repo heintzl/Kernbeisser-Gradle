@@ -230,17 +230,22 @@ public class User implements Serializable, UserRelated, ActuallyCloneable {
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    Collection<User> activeUsers =
-        em.createQuery(
-                "SELECT u FROM User u INNER JOIN Transaction t ON (u = t.fromUser and t.transactionType = :t_type) "
-                    + "WHERE active = true GROUP BY u HAVING MAX(t.date) < :deadline",
-                User.class)
-            .setParameter("t_type", TransactionType.PURCHASE)
-            .setParameter(
-                "deadline",
-                Instant.now().minus(Setting.DAYS_BEFORE_INACTIVITY.getIntValue(), ChronoUnit.DAYS))
+    List<Integer> activeUserIds =
+        QueryBuilder.select(TransactionField.fromUser.child(UserField.id))
+            .where(
+                greaterOrEq(
+                    TransactionField.date,
+                    asExpression(
+                        Instant.now()
+                            .minus(Setting.DAYS_BEFORE_INACTIVITY.getIntValue(), ChronoUnit.DAYS))),
+                TransactionField.transactionType.eq(TransactionType.PURCHASE))
+            .distinct()
             .getResultList();
-    for (User u : activeUsers) {
+    List<User> inactiveUsers =
+        QueryBuilder.selectAll(User.class)
+            .where(UserField.active.eq(true), UserField.id.in(activeUserIds).not())
+            .getResultList(em);
+    for (User u : inactiveUsers) {
       u.setSetUpdatedBy(false);
       u.setActive(false);
       em.persist(u);
@@ -268,25 +273,18 @@ public class User implements Serializable, UserRelated, ActuallyCloneable {
   }
 
   public static void checkAdminConsistency() throws InvalidValue {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
     try {
-      @Cleanup(value = "commit")
-      EntityTransaction et = em.getTransaction();
-      et.begin();
-      String checkValue =
-          em.createQuery(
-                  "select case when exists"
-                      + "(select t from Transaction t where u IN(fromUser, toUser) or u.userGroup IN (fromUserGroup, toUserGroup)) "
-                      + "then 'invalid Transaction' "
-                      + "when (select value from UserGroup ug where u.userGroup = ug) <> 0 then 'invalid value' "
-                      + "else 'OK' end as result "
-                      + "from User u "
-                      + "where u.username = 'Admin'",
-                  String.class)
-              .getSingleResult();
-      if (!checkValue.equals("OK")) {
-        throw new InvalidValue("Admin user state error: " + checkValue);
+      User adminUser = QueryBuilder.getByProperty(UserField.username, "Admin");
+      if (QueryBuilder.selectAll(Transaction.class)
+          .where(
+              or(
+                  TransactionField.toUserGroup.eq(adminUser.userGroup),
+                  TransactionField.fromUserGroup.eq(adminUser.userGroup)))
+          .hasResult()) {
+        throw new InvalidValue("Found transactions involving the admin user!");
       }
+      if (adminUser.userGroup.getValue() != 0.0)
+        throw new InvalidValue("The admin user group has value!");
     } catch (Exception e) {
       throw UnexpectedExceptionHandler.showUnexpectedErrorWarning(e);
     }
