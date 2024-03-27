@@ -9,10 +9,14 @@ import java.util.concurrent.CancellationException;
 import java.util.stream.Collectors;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
+import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Permission;
+import kernbeisser.DBEntities.TypeFields.PermissionField;
+import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Security.PermissionKeyGroups;
 import kernbeisser.Security.PermissionKeys;
 import kernbeisser.Useful.CSV;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
 import org.jetbrains.annotations.NotNull;
 import rs.groump.Key;
@@ -53,7 +57,9 @@ public class PermissionController extends Controller<PermissionView, PermissionM
   void loadSolutions() {
     Optional<PermissionKeyGroups> selectedPermissionKerOrdering = getView().getCategory();
     if (selectedPermissionKerOrdering.isEmpty()) return;
-    List<Permission> permissions = Permission.getAll("where NOT name = '@ADMIN'");
+    List<Permission> permissions =
+        DBConnection.getConditioned(
+            Permission.class, PermissionField.name.eq(PermissionConstants.ADMIN.nameId()).not());
     Collections.reverse(permissions);
     Column<PermissionKey> nameColumn =
         Columns.create(
@@ -164,7 +170,7 @@ public class PermissionController extends Controller<PermissionView, PermissionM
 
   public void exportTo(File selectedFile) throws IOException {
     PermissionRepresentation.write(
-        selectedFile, new PermissionRepresentation(Permission.getAll(null)));
+        selectedFile, new PermissionRepresentation(Tools.getAll(Permission.class)));
   }
 
   public void exportCsv(File file) throws IOException {

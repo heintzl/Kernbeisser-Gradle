@@ -1,5 +1,6 @@
 package kernbeisser.Reports;
 
+import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -35,9 +36,9 @@ public class AccountingTransactionsReport extends Report {
 
   @Override
   Map<String, Object> getReportParams() {
-    long lastTransactionId = transactions.stream().mapToLong(Transaction::getId).max().getAsLong();
-    Map<String, Object> reportParams =
-        UserGroup.getValueAggregatesAtTransactionId(lastTransactionId);
+    Instant lastTransactionInstant =
+        transactions.stream().map(Transaction::getDate).max(Instant::compareTo).get();
+    Map<String, Object> reportParams = UserGroup.getValueAggregatesAt(lastTransactionInstant);
     reportParams.put("userGroup", User.getKernbeisserUser().getUserGroup());
     reportParams.put("reportNo", reportNo);
     reportParams.put("reportTitle", AccountingReport.getReportTitle(reportNo, transactions));

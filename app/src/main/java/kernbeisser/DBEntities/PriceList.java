@@ -18,6 +18,9 @@ import java.util.Collection;
 import java.util.List;
 import kernbeisser.CustomComponents.ObjectTree.Node;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.QueryBuilder;
+import kernbeisser.DBEntities.TypeFields.ArticleField;
+import kernbeisser.DBEntities.TypeFields.PriceListField;
 import kernbeisser.Forms.ObjectForm.Components.Source;
 import kernbeisser.Useful.Tools;
 import lombok.*;
@@ -84,12 +87,8 @@ public class PriceList implements Serializable {
   }
 
   private static PriceList getPriceList(String name) throws NoResultException {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery("select p from PriceList p where name = :n", PriceList.class)
-        .setParameter("n", name)
+    return QueryBuilder.selectAll(PriceList.class)
+        .where(PriceListField.name.eq(name))
         .getSingleResult();
   }
 
@@ -111,31 +110,21 @@ public class PriceList implements Serializable {
   }
 
   public static Collection<PriceList> getAllHeadPriceLists() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery(
-            "select p from PriceList p where p.superPriceList = null", PriceList.class)
+    return QueryBuilder.selectAll(PriceList.class)
+        .where(PriceListField.superPriceList.isNull())
         .getResultList();
   }
 
   public List<PriceList> getAllPriceLists() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery(
-            "select p from PriceList p where p.superPriceList = "
-                + getId()
-                + " order by p.name asc",
-            PriceList.class)
+    return QueryBuilder.selectAll(PriceList.class)
+        .where(PriceListField.superPriceList.eq(this))
+        .orderBy(PriceListField.name.asc())
         .getResultList();
   }
 
   @Override
   public String toString() {
-    return Tools.optional(this::getName).orElse("Preisliste[" + id + "]");
+    return Tools.runIfPossible(this::getName).orElse("Preisliste[" + id + "]");
   }
 
   public List<Article> getAllArticles() {
@@ -147,9 +136,9 @@ public class PriceList implements Serializable {
   }
 
   public List<Article> getAllArticles(EntityManager em) {
-    return em.createQuery("select a from Article a where a.priceList = :p", Article.class)
-        .setParameter("p", this)
-        .getResultList();
+    return QueryBuilder.selectAll(Article.class)
+        .where(ArticleField.priceList.eq(this))
+        .getResultList(em);
   }
 
   public static Node<PriceList> asNode(Node<PriceList> parent, PriceList priceList) {
@@ -201,15 +190,10 @@ public class PriceList implements Serializable {
   }
 
   public static Source<PriceList> onlyWithContent() {
-    return () -> {
-      @Cleanup EntityManager em = DBConnection.getEntityManager();
-      @Cleanup("commit")
-      EntityTransaction et = em.getTransaction();
-      et.begin();
-      return em.createQuery(
-              "select p from PriceList p where exists (select a from Article a where a.priceList = p) order by name",
-              PriceList.class)
-          .getResultList();
-    };
+    return () ->
+        QueryBuilder.select(ArticleField.priceList)
+            .orderBy(ArticleField.priceList.child(PriceListField.name).asc())
+            .distinct()
+            .getResultList();
   }
 }

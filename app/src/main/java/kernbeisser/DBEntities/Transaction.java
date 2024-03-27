@@ -1,5 +1,8 @@
 package kernbeisser.DBEntities;
 
+import static kernbeisser.DBConnection.ExpressionFactory.max;
+import static kernbeisser.DBConnection.PredicateFactory.or;
+
 import jakarta.persistence.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -7,8 +10,11 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.ExpressionFactory;
+import kernbeisser.DBConnection.PredicateFactory;
+import kernbeisser.DBConnection.QueryBuilder;
+import kernbeisser.DBEntities.TypeFields.TransactionField;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.InvalidTransactionException;
@@ -101,10 +107,6 @@ public class Transaction implements UserRelated {
   @Column @Transient @Getter private String fromIdentification;
 
   @Column @Transient @Getter private String toIdentification;
-
-  public static List<Transaction> getAll(String condition) {
-    return Tools.getAll(Transaction.class, condition);
-  }
 
   public Transaction withUserIdentifications(UserNameObfuscation withNames) {
 
@@ -267,25 +269,19 @@ public class Transaction implements UserRelated {
   }
 
   public static long getLastReportNo() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return Optional.ofNullable(
-            em.createQuery("select max(accountingReportNo) from Transaction t", Long.class)
-                .getSingleResult())
+    return QueryBuilder.select(Transaction.class, max(TransactionField.accountingReportNo))
+        .getSingleResultOptional()
+        .map(tuple -> tuple.get(0, Long.class))
         .orElse(0L);
   }
 
-  public static long getLastIdOfReportNo(long reportNo) throws NoResultException {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery(
-            "select max(id) from Transaction t where accountingReportNo <= :no", Long.class)
-        .setParameter("no", reportNo)
-        .getSingleResult();
+  public static Instant getLastOfReportNo(long reportNo) throws NoResultException {
+    return QueryBuilder.select(Transaction.class, max(TransactionField.date))
+        .where(
+            PredicateFactory.lessOrEq(
+                TransactionField.accountingReportNo, ExpressionFactory.asExpression(reportNo)))
+        .getSingleResult()
+        .get(0, Instant.class);
   }
 
   public static void writeAccountingReportNo(Collection<Transaction> transactions, long no) {
@@ -302,33 +298,10 @@ public class Transaction implements UserRelated {
   }
 
   public static List<Transaction> getTransactionsByReportNo(long reportNo) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
     List<Transaction> transactions =
-        em.createQuery(
-                "select t from Transaction t where t.accountingReportNo = :no order by id",
-                Transaction.class)
-            .setParameter("no", reportNo)
-            .getResultList();
-    if (transactions.isEmpty()) {
-      throw new NoTransactionsFoundException();
-    }
-    return transactions;
-  }
-
-  public static List<Transaction> getTransactionDateRange(Instant startDate, Instant endDate) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    List<Transaction> transactions =
-        em.createQuery(
-                "select t from Transaction t where t.date between :from and :to order by id",
-                Transaction.class)
-            .setParameter("from", startDate)
-            .setParameter("to", endDate)
+        QueryBuilder.selectAll(Transaction.class)
+            .where(TransactionField.accountingReportNo.eq(reportNo))
+            .orderBy(TransactionField.id.asc())
             .getResultList();
     if (transactions.isEmpty()) {
       throw new NoTransactionsFoundException();
@@ -337,15 +310,13 @@ public class Transaction implements UserRelated {
   }
 
   public static List<Transaction> getUnreportedTransactions() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
+    User kbUser = User.getKernbeisserUser();
     List<Transaction> transactions =
-        em.createQuery(
-                "select t from Transaction t where t.accountingReportNo IS NULL AND :shopUser IN (t.fromUser, t.toUser) order by id",
-                Transaction.class)
-            .setParameter("shopUser", User.getKernbeisserUser())
+        QueryBuilder.selectAll(Transaction.class)
+            .where(
+                TransactionField.accountingReportNo.isNull(),
+                or(TransactionField.fromUser.eq(kbUser), TransactionField.toUser.eq(kbUser)))
+            .orderBy(TransactionField.id.asc())
             .getResultList();
     if (transactions.isEmpty()) {
       throw new NoTransactionsFoundException();

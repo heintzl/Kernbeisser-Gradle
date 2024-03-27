@@ -2,6 +2,9 @@ package kernbeisser.Forms.FormImplemetations.User;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import java.util.function.Supplier;
+import kernbeisser.DBConnection.QueryBuilder;
+import kernbeisser.DBEntities.Permission;
+import kernbeisser.DBEntities.TypeFields.PermissionField;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Enums.Mode;
@@ -10,6 +13,7 @@ import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.MissingFullMemberException;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
 import kernbeisser.Forms.FormController;
+import kernbeisser.Forms.ObjectForm.Components.Source;
 import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
 import kernbeisser.Forms.ObjectForm.ObjectForm;
 import kernbeisser.Useful.Tools;
@@ -175,5 +179,18 @@ public class UserController extends FormController<UserView, UserModel, User> {
       return;
     }
     getView().messageDeleteSuccess(user.delete());
+  }
+
+  public Source<Permission> getPermissionSource() {
+    return () ->
+        QueryBuilder.selectAll(Permission.class)
+            .where(
+                PermissionField.name
+                    .in(
+                        PermissionConstants.APPLICATION.nameId(),
+                        PermissionConstants.IMPORT.nameId(),
+                        PermissionConstants.IN_RELATION_TO_OWN_USER.nameId())
+                    .not())
+            .getResultList();
   }
 }

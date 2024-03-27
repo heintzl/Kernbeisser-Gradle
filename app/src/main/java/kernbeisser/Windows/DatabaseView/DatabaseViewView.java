@@ -7,7 +7,6 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import javax.swing.*;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.CustomComponents.ObjectTable.Column;
@@ -38,12 +37,8 @@ public class DatabaseViewView implements IView<DatabaseViewController> {
         });
   }
 
-  Optional<String> getFilter() {
-    String text = filter.getText();
-    if (text.replaceAll(" ", "").equals("")) {
-      return Optional.empty();
-    }
-    return Optional.of(text);
+  String getFilter() {
+    return filter.getText();
   }
 
   void setSelectionEntities(List<Class<?>> classes) {

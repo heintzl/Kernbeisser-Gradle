@@ -1,15 +1,21 @@
 package kernbeisser.Reports.ReportDTO;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityTransaction;
+import static kernbeisser.DBConnection.ExpressionFactory.asExpression;
+import static kernbeisser.DBConnection.PredicateFactory.isMember;
+
+import jakarta.persistence.Tuple;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.QueryBuilder;
+import kernbeisser.DBEntities.SaleSession;
+import kernbeisser.DBEntities.TypeFields.SaleSessionField;
+import kernbeisser.DBEntities.TypeFields.TransactionField;
+import kernbeisser.DBEntities.TypeFields.UserField;
 import kernbeisser.DBEntities.User;
+import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Useful.Date;
-import lombok.Cleanup;
 import lombok.Getter;
 
 public class TrialMemberReportEntry {
@@ -25,19 +31,42 @@ public class TrialMemberReportEntry {
   }
 
   public static List<TrialMemberReportEntry> getAllTrialMembers() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    String query =
-        "SELECT new kernbeisser.Reports.ReportDTO.TrialMemberReportEntry(u, coalesce(SUM(t.value), 0), MAX(t.date)) "
-            + "FROM User u LEFT JOIN Transaction t ON "
-            + "EXISTS (SELECT s FROM SaleSession s WHERE s.transaction = t AND s.customer = u) "
-            + "GROUP BY u";
-    return em.createQuery(query, TrialMemberReportEntry.class)
-        .getResultStream()
-        .filter(e -> e.getUser().isTrialMember())
-        .collect(Collectors.toList());
+    double sum = 0;
+    int lastUid = -1;
+    User lastUser = null;
+    Instant lastSaleSession = Instant.MIN;
+    List<TrialMemberReportEntry> entries = new ArrayList<>();
+    List<Tuple> resultList =
+        QueryBuilder.select(
+                SaleSession.class,
+                SaleSessionField.customer,
+                SaleSessionField.transaction.child(TransactionField.value),
+                SaleSessionField.transaction.child(TransactionField.date))
+            .where(
+                isMember(
+                    asExpression(PermissionConstants.TRIAL_MEMBER.getPermission()),
+                    SaleSessionField.customer.child(UserField.permissions)))
+            .orderBy(SaleSessionField.customer.asc())
+            .getResultList();
+    for (Tuple tuple : resultList) {
+      User user = tuple.get(0, User.class);
+      Double saleSessionTransactionValue = tuple.get(1, Double.class);
+      Instant saleSessionDate = tuple.get(2, Instant.class);
+      if (lastUid != user.getId()) {
+        if (lastUid != -1) {
+          entries.add(new TrialMemberReportEntry(user, sum, lastSaleSession));
+        }
+        sum = 0;
+        lastUid = user.getId();
+        lastUser = user;
+        lastSaleSession = saleSessionDate;
+      }
+      sum += saleSessionTransactionValue;
+      lastSaleSession =
+          lastSaleSession.isAfter(saleSessionDate) ? lastSaleSession : saleSessionDate;
+    }
+    if (lastUid != -1) entries.add(new TrialMemberReportEntry(lastUser, sum, lastSaleSession));
+    return entries;
   }
 
   public String getLastPurchaseAsString() {

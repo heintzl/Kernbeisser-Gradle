@@ -10,19 +10,20 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.CatalogEntry;
 import kernbeisser.DBEntities.IgnoredDifference;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.DBEntities.SurchargeGroup;
+import kernbeisser.DBEntities.TypeFields.ArticleField;
 import kernbeisser.Enums.ShopRange;
 import kernbeisser.Tasks.Catalog.CatalogImporter;
 import lombok.Getter;
@@ -52,8 +53,7 @@ public class CatalogMergeSession {
 
   private HashMap<Integer, Collection<IgnoredDifference>> loadIgnoreDifferences() {
     Collection<IgnoredDifference> queryResult =
-        em.createQuery("select i from IgnoredDifference i", IgnoredDifference.class)
-            .getResultList();
+        QueryBuilder.selectAll(IgnoredDifference.class).getResultList();
     HashMap<Integer, Collection<IgnoredDifference>> out = new HashMap<>(queryResult.size());
     queryResult.forEach(
         e -> out.computeIfAbsent(e.getArticle().getSuppliersItemNumber(), b -> new ArrayList<>()));
@@ -61,14 +61,10 @@ public class CatalogMergeSession {
     return out;
   }
 
-  private HashMap<Integer, Article> loadCurrentState() {
-    List<Article> result =
-        em.createQuery("select a from Article a where supplier = :s", Article.class)
-            .setParameter("s", Supplier.getKKSupplier())
-            .getResultList();
-    HashMap<Integer, Article> out = new HashMap<>(result.size());
-    result.forEach(a -> out.put(a.getSuppliersItemNumber(), a));
-    return out;
+  private Map<Integer, Article> loadCurrentState() {
+    return QueryBuilder.selectAll(Article.class)
+        .where(ArticleField.supplier.eq(Supplier.getKKSupplier()))
+        .getResultMap(Article::getSuppliersItemNumber, article -> article);
   }
 
   private HashMap<Integer, Double> createDepositHashMap(Collection<String> source) {
@@ -102,12 +98,11 @@ public class CatalogMergeSession {
             UniqueValidator.forbidNull(CatalogEntry::getArtikelNr),
             UniqueValidator.allowNull(
                 CatalogEntry::getEanLadenEinheit,
-                em.createQuery(
-                        "select a.barcode from Article a where a.supplier <> :s and a.barcode is not null",
-                        Long.class)
-                    .setParameter("s", kkSupplier)
+                QueryBuilder.select(ArticleField.barcode)
+                    .where(
+                        ArticleField.supplier.eq(kkSupplier).not(),
+                        ArticleField.barcode.isNull().not())
                     .getResultList()));
-
     return mapToArticleMerge(
             readSource(source).filter(e -> !uniqueValidator.brakesUniqueConstraints(e)),
             createDepositHashMap(source),
@@ -209,14 +204,10 @@ public class CatalogMergeSession {
   public void pushToDB(Iterator<ArticleMerge> articleMerges, boolean checkVerified) {
     Session session = em.unwrap(Session.class);
     HashSet<Long> barcodes =
-        new HashSet<>(
-            em.createQuery("select a.barcode from Article a", Long.class).getResultList());
+        new HashSet<>(QueryBuilder.select(ArticleField.barcode).getResultList(em));
     UniqueNumberIncrementingFactory kbNumberFactory =
         new UniqueNumberIncrementingFactory(
-            new HashSet<>(
-                em.createQuery("select a.kbNumber" + " from Article a", Integer.class)
-                    .getResultList()),
-            FILL_OFFSET);
+            new HashSet<>(QueryBuilder.select(ArticleField.kbNumber).getResultList()), FILL_OFFSET);
     articleMerges.forEachRemaining(
         articleMerge -> {
           if (checkVerified) checkMergeStatus(articleMerge);
@@ -245,17 +236,6 @@ public class CatalogMergeSession {
     em.flush();
     et.commit();
     em.close();
-  }
-
-  public void pushAllNotImportantChanges() {
-    pushToDB(
-        articleMerges.stream()
-            .filter(
-                e ->
-                    e.getMergeStatus() == MergeStatus.ADDED
-                        || e.getMergeStatus() == MergeStatus.NO_CONFLICTS)
-            .iterator(),
-        false);
   }
 
   private Article createNewBase(Supplier supplier, PriceList priceList, SurchargeGroup sg) {

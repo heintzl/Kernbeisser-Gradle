@@ -1,7 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Main(Proxy)" type="Application" factoryName="Application">
     <option name="ALTERNATIVE_JRE_PATH" value="21" />
-    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
     <option name="MAIN_CLASS_NAME" value="kernbeisser.Main" />
     <module name="kernbeisser.app.main" />
     <option name="VM_PARAMETERS" value="-splash:KernbeisserSplash.png -javaagent:&quot;security/build/libs/security.jar&quot;" />

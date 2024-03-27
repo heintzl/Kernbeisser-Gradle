@@ -1,16 +1,18 @@
 package kernbeisser.DBEntities;
 
+import static kernbeisser.DBConnection.PredicateFactory.like;
+import static kernbeisser.DBConnection.PredicateFactory.or;
+
 import jakarta.persistence.*;
 import java.time.Instant;
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.QueryBuilder;
+import kernbeisser.DBEntities.TypeFields.JobField;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
 import kernbeisser.Useful.ActuallyCloneable;
 import kernbeisser.Useful.Tools;
-import lombok.Cleanup;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -49,20 +51,10 @@ public class Job implements ActuallyCloneable {
   @Setter(onMethod_ = {@Key(PermissionKey.JOB_UPDATE_DATE_WRITE)})
   private Instant updateDate;
 
-  public static List<Job> getAll(String condition) {
-    return Tools.getAll(Job.class, condition);
-  }
-
   public static Collection<Job> defaultSearch(String s, int max) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery(
-            "select j from Job j where j.name like :s or description like :sn", Job.class)
-        .setParameter("s", s + "%")
-        .setParameter("sn", "%" + s + "%")
-        .setMaxResults(max)
+    return QueryBuilder.selectAll(Job.class)
+        .where(or(like(JobField.name, s + "%"), like(JobField.description, "%" + s + "%")))
+        .limit(max)
         .getResultList();
   }
 
@@ -72,7 +64,7 @@ public class Job implements ActuallyCloneable {
 
   @Override
   public String toString() {
-    return Tools.optional(this::getName).orElse("Job[" + id + "]");
+    return Tools.runIfPossible(this::getName).orElse("Job[" + id + "]");
   }
 
   @Override

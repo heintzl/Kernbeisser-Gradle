@@ -1,7 +1,6 @@
 package kernbeisser.Windows.UserInfo;
 
 import static java.lang.String.format;
-import static kernbeisser.Useful.Tools.optional;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
@@ -162,11 +161,13 @@ public class UserInfoView implements IView<UserInfoController> {
 
     shoppingHistory =
         new ObjectTable<Purchase>(
-            Columns.<Purchase>create("Datum", e -> Date.INSTANT_DATE_TIME.format(e.getCreateDate()))
-                .withSorter(Column.DATE_SORTER(Date.INSTANT_DATE_TIME)),
-            Columns.create("Verkäufer", e -> e.getSession().getSeller()),
-            Columns.create("Käufer", e -> e.getSession().getCustomer()),
-            Columns.create("Summe", e -> format("%.2f€", e.getSum()), SwingConstants.RIGHT));
+                Columns.<Purchase>create(
+                        "Datum", e -> Date.INSTANT_DATE_TIME.format(e.getCreateDate()))
+                    .withSorter(Column.DATE_SORTER(Date.INSTANT_DATE_TIME)),
+                Columns.create("Verkäufer", e -> e.getSession().getSeller()),
+                Columns.create("Käufer", e -> e.getSession().getCustomer()),
+                Columns.create("Summe", e -> format("%.2f€", e.getSum()), SwingConstants.RIGHT))
+            .allowCaching();
 
     phoneNumber1 = new AccessCheckingLabel<>(User::getPhoneNumber1);
     username = new AccessCheckingLabel<>(User::getUsername);
@@ -260,9 +261,9 @@ public class UserInfoView implements IView<UserInfoController> {
   @Override
   public String getTitle() {
     return "Benutzerinformationen von "
-        + optional(controller.getModel().getUser()::getFirstName).orElse(ACCESS_DENIED)
+        + Tools.runIfPossible(controller.getModel().getUser()::getFirstName).orElse(ACCESS_DENIED)
         + ", "
-        + optional(controller.getModel().getUser()::getSurname).orElse(ACCESS_DENIED);
+        + Tools.runIfPossible(controller.getModel().getUser()::getSurname).orElse(ACCESS_DENIED);
   }
 
   public void setOptCurrentSelected(boolean b) {

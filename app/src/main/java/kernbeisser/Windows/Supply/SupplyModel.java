@@ -4,8 +4,9 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import java.util.*;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBConnection.FieldCondition;
 import kernbeisser.DBEntities.*;
+import kernbeisser.DBEntities.Repositories.ArticleRepository;
+import kernbeisser.DBEntities.TypeFields.PreOrderField;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
@@ -42,16 +43,12 @@ public class SupplyModel implements IModel<SupplyController> {
     em.flush();
   }
 
-  Collection<Supplier> getAllSuppliers() {
-    return Tools.getAll(Supplier.class, null);
-  }
-
   public Optional<Article> findBySuppliersItemNumber(Supplier supplier, int suppliersItemNumber) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup("commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    return Articles.getBySuppliersItemNumber(supplier, suppliersItemNumber, em);
+    return ArticleRepository.getBySuppliersItemNumber(supplier, suppliersItemNumber, em);
   }
 
   void print() {
@@ -101,7 +98,7 @@ public class SupplyModel implements IModel<SupplyController> {
   }
 
   public Article getBySuppliersItemNumber(Supplier selected, int suppliersItemNumber) {
-    return Articles.getBySuppliersItemNumber(selected, suppliersItemNumber)
+    return ArticleRepository.getBySuppliersItemNumber(selected, suppliersItemNumber)
         .orElseThrow(NoSuchElementException::new);
   }
 
@@ -109,8 +106,8 @@ public class SupplyModel implements IModel<SupplyController> {
     List<PreOrder> userPreorders =
         DBConnection.getConditioned(
             PreOrder.class,
-            FieldCondition.isNull("delivery"),
-            new FieldCondition("user", User.getKernbeisserUser()).not());
+            PreOrderField.delivery.isNull(),
+            PreOrderField.user.eq(User.getKernbeisserUser()).not());
     Map<CatalogEntry, Integer> entryCounts = new HashMap<>(userPreorders.size());
     for (PreOrder preorder : userPreorders) {
       CatalogEntry entry = preorder.getCatalogEntry();
@@ -177,7 +174,7 @@ public class SupplyModel implements IModel<SupplyController> {
       item.setItemMultiplier(item.getItemMultiplier() + articleBefore.getItemMultiplier());
       shoppingItems.remove(existingItemIndex);
     }
-    shoppingItems.add(0, item);
+    shoppingItems.addFirst(item);
   }
 
   public List<ShoppingItem> getShoppingItems() {
@@ -190,5 +187,9 @@ public class SupplyModel implements IModel<SupplyController> {
 
   public void removeShoppingItem(ShoppingItem item) {
     shoppingItems.remove(item);
+  }
+
+  public List<Supplier> getAllSuppliers() {
+    return Tools.getAll(Supplier.class);
   }
 }

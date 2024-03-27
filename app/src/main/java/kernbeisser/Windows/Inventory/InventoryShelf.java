@@ -8,11 +8,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBConnection.FieldCondition;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.ArticleStock;
-import kernbeisser.DBEntities.Articles;
+import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.DBEntities.Shelf;
+import kernbeisser.DBEntities.TypeFields.ArticleStockField;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Useful.Tools;
 import lombok.Getter;
@@ -30,19 +30,19 @@ public class InventoryShelf {
   }
 
   private void updateValues() {
-
     LocalDate localDate = Setting.INVENTORY_SCHEDULED_DATE.getDateValue();
     List<ArticleStock> shelfStocks =
         DBConnection.getConditioned(
             ArticleStock.class,
-            new FieldCondition("shelf", shelf),
-            new FieldCondition("inventoryDate", localDate));
+            ArticleStockField.shelf.eq(shelf),
+            ArticleStockField.inventoryDate.eq(localDate));
 
     List<Integer> stockArticleIds =
         shelfStocks.stream().map(s -> s.getArticle().getId()).collect(Collectors.toList());
     Date date = Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
     Map<Integer, Article> indexedArticlesAtDate =
-        Maps.uniqueIndex(Articles.getArticlesStateAtDate(date, stockArticleIds), Article::getId);
+        Maps.uniqueIndex(
+            ArticleRepository.getArticlesStateAtDate(date, stockArticleIds), Article::getId);
     double net = 0;
     double deposit = 0;
 

@@ -485,4 +485,13 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
                 component.setEnabled(!getSelectionModel().isSelectionEmpty());
             });
   }
+
+  public ObjectTable<T> allowCaching() {
+    return allowCaching(true);
+  }
+
+  public ObjectTable<T> allowCaching(boolean allowCaching) {
+    getModel().setAllowCaching(allowCaching);
+    return this;
+  }
 }

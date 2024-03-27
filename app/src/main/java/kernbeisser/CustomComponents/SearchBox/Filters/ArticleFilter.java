@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import javax.swing.*;
 import kernbeisser.DBEntities.Article;
-import kernbeisser.DBEntities.Articles;
+import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.DBEntities.Supplier;
 import lombok.Setter;
 
@@ -24,7 +24,7 @@ public class ArticleFilter implements SearchBoxFilter<Article> {
 
   public Collection<Article> searchable(String query, int max) {
     Supplier kkSupplier = Supplier.getKKSupplier();
-    return Articles.getDefaultAll(
+    return ArticleRepository.getDefaultAll(
         query,
         e ->
             (!filterNoBarcode || e.getBarcode() == null)

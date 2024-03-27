@@ -14,7 +14,7 @@ import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.ArticlePrintPool;
-import kernbeisser.DBEntities.Articles;
+import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.CollectionView.CollectionController;
@@ -41,26 +41,7 @@ public class PrintLabelsController extends Controller<PrintLabelsView, PrintLabe
     super(new PrintLabelsModel());
     model.setPrintPoolBefore(ArticlePrintPool.getPrintPoolAsMap());
     articles = PrintLabelsModel.getArticleSource();
-    articles.addCollectionModifiedListener(this::refreshPrintButton);
-    articles.addObjectsListener(this::onObjectsSelected);
-    printButton.setIcon(IconFontSwing.buildIcon(FontAwesome.PRINT, 20, Color.BLUE));
-    printButton.addActionListener((e) -> print());
-
-    articles
-        .getView()
-        .getChosen()
-        .addColumnAtIndex(
-            0,
-            Columns.create("Anzahl", model::getPrintPool)
-                .withLeftClickConsumer(this::editPrintPool));
-    ObjectTable<Article> available = articles.getView().getAvailable();
-    available.addColumnAtIndex(
-        0,
-        Columns.create("Lieferant", PrintLabelsModel::getArticleSupplierName).withDefaultFilter());
-    available.addColumn(Columns.create("Barcode", Article::getBarcode).withDefaultFilter());
-    available.addColumn(Columns.create("Preisliste", Article::getPriceList).withDefaultFilter());
-    articles.addControls(printButton, printSheetInfo);
-    barcodeCapture = new BarcodeCapture(getView()::processBarcode);
+    barcodeCapture = new BarcodeCapture((s) -> getView().processBarcode(s));
   }
 
   private void editPrintPool(Article article) {
@@ -74,12 +55,8 @@ public class PrintLabelsController extends Controller<PrintLabelsView, PrintLabe
     refreshPrintButton();
   }
 
-  private static void openMe(ViewContainer targetComponent) {
-    new PrintLabelsController().openIn(new SubWindow(targetComponent));
-  }
-
   public static void setLabelPrintText(JButton button) {
-    boolean pendingLabels = Articles.getArticlePrintPoolSize() > 0;
+    boolean pendingLabels = ArticleRepository.getArticlePrintPoolSize() > 0;
     button.setText("Etiketten drucken" + (pendingLabels ? " *" : ""));
   }
 
@@ -158,7 +135,25 @@ public class PrintLabelsController extends Controller<PrintLabelsView, PrintLabe
 
   @Override
   public void fillView(PrintLabelsView printLabelsView) {
-    articles.setLoadedAndSource(Articles.getPrintPool(), PrintLabelsModel::getAllArticles);
+    articles.addCollectionModifiedListener(this::refreshPrintButton);
+    articles.addObjectsListener(this::onObjectsSelected);
+    printButton.setIcon(IconFontSwing.buildIcon(FontAwesome.PRINT, 20, Color.BLUE));
+    printButton.addActionListener((e) -> print());
+    articles
+        .getView()
+        .getChosen()
+        .addColumnAtIndex(
+            0,
+            Columns.create("Anzahl", model::getPrintPool)
+                .withLeftClickConsumer(this::editPrintPool));
+    ObjectTable<Article> available = articles.getView().getAvailable();
+    available.addColumnAtIndex(
+        0,
+        Columns.create("Lieferant", PrintLabelsModel::getArticleSupplierName).withDefaultFilter());
+    available.addColumn(Columns.create("Barcode", Article::getBarcode).withDefaultFilter());
+    available.addColumn(Columns.create("Preisliste", Article::getPriceList).withDefaultFilter());
+    articles.addControls(printButton, printSheetInfo);
+    articles.setLoadedAndSource(ArticleRepository.getPrintPool(), PrintLabelsModel::getAllArticles);
     articles.getView().addSearchbox(CollectionView.BOTH);
   }
 

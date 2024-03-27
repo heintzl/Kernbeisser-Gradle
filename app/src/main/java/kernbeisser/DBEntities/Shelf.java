@@ -1,11 +1,16 @@
 package kernbeisser.DBEntities;
 
+import static kernbeisser.DBConnection.ExpressionFactory.max;
+
 import jakarta.persistence.*;
 import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.QueryBuilder;
+import kernbeisser.DBEntities.Repositories.ArticleRepository;
+import kernbeisser.DBEntities.TypeFields.ShelfField;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
 import kernbeisser.Useful.ActuallyCloneable;
 import lombok.Cleanup;
@@ -68,7 +73,7 @@ public class Shelf implements ActuallyCloneable {
   public Collection<Article> getAllArticles(EntityManager em) {
     return Stream.concat(
             priceLists.stream()
-                .map(e -> Articles.getAllActiveArticlesFromPriceList(em, e))
+                .map(e -> ArticleRepository.getAllActiveArticlesFromPriceList(em, e))
                 .flatMap(Collection::stream)
                 .sorted(Comparator.comparingInt(Article::getKbNumber)),
             articles.stream())
@@ -78,9 +83,10 @@ public class Shelf implements ActuallyCloneable {
   }
 
   public static int createShelfNo() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    return em.createQuery("select coalesce (max(s.shelfNo), 0) from Shelf s", Integer.class)
-            .getSingleResult()
+    return QueryBuilder.select(Shelf.class, max(ShelfField.shelfNo))
+            .getSingleResultOptional()
+            .map(tuple -> tuple.get(0, Integer.class))
+            .orElse(0)
         + 1;
   }
 

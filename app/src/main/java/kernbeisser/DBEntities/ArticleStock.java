@@ -6,8 +6,10 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Optional;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.QueryBuilder;
+import kernbeisser.DBEntities.Repositories.ArticleRepository;
+import kernbeisser.DBEntities.TypeFields.ArticleStockField;
 import kernbeisser.Enums.Setting;
-import kernbeisser.Useful.Tools;
 import lombok.Cleanup;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -33,14 +35,12 @@ public class ArticleStock {
   @CreationTimestamp private Instant createDate;
 
   public static Optional<ArticleStock> ofArticle(EntityManager em, Article article, Shelf shelf) {
-    return Tools.optional(
-        em.createQuery(
-                "select a from ArticleStock a where a.article = :a and a.shelf = :s and a.inventoryDate = :d",
-                ArticleStock.class)
-            .setMaxResults(1)
-            .setParameter("a", article)
-            .setParameter("s", shelf)
-            .setParameter("d", Setting.INVENTORY_SCHEDULED_DATE.getDateValue()));
+    return QueryBuilder.selectAll(ArticleStock.class)
+        .where(
+            ArticleStockField.article.eq(article),
+            ArticleStockField.shelf.eq(shelf),
+            ArticleStockField.inventoryDate.eq(Setting.INVENTORY_SCHEDULED_DATE.getDateValue()))
+        .getSingleResultOptional(em);
   }
 
   public static ArticleStock newFromArticle(Article e, Shelf shelf) {
@@ -63,7 +63,7 @@ public class ArticleStock {
             .atStartOfDay()
             .atZone(ZoneId.systemDefault())
             .toInstant();
-    Article articleAtDate = Articles.getArticleStateAtDate(article, date);
+    Article articleAtDate = ArticleRepository.getArticleStateAtDate(article, date);
     if (articleAtDate == null) {
       return article;
     }

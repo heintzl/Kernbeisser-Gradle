@@ -1,10 +1,7 @@
 package kernbeisser;
 
 import java.awt.*;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URISyntaxException;
 import java.util.Locale;
 import javax.swing.*;
@@ -12,6 +9,7 @@ import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.Config.Config;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.Theme;
 import kernbeisser.StartUp.SplashScreenHandler;
@@ -20,6 +18,7 @@ import kernbeisser.VersionIntegrationTools.Version;
 import kernbeisser.Windows.LogIn.SimpleLogIn.SimpleLogInController;
 import kernbeisser.Windows.TabbedPane.TabbedPaneModel;
 import lombok.extern.log4j.Log4j2;
+import rs.groump.Access;
 import rs.groump.Agent;
 
 @Log4j2
@@ -107,14 +106,17 @@ public class Main {
   }
 
   public static void buildEnvironment() throws UnsupportedLookAndFeelException {
-    log.info("setting look and feel");
-    setSettingLAF();
-    log.info("register FontAwesome");
-    IconFontSwing.register(FontAwesome.getIconFont());
-    try {
-      UiTools.scaleFonts(Float.parseFloat(Setting.LABEL_SCALE_FACTOR.getStringValue()));
-    } catch (NumberFormatException ignored) {
-    }
+    Access.runUnchecked(
+        () -> {
+          log.info("setting look and feel");
+          setSettingLAF();
+          log.info("register FontAwesome");
+          IconFontSwing.register(FontAwesome.getIconFont());
+          try {
+            UiTools.scaleFonts(Float.parseFloat(Setting.LABEL_SCALE_FACTOR.getStringValue()));
+          } catch (NumberFormatException ignored) {
+          }
+        });
   }
 
   public static void setSettingLAF() throws UnsupportedLookAndFeelException {

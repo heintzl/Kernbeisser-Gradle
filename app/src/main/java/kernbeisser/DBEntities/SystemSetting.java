@@ -2,17 +2,18 @@ package kernbeisser.DBEntities;
 
 import com.google.common.collect.ImmutableMap;
 import jakarta.persistence.*;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.Useful.Tools;
+import kernbeisser.DBConnection.QueryBuilder;
+import kernbeisser.DBEntities.TypeFields.SystemSettingField;
 import kernbeisser.VersionIntegrationTools.Version;
 import lombok.Cleanup;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import rs.groump.Access;
 import rs.groump.Key;
 import rs.groump.PermissionKey;
 
@@ -22,12 +23,13 @@ import rs.groump.PermissionKey;
 public class SystemSetting {
 
   @Getter(lazy = true)
-  private static final HashMap<String, String> valueHashMap = load();
+  private static final Map<String, String> valueHashMap = load();
 
-  private static HashMap<String, String> load() {
-    HashMap<String, String> out = new HashMap<>();
-    getAll(null).forEach(e -> out.put(e.setting, e.value));
-    return out;
+  private static Map<String, String> load() {
+    return Access.runUnchecked(
+        () ->
+            QueryBuilder.selectAll(SystemSetting.class).getResultList().stream()
+                .collect(Collectors.toMap(SystemSetting::getSetting, SystemSetting::getValue)));
   }
 
   @Id
@@ -70,10 +72,9 @@ public class SystemSetting {
     et.begin();
     try {
       SystemSetting settingValue =
-          em.createQuery(
-                  "select s from SystemSetting s where s.setting = :key", SystemSetting.class)
-              .setParameter("key", key)
-              .getSingleResult();
+          QueryBuilder.selectAll(SystemSetting.class)
+              .where(SystemSettingField.setting.eq(key))
+              .getSingleResult(em);
       settingValue.value = value;
       em.persist(settingValue);
     } catch (NoResultException noResultException) {
@@ -83,10 +84,6 @@ public class SystemSetting {
       em.persist(settingValue);
     }
     getValueHashMap().replace(key, value);
-  }
-
-  public static List<SystemSetting> getAll(String condition) {
-    return Tools.getAll(SystemSetting.class, condition);
   }
 
   @Override

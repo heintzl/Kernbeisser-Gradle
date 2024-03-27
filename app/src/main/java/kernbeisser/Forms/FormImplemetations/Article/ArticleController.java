@@ -45,10 +45,10 @@ public class ArticleController extends FormController<ArticleView, ArticleModel,
 
   void validateArticle(Article article, Mode mode) throws CannotParseException {
     if (mode == Mode.ADD) {
-      Optional<Article> nearestOpt = model.findNearestArticle(article);
+      Optional<Article> nearestOpt = model.findArticleWithMostIdenticalName(article);
       if (!nearestOpt.isPresent()) return;
       Article nearest = nearestOpt.get();
-      int distance = Tools.calculate(article.getName(), nearest.getName());
+      int distance = Tools.calculateStringDifference(article.getName(), nearest.getName());
       if (distance < Setting.WARN_ARTICLE_DIFFERENCE.getIntValue()) {
         if (!getView().isSameArticle(nearest)) {
           throw new SilentParseException();

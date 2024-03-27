@@ -2,7 +2,7 @@ package kernbeisser.Windows.ShoppingMask;
 
 import jakarta.persistence.NoResultException;
 import kernbeisser.DBEntities.Article;
-import kernbeisser.DBEntities.Articles;
+import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.Supplier;
@@ -28,27 +28,27 @@ public class ShoppingMaskModel implements IModel<ShoppingMaskController> {
   }
 
   Article getArticleByKbNumber(int kbNumber) {
-    return Articles.getByKbNumber(kbNumber, true).map(ObjectState::getValue).orElse(null);
+    return ArticleRepository.getByKbNumber(kbNumber, true).map(ObjectState::getValue).orElse(null);
   }
 
   ShoppingItem getItemByKbNumber(int kbNumber, int discount, boolean preordered) {
-    return Articles.getByKbNumber(kbNumber, true)
+    return ArticleRepository.getByKbNumber(kbNumber, true)
         .map(e -> new ShoppingItem(e, discount, preordered))
         .orElse(null);
   }
 
   Article getArticleBySupplierItemNumber(Supplier supplier, int suppliersNumber) {
-    return Articles.getBySuppliersItemNumber(supplier, suppliersNumber).orElse(null);
+    return ArticleRepository.getBySuppliersItemNumber(supplier, suppliersNumber).orElse(null);
   }
 
   ShoppingItem getItemBySupplierItemNumber(
       Supplier supplier, int suppliersNumber, int discount, boolean preordered) {
-    return Articles.getBySuppliersItemNumber(supplier, suppliersNumber)
+    return ArticleRepository.getBySuppliersItemNumber(supplier, suppliersNumber)
         .map(e -> new ShoppingItem(e, discount, preordered))
         .orElse(null);
   }
 
   Article getByBarcode(long barcode) throws NoResultException {
-    return (Articles.getByBarcode(barcode).orElseThrow(NoResultException::new));
+    return (ArticleRepository.getByBarcode(barcode).orElseThrow(NoResultException::new));
   }
 }

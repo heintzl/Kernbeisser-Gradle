@@ -15,7 +15,7 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntities.Articles;
+import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Enums.ArticleCatalogState;
@@ -55,7 +55,9 @@ public class SupplierFile {
     et.begin();
     Supplier kkSupplier = Supplier.getKKSupplier();
     return contents.stream()
-        .filter(e -> Articles.getBySuppliersItemNumber(kkSupplier, e.getKkNumber()).isPresent())
+        .filter(
+            e ->
+                ArticleRepository.getBySuppliersItemNumber(kkSupplier, e.getKkNumber()).isPresent())
         .collect(Collectors.toCollection(ArrayList::new));
   }
 

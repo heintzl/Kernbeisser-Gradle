@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.Useful.DelegatingMap;
 import kernbeisser.VersionIntegrationTools.VersionUpdatingTool;
@@ -42,8 +43,7 @@ public class PermissionKeyChange implements VersionUpdatingTool {
     @Cleanup("commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    Collection<Permission> permissions =
-        em.createQuery("select p from Permission p", Permission.class).getResultList();
+    Collection<Permission> permissions = QueryBuilder.selectAll(Permission.class).getResultList(em);
     for (Permission permission : permissions) {
       if (permission.getKeySet().remove(PermissionKey.DEPRECATED)) {
         permission.setKeySet(new HashSet<>(permission.getKeySet()));

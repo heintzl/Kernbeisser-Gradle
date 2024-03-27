@@ -1,10 +1,15 @@
 package kernbeisser.Windows.PermissionManagement;
 
+import static kernbeisser.DBConnection.ExpressionFactory.asExpression;
+
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import java.util.*;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.PredicateFactory;
+import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Permission;
+import kernbeisser.DBEntities.TypeFields.UserField;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Security.PermissionKeyGroups;
 import kernbeisser.Useful.Tools;
@@ -22,7 +27,7 @@ public class PermissionModel implements IModel<PermissionController> {
   }
 
   Collection<Permission> getAllPermissions() {
-    return Permission.getAll(null);
+    return Tools.getAll(Permission.class);
   }
 
   List<PermissionKeyGroups> getAllKeyCategories() {
@@ -56,17 +61,17 @@ public class PermissionModel implements IModel<PermissionController> {
 
   public void removeUserFromPermission(Permission permission) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-
     EntityTransaction et = em.getTransaction();
     et.begin();
     // TODO: fix that inefficient query
-    em.createQuery("select u from User u", User.class)
-        .getResultList()
-        .forEach(
-            e -> {
-              e.getPermissions().remove(permission);
-              em.persist(e);
-            });
+    List<User> resultList =
+        QueryBuilder.selectAll(User.class)
+            .where(PredicateFactory.isMember(asExpression(permission), UserField.permissions))
+            .getResultList(em);
+    for (User e : resultList) {
+      e.getPermissions().remove(permission);
+      em.persist(e);
+    }
     em.flush();
     em.remove(permission);
     et.commit();

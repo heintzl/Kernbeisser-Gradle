@@ -10,6 +10,7 @@ import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.CustomComponents.KeyCapture;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.*;
+import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.Enums.*;
 import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
 import kernbeisser.Useful.Tools;
@@ -208,7 +209,7 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
   public static Article findOrCreateArticle(
       Supplier kkSupplier, LineContent content, boolean noBarcode) {
     Optional<Article> articleInDb =
-        Articles.getBySuppliersItemNumber(kkSupplier, content.getKkNumber());
+        ArticleRepository.getBySuppliersItemNumber(kkSupplier, content.getKkNumber());
     if (articleInDb.isPresent()) {
       boolean dirty = false;
       @Cleanup EntityManager em = DBConnection.getEntityManager();
@@ -274,7 +275,7 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
     EntityTransaction et = em.getTransaction();
     et.begin();
     Supplier kkSupplier = Supplier.getKKSupplier();
-    Article pattern = Articles.nextArticleTo(em, content.getKkNumber(), kkSupplier);
+    Article pattern = ArticleRepository.nextArticleTo(em, content.getKkNumber(), kkSupplier);
     Article article = new Article();
     article.setSupplier(kkSupplier);
     article.setName(content.getName());
@@ -292,9 +293,9 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
       vat = pattern.getVat();
     }
     article.setVat(vat);
-    article.setPriceList(Articles.getValidPriceList(em, pattern));
+    article.setPriceList(ArticleRepository.getValidPriceList(em, pattern));
     article.setVerified(false);
-    article.setKbNumber(Articles.nextFreeKBNumber(em));
+    article.setKbNumber(ArticleRepository.nextFreeKBNumber(em));
     article.setSuppliersItemNumber(content.getKkNumber());
     article.setSingleDeposit(content.getSingleDeposit());
     article.setContainerDeposit(content.getContainerDeposit());

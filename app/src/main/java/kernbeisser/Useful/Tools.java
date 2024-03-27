@@ -19,8 +19,11 @@ import java.util.stream.Collectors;
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.PredicateFactory;
+import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.SurchargeGroup;
+import kernbeisser.DBEntities.TypeFields.ArticleField;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.UserSetting;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
@@ -32,7 +35,6 @@ import kernbeisser.Windows.ViewContainers.SubWindow;
 import lombok.Cleanup;
 import org.hibernate.envers.AuditReader;
 import org.hibernate.envers.AuditReaderFactory;
-import org.jetbrains.annotations.Nullable;
 import rs.groump.AccessDeniedException;
 
 public class Tools {
@@ -112,16 +114,6 @@ public class Tools {
       out.add(s.get());
     }
     return out;
-  }
-
-  public static <T> List<T> getAll(Class<T> c, @Nullable String condition) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery(
-            "select c from " + c.getName() + " c " + (condition != null ? condition : ""), c)
-        .getResultList();
   }
 
   public static <T> T setId(T t, Object id) {
@@ -470,9 +462,9 @@ public class Tools {
     et.begin();
     Map<SurchargeGroup, Map<Double, List<String>>> result = new HashMap<>();
     Map<SurchargeGroup, List<Article>> articleMap =
-        em.createQuery(
-                "Select a from Article a where a.obsoleteSurcharge is not null", Article.class)
-            .getResultStream()
+        QueryBuilder.selectAll(Article.class)
+            .where(ArticleField.obsoleteSurcharge.isNull().not())
+            .getResultStream(em)
             .collect(Collectors.groupingBy(Article::getSurchargeGroup, Collectors.toList()));
     Map<SurchargeGroup, Map<Double, Long>> surchargeMap = new HashMap<>();
     articleMap.forEach(
@@ -537,7 +529,7 @@ public class Tools {
     return result;
   }
 
-  public static int calculate(String x, String y) {
+  public static int calculateStringDifference(String x, String y) {
     int[][] dp = new int[x.length() + 1][y.length() + 1];
     for (int i = 0; i <= x.length(); i++) {
       for (int j = 0; j <= y.length(); j++) {
@@ -584,22 +576,14 @@ public class Tools {
   }
 
   public static String accessString(AccessSupplier<String> supplier) {
-    return optional(supplier).orElse("[Keine Leseberechtigung]");
+    return runIfPossible(supplier).orElse("[Keine Leseberechtigung]");
   }
 
-  public static <T> SecuredOptional<T> optional(AccessSupplier<T> supplier) {
+  public static <T> SecuredOptional<T> runIfPossible(AccessSupplier<T> supplier) {
     try {
       return SecuredOptional.ofNullable(supplier.get());
     } catch (AccessDeniedException e) {
       return SecuredOptional.empty();
-    }
-  }
-
-  public static <T> Optional<T> optional(TypedQuery<T> supplier) {
-    try {
-      return Optional.of(supplier.getSingleResult());
-    } catch (NoResultException e) {
-      return Optional.empty();
     }
   }
 
@@ -620,7 +604,7 @@ public class Tools {
   }
 
   public static <T> T or(AccessSupplier<T> supplier, T v) {
-    return optional(supplier).orElse(v);
+    return runIfPossible(supplier).orElse(v);
   }
 
   public static boolean isPartOfNumb(char c) {
@@ -681,7 +665,7 @@ public class Tools {
     et.begin();
     AuditReader auditReaderFactory = AuditReaderFactory.get(em);
     List<Number> revisions = auditReaderFactory.getRevisions(o.getClass(), Tools.getId(o));
-    return revisions.get(revisions.size() - 1).intValue();
+    return revisions.getLast().intValue();
   }
 
   public static String jasperTaggedStyling(String text, String markup) {
@@ -695,6 +679,11 @@ public class Tools {
     } else {
       return defaultValue;
     }
+  }
+
+  @SafeVarargs
+  public static <T> List<T> getAll(Class<T> tableClass, PredicateFactory<T>... whereCondition) {
+    return QueryBuilder.selectAll(tableClass).where(whereCondition).getResultList();
   }
 
   public static String capitalize1st(String s) {

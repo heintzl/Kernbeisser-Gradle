@@ -12,7 +12,7 @@ import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.Article;
-import kernbeisser.DBEntities.Articles;
+import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Enums.Mode;
@@ -55,7 +55,7 @@ public class SupplySelectorController extends Controller<SupplySelectorView, Sup
             () -> {
               refreshLineContent(
                   lineContent,
-                  Articles.getByKkItemNumber(article.getSuppliersItemNumber()).get(),
+                  ArticleRepository.getByKkItemNumber(article.getSuppliersItemNumber()).get(),
                   confirmMerge);
             })
         .openIn(new SubWindow(getView().traceViewContainer()));

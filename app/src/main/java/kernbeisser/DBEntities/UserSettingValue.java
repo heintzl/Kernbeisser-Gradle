@@ -4,9 +4,10 @@ import jakarta.persistence.*;
 import java.util.Collection;
 import java.util.HashMap;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.QueryBuilder;
+import kernbeisser.DBEntities.TypeFields.UserSettingValueField;
 import kernbeisser.Enums.UserSetting;
 import kernbeisser.Security.Access.UserRelated;
-import kernbeisser.Useful.Tools;
 import lombok.Cleanup;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -53,13 +54,8 @@ public class UserSettingValue implements UserRelated {
   private String value;
 
   private static Collection<UserSettingValue> getAllForUser(User user) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery(
-            "select u from UserSettingValue u where u.user.id = :uid", UserSettingValue.class)
-        .setParameter("uid", user.getId())
+    return QueryBuilder.selectAll(UserSettingValue.class)
+        .where(UserSettingValueField.user.eq(user))
         .getResultList();
   }
 
@@ -98,12 +94,10 @@ public class UserSettingValue implements UserRelated {
     EntityTransaction et = em.getTransaction();
     et.begin();
     UserSettingValue usv =
-        Tools.optional(
-                em.createQuery(
-                        "select u from UserSettingValue u where u.user = :u and u.userSetting =:us",
-                        UserSettingValue.class)
-                    .setParameter("u", user)
-                    .setParameter("us", setting))
+        QueryBuilder.selectAll(UserSettingValue.class)
+            .where(
+                UserSettingValueField.user.eq(user), UserSettingValueField.userSetting.eq(setting))
+            .getSingleResultOptional(em)
             .orElseGet(
                 () -> {
                   UserSettingValue newUsv = new UserSettingValue();

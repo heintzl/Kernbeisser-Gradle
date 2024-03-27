@@ -6,6 +6,7 @@ import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
 import java.time.Instant;
+import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.ShopRange;
 import kernbeisser.Enums.VAT;
@@ -82,7 +83,7 @@ class ShoppingItemTest {
       double expected) {
     try (var staticMock = mockStatic(ShoppingItem.class)) {
       staticMock
-          .when(Articles::getContainerSurchargeReduction)
+          .when(ArticleRepository::getContainerSurchargeReduction)
           .thenReturn(containerDiscountReduction);
       staticMock.when(ShoppingItem::getOfferPrefix).thenReturn("AK");
     }

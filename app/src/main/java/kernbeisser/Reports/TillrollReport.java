@@ -1,16 +1,18 @@
 package kernbeisser.Reports;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityTransaction;
+import static kernbeisser.DBConnection.ExpressionFactory.asExpression;
+import static kernbeisser.DBConnection.PredicateFactory.*;
+
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.ShoppingItem;
-import lombok.Cleanup;
+import kernbeisser.DBEntities.TypeFields.PurchaseField;
+import kernbeisser.DBEntities.TypeFields.ShoppingItemField;
 
 public class TillrollReport extends Report {
   private final Instant start;
@@ -40,15 +42,13 @@ public class TillrollReport extends Report {
 
   @Override
   public Collection<?> getDetailCollection() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery(
-            "select si from ShoppingItem si where not si.purchase.createDate < :start and purchase.createDate < :end",
-            ShoppingItem.class)
-        .setParameter("start", start)
-        .setParameter("end", endExclusive)
+    return QueryBuilder.selectAll(ShoppingItem.class)
+        .where(
+            greaterOrEq(
+                ShoppingItemField.purchase.child(PurchaseField.createDate), asExpression(start)),
+            lessThan(
+                ShoppingItemField.purchase.child(PurchaseField.createDate),
+                asExpression(endExclusive)))
         .getResultList();
   }
 }

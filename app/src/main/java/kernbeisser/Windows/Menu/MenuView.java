@@ -126,7 +126,7 @@ public class MenuView implements IView<MenuController> {
     if (LogInModel.getLoggedIn().isFullMember()) return true;
     if (user.getUserGroup().getMembers().size() == 1) return false;
     try {
-      user.validateGroupMemberships("");
+      User.validateGroupMemberships(user, "");
       return true;
     } catch (MissingFullMemberException e) {
       return false;

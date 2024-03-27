@@ -3,14 +3,11 @@ package kernbeisser.DBEntities;
 import jakarta.persistence.*;
 import java.time.Instant;
 import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
 import java.util.function.Predicate;
-import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.QueryBuilder;
+import kernbeisser.DBEntities.TypeFields.ShoppingItemField;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Security.Access.UserRelated;
-import kernbeisser.Useful.Tools;
-import lombok.Cleanup;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -52,10 +49,6 @@ public class Purchase implements UserRelated {
 
   @Column @Transient @Getter private String customerIdentification;
 
-  public static List<Purchase> getAll(String condition) {
-    return Tools.getAll(Purchase.class, condition);
-  }
-
   public Purchase withUserIdentification(boolean withNames) {
 
     Purchase out = this;
@@ -68,12 +61,8 @@ public class Purchase implements UserRelated {
   }
 
   public Collection<ShoppingItem> getAllItems() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery(
-            "select i from ShoppingItem i where i.purchase.id = " + id, ShoppingItem.class)
+    return QueryBuilder.selectAll(ShoppingItem.class)
+        .where(ShoppingItemField.purchase.eq(this))
         .getResultList();
   }
 
@@ -91,27 +80,6 @@ public class Purchase implements UserRelated {
         .findFirst()
         .map(ShoppingItem::getVatValue)
         .orElse(0.0);
-  }
-
-  public static long getLastBonNo() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return Optional.ofNullable(
-            em.createQuery("select max(id) from Purchase p", Long.class).getSingleResult())
-        .orElse(-1L);
-  }
-
-  public static Optional<Purchase> getLastBon() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return Optional.ofNullable(
-        em.createQuery("select p from Purchase p order by p.id desc", Purchase.class)
-            .setMaxResults(1)
-            .getSingleResult());
   }
 
   @Override

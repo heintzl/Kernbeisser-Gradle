@@ -67,7 +67,8 @@ public enum MappedDifference implements Difference<Article, Object> {
     @Override
     public double distance(Object a, Object b) {
       return ((double)
-              Tools.calculate(((String) a).replaceAll(" ", ""), ((String) b).replaceAll(" ", ""))
+              Tools.calculateStringDifference(
+                  ((String) a).replaceAll(" ", ""), ((String) b).replaceAll(" ", ""))
           / ((String) b).replaceAll(" ", "").length());
     }
   };

@@ -1,10 +1,11 @@
 package kernbeisser.DBEntities;
 
+import static kernbeisser.DBConnection.ExpressionFactory.asExpression;
+import static kernbeisser.DBConnection.ExpressionFactory.upper;
+import static kernbeisser.DBConnection.PredicateFactory.*;
+
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import jakarta.persistence.*;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Root;
 import java.io.Serializable;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -12,6 +13,10 @@ import java.util.*;
 import java.util.function.Predicate;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.ExpressionFactory;
+import kernbeisser.DBConnection.PredicateFactory;
+import kernbeisser.DBConnection.QueryBuilder;
+import kernbeisser.DBEntities.TypeFields.*;
 import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.TransactionType;
@@ -39,6 +44,18 @@ import rs.groump.PermissionSet;
 @NoArgsConstructor
 @EqualsAndHashCode(doNotUseGetters = true)
 public class User implements Serializable, UserRelated, ActuallyCloneable {
+  public static final PredicateFactory<User> GENERIC_USERS_PREDICATE =
+      in(upper(UserField.username), "KERNBEISSER", "ADMIN");
+
+  public static final PredicateFactory<User> IS_FULL_USER =
+      isMember(
+          asExpression(PermissionConstants.FULL_MEMBER.getPermission()), UserField.permissions);
+  public static final PredicateFactory<User> IS_TRAIL_USER =
+      isMember(
+          asExpression(PermissionConstants.TRIAL_MEMBER.getPermission()), UserField.permissions);
+  public static final String GENERIC_USERS_CONDITION =
+      "upper(username) IN ('KERNBEISSER', 'ADMIN')";
+
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   @Column(updatable = false, insertable = false, nullable = false)
@@ -173,10 +190,183 @@ public class User implements Serializable, UserRelated, ActuallyCloneable {
   // primary only required during data import
   @Column @Transient @Getter @Setter private boolean primary;
 
-  @Column @Transient private boolean setUpdatedBy = true;
+  @Column @Transient @Setter @Getter private boolean setUpdatedBy = true;
 
   public User(String username) {
     this.username = username;
+  }
+
+  public static void validateGroupMemberships(Collection<User> members, String exceptionMessage)
+      throws MissingFullMemberException {
+    if (members.size() > 1 && members.stream().noneMatch(User::isFullMember)) {
+      throw new MissingFullMemberException(exceptionMessage);
+    }
+  }
+
+  public static void checkValidUserGroupMemberships() throws MissingFullMemberException {
+    int lastUgId = -1;
+    boolean hasFullMember = true;
+    int memberCount = 1;
+    // orders all users by ug, then looks for invalid userGroups
+    for (Tuple tuple :
+        QueryBuilder.select(
+                User.class, UserField.userGroup.child(UserGroupField.id), User.IS_FULL_USER)
+            .orderBy(UserField.userGroup.child(UserGroupField.id).asc())
+            .getResultList()) {
+      int ugId = Objects.requireNonNull(tuple.get(0, Integer.class));
+      boolean isFullMember = Objects.requireNonNull(tuple.get(1, Boolean.class));
+      if (ugId != lastUgId) {
+        checkValidUserGroup(lastUgId, memberCount, hasFullMember);
+        hasFullMember = false;
+        memberCount = 0;
+        lastUgId = ugId;
+      }
+      hasFullMember = hasFullMember | isFullMember;
+      memberCount++;
+    }
+    checkValidUserGroup(lastUgId, memberCount, hasFullMember);
+  }
+
+  private static void checkValidUserGroup(int ugId, int memberCount, boolean hasFullMember)
+      throws MissingFullMemberException {
+    if (memberCount <= 1) return;
+    if (hasFullMember) return;
+    throw new MissingFullMemberException(
+        "Benutzergruppe(n) ohne Vollmitglied gefunden. Bitte den Vorstand informieren.");
+  }
+
+  public static User getByUsername(String username) throws NoResultException {
+    return QueryBuilder.getByProperty(UserField.username, username);
+  }
+
+  public static void refreshActivity() {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    List<Integer> activeUserIds =
+        QueryBuilder.select(TransactionField.fromUser.child(UserField.id))
+            .where(
+                greaterOrEq(
+                    TransactionField.date,
+                    asExpression(
+                        Instant.now()
+                            .minus(Setting.DAYS_BEFORE_INACTIVITY.getIntValue(), ChronoUnit.DAYS))),
+                TransactionField.transactionType.eq(TransactionType.PURCHASE))
+            .distinct()
+            .getResultList();
+    List<User> inactiveUsers =
+        QueryBuilder.selectAll(User.class)
+            .where(UserField.active.eq(true), UserField.id.in(activeUserIds).not())
+            .getResultList(em);
+    for (User u : inactiveUsers) {
+      u.setSetUpdatedBy(false);
+      u.setActive(false);
+      em.persist(u);
+    }
+    em.flush();
+  }
+
+  public static Collection<User> defaultSearch(String s, int max) {
+    String searchPattern = s + "%";
+    return QueryBuilder.selectAll(User.class)
+        .where(
+            UserField.unreadable.eq(false),
+            GENERIC_USERS_PREDICATE.not(),
+            or(
+                like(UserField.firstName, searchPattern),
+                like(UserField.surname, searchPattern),
+                like(UserField.username, searchPattern)))
+        .orderBy(UserField.firstName.asc())
+        .limit(max)
+        .getResultList();
+  }
+
+  public static User getById(int parseInt) {
+    return QueryBuilder.selectAll(User.class).where(UserField.id.eq(parseInt)).getSingleResult();
+  }
+
+  public static void checkAdminConsistency() throws InvalidValue {
+    try {
+      User adminUser = QueryBuilder.getByProperty(UserField.username, "Admin");
+      if (QueryBuilder.selectAll(Transaction.class)
+          .where(
+              or(
+                  TransactionField.toUserGroup.eq(adminUser.userGroup),
+                  TransactionField.fromUserGroup.eq(adminUser.userGroup)))
+          .hasResult()) {
+        throw new InvalidValue("Found transactions involving the admin user!");
+      }
+      if (adminUser.userGroup.getValue() != 0.0)
+        throw new InvalidValue("The admin user group has value!");
+    } catch (Exception e) {
+      throw UnexpectedExceptionHandler.showUnexpectedErrorWarning(e);
+    }
+  }
+
+  public static User getKernbeisserUser() {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    try {
+      @Cleanup(value = "commit")
+      EntityTransaction et = em.getTransaction();
+      et.begin();
+      return QueryBuilder.selectAll(User.class)
+          .where(UserField.username.eq("kernbeisser"))
+          .getSingleResult(em);
+    } catch (NoResultException e) {
+      EntityTransaction et = em.getTransaction();
+      et.begin();
+      User kernbeisser = new User();
+      kernbeisser.getPermissions().add(PermissionConstants.APPLICATION.getPermission());
+      kernbeisser.setPassword("CANNOT LOG IN");
+      kernbeisser.setFirstName("Konto");
+      kernbeisser.setSurname("Kernbeisser");
+      kernbeisser.setUsername("kernbeisser");
+      kernbeisser.setNewUserGroup(em);
+      em.persist(kernbeisser);
+      em.flush();
+      et.commit();
+      return getKernbeisserUser();
+    }
+  }
+
+  public static Collection<User> getAllUserFullNames(boolean withKbUser, boolean orderSurname) {
+    var qb =
+        QueryBuilder.selectAll(User.class)
+            .where(UserField.unreadable.eq(false), GENERIC_USERS_PREDICATE.not());
+    if (orderSurname) {
+      qb.orderBy(UserField.surname.asc(), UserField.firstName.asc());
+    } else {
+      qb.orderBy(UserField.firstName.asc(), UserField.surname.asc());
+    }
+    var result = qb.getResultList();
+    if (withKbUser) result.addFirst(getKernbeisserUser());
+    return result;
+  }
+
+  public static Collection<User> getGenericUsers() {
+    return QueryBuilder.selectAll(User.class).where(GENERIC_USERS_PREDICATE).getResultList();
+  }
+
+  public static void populateUserComboBox(
+      AdvancedComboBox<User> box,
+      boolean withKbUser,
+      boolean surnameFirst,
+      Predicate<User> filter) {
+    Optional<User> selected = box.getSelected();
+    List<User> boxItems = new ArrayList<>();
+    if (withKbUser) {
+      boxItems.add(getKernbeisserUser());
+    }
+    getAllUserFullNames(false, surnameFirst).stream().filter(filter).forEach(boxItems::add);
+    box.setItems(boxItems);
+    if (box.isEnabled()) {
+      if (selected.isPresent() && filter.test(selected.get())) {
+        box.setSelectedItem(selected.get());
+      } else {
+        box.setSelectedItem(null);
+      }
+    }
   }
 
   @PrePersist
@@ -185,16 +375,9 @@ public class User implements Serializable, UserRelated, ActuallyCloneable {
     if (setUpdatedBy && LogInModel.getLoggedIn() != null) updateBy = LogInModel.getLoggedIn();
   }
 
-  public static void validateGroupMemberships(Collection<User> members, String exceptionMessage)
+  public static void validateGroupMemberships(User user, String exceptionMessage)
       throws MissingFullMemberException {
-    if (members.size() > 1 && members.stream().noneMatch(User::isFullMember)) {
-      throw new MissingFullMemberException(exceptionMessage);
-    }
-    ;
-  }
-
-  public void validateGroupMemberships(String exceptionMessage) throws MissingFullMemberException {
-    validateGroupMemberships(this.getAllGroupMembers(), exceptionMessage);
+    validateGroupMemberships(user.getAllGroupMembers(), exceptionMessage);
   }
 
   @Key(PermissionKey.USER_USER_GROUP_WRITE)
@@ -229,9 +412,6 @@ public class User implements Serializable, UserRelated, ActuallyCloneable {
     this.userGroup = userGroup;
   }
 
-  public static final String GENERIC_USERS_CONDITION =
-      "upper(username) IN ('KERNBEISSER', 'ADMIN')";
-
   @Key(PermissionKey.USER_PERMISSIONS_READ)
   public Set<Permission> getPermissionsAsAvailable() {
     return Tools.or(this::getPermissions, Collections.unmodifiableSet(permissions));
@@ -240,20 +420,6 @@ public class User implements Serializable, UserRelated, ActuallyCloneable {
   @Key(PermissionKey.USER_JOBS_READ)
   public Set<Job> getJobsAsAvailable() {
     return Tools.or(this::getJobs, Collections.unmodifiableSet(jobs));
-  }
-
-  public static List<User> getAll(String condition) {
-    return Tools.getAll(User.class, condition);
-  }
-
-  public static User getByUsername(String username) throws NoResultException {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery("select u from User u where u.username = :username", User.class)
-        .setParameter("username", username)
-        .getSingleResult();
   }
 
   private void makeUserUnreadable() {
@@ -302,52 +468,6 @@ public class User implements Serializable, UserRelated, ActuallyCloneable {
     }
   }
 
-  public static void refreshActivity() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    Collection<User> activeUsers =
-        em.createQuery(
-                "SELECT u FROM User u INNER JOIN Transaction t ON (u = t.fromUser and t.transactionType = :t_type) "
-                    + "WHERE active = true GROUP BY u HAVING MAX(t.date) < :deadline",
-                User.class)
-            .setParameter("t_type", TransactionType.PURCHASE)
-            .setParameter(
-                "deadline",
-                Instant.now().minus(Setting.DAYS_BEFORE_INACTIVITY.getIntValue(), ChronoUnit.DAYS))
-            .getResultList();
-    for (User u : activeUsers) {
-      u.setUpdatedBy = false;
-      u.active = false;
-      em.persist(u);
-    }
-    em.flush();
-  }
-
-  public static Collection<User> defaultSearch(String s, int max) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery(
-            "select u from User u where u.unreadable = false and not "
-                + User.GENERIC_USERS_CONDITION
-                + " and ((u.firstName like :search or u.surname like :search or u.username like :search)) order by u.firstName ASC",
-            User.class)
-        .setParameter("search", s + "%")
-        .setMaxResults(max)
-        .getResultList();
-  }
-
-  public static User getById(int parseInt) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.find(User.class, parseInt);
-  }
-
   @rs.groump.Key(PermissionKey.USER_PASSWORD_WRITE)
   public void setPassword(String password) {
     if (!password.equals(this.password)) {
@@ -370,9 +490,12 @@ public class User implements Serializable, UserRelated, ActuallyCloneable {
     if (isKernbeisser()) {
       return surname;
     }
-    return firstSurname
-        ? Tools.accessString(this::getSurname) + ", " + Tools.accessString(this::getFirstName)
-        : Tools.accessString(this::getFirstName) + " " + Tools.accessString(this::getSurname);
+    return getFullName(
+        Tools.accessString(this::getFirstName), Tools.accessString(this::getSurname), firstSurname);
+  }
+
+  public static String getFullName(String firstName, String surname, boolean firstSurname) {
+    return firstSurname ? surname + ", " + firstName : firstName + " " + surname;
   }
 
   public String getJobsAsString() {
@@ -380,7 +503,7 @@ public class User implements Serializable, UserRelated, ActuallyCloneable {
   }
 
   public String toString() {
-    return Tools.optional(this::getUsername).orElse("Benutzer[" + id + "]");
+    return Tools.runIfPossible(this::getUsername).orElse("Benutzer[" + id + "]");
   }
 
   public Collection<User> getAllGroupMembers() {
@@ -388,99 +511,34 @@ public class User implements Serializable, UserRelated, ActuallyCloneable {
   }
 
   public Collection<Transaction> getAllValueChanges() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery(
-            "select t from Transaction t where t.fromUserGroup = :ug or t.toUserGroup = :ug order by date asc",
-            Transaction.class)
-        .setParameter("ug", getUserGroup())
+    return QueryBuilder.selectAll(Transaction.class)
+        .where(
+            or(
+                TransactionField.fromUserGroup.eq(getUserGroup()),
+                TransactionField.toUserGroup.eq(getUserGroup())))
+        .orderBy(TransactionField.date.asc())
         .getResultList();
   }
 
   public Collection<Purchase> getAllPurchases() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery(
-            "select p from Purchase p where p.session.customer.id = :id", Purchase.class)
-        .setParameter("id", id)
+    return QueryBuilder.selectAll(Purchase.class)
+        .where(
+            PurchaseField.session
+                .child(SaleSessionField.customer.child(UserField.userGroup))
+                .eq(userGroup))
         .getResultList();
   }
 
-  public static void checkAdminConsistency() throws InvalidValue {
-
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    try {
-      @Cleanup(value = "commit")
-      EntityTransaction et = em.getTransaction();
-      et.begin();
-      String checkValue =
-          em.createQuery(
-                  "select case when exists"
-                      + "(select t from Transaction t where u IN(fromUser, toUser) or u.userGroup IN (fromUserGroup, toUserGroup)) "
-                      + "then 'invalid Transaction' "
-                      + "when (select value from UserGroup ug where u.userGroup = ug) <> 0 then 'invalid value' "
-                      + "else 'OK' end as result "
-                      + "from User u "
-                      + "where u.username = 'Admin'",
-                  String.class)
-              .getSingleResult();
-      if (!checkValue.equals("OK")) {
-        throw new InvalidValue("Admin user state error: " + checkValue);
-      }
-    } catch (Exception e) {
-      throw UnexpectedExceptionHandler.showUnexpectedErrorWarning(e);
-    }
-  }
-
-  public static User getKernbeisserUser() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    try {
-      @Cleanup(value = "commit")
-      EntityTransaction et = em.getTransaction();
-      et.begin();
-      return em.createQuery("select u from User u where u.username = 'kernbeisser'", User.class)
-          .setMaxResults(1)
-          .getSingleResult();
-    } catch (NoResultException e) {
-      EntityTransaction et = em.getTransaction();
-      et.begin();
-      User kernbeisser = new User();
-      kernbeisser.getPermissions().add(PermissionConstants.APPLICATION.getPermission());
-      kernbeisser.setPassword("CANNOT LOG IN");
-      kernbeisser.setFirstName("Konto");
-      kernbeisser.setSurname("Kernbeisser");
-      kernbeisser.setUsername("kernbeisser");
-      kernbeisser.setNewUserGroup(em);
-      em.persist(kernbeisser);
-      em.flush();
-      et.commit();
-      return getKernbeisserUser();
-    }
-  }
-
   public double valueAt(Instant instant) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    CriteriaBuilder builder = em.getCriteriaBuilder();
-    builder.createQuery(Transaction.class);
-    CriteriaQuery<Transaction> query = builder.createQuery(Transaction.class);
-    Root<Transaction> root = query.from(Transaction.class);
-    query
-        .select(root)
-        .where(
-            builder.and(
-                builder.or(
-                    builder.equal(root.get("toUserGroup").get("id"), getUserGroup().getId()),
-                    builder.equal(root.get("fromUserGroup").get("id"), getUserGroup().getId()))),
-            builder.lessThan(root.get("date"), instant));
+    UserGroup ug = getUserGroup();
+    List<Transaction> result =
+        QueryBuilder.selectAll(Transaction.class)
+            .where(
+                or(TransactionField.toUserGroup.eq(ug), TransactionField.fromUserGroup.eq(ug)),
+                lessOrEq(TransactionField.date, ExpressionFactory.asExpression(instant)))
+            .getResultList();
     double value = 0;
-    for (Transaction transaction : em.createQuery(query).getResultList()) {
+    for (Transaction transaction : result) {
       if (transaction.getFromUserGroup().getId() == getUserGroup().getId()) {
         value -= transaction.getValue();
       } else {
@@ -537,54 +595,6 @@ public class User implements Serializable, UserRelated, ActuallyCloneable {
     em.persist(ignoredDialog);
     em.flush();
     getIgnoredDialogs().add(name);
-  }
-
-  public static Collection<User> getAllUserFullNames(boolean withKbUser, boolean orderSurname) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    List<User> result =
-        em.createQuery(
-                "select u from User u where u.unreadable = false and not "
-                    + GENERIC_USERS_CONDITION
-                    + " order by "
-                    + (orderSurname ? "surname, firstName" : "firstName, surname")
-                    + " asc",
-                User.class)
-            .getResultList();
-    if (withKbUser) result.add(0, User.getKernbeisserUser());
-    return result;
-  }
-
-  public static Collection<User> getGenericUsers() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery("select u from User u where " + GENERIC_USERS_CONDITION, User.class)
-        .getResultList();
-  }
-
-  public static void populateUserComboBox(
-      AdvancedComboBox<User> box,
-      boolean withKbUser,
-      boolean surnameFirst,
-      Predicate<User> filter) {
-    Optional<User> selected = box.getSelected();
-    List<User> boxItems = new ArrayList<>();
-    if (withKbUser) {
-      boxItems.add(User.getKernbeisserUser());
-    }
-    getAllUserFullNames(false, surnameFirst).stream().filter(filter).forEach(boxItems::add);
-    box.setItems(boxItems);
-    if (box.isEnabled()) {
-      if (selected.isPresent() && filter.test(selected.get())) {
-        box.setSelectedItem(selected.get());
-      } else {
-        box.setSelectedItem(null);
-      }
-    }
   }
 
   @Override

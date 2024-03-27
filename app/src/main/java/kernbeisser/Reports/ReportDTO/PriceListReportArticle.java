@@ -5,7 +5,7 @@ import java.text.DecimalFormat;
 import java.time.Instant;
 import java.util.Map;
 import kernbeisser.DBEntities.Article;
-import kernbeisser.DBEntities.Articles;
+import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.Useful.Date;
 import kernbeisser.Windows.Supply.SupplySelector.LineContent;
 import lombok.Data;
@@ -34,7 +34,8 @@ public class PriceListReportArticle {
       Article article, Map<Integer, Instant> lastDeliveries) {
     PriceListReportArticle priceListArticle = new PriceListReportArticle();
     priceListArticle.name = article.getName();
-    priceListArticle.itemRetailPrice = Articles.calculateArticleRetailPrice(article, 0, false);
+    priceListArticle.itemRetailPrice =
+        ArticleRepository.calculateArticleRetailPrice(article, 0, false);
     priceListArticle.kbNumber = article.getKbNumber();
     priceListArticle.suppliersShortName = article.getSupplier().getShortName();
     priceListArticle.suppliersItemNumber = article.getSuppliersItemNumber();
@@ -42,7 +43,7 @@ public class PriceListReportArticle {
     priceListArticle.weighAble = article.isWeighable();
     priceListArticle.containerSize = article.getContainerSize();
     priceListArticle.unitAmount = getPriceInfoAmount(article);
-    priceListArticle.shortBarcode = Articles.getShortBarcode(article);
+    priceListArticle.shortBarcode = ArticleRepository.getShortBarcode(article);
     priceListArticle.lastDeliveryMonth =
         Date.INSTANT_MONTH_YEAR.format(
             lastDeliveries.getOrDefault(article.getKbNumber(), Instant.now()));
@@ -74,7 +75,7 @@ public class PriceListReportArticle {
     if (a.isWeighable()) {
       return "pro " + a.getMetricUnits().getDisplayUnit().getShortName();
     } else {
-      return Articles.getPieceAmount(a);
+      return ArticleRepository.getPieceAmount(a);
     }
   }
 }

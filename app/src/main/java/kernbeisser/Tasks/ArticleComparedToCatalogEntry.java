@@ -2,8 +2,8 @@ package kernbeisser.Tasks;
 
 import java.util.*;
 import kernbeisser.DBEntities.Article;
-import kernbeisser.DBEntities.Articles;
 import kernbeisser.DBEntities.CatalogEntry;
+import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.Enums.ArticleCatalogState;
 import kernbeisser.Useful.Tools;
 import lombok.Getter;
@@ -49,12 +49,12 @@ public class ArticleComparedToCatalogEntry {
 
     Long bc_article = Tools.ifNull(article.getBarcode(), -999L);
     Long bc_catalog = Tools.ifNull(catalogEntry.getEanLadenEinheit(), -999L);
-    if (!Articles.validateBarcode(bc_catalog) || bc_catalog.equals(bc_article)) {
+    if (!ArticleRepository.validateBarcode(bc_catalog) || bc_catalog.equals(bc_article)) {
       analyzeOtherDifferences();
       return;
     }
     fieldDifferences.add("Barcode");
-    Optional<Article> conflictingArticle = Articles.getByBarcode(bc_catalog);
+    Optional<Article> conflictingArticle = ArticleRepository.getByBarcode(bc_catalog);
     if (conflictingArticle.isPresent()) {
       this.conflictingArticle = conflictingArticle.get();
       if (article.getSupplier().equals(this.conflictingArticle.getSupplier())) {
@@ -64,7 +64,7 @@ public class ArticleComparedToCatalogEntry {
       }
       return;
     }
-    if (!Articles.validateBarcode(bc_article)) {
+    if (!ArticleRepository.validateBarcode(bc_article)) {
       analyzeOtherDifferences();
       return;
     }

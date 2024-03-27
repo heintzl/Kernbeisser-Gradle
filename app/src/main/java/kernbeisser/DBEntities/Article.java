@@ -212,7 +212,7 @@ public final class Article implements ActuallyCloneable {
 
   @Override
   public String toString() {
-    return Tools.optional(this::getName).orElse("ArtikelBase[" + super.toString() + "]");
+    return Tools.runIfPossible(this::getName).orElse("ArtikelBase[" + super.toString() + "]");
   }
 
   @Override

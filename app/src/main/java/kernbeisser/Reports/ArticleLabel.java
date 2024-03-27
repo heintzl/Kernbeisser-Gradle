@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import kernbeisser.DBEntities.Article;
-import kernbeisser.DBEntities.Articles;
+import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.Reports.ReportDTO.PriceListReportArticle;
 import kernbeisser.Useful.Date;
 
@@ -32,7 +32,7 @@ public class ArticleLabel extends Report {
 
   @Override
   Collection<?> getDetailCollection() {
-    Map<Integer, Instant> lastDeliveries = Articles.getLastDeliveries();
+    Map<Integer, Instant> lastDeliveries = ArticleRepository.getLastDeliveries();
     return articles.stream()
         .map(a -> PriceListReportArticle.ofArticle(a, lastDeliveries))
         .sorted(

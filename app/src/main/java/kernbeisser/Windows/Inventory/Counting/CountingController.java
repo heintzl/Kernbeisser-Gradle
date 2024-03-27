@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import java.time.chrono.ChronoLocalDate;
 import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.DBEntities.ArticleStock;
-import kernbeisser.DBEntities.Articles;
+import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.DBEntities.Shelf;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Useful.Date;
@@ -91,7 +91,7 @@ public class CountingController extends Controller<CountingView, CountingModel> 
   private final BarcodeCapture capture =
       new BarcodeCapture(
           b ->
-              Articles.getByBarcode(Long.parseLong(b))
+              ArticleRepository.getByBarcode(Long.parseLong(b))
                   .ifPresent(
                       a ->
                           getView()

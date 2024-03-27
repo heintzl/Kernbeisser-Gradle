@@ -1,15 +1,19 @@
 package kernbeisser.VersionIntegrationTools.UpdatingTools;
 
+import static kernbeisser.DBEntities.TypeFields.PreOrderField.catalogEntry;
+import static kernbeisser.DBEntities.TypeFields.PreOrderField.delivery;
+
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import java.util.Collection;
 import java.util.Optional;
 import javax.swing.*;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBConnection.FieldCondition;
+import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.CatalogEntry;
 import kernbeisser.DBEntities.PreOrder;
+import kernbeisser.DBEntities.TypeFields.CatalogEntryField;
 import kernbeisser.VersionIntegrationTools.VersionUpdatingTool;
 import lombok.Cleanup;
 
@@ -21,16 +25,17 @@ public class MigrateOpenPreOrders implements VersionUpdatingTool {
     EntityTransaction et = em.getTransaction();
     et.begin();
     Collection<PreOrder> relevantPreorders =
-        DBConnection.getConditioned(PreOrder.class, FieldCondition.isNull("delivery")).stream()
-            .filter(p -> p.getCatalogEntry() == null)
-            .toList();
+        QueryBuilder.selectAll(PreOrder.class)
+            .where(delivery.isNull(), catalogEntry.isNull())
+            .getResultList(em);
     for (PreOrder preOrder : relevantPreorders) {
       int kkNUmber = preOrder.getArticle().getSuppliersItemNumber();
       Optional<CatalogEntry> entry =
-          DBConnection.getConditioned(
-                  CatalogEntry.class, new FieldCondition("artikelNr", Integer.toString(kkNUmber)))
-              .stream()
-              .filter(e -> !e.getAktionspreis())
+          QueryBuilder.selectAll(CatalogEntry.class)
+              .where(
+                  CatalogEntryField.artikelNr.eq(Integer.toString(kkNUmber)),
+                  CatalogEntryField.aktionspreis.eq(false))
+              .getResultStream(em)
               .findFirst();
       PreOrder existingPreOrder = em.find(PreOrder.class, preOrder.getId());
       if (entry.isPresent()) {

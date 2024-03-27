@@ -1,7 +1,7 @@
 package kernbeisser.Reports;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityTransaction;
+import static kernbeisser.DBConnection.PredicateFactory.or;
+
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
@@ -9,12 +9,12 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
-import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Transaction;
+import kernbeisser.DBEntities.TypeFields.TransactionField;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Enums.StatementType;
-import lombok.Cleanup;
 
 public class TransactionStatement extends Report {
   private final UserGroup userGroup;
@@ -65,15 +65,12 @@ public class TransactionStatement extends Report {
       default:
         break;
     }
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
     userTransactions =
-        em.createQuery(
-                "select t from Transaction t where :ug IN (fromUserGroup.id, toUserGroup.id)",
-                Transaction.class)
-            .setParameter("ug", userGroup.getId())
+        QueryBuilder.selectAll(Transaction.class)
+            .where(
+                or(
+                    TransactionField.fromUserGroup.eq(userGroup),
+                    TransactionField.toUserGroup.eq(userGroup)))
             .getResultList();
   }
 
