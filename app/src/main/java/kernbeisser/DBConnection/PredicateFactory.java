@@ -3,6 +3,8 @@ package kernbeisser.DBConnection;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.metamodel.Attribute;
+
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -50,7 +52,12 @@ public interface PredicateFactory<P> extends ExpressionFactory<P, Boolean> {
   }
 
   static <P> PredicateFactory<P> like(
-      ExpressionFactory<P, String> expressionFactory, String pattern) {
+          ExpressionFactory<P, String> expressionFactory, String pattern) {
+    return ((source, cb) -> cb.like(expressionFactory.createExpression(source, cb), pattern));
+  }
+
+  static <P> PredicateFactory<P> like(
+          Attribute<P, String> expressionFactory, String pattern) {
     return ((source, cb) -> cb.like(expressionFactory.createExpression(source, cb), pattern));
   }
 

@@ -2,12 +2,15 @@ package kernbeisser.DBConnection;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Expression;
+import jakarta.persistence.criteria.From;
 import jakarta.persistence.criteria.Selection;
+import jakarta.persistence.metamodel.Attribute;
+
 import java.util.Arrays;
 import java.util.Collection;
 
 public interface ExpressionFactory<P, V> extends SelectionFactory<P> {
-  Expression<V> createExpression(Source<P> source, CriteriaBuilder cb);
+  Expression<V> createExpression(From<P, V> source, CriteriaBuilder cb);
 
   default PredicateFactory<P> isNull() {
     return PredicateFactory.isNull(this);
@@ -30,7 +33,7 @@ public interface ExpressionFactory<P, V> extends SelectionFactory<P> {
   }
 
   default <N> ExpressionFactory<P, N> as(Class<N> newClass) {
-    return ((source, cb) -> this.createExpression(source, cb).as(newClass));
+    return ((source, cb) -> this.createExpression((From<P, V>) source, cb).as(newClass));
   }
 
   default OrderFactory<P> asc() {
@@ -42,7 +45,7 @@ public interface ExpressionFactory<P, V> extends SelectionFactory<P> {
   }
 
   @Override
-  default Selection<?> createSelection(Source<P> source, CriteriaBuilder cb) {
+  default Selection<?> createSelection(From<P, V> source, CriteriaBuilder cb) {
     return createExpression(source, cb);
   }
 
@@ -103,5 +106,9 @@ public interface ExpressionFactory<P, V> extends SelectionFactory<P> {
 
   static <P, V> ExpressionFactory<P, V> asExpression(V v) {
     return ((source, cb) -> cb.literal(v));
+  }
+
+  static <P,V> ExpressionFactory<P,V> ofAttribute(Attribute<P,V> attribute) {
+    return ((source, cb) -> )
   }
 }
