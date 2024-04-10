@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 public interface ExpressionFactory<P, V> extends SelectionFactory<P> {
-  Expression<V> createExpression(From<P, V> source, CriteriaBuilder cb);
+  Expression<V> createExpression(From<P, ?> from, CriteriaBuilder cb);
 
   default PredicateFactory<P> isNull() {
     return PredicateFactory.isNull(this);
@@ -33,7 +33,7 @@ public interface ExpressionFactory<P, V> extends SelectionFactory<P> {
   }
 
   default <N> ExpressionFactory<P, N> as(Class<N> newClass) {
-    return ((source, cb) -> this.createExpression((From<P, V>) source, cb).as(newClass));
+    return ((source, cb) -> this.createExpression((From<P, ?>) source, cb).as(newClass));
   }
 
   default OrderFactory<P> asc() {
@@ -45,7 +45,7 @@ public interface ExpressionFactory<P, V> extends SelectionFactory<P> {
   }
 
   @Override
-  default Selection<?> createSelection(From<P, V> source, CriteriaBuilder cb) {
+  default Selection<?> createSelection(From<P, ?> source, CriteriaBuilder cb) {
     return createExpression(source, cb);
   }
 
@@ -109,6 +109,12 @@ public interface ExpressionFactory<P, V> extends SelectionFactory<P> {
   }
 
   static <P,V> ExpressionFactory<P,V> ofAttribute(Attribute<P,V> attribute) {
-    return ((source, cb) -> )
+    return ((source, cb) -> source.get(attribute.getName()));
+  }
+
+  public static  <P,V,CV> ExpressionFactory<P, CV> child(Attribute<P,V>  parent, Attribute<V,CV> child) {
+    return (source, cb) -> ExpressionFactory.ofAttribute(child).createExpression(
+            source.join(child.getName()), cb
+    );
   }
 }

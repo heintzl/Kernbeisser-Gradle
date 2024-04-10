@@ -1,5 +1,6 @@
 package kernbeisser.DBEntities;
 
+import static kernbeisser.DBConnection.ExpressionFactory.child;
 import static kernbeisser.DBConnection.PredicateFactory.like;
 import static kernbeisser.DBConnection.PredicateFactory.or;
 
@@ -61,8 +62,8 @@ public class SurchargeGroup implements Serializable, ActuallyCloneable {
     return QueryBuilder.selectAll(SurchargeGroup.class)
         .where(
             or(
-                like(SurchargeGroupField.name, searchPattern),
-                like(SurchargeGroupField.supplier.child(SupplierField.name), searchPattern),
+                like(SurchargeGroup_.name, searchPattern),
+                like(child()SurchargeGroupField.supplier.child(SupplierField.name), searchPattern),
                 like(SurchargeGroupField.supplier.child(SupplierField.shortName), searchPattern)))
         .limit(max)
         .getResultList();

@@ -2,6 +2,7 @@ package kernbeisser.DBConnection;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Expression;
+import jakarta.persistence.criteria.From;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.metamodel.Attribute;
 
@@ -9,7 +10,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 public interface PredicateFactory<P> extends ExpressionFactory<P, Boolean> {
-  Predicate createPredicate(Source<P> source, CriteriaBuilder cb);
+  Predicate createPredicate(From<P,?> source, CriteriaBuilder cb);
 
   default PredicateFactory<P> not() {
     return ((source, cb) -> createPredicate(source, cb).not());
@@ -57,7 +58,8 @@ public interface PredicateFactory<P> extends ExpressionFactory<P, Boolean> {
   }
 
   static <P> PredicateFactory<P> like(
-          Attribute<P, String> expressionFactory, String pattern) {
+          Attribute<P, String> attribute, String pattern) {
+    var expressionFactory = kernbeisser.DBConnection.ExpressionFactory.ofAttribute(attribute);
     return ((source, cb) -> cb.like(expressionFactory.createExpression(source, cb), pattern));
   }
 
@@ -110,7 +112,7 @@ public interface PredicateFactory<P> extends ExpressionFactory<P, Boolean> {
   }
 
   @Override
-  default Expression<Boolean> createExpression(Source<P> source, CriteriaBuilder cb) {
-    return createPredicate(source, cb);
+  default Expression<Boolean> createExpression(From<P,?> from, CriteriaBuilder cb) {
+    return createPredicate(from, cb);
   }
 }

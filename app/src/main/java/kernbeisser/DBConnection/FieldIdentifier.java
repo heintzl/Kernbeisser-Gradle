@@ -2,6 +2,8 @@ package kernbeisser.DBConnection;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Expression;
+import jakarta.persistence.criteria.From;
+import jakarta.persistence.metamodel.Attribute;
 import lombok.Getter;
 
 @Getter
@@ -18,17 +20,8 @@ public class FieldIdentifier<P, V> implements ExpressionFactory<P, V> {
     this.propertyClass = propertyClass;
   }
 
-  public <N> FieldIdentifier<P, N> child(FieldIdentifier<V, N> childField) {
-    return new FieldIdentifier<P, N>(tableClass, childField.propertyClass, name) {
-      @Override
-      public Expression<N> createExpression(Source<P> source, CriteriaBuilder cb) {
-        return childField.createExpression(source.join(FieldIdentifier.this), cb);
-      }
-    };
-  }
-
   @Override
-  public Expression<V> createExpression(Source<P> source, CriteriaBuilder cb) {
-    return source.get(this);
+  public Expression<V> createExpression(From<P,?> from, CriteriaBuilder cb) {
+    return from.get(this);
   }
 }

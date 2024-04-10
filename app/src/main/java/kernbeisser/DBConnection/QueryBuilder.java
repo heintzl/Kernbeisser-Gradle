@@ -161,16 +161,15 @@ public class QueryBuilder<P, R> {
     CriteriaBuilder cb = em.getCriteriaBuilder();
     CriteriaQuery<R> cr = cb.createQuery(resultClass);
     Root<P> root = cr.from(tableClass);
-    Source<P> source = Source.rootSource(root);
     var selection =
-        this.selections.stream().map(e -> e.createSelection(source, cb)).toArray(Selection[]::new);
+        this.selections.stream().map(e -> e.createSelection(root, cb)).toArray(Selection[]::new);
     var whereConditions =
-        conditions.stream().map(e -> e.createPredicate(source, cb)).toArray(Predicate[]::new);
+        conditions.stream().map(e -> e.createPredicate(root, cb)).toArray(Predicate[]::new);
     var groupByExpressions =
-        groupBy.stream().map(e -> e.createExpression(source, cb)).toArray(Expression[]::new);
+        groupBy.stream().map(e -> e.createExpression(root, cb)).toArray(Expression[]::new);
     var orderBy =
         orders.stream()
-            .map(fieldIdentifier -> fieldIdentifier.createOrder(source, cb))
+            .map(fieldIdentifier -> fieldIdentifier.createOrder(root, cb))
             .toArray(Order[]::new);
     if (resultClass.equals(Tuple.class)) {
       cr.multiselect(selection);

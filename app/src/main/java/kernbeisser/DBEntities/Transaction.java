@@ -301,7 +301,7 @@ public class Transaction implements UserRelated {
     List<Transaction> transactions =
         QueryBuilder.selectAll(Transaction.class)
             .where(TransactionField.accountingReportNo.eq(reportNo))
-            .orderBy(TransactionField.id.asc())
+            .orderBy(TransactionField.date.asc())
             .getResultList();
     if (transactions.isEmpty()) {
       throw new NoTransactionsFoundException();
@@ -316,7 +316,7 @@ public class Transaction implements UserRelated {
             .where(
                 TransactionField.accountingReportNo.isNull(),
                 or(TransactionField.fromUser.eq(kbUser), TransactionField.toUser.eq(kbUser)))
-            .orderBy(TransactionField.id.asc())
+            .orderBy(TransactionField.date.asc())
             .getResultList();
     if (transactions.isEmpty()) {
       throw new NoTransactionsFoundException();
