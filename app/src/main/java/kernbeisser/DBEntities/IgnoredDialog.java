@@ -2,8 +2,8 @@ package kernbeisser.DBEntities;
 
 import jakarta.persistence.*;
 import java.util.Collection;
-import kernbeisser.DBConnection.DBConnection;
-import lombok.Cleanup;
+import kernbeisser.DBConnection.QueryBuilder;
+import kernbeisser.DBEntities.TypeFields.IgnoredDialogField;
 import lombok.Getter;
 
 @Entity
@@ -23,12 +23,8 @@ public class IgnoredDialog {
   @Column @Getter private String origin;
 
   public static Collection<IgnoredDialog> getAllFor(User user) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery("select i from IgnoredDialog i where i.user = :u", IgnoredDialog.class)
-        .setParameter("u", user)
+    return QueryBuilder.selectAll(IgnoredDialog.class)
+        .where(IgnoredDialogField.user.eq(user))
         .getResultList();
   }
 }

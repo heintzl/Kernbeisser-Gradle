@@ -9,11 +9,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBConnection.FieldCondition;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.ArticleStock;
-import kernbeisser.DBEntities.Articles;
+import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.DBEntities.Shelf;
+import kernbeisser.DBEntities.TypeFields.ArticleStockField;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Useful.Tools;
@@ -33,7 +33,7 @@ public class InventoryArticleStock {
   public InventoryArticleStock(ArticleStock stock) {
     this.shelf = stock.getShelf();
     this.article = stock.getArticle();
-    this.amount = Articles.getPieceAmount(article);
+    this.amount = ArticleRepository.getPieceAmount(article);
     MetricUnits unit = article.getMetricUnits();
     if (article.isWeighable()) {
       switch (unit) {
@@ -61,7 +61,8 @@ public class InventoryArticleStock {
         stocks.stream().map(s -> s.getArticle().getId()).collect(Collectors.toList());
     Date date = Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
     Map<Integer, Article> indexedArticlesAtDate =
-        Maps.uniqueIndex(Articles.getArticlesStateAtDate(date, stockArticleIds), Article::getId);
+        Maps.uniqueIndex(
+            ArticleRepository.getArticlesStateAtDate(date, stockArticleIds), Article::getId);
     return stocks.stream()
         .map(
             s ->
@@ -87,7 +88,7 @@ public class InventoryArticleStock {
     LocalDate currentInventoryDate = Setting.INVENTORY_SCHEDULED_DATE.getDateValue();
     List<InventoryArticleStock> stocksWithoutSums =
         DBConnection.getConditioned(
-                ArticleStock.class, new FieldCondition("inventoryDate", currentInventoryDate))
+                ArticleStock.class, ArticleStockField.inventoryDate.eq(currentInventoryDate))
             .stream()
             .filter(s -> s.getCounted() != 0.0)
             .map(InventoryArticleStock::new)

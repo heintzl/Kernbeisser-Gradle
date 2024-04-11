@@ -12,8 +12,9 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBConnection.FieldCondition;
 import kernbeisser.DBEntities.*;
+import kernbeisser.DBEntities.Repositories.ArticleRepository;
+import kernbeisser.DBEntities.TypeFields.CatalogEntryField;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.VAT;
@@ -74,7 +75,7 @@ public class LineContent {
       String currentLine = lines.get(i);
       if (isComment(currentLine)) {
         if (contents.isEmpty()) continue;
-        LineContent before = contents.get(contents.size() - 1);
+        LineContent before = contents.getLast();
         before.setMessage(extractMessage(currentLine));
         continue;
       }
@@ -110,8 +111,8 @@ public class LineContent {
           fileName + ": Fehlerhafte Zeilen wurden übersprungen:",
           JOptionPane.WARNING_MESSAGE);
     }
-    FieldCondition articleCondition = new FieldCondition("artikelNr", kkNumbers);
-    FieldCondition actionCondition = new FieldCondition("aktionspreis", 1).not();
+    var articleCondition = CatalogEntryField.artikelNr.in(kkNumbers);
+    var actionCondition = CatalogEntryField.aktionspreis.eq(1).not();
     Map<String, CatalogEntry> catalogEntries =
         DBConnection.getConditioned(CatalogEntry.class, articleCondition, actionCondition).stream()
             .collect(Collectors.toMap(CatalogEntry::getArtikelNr, e -> e));
@@ -136,7 +137,7 @@ public class LineContent {
           Article articleToCompare = content.article;
           if (articleToCompare == null) {
             articleToCompare = new Article();
-            articleToCompare.setSupplier(Articles.KK_SUPPLIER);
+            articleToCompare.setSupplier(ArticleRepository.KK_SUPPLIER);
           }
           content.comparedToCatalog =
               new ArticleComparedToCatalogEntry(articleToCompare, matchingEntry);
@@ -247,7 +248,7 @@ public class LineContent {
     content.origin = line.substring(77, 80).replace(" ", "");
     content.discount = Integer.parseInt(line.substring(133, 136)) / 10000.;
     content.priceKk = Integer.parseInt(line.substring(93, 100).replace(" ", "")) / 1000.;
-    Optional<Article> matchedArticle = Articles.getByKkItemNumber(content.kkNumber);
+    Optional<Article> matchedArticle = ArticleRepository.getByKkItemNumber(content.kkNumber);
     Article pattern;
     if (matchedArticle.isPresent()) {
       content.article = matchedArticle.get();
@@ -255,11 +256,11 @@ public class LineContent {
       content.weighableKb = content.article.isWeighable();
       content.priceKb = content.calculatePriceKb();
     } else {
-      pattern = Articles.nextArticleTo(em, content.kkNumber, Supplier.getKKSupplier());
+      pattern = ArticleRepository.nextArticleTo(em, content.kkNumber, Supplier.getKKSupplier());
       content.weighableKb = false;
       content.priceKb = content.priceKk;
     }
-    content.estimatedPriceList = Articles.getValidPriceList(em, pattern);
+    content.estimatedPriceList = ArticleRepository.getValidPriceList(em, pattern);
     content.estimatedSurchargeGroup = pattern.getSurchargeGroup();
     return content;
   }
@@ -306,7 +307,7 @@ public class LineContent {
       return ResolveStatus.PRODUCE;
     }
     resolveStatus =
-        Articles.getBySuppliersItemNumber(Supplier.getKKSupplier(), kkNumber, em)
+        ArticleRepository.getBySuppliersItemNumber(Supplier.getKKSupplier(), kkNumber, em)
             .map(e -> ResolveStatus.OK)
             .orElse(ResolveStatus.ADDED);
     return resolveStatus;
@@ -329,7 +330,7 @@ public class LineContent {
       throw new InvalidInputException("expected PRODUCE, got " + getStatus().name());
     }
     double retailPrice =
-        Articles.calculateRetailPrice(
+        ArticleRepository.calculateRetailPrice(
             priceKk, VAT.LOW, Supplier.getProduceSupplier().getDefaultSurcharge(), 0, false);
     return Math.round(retailPrice * 10) * 0.1;
   }

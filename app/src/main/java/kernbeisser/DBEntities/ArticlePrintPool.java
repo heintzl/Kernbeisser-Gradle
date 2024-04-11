@@ -2,9 +2,11 @@ package kernbeisser.DBEntities;
 
 import jakarta.persistence.*;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.QueryBuilder;
+import kernbeisser.DBEntities.TypeFields.ArticlePrintPoolField;
 import kernbeisser.Security.StaticPermissionChecks;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
@@ -43,17 +45,11 @@ public class ArticlePrintPool {
 
   public static int get(Article article) {
     StaticPermissionChecks.getStaticInstance().checkShouldReadArticlePrintPoolAgain();
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    try {
-      return em.createQuery("select number from ArticlePrintPool where article = :a", Integer.class)
-          .setParameter("a", article)
-          .getSingleResult();
-    } catch (NoResultException e) {
-      return 0;
-    }
+    return QueryBuilder.selectAll(ArticlePrintPool.class)
+        .where(ArticlePrintPoolField.article.eq(article))
+        .getSingleResultOptional()
+        .map(ArticlePrintPool::getNumber)
+        .orElse(0);
   }
 
   private static void deleteAll(EntityManager em) {
@@ -70,29 +66,16 @@ public class ArticlePrintPool {
   }
 
   private static Long getArticlePrintPoolId(Article article) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    try {
-      return em.createQuery("select id from ArticlePrintPool ap where article = :a", Long.class)
-          .setParameter("a", article)
-          .getSingleResult();
-    } catch (NoResultException e) {
-      return null;
-    }
+    return QueryBuilder.selectAll(ArticlePrintPool.class)
+        .where(ArticlePrintPoolField.article.eq(article))
+        .getSingleResultOptional()
+        .map(ArticlePrintPool::getId)
+        .orElse(null);
   }
 
   public static Map<Article, Integer> getPrintPoolAsMap() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    Map<Article, Integer> result = new HashMap<>();
-    em.createQuery("select ap from ArticlePrintPool ap", ArticlePrintPool.class)
-        .getResultStream()
-        .forEach(e -> result.put(e.article, e.number));
-    return result;
+    return QueryBuilder.selectAll(ArticlePrintPool.class).getResultList().stream()
+        .collect(Collectors.toMap(e -> e.article, e -> e.number));
   }
 
   public static void setPrintPoolFromMap(Map<Article, Integer> newPrintPool) {

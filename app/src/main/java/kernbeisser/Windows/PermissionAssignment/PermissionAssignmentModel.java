@@ -1,12 +1,18 @@
 package kernbeisser.Windows.PermissionAssignment;
 
+import static kernbeisser.DBConnection.ExpressionFactory.asExpression;
+import static kernbeisser.DBConnection.ExpressionFactory.concat;
+import static kernbeisser.DBConnection.PredicateFactory.isMember;
+
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import java.util.*;
 import java.util.stream.Collectors;
 import kernbeisser.CustomComponents.ClipboardFilter;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Permission;
+import kernbeisser.DBEntities.TypeFields.UserField;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
@@ -24,11 +30,7 @@ public class PermissionAssignmentModel implements IModel<PermissionAssignmentCon
   private boolean showFilterExplanation = true;
 
   public List<Permission> getPermissions() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery("select p from Permission p", Permission.class).getResultList();
+    return QueryBuilder.selectAll(Permission.class).getResultList();
   }
 
   public Optional<Permission> getRecent() {
@@ -36,24 +38,26 @@ public class PermissionAssignmentModel implements IModel<PermissionAssignmentCon
   }
 
   public Collection<User> allUsers() {
-    List<User> c = User.getAll(null);
+    List<User> c = Tools.getAll(User.class);
     c.removeAll(User.getGenericUsers());
     c.sort(Comparator.comparing(User::getFullName));
     return c;
   }
 
+  public Collection<User> assignedUsers(EntityManager em, Permission permission) {
+    return QueryBuilder.selectAll(User.class)
+        .where(
+            User.GENERIC_USERS_PREDICATE.not(),
+            isMember(asExpression(permission), UserField.permissions))
+        .getResultList(em);
+  }
+
   public Collection<User> assignedUsers(Permission permission) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
+    @Cleanup("commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    return em.createQuery(
-            "select u from User u where :pid in elements(u.permissions) and not "
-                + User.GENERIC_USERS_CONDITION
-                + " order by u.firstName, u.surname",
-            User.class)
-        .setParameter("pid", permission)
-        .getResultList();
+    return assignedUsers(em, permission);
   }
 
   @Key(PermissionKey.ACTION_GRANT_CASHIER_PERMISSION)
@@ -68,18 +72,11 @@ public class PermissionAssignmentModel implements IModel<PermissionAssignmentCon
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    Collection<User> hadBefore =
-        em.createQuery(
-                "select u from User u where :pid in elements(u.permissions) and not "
-                    + User.GENERIC_USERS_CONDITION,
-                User.class)
-            .setParameter("pid", permission)
-            .getResultList();
+    Collection<User> hadBefore = assignedUsers(em, permission);
     ArrayList<User> notToRemove = new ArrayList<>(loaded);
     loaded.removeAll(hadBefore);
     hadBefore.removeAll(notToRemove);
-    Collection<User> willGet =
-        loaded.stream().map(e -> em.find(User.class, e.getId())).collect(Collectors.toList());
+    Collection<User> willGet = loaded.stream().map(e -> em.find(User.class, e.getId())).toList();
     boolean skipUserAccessChecking =
         ignoreUserPermission && Tools.canInvoke(this::checkGrantCashierPermission);
     Access.runWithAccessManager(
@@ -98,17 +95,10 @@ public class PermissionAssignmentModel implements IModel<PermissionAssignmentCon
   private Collection<User> getUserRowFilter(String[] rows) {
     List<String> userNames =
         Arrays.stream(rows).map(r -> r.replace("\t", "&")).collect(Collectors.toList());
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    List<User> result =
-        em.createQuery(
-                "Select u from User u where concat(u.surname, '&', u.firstName) in (:ul)",
-                User.class)
-            .setParameter("ul", userNames)
-            .getResultList();
-    return result;
+    return QueryBuilder.selectAll(User.class)
+        .where(
+            concat(concat(UserField.surname, asExpression("&")), UserField.firstName).in(userNames))
+        .getResultList();
   }
 
   public ClipboardFilter<User> getClpBoardRowFilter() {

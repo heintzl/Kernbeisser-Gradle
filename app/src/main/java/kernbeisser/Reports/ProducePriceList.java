@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import kernbeisser.DBEntities.Articles;
+import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
 import kernbeisser.Reports.ReportDTO.PriceListReportArticle;
 import kernbeisser.Windows.Supply.SupplySelector.LineContent;
@@ -19,7 +19,7 @@ public class ProducePriceList extends Report {
   public ProducePriceList(Collection<LineContent> contents, String priceListName) {
     super(ReportFileNames.PRODUCE_PRICELIST);
     // setDuplexPrint(false);
-    Map<Integer, Instant> lastDeliveries = Articles.getLastDeliveries();
+    Map<Integer, Instant> lastDeliveries = ArticleRepository.getLastDeliveries();
     this.priceListReportContents = new ArrayList<>();
     for (LineContent c : contents) {
       if (c.getStatus() == ResolveStatus.PRODUCE) {

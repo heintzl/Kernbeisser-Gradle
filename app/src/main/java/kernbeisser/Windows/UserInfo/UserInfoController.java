@@ -1,7 +1,5 @@
 package kernbeisser.Windows.UserInfo;
 
-import static kernbeisser.Useful.Tools.optional;
-
 import java.util.Arrays;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
@@ -36,14 +34,15 @@ public class UserInfoController extends Controller<UserInfoView, UserInfoModel> 
     UserInfoView view = getView();
     switch (view.getSelectedTabIndex()) {
       case 0:
-        optional(model.getUser()::getJobsAsAvailable).ifPresent(view::setJobs);
-        optional(model.getUser()::getPermissionsAsAvailable).ifPresent(view::setPermissions);
-        optional(model.getUser()::getUserGroup)
-            .flatMap(e -> optional(e::getMembers))
+        Tools.runIfPossible(model.getUser()::getJobsAsAvailable).ifPresent(view::setJobs);
+        Tools.runIfPossible(model.getUser()::getPermissionsAsAvailable)
+            .ifPresent(view::setPermissions);
+        Tools.runIfPossible(model.getUser()::getUserGroup)
+            .flatMap(e -> Tools.runIfPossible(e::getMembers))
             .ifPresent(view::setUserGroupMembers);
         return;
       case 1:
-        optional(model::getUserPurchases).ifPresent(view::setShoppingHistory);
+        Tools.runIfPossible(model::getUserPurchases).ifPresent(view::setShoppingHistory);
         return;
       case 2:
         view.setValueHistory(model.getUserTransactions());

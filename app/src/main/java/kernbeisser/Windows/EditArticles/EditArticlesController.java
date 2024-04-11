@@ -23,6 +23,7 @@ import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.ObjectTree.ObjectTree;
 import kernbeisser.CustomComponents.SearchBox.Filters.ArticleFilter;
 import kernbeisser.DBEntities.*;
+import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Forms.FormImplemetations.Article.ArticleController;
 import kernbeisser.Forms.ObjectView.ObjectViewController;
@@ -63,7 +64,7 @@ public class EditArticlesController extends Controller<EditArticlesView, EditArt
   @Key(PermissionKey.ACTION_OPEN_EDIT_ARTICLES)
   public EditArticlesController() {
     super(new EditArticlesModel());
-    Map<Integer, Instant> lastDeliveries = Articles.getLastDeliveries();
+    Map<Integer, Instant> lastDeliveries = ArticleRepository.getLastDeliveries();
     objectViewController =
         new ObjectViewController<>(
             "Artikel bearbeiten",
@@ -96,7 +97,9 @@ public class EditArticlesController extends Controller<EditArticlesView, EditArt
                 .withSorter(Column.NUMBER_SORTER),
             new CustomizableColumn<Article>(
                     "Verkaufspreis",
-                    e -> String.format("%.2f€", Articles.calculateArticleRetailPrice(e, 0, false)))
+                    e ->
+                        String.format(
+                            "%.2f€", ArticleRepository.calculateArticleRetailPrice(e, 0, false)))
                 .withHorizontalAlignment(RIGHT)
                 .withSorter(Column.NUMBER_SORTER),
             Columns.create("Einzelpfand", e -> String.format("%.2f€", e.getSingleDeposit()), RIGHT),
@@ -124,7 +127,8 @@ public class EditArticlesController extends Controller<EditArticlesView, EditArt
         new BarcodeCapture(
             e ->
                 objectViewController.openForm(
-                    Articles.getByBarcode(Long.parseLong(e)).orElseThrow(NoResultException::new),
+                    ArticleRepository.getByBarcode(Long.parseLong(e))
+                        .orElseThrow(NoResultException::new),
                     Mode.EDIT));
     objectViewController.addComponents(articleFilter.createFilterUIComponents());
     objectViewController.setForceExtraButtonState(false);
@@ -172,7 +176,7 @@ public class EditArticlesController extends Controller<EditArticlesView, EditArt
     ObjectTree<PriceList> priceListObjectTree = new ObjectTree<>(PriceList.getPriceListsAsNode());
     priceListObjectTree.addSelectionListener(
         e -> {
-          objectViewController.setSearch(e.toString());
+          objectViewController.setSearch("PL:" + e.getValue().getName());
           objectViewController.search();
           IView.traceViewContainer(priceListObjectTree.getParent()).requestClose();
         });

@@ -1,11 +1,16 @@
 package kernbeisser.DBEntities;
 
+import static kernbeisser.DBConnection.PredicateFactory.like;
+import static kernbeisser.DBConnection.PredicateFactory.or;
+
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Collection;
-import java.util.List;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.QueryBuilder;
+import kernbeisser.DBEntities.TypeFields.SupplierField;
+import kernbeisser.DBEntities.TypeFields.SurchargeGroupField;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
 import kernbeisser.Useful.ActuallyCloneable;
@@ -98,11 +103,11 @@ public class Supplier implements Serializable, ActuallyCloneable {
 
   public SurchargeGroup getOrPersistDefaultSurchargeGroup(EntityManager em) {
     try {
-      return em.createQuery(
-              "select sg from SurchargeGroup sg where sg.parent = NULL and sg.supplier = :s and name = :n",
-              SurchargeGroup.class)
-          .setParameter("s", this)
-          .setParameter("n", SurchargeGroup.defaultListNameQualifier(this))
+      return QueryBuilder.selectAll(SurchargeGroup.class)
+          .where(
+              SurchargeGroupField.parent.isNull(),
+              SurchargeGroupField.supplier.eq(this),
+              SurchargeGroupField.name.eq(SurchargeGroup.defaultListNameQualifier(this)))
           .getSingleResult();
     } catch (NoResultException e) {
       SurchargeGroup defaultGroup = new SurchargeGroup();
@@ -119,12 +124,8 @@ public class Supplier implements Serializable, ActuallyCloneable {
   }
 
   public static Supplier getSupplierByShortName(String shortName) throws NoResultException {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery("select s from Supplier s where s.shortName like :sn", Supplier.class)
-        .setParameter("sn", shortName)
+    return QueryBuilder.selectAll(Supplier.class)
+        .where(SupplierField.shortName.eq(shortName))
         .getSingleResult();
   }
 
@@ -175,26 +176,23 @@ public class Supplier implements Serializable, ActuallyCloneable {
     return getOrCreateSupplierByShortName("CP", "Kennung Benutzerdefiniert", 0);
   }
 
-  public static List<Supplier> getAll(String condition) {
-    return Tools.getAll(Supplier.class, condition);
-  }
-
   @Override
   public String toString() {
-    return Tools.optional(() -> getName() + "[" + getShortName() + "]")
+    return Tools.runIfPossible(() -> getName() + "[" + getShortName() + "]")
         .orElse("Lieferant[" + id + "]");
   }
 
   public static Collection<Supplier> defaultSearch(String s, int max) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery(
-            "select s from Supplier s where s.name like :n or keeper like :n or s.phoneNumber like :n or s.fax like :n or email like :n",
-            Supplier.class)
-        .setParameter("n", "%" + s + "%")
-        .setMaxResults(max)
+    String containsPattern = "%" + s + "%";
+    return QueryBuilder.selectAll(Supplier.class)
+        .where(
+            or(
+                like(SupplierField.name, containsPattern),
+                like(SupplierField.keeper, containsPattern),
+                like(SupplierField.phoneNumber, containsPattern),
+                like(SupplierField.email, containsPattern),
+                like(SupplierField.fax, containsPattern)))
+        .limit(max)
         .getResultList();
   }
 

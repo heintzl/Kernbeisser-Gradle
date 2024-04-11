@@ -1,16 +1,18 @@
 package kernbeisser.DBEntities;
 
 import jakarta.persistence.*;
-import java.util.HashMap;
-import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Converters.SettingValueConverter;
+import kernbeisser.DBEntities.TypeFields.SettingValueField;
 import kernbeisser.Enums.Setting;
-import kernbeisser.Useful.Tools;
 import lombok.Cleanup;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import rs.groump.Access;
 import rs.groump.Key;
 import rs.groump.PermissionKey;
 
@@ -20,12 +22,13 @@ import rs.groump.PermissionKey;
 public class SettingValue {
 
   @Getter(lazy = true)
-  private static final HashMap<Setting, String> settingValueHashMap = load();
+  private static final Map<Setting, String> settingValueHashMap = load();
 
-  private static HashMap<Setting, String> load() {
-    HashMap<Setting, String> out = new HashMap<>();
-    getAll(null).forEach(e -> out.put(e.setting, e.value));
-    return out;
+  private static Map<Setting, String> load() {
+    return Access.runUnchecked(
+        () ->
+            QueryBuilder.selectAll(SettingValue.class).getResultList().stream()
+                .collect(Collectors.toMap(SettingValue::getSetting, SettingValue::getValue)));
   }
 
   @Id
@@ -62,10 +65,9 @@ public class SettingValue {
     et.begin();
     try {
       SettingValue settingValue =
-          em.createQuery(
-                  "select s from SettingValue s where s.setting = :setting", SettingValue.class)
-              .setParameter("setting", setting)
-              .getSingleResult();
+          QueryBuilder.selectAll(SettingValue.class)
+              .where(SettingValueField.setting.eq(setting))
+              .getSingleResult(em);
       settingValue.value = value;
       em.persist(settingValue);
     } catch (NoResultException noResultException) {
@@ -75,10 +77,6 @@ public class SettingValue {
       em.persist(settingValue);
     }
     getSettingValueHashMap().replace(setting, value);
-  }
-
-  public static List<SettingValue> getAll(String condition) {
-    return Tools.getAll(SettingValue.class, condition);
   }
 
   @Override

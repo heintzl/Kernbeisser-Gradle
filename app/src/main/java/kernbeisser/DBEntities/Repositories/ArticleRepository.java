@@ -1,7 +1,9 @@
-package kernbeisser.DBEntities;
+package kernbeisser.DBEntities.Repositories;
+
+import static kernbeisser.DBConnection.ExpressionFactory.*;
+import static kernbeisser.DBConnection.PredicateFactory.*;
 
 import jakarta.persistence.*;
-import java.text.DecimalFormat;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -9,8 +11,9 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBConnection.FieldCondition;
+import kernbeisser.DBConnection.*;
+import kernbeisser.DBEntities.*;
+import kernbeisser.DBEntities.TypeFields.*;
 import kernbeisser.EntityWrapper.ObjectState;
 import kernbeisser.Enums.*;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
@@ -27,10 +30,10 @@ import rs.groump.Access;
 import rs.groump.AccessManager;
 
 @Log4j2
-public class Articles {
+public class ArticleRepository {
   public static final Supplier KK_SUPPLIER = Supplier.getKKSupplier();
 
-  private Articles() {}
+  private ArticleRepository() {}
 
   public static Collection<Article> defaultSearch(String search, int maxResults) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
@@ -60,14 +63,12 @@ public class Articles {
 
   public static Optional<ObjectState<Article>> getByKbNumber(
       EntityManager em, int kbNumber, boolean filterShopRange) {
-    return Optional.ofNullable(
-        em.createQuery("select i from Article i where kbNumber = :n", Article.class)
-            .setParameter("n", kbNumber)
-            .getResultStream()
-            .filter(a -> !(filterShopRange && !a.getShopRange().isVisible()))
-            .findAny()
-            .map(ObjectState::currentState)
-            .orElseGet(() -> searchInArticleHistoryForKbNumber(em, kbNumber).orElse(null)));
+    var qb = QueryBuilder.selectAll(Article.class).where(ArticleField.kbNumber.eq(kbNumber));
+    if (filterShopRange) qb.where(ArticleField.shopRange.in(ShopRange.visibleRanges()));
+    return qb.getResultStream(em)
+        .findAny()
+        .map(ObjectState::currentState)
+        .or(() -> searchInArticleHistoryForKbNumber(em, kbNumber));
   }
 
   public static Optional<ObjectState<Article>> getByKbNumber(
@@ -111,32 +112,26 @@ public class Articles {
   }
 
   public static Optional<Article> getBySuppliersItemNumber(
-      Supplier supplier, int suppliersNumber, EntityManager em) {
-    try {
-      return Optional.of(
-          em.createQuery(
-                  "select i from Article i where suppliersItemNumber = :n and supplier  = :s",
-                  Article.class)
-              .setParameter("s", supplier)
-              .setParameter("n", suppliersNumber)
-              .getSingleResult());
-    } catch (NoResultException e) {
-      return Optional.empty();
-    }
+      Supplier targetSupplier, int suppliersNumber, EntityManager em) {
+    return DBConnection.getConditioned(
+            em,
+            Article.class,
+            ArticleField.suppliersItemNumber.eq(suppliersNumber),
+            ArticleField.supplier.eq(targetSupplier))
+        .stream()
+        .findFirst();
   }
 
-  public static Optional<Article> getByBarcode(long barcode) throws NoResultException {
+  public static Optional<Article> getByBarcode(long targetBarcode) throws NoResultException {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    Collection<Article> articles =
-        em.createQuery("select a from Article a where barcode = :b", Article.class)
-            .setParameter("b", barcode)
-            .getResultList();
+    List<Article> articles =
+        DBConnection.getConditioned(em, Article.class, ArticleField.barcode.eq(targetBarcode));
     return Optional.ofNullable(
         articles.stream()
-            .filter(Articles::articleIsActiveOffer)
+            .filter(ArticleRepository::articleIsActiveOffer)
             .findAny()
             .orElse(articles.stream().findFirst().orElse(null)));
   }
@@ -152,11 +147,11 @@ public class Articles {
       @Cleanup(value = "commit")
       EntityTransaction et = em.getTransaction();
       et.begin();
-      return em.createQuery(
-              "select  i from Article i where name = :n and kbNumber IN (:c)", Article.class)
-          .setParameter("n", rawPrice.getName())
-          .setParameter("c", rawPriceIdentifiers)
-          .getSingleResult();
+      return QueryBuilder.selectAll(Article.class)
+          .where(
+              ArticleField.name.eq(rawPrice.getName()),
+              ArticleField.kbNumber.in(rawPriceIdentifiers))
+          .getSingleResult(em);
     } catch (NoResultException e) {
       ArticleConstants identifierEnum = ArticleConstants.CUSTOM_PRODUCT;
       AtomicReference<Supplier> supplier = new AtomicReference<>();
@@ -206,42 +201,48 @@ public class Articles {
   }
 
   private static TypedQuery<Article> createQuery(EntityManager em, String search) {
-    return em.createQuery(
-            "select i from Article i where kbNumber = :n"
-                + " or suppliersItemNumber = :n"
-                + " or UPPER(i.name) like :ds"
-                + " or barcode = :l"
-                + " or MOD(barcode,:bl) = :n"
-                + " or UPPER( i.priceList.name) like :u"
-                + " order by i.name asc",
-            Article.class)
-        .setParameter("n", Tools.tryParseInt(search))
-        .setParameter(
-            "bl",
-            (int)
-                (Tools.tryParseInt(search) > 0
-                    ? Math.pow(10, Math.ceil(Math.log10(Tools.tryParseInt(search))))
-                    : 1))
-        .setParameter("l", Tools.tryParseLong(search))
-        .setParameter("ds", (search.length() > 3 ? "%" + search + "%" : search + "%").toUpperCase())
-        .setParameter("u", search.toUpperCase() + "%");
+    if (search.startsWith("PL:")) {
+      return QueryBuilder.selectAll(Article.class)
+          .where(ArticleField.priceList.child(PriceListField.name).eq(search.replace("PL:", "")))
+          .buildQuery(em);
+    }
+    int n = Tools.tryParseInt(search);
+    String ds = (search.length() > 3 ? "%" + search + "%" : search + "%").toLowerCase();
+    long l = Tools.tryParseLong(search);
+    return QueryBuilder.selectAll(Article.class)
+        .where(
+            or(
+                ArticleField.kbNumber.eq(n),
+                ArticleField.suppliersItemNumber.eq(Tools.tryParseInt(search)),
+                like(lower(ArticleField.name), ds),
+                ArticleField.barcode.eq(l),
+                like(ArticleField.barcode.as(String.class), "%" + search)))
+        .orderBy(ArticleField.name.asc())
+        .buildQuery(em);
+  }
+
+  // TODO find better solution this one only makes sense when trying to find hundreds of free ids...
+  public static int nextFreeKBNumber(EntityManager em, int min) {
+    List<Integer> usedKbNumbers =
+        QueryBuilder.select(ArticleField.kbNumber)
+            .where(greaterOrEq(ArticleField.kbNumber, asExpression(min)))
+            .orderBy(ArticleField.kbNumber.asc())
+            .getResultList(em);
+    for (int id = min; ; id++) {
+      if (!usedKbNumbers.contains(id)) return id;
+    }
   }
 
   public static int nextFreeKBNumber(EntityManager em) {
-    return em.createQuery(
-            "select a.kbNumber+1 from Article a where not exists (select b from Article b where b.kbNumber = a.kbNumber+1)",
-            Integer.class)
-        .setMaxResults(1)
-        .getSingleResult();
+    return nextFreeKBNumber(em, 1);
   }
 
   public static Article nextArticleTo(
       EntityManager em, int suppliersItemNumber, Supplier supplier) {
-    return em.createQuery(
-            "select a from Article a where supplier = :s order by abs(a.suppliersItemNumber - :sn) asc",
-            Article.class)
-        .setParameter("s", supplier)
-        .setParameter("sn", suppliersItemNumber)
+    return QueryBuilder.selectAll(Article.class)
+        .where(ArticleField.supplier.eq(supplier))
+        .orderBy(diff(ArticleField.suppliersItemNumber, asExpression(suppliersItemNumber)).asc())
+        .buildQuery(em)
         .setMaxResults(1)
         .getResultStream()
         .findAny()
@@ -250,16 +251,12 @@ public class Articles {
 
   public static Article nextArticleTo(
       EntityManager em, int suppliersItemNumber, Supplier supplier, PriceList excludedPriceList) {
-    return em.createQuery(
-            "select a from Article a where supplier = :s and priceList != :pl "
-                + "order by abs(a.suppliersItemNumber - :sn) asc",
-            Article.class)
-        .setParameter("s", supplier)
-        .setParameter("sn", suppliersItemNumber)
-        .setParameter("pl", excludedPriceList)
-        .setMaxResults(1)
-        .getResultStream()
-        .findAny()
+    return QueryBuilder.selectAll(Article.class)
+        .where(
+            ArticleField.supplier.eq(supplier), ArticleField.priceList.eq(excludedPriceList).not())
+        .orderBy(diff(ArticleField.suppliersItemNumber, asExpression(suppliersItemNumber)).asc())
+        .getResultStream(em)
+        .findFirst()
         .orElse(null);
   }
 
@@ -268,13 +265,8 @@ public class Articles {
   }
 
   public static Optional<Offer> findOfferOn(Article article) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup("commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em
-        .createQuery("select o from Offer o where o.offerArticle = :o", Offer.class)
-        .setParameter("o", article)
+    return QueryBuilder.selectAll(Offer.class)
+        .where(OfferField.offerArticle.eq(article))
         .getResultList()
         .stream()
         .filter(e -> e.getFromDate().isBefore(Instant.now()))
@@ -283,17 +275,16 @@ public class Articles {
   }
 
   public static Map<Integer, Instant> getLastDeliveries() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    Map<Integer, Instant> result = new HashMap<>();
-    em.createQuery(
-            "select kbNumber, max(createDate) from ShoppingItem i where i.purchase is null group by i.kbNumber order by kbNumber",
-            Tuple.class)
-        .getResultStream()
-        .forEach(t -> result.put(t.get(0, Integer.class), t.get(1, Instant.class)));
-    return result;
+    return QueryBuilder.select(
+            ShoppingItem.class, ShoppingItemField.kbNumber, max(ShoppingItemField.createDate))
+        .where(ShoppingItemField.purchase.isNull())
+        .groupBy(ShoppingItemField.kbNumber)
+        .orderBy(ShoppingItemField.kbNumber.asc())
+        .getResultList()
+        .stream()
+        .collect(
+            Collectors.toMap(
+                tuple -> tuple.get(0, Integer.class), tuple -> tuple.get(1, Instant.class)));
   }
 
   public static double getContainerSurchargeReduction() {
@@ -338,56 +329,15 @@ public class Articles {
     return barcodeString.substring(Math.max(barcodeString.length() - 4, 0));
   }
 
-  public static Article createOfferArticle(
-      Article base, double specialNetPrice, Instant from, Instant to) {
-    if (base.isOffer()) throw new IllegalArgumentException("article is already a offer");
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup("commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    Optional<Article> offerArticle =
-        Tools.optional(
-            em.createQuery(
-                "select a from Article a where a.suppliersItemNumber = :s and offer = true",
-                Article.class));
-    Article newOfferArticle = offerArticle.orElseGet(() -> withValidKBNumber(base.clone(), em));
-    newOfferArticle.setNetPrice(specialNetPrice);
-    newOfferArticle.setOffer(true);
-    Offer offer = new Offer();
-    offer.setOfferArticle(newOfferArticle);
-    offer.setParentArticle(base);
-    offer.setFromDate(from);
-    offer.setToDate(to);
-    em.persist(newOfferArticle);
-    em.persist(offer);
-    return newOfferArticle;
-  }
-
-  public static Article withValidKBNumber(Article article, EntityManager em) {
-    article.setKbNumber(Articles.nextFreeKBNumber(em));
-    return article;
-  }
-
   public static Collection<Article> getPrintPool() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup("commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery(
-            "select a from Article a where a in (select ap.article from ArticlePrintPool ap)",
-            Article.class)
-        .getResultList();
+    return QueryBuilder.select(ArticlePrintPoolField.article).distinct().getResultList();
   }
 
-  public static long getArticlePrintPoolSize() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup("commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    Long result =
-        em.createQuery("select sum (number) from ArticlePrintPool ap", Long.class)
-            .getSingleResult();
-    return Tools.ifNull(result, 0L);
+  public static int getArticlePrintPoolSize() {
+    return QueryBuilder.select(ArticlePrintPool.class, sum(ArticlePrintPoolField.number))
+        .getSingleResultOptional()
+        .map(tuple -> tuple.get(0, Integer.class))
+        .orElse(0);
   }
 
   public static Collection<Article> getAllActiveArticlesFromPriceList(
@@ -397,12 +347,16 @@ public class Articles {
     }
     Instant expireDate =
         Instant.now().minus(Setting.INVENTORY_INACTIVE_ARTICLE.getIntValue(), ChronoUnit.DAYS);
-    return em.createQuery(
-            "select a from Article a where a.priceList = :p and a.kbNumber in (select s.kbNumber from ShoppingItem s where s.createDate > :expireDate)",
-            Article.class)
-        .setParameter("p", priceList)
-        .setParameter("expireDate", expireDate)
-        .getResultList();
+    List<Integer> articleIds =
+        QueryBuilder.select(ShoppingItemField.articleId)
+            .where(greaterOrEq(ShoppingItemField.createDate, asExpression(expireDate)))
+            .distinct()
+            .getResultStream(em)
+            .map(e -> e.intValue())
+            .toList();
+    return QueryBuilder.selectAll(Article.class)
+        .where(ArticleField.id.in(articleIds))
+        .getResultList(em);
   }
 
   public static Article getCustomArticleVersion(Consumer<Article> transformer) {
@@ -410,27 +364,32 @@ public class Articles {
     @Cleanup("commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    Article article =
-        Tools.optional(
-                em.createQuery("select a from Article a where a.kbNumber =:kb", Article.class)
-                    .setParameter("kb", ArticleConstants.CUSTOM_PRODUCT.getUniqueIdentifier()))
-            .orElseGet(
-                () ->
-                    Access.runWithAccessManager(
-                        AccessManager.ACCESS_GRANTED,
-                        () -> {
-                          Article out = new Article();
-                          out.setKbNumber(ArticleConstants.CUSTOM_PRODUCT.getUniqueIdentifier());
-                          out.setSupplier(Supplier.getCustomProductSupplier());
-                          out.setSurchargeGroup(
-                              out.getSupplier().getOrPersistDefaultSurchargeGroup());
-                          out.setSuppliersItemNumber(
-                              ArticleConstants.CUSTOM_PRODUCT.getUniqueIdentifier());
-                          return out;
-                        }));
-    Access.runWithAccessManager(AccessManager.ACCESS_GRANTED, () -> transformer.accept(article));
-    em.persist(article);
-    return article;
+    return Access.runWithAccessManager(
+        AccessManager.ACCESS_GRANTED,
+        () -> {
+          Article article =
+              DBConnection.getConditioned(
+                      em,
+                      Article.class,
+                      ArticleField.kbNumber.eq(
+                          ArticleConstants.CUSTOM_PRODUCT.getUniqueIdentifier()))
+                  .stream()
+                  .findFirst()
+                  .orElseGet(ArticleRepository::createCustomArticlePreset);
+          Access.runWithAccessManager(
+              AccessManager.ACCESS_GRANTED, () -> transformer.accept(article));
+          em.persist(article);
+          return article;
+        });
+  }
+
+  private static Article createCustomArticlePreset() {
+    Article out = new Article();
+    out.setKbNumber(ArticleConstants.CUSTOM_PRODUCT.getUniqueIdentifier());
+    out.setSupplier(Supplier.getCustomProductSupplier());
+    out.setSurchargeGroup(out.getSupplier().getOrPersistDefaultSurchargeGroup());
+    out.setSuppliersItemNumber(ArticleConstants.CUSTOM_PRODUCT.getUniqueIdentifier());
+    return out;
   }
 
   public static int getSafeAmount(Article article) {
@@ -469,23 +428,6 @@ public class Articles {
     return String.format("%,1d", getSafeAmount(article)) + article.getMetricUnits().getShortName();
   }
 
-  public static String getContentAmount(Article article) {
-    String containerInfo = new DecimalFormat("0.###").format(article.getContainerSize());
-    if (article.isWeighable()) {
-      return containerInfo + " " + article.getMetricUnits().getDisplayUnit().getShortName();
-    } else if (article.getMetricUnits() == MetricUnits.NONE
-        || article.getMetricUnits() == MetricUnits.PIECE
-        || !(article.getAmount() > 0)) {
-      return containerInfo;
-    } else {
-      return containerInfo
-          + " x "
-          + article.getAmount()
-          + " "
-          + article.getMetricUnits().getShortName();
-    }
-  }
-
   public static PriceList getValidPriceList(EntityManager em, Article article) {
     PriceList priceList = article.getPriceList();
     if (!priceList.getName().equals("Verdeckte Aufnahme")) return priceList;
@@ -499,22 +441,22 @@ public class Articles {
 
   public static Map<String, CatalogEntry> getArticleCatalogMap(
       Collection<Article> articles, Supplier supplier) {
-
-    Collection<Integer> articleNos = new ArrayList<>();
-    articles.stream()
-        .filter(e -> e.getSupplier().equals(supplier))
-        .mapToInt(Article::getSuppliersItemNumber)
-        .forEach(articleNos::add);
-
-    return DBConnection.getConditioned(
-            CatalogEntry.class, new FieldCondition("artikelNr", articleNos))
+    Collection<String> articleNos =
+        articles.stream()
+            .filter(e -> e.getSupplier().equals(supplier))
+            .mapToInt(Article::getSuppliersItemNumber)
+            .mapToObj(Integer::toString)
+            .collect(Collectors.toList());
+    return QueryBuilder.selectAll(CatalogEntry.class)
+        .where(
+            CatalogEntryField.aktionspreis.eq(false),
+            CatalogEntryField.artikelNr.in(articleNos),
+            or(
+                CatalogEntryField.ladeneinheit.isNull().not(),
+                CatalogEntryField.gebindePfand.eq(0.0).not(),
+                CatalogEntryField.einzelPfand.eq(0.0).not()))
+        .getResultList()
         .stream()
-        .filter(
-            e ->
-                Boolean.FALSE == e.getAktionspreis()
-                    && (e.getEanLadenEinheit() != null
-                        || e.getGebindePfand() != 0.0
-                        || e.getEinzelPfand() != 0.0))
         .collect(Collectors.toMap(CatalogEntry::getArtikelNr, c -> c));
   }
 

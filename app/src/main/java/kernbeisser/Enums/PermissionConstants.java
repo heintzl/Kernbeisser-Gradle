@@ -6,7 +6,10 @@ import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.NoResultException;
 import java.util.Set;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.PredicateFactory;
+import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Permission;
+import kernbeisser.DBEntities.TypeFields.PermissionField;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Security.PermissionKeyGroups;
 import kernbeisser.Security.PermissionKeys;
@@ -54,15 +57,15 @@ public enum PermissionConstants {
   public static String getTranslation(String permissionName) {
     ImmutableMap<String, String> nameTranslations =
         ImmutableMap.<String, String>builder()
-            .put("@KEY_PERMISSION", "<Schlüssel Inhaber>")
-            .put("@IMPORT", "<Aus alter Version übernommen>")
-            .put("@FULL_MEMBER", "<Vollmitglied>")
-            .put("@APPLICATION", "<Applikation>")
-            .put("@ADMIN", "<Administration>")
-            .put("@IN_RELATION_TO_OWN_USER", "<eigene Daten>")
-            .put("@CASHIER", "<Ladendienst>")
-            .put("@BASIC_ACCESS", "<Basis-Anwender>")
-            .put("@TRIAL_MEMBER", "<Probemitglied>")
+            .put(KEY_PERMISSION.nameId(), "<Schlüssel Inhaber>")
+            .put(IMPORT.nameId(), "<Aus alter Version übernommen>")
+            .put(FULL_MEMBER.nameId(), "<Vollmitglied>")
+            .put(APPLICATION.nameId(), "<Applikation>")
+            .put(ADMIN.nameId(), "<Administration>")
+            .put(IN_RELATION_TO_OWN_USER.nameId(), "<eigene Daten>")
+            .put(CASHIER.nameId(), "<Ladendienst>")
+            .put(BASIC_ACCESS.nameId(), "<Basis-Anwender>")
+            .put(TRIAL_MEMBER.nameId(), "<Probemitglied>")
             .build();
     return nameTranslations.getOrDefault(permissionName, permissionName);
   }
@@ -76,10 +79,9 @@ public enum PermissionConstants {
             @Cleanup(value = "commit")
             EntityTransaction et = em.getTransaction();
             et.begin();
-            return em.createQuery(
-                    "select p from Permission p where name like :pcn", Permission.class)
-                .setParameter("pcn", "@" + constants.name())
-                .getSingleResult();
+            return QueryBuilder.selectAll(Permission.class)
+                .where(PredicateFactory.like(PermissionField.name, "@" + constants.name()))
+                .getSingleResult(em);
           } catch (NoResultException e) {
             EntityTransaction et = em.getTransaction();
             et.begin();
@@ -118,5 +120,9 @@ public enum PermissionConstants {
           em.merge(currentUser);
           em.flush();
         });
+  }
+
+  public String nameId() {
+    return "@" + name();
   }
 }

@@ -1,5 +1,7 @@
 package kernbeisser.Enums;
 
+import java.util.Arrays;
+import java.util.Collection;
 import lombok.Getter;
 
 public enum ShopRange {
@@ -19,5 +21,9 @@ public enum ShopRange {
   @Override
   public String toString() {
     return name;
+  }
+
+  public static Collection<ShopRange> visibleRanges() {
+    return Arrays.stream(ShopRange.values()).filter(ShopRange::isVisible).toList();
   }
 }

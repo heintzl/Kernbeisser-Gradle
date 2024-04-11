@@ -37,7 +37,8 @@ public class UserBalanceReport extends Report {
     final Map<UserGroup, Double> historicUserGroupValues =
         reportNo == -1
             ? new HashMap<>()
-            : UserGroup.getValueMapAtTransactionId(Transaction.getLastIdOfReportNo(reportNo), true);
+            : UserGroup.populateWithEntities(
+                UserGroup.getValueMapAt(Transaction.getLastOfReportNo(reportNo), true));
     if (reportNo == -1) {
       userGroups = UserGroup.getActiveUserGroups();
     } else {
@@ -56,8 +57,7 @@ public class UserBalanceReport extends Report {
     if (reportNo == -1) {
       params = UserGroup.getValueAggregates();
     } else {
-      params =
-          UserGroup.getValueAggregatesAtTransactionId(Transaction.getLastIdOfReportNo(reportNo));
+      params = UserGroup.getValueAggregatesAt(Transaction.getLastOfReportNo(reportNo));
     }
     params.put(
         "reportTitle",

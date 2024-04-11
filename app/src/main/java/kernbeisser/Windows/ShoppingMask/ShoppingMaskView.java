@@ -28,6 +28,7 @@ import kernbeisser.CustomComponents.TextFields.DoubleParseField;
 import kernbeisser.CustomComponents.TextFields.IntegerParseField;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.*;
+import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.Enums.*;
 import kernbeisser.Forms.ObjectForm.Components.AccessCheckingField;
 import kernbeisser.Useful.Tools;
@@ -352,7 +353,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
 
     if (type == ArticleType.PRODUCE || type == ArticleType.BAKED_GOODS) {
       RawPrice rawPrice = type == ArticleType.PRODUCE ? RawPrice.PRODUCE : RawPrice.BAKERY;
-      loadArticleStats(Articles.getOrCreateRawPriceArticle(rawPrice));
+      loadArticleStats(ArticleRepository.getOrCreateRawPriceArticle(rawPrice));
       this.articleName.setText(rawPrice.getName());
       if (isPreordered) {
         netPrice.requestFocusInWindow();
@@ -450,8 +451,8 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
       itemMultiplierUnit.setText(unit);
     } else if (getArticleType() == ArticleType.ARTICLE_NUMBER
         || getArticleType() == ArticleType.CUSTOM_PRODUCT) {
-      priceUnit += "/" + Articles.getPriceUnit(article).getShortName();
-      itemMultiplierUnit.setText(Articles.getMultiplierUnit(article).getShortName());
+      priceUnit += "/" + ArticleRepository.getPriceUnit(article).getShortName();
+      itemMultiplierUnit.setText(ArticleRepository.getMultiplierUnit(article).getShortName());
     } else {
       itemMultiplierUnit.setText("");
     }
@@ -459,7 +460,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     retailPriceUnit.setText(priceUnit);
     containerSize.setText(
         new DecimalFormat("##.###").format(article.getContainerSize() * (isWeighable ? 1000 : 1)));
-    containerUnit.setText(Articles.getContainerUnits(article).getShortName());
+    containerUnit.setText(ArticleRepository.getContainerUnits(article).getShortName());
     deposit.setText(String.format("%.2f", article.getSingleDeposit()));
     updateAllControls(currentArticleType);
   }

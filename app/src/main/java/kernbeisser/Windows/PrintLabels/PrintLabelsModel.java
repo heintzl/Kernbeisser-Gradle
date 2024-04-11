@@ -1,16 +1,15 @@
 package kernbeisser.Windows.PrintLabels;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.NoResultException;
 import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
-import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Article;
-import kernbeisser.DBEntities.Articles;
+import kernbeisser.DBEntities.Repositories.ArticleRepository;
+import kernbeisser.DBEntities.TypeFields.ArticleField;
 import kernbeisser.Enums.ShopRange;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
 import kernbeisser.Forms.ObjectForm.Components.Source;
@@ -19,7 +18,6 @@ import kernbeisser.Reports.Report;
 import kernbeisser.Useful.Date;
 import kernbeisser.Windows.CollectionView.CollectionController;
 import kernbeisser.Windows.MVC.IModel;
-import lombok.Cleanup;
 import lombok.Getter;
 
 public class PrintLabelsModel implements IModel<PrintLabelsController> {
@@ -28,7 +26,7 @@ public class PrintLabelsModel implements IModel<PrintLabelsController> {
   @Getter private Map<Article, Integer> printPoolMap;
 
   public static CollectionController<Article> getArticleSource() {
-    Map<Integer, Instant> lastDeliveries = Articles.getLastDeliveries();
+    Map<Integer, Instant> lastDeliveries = ArticleRepository.getLastDeliveries();
     return new CollectionController<>(
         new ArrayList<>(),
         Source.empty(),
@@ -62,15 +60,9 @@ public class PrintLabelsModel implements IModel<PrintLabelsController> {
   }
 
   public static Collection<Article> getAllArticles() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery(
-            "select a from Article a where shopRange <> "
-                + ShopRange.NOT_IN_RANGE.ordinal()
-                + " order by name",
-            Article.class)
+    return QueryBuilder.selectAll(Article.class)
+        .where(ArticleField.shopRange.eq(ShopRange.NOT_IN_RANGE).not())
+        .orderBy(ArticleField.name.asc())
         .getResultList();
   }
 
@@ -97,6 +89,6 @@ public class PrintLabelsModel implements IModel<PrintLabelsController> {
   }
 
   public static Article getByBarcode(String s) throws NoResultException {
-    return Articles.getByBarcode(Long.parseLong(s)).orElseThrow(NoResultException::new);
+    return ArticleRepository.getByBarcode(Long.parseLong(s)).orElseThrow(NoResultException::new);
   }
 }

@@ -6,10 +6,16 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Optional;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.PriceList;
+import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.DBEntities.SurchargeGroup;
+import kernbeisser.DBEntities.TypeFields.ArticleField;
+import kernbeisser.DBEntities.TypeFields.PriceListField;
+import kernbeisser.DBEntities.TypeFields.SupplierField;
+import kernbeisser.DBEntities.TypeFields.SurchargeGroupField;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Useful.Tools;
@@ -19,27 +25,11 @@ import lombok.Cleanup;
 public class ArticleModel implements IModel<ArticleController> {
 
   boolean kbNumberExists(int kbNumber) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery("select id from Article where kbNumber = :kbn", Integer.class)
-        .setParameter("kbn", kbNumber)
-        .getResultStream()
-        .findAny()
-        .isPresent();
+    return QueryBuilder.propertyWithThatValueExists(ArticleField.kbNumber, kbNumber);
   }
 
   boolean barcodeExists(long barcode) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery("select id from Article where barcode = :b", Integer.class)
-        .setParameter("b", barcode)
-        .getResultStream()
-        .findAny()
-        .isPresent();
+    return QueryBuilder.propertyWithThatValueExists(ArticleField.barcode, barcode);
   }
 
   MetricUnits[] getAllUnits() {
@@ -51,95 +41,50 @@ public class ArticleModel implements IModel<ArticleController> {
   }
 
   Collection<Supplier> getAllSuppliers() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery("select s from Supplier s order by s.name asc", Supplier.class)
-        .getResultList();
+    return QueryBuilder.selectAll(Supplier.class).orderBy(SupplierField.name.asc()).getResultList();
   }
 
   Collection<PriceList> getAllPriceLists() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery("select s from PriceList s order by s.name asc", PriceList.class)
+    return QueryBuilder.selectAll(PriceList.class)
+        .orderBy(PriceListField.name.asc())
         .getResultList();
   }
 
   public int nextUnusedArticleNumber(int kbNumber) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
+    @Cleanup("commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    return em.createQuery(
-                "select i.kbNumber from Article i where i.kbNumber >= :last and Not exists (select k from Article k where kbNumber = i.kbNumber+1)",
-                Integer.class)
-            .setMaxResults(1)
-            .setParameter("last", kbNumber)
-            .getSingleResult()
-        + 1;
+    return ArticleRepository.nextFreeKBNumber(em, kbNumber);
   }
 
   public static boolean nameExists(String name) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery("select i from Article i where i.name like :name")
-        .setMaxResults(1)
-        .setParameter("name", name)
-        .getResultStream()
-        .findAny()
-        .isPresent();
+    return QueryBuilder.propertyWithThatValueExists(ArticleField.name, name);
   }
 
   public Collection<SurchargeGroup> getAllSurchargeGroupsFor(Supplier s) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery(
-            "select s from SurchargeGroup s where supplier = :sid order by s.name asc",
-            SurchargeGroup.class)
-        .setParameter("sid", s)
+    return QueryBuilder.selectAll(SurchargeGroup.class)
+        .where(SurchargeGroupField.surcharge.eq(s))
+        .orderBy(SurchargeGroupField.name.asc())
         .getResultList();
   }
 
-  public Collection<SurchargeGroup> getAllSurchargeGroups() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery("select s from SurchargeGroup s", SurchargeGroup.class).getResultList();
-  }
-
-  public Optional<Article> findNearestArticle(Article a) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery(
-            "select a from Article a where supplier = :s and id != :id", Article.class)
-        .setParameter("id", a.getId())
-        .setParameter("s", a.getSupplier())
-        .getResultStream()
-        .min(Comparator.comparingInt(e -> Tools.calculate(a.getName(), e.getName())));
+  public Optional<Article> findArticleWithMostIdenticalName(Article a) {
+    return QueryBuilder.selectAll(Article.class)
+        .where(ArticleField.supplier.eq(a.getSupplier()), ArticleField.id.eq(a.getId()).not())
+        .getResultList()
+        .stream()
+        .min(
+            Comparator.comparingInt(
+                e -> Tools.calculateStringDifference(a.getName(), e.getName())));
   }
 
   public boolean suppliersItemNumberExists(Supplier supplier, int suppliersItemNumber) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery(
-            "select a from Article a where a.supplier = :s and a.suppliersItemNumber = :sn",
-            Article.class)
-        .setParameter("s", supplier)
-        .setParameter("sn", suppliersItemNumber)
-        .getResultStream()
-        .findAny()
-        .isPresent();
+    return !QueryBuilder.selectAll(Article.class)
+        .where(
+            ArticleField.supplier.eq(supplier),
+            ArticleField.suppliersItemNumber.eq(suppliersItemNumber))
+        .getResultList()
+        .isEmpty();
   }
 }

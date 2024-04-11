@@ -2,23 +2,20 @@ package kernbeisser.Windows.Inventory.Counting;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.ArticleStock;
 import kernbeisser.DBEntities.Shelf;
-import kernbeisser.Useful.Tools;
+import kernbeisser.DBEntities.TypeFields.ShelfField;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
 
 public class CountingModel implements IModel<CountingController> {
 
   public List<Shelf> getAllShelves() {
-    List<Shelf> shelves = new ArrayList<>(Tools.getAll(Shelf.class, null));
-    shelves.sort(Comparator.comparingInt(Shelf::getShelfNo));
-    return shelves;
+    return QueryBuilder.selectAll(Shelf.class).orderBy(ShelfField.shelfNo.desc()).getResultList();
   }
 
   public void addArticleToShelf(Shelf shelf, Article article) {

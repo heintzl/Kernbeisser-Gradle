@@ -3,6 +3,7 @@ package kernbeisser.Reports;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.NoResultException;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -10,7 +11,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import javax.swing.*;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.*;
+import kernbeisser.DBEntities.TypeFields.PurchaseField;
+import kernbeisser.DBEntities.TypeFields.SaleSessionField;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Exeptions.InvalidVATValueException;
 import kernbeisser.Exeptions.NoTransactionsFoundException;
@@ -39,15 +43,9 @@ public class AccountingReport extends Report {
   }
 
   private List<Purchase> getPurchases() throws NoResultException {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
     List<Purchase> purchases =
-        em.createQuery(
-                "select p from Purchase p where p.session in (select s from SaleSession s where s.transaction in (:transactions))",
-                Purchase.class)
-            .setParameter("transactions", transactions)
+        QueryBuilder.selectAll(Purchase.class)
+            .where(PurchaseField.session.child(SaleSessionField.transaction).in(transactions))
             .getResultList();
     if (purchases.isEmpty()) {
       throw new NoTransactionsFoundException();
@@ -58,9 +56,9 @@ public class AccountingReport extends Report {
   static String getReportTitle(long reportNo, List<Transaction> transactions) {
     return (reportNo == 0 ? "Umsatzbericht " : "LD-Endabrechnung Nr. " + reportNo)
         + "    "
-        + Date.INSTANT_DATE.format(transactions.get(0).getDate())
+        + Date.INSTANT_DATE.format(transactions.getFirst().getDate())
         + " bis "
-        + Date.INSTANT_DATE.format(transactions.get(transactions.size() - 1).getDate());
+        + Date.INSTANT_DATE.format(transactions.getLast().getDate());
   }
 
   static long countVatValues(Collection<Purchase> purchases, VAT vat) {
@@ -187,9 +185,7 @@ public class AccountingReport extends Report {
         }
       }
     }
-    long lastTransactionId = transactions.stream().mapToLong(Transaction::getId).max().getAsLong();
-    Map<String, Object> reportParams =
-        UserGroup.getValueAggregatesAtTransactionId(lastTransactionId);
+    Map<String, Object> reportParams = UserGroup.getValueAggregatesAt(Instant.now());
     reportParams.put("transactionSaldo", transactionSaldo);
     reportParams.put("transactionCreditPayIn", transactionCreditPayIn);
     reportParams.put("transactionSpecialPayments", transactionSpecialPayments);

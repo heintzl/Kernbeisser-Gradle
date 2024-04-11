@@ -3,7 +3,7 @@ package kernbeisser.Reports.ReportDTO;
 import java.util.Collection;
 import java.util.stream.Stream;
 import kernbeisser.DBEntities.Article;
-import kernbeisser.DBEntities.Articles;
+import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.DBEntities.Shelf;
 import lombok.Data;
 
@@ -24,10 +24,10 @@ public class InventoryArticle {
     this.name = article.getName();
     this.netPrice = article.getNetPrice();
     this.kbNumber = article.getKbNumber();
-    this.amount = Articles.getPieceAmount(article);
+    this.amount = ArticleRepository.getPieceAmount(article);
     this.weighable = article.isWeighable();
     this.count = count;
-    this.barcode4 = Articles.getShortBarcode(article);
+    this.barcode4 = ArticleRepository.getShortBarcode(article);
   }
 
   public static Stream<InventoryArticle> articleStreamOfShelf(Shelf shelf) {

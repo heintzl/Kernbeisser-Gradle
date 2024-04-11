@@ -4,6 +4,8 @@ import at.favre.lib.crypto.bcrypt.BCrypt;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.QueryBuilder;
+import kernbeisser.DBEntities.TypeFields.UserField;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
@@ -19,15 +21,10 @@ public class ChangePasswordModel implements IModel<ChangePasswordController> {
   }
 
   public boolean checkPassword(String password) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
     String currentPassword =
-        (String)
-            em.createQuery("select u.password from User u where u.id = :id")
-                .setParameter("id", user.getId())
-                .getSingleResult();
+        QueryBuilder.select(UserField.password)
+            .where(UserField.id.eq(user.getId()))
+            .getSingleResult();
     BCrypt.Result r =
         BCrypt.verifyer().verify(password.toCharArray(), (currentPassword.toCharArray()));
     return r.verified;

@@ -3,7 +3,6 @@ package kernbeisser.Windows.ManagePriceLists;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.PersistenceException;
-import jakarta.persistence.Query;
 import java.util.Collection;
 import java.util.concurrent.atomic.AtomicBoolean;
 import kernbeisser.CustomComponents.ObjectTree.Node;
@@ -33,18 +32,13 @@ public class ManagePriceListsModel implements IModel<ManagePriceListsController>
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    Query query;
+    PriceList targetPriceListInDB = em.find(PriceList.class, target.getId());
     if (destination.getId() == 0) {
-      query =
-          em.createQuery("update PriceList set superPriceList = null where id = :t")
-              .setParameter("t", target.getId());
+      targetPriceListInDB.setSuperPriceList(null);
     } else {
-      query =
-          em.createQuery("update PriceList set superPriceList = :d where id = :t")
-              .setParameter("d", destination)
-              .setParameter("t", target.getId());
+      targetPriceListInDB.setSuperPriceList(em.find(PriceList.class, destination.getId()));
     }
-    query.executeUpdate();
+    em.persist(targetPriceListInDB);
     em.flush();
   }
 
