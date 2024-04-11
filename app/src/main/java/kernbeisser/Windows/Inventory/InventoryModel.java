@@ -15,8 +15,8 @@ import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.ArticleStock;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.Shelf;
-import kernbeisser.DBEntities.TypeFields.ArticleStockField;
-import kernbeisser.DBEntities.TypeFields.ShelfField;
+import kernbeisser.DBEntities.ArticleStock_;
+import kernbeisser.DBEntities.Shelf_;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
 import kernbeisser.Windows.MVC.IModel;
@@ -61,10 +61,10 @@ public class InventoryModel implements IModel<InventoryController> {
     return QueryBuilder.selectAll(Shelf.class)
         .where(
             or(
-                like(lower(ShelfField.location), searchPattern),
-                like(lower(ShelfField.comment), searchPattern),
-                ShelfField.shelfNo.eq(searchInt)))
-        .orderBy(ShelfField.shelfNo.asc())
+                like(lower(Shelf_.location), searchPattern),
+                like(lower(Shelf_.comment), searchPattern),
+                Shelf_.shelfNo.eq(searchInt)))
+        .orderBy(Shelf_.shelfNo.asc())
         .getResultList();
   }
 
@@ -87,7 +87,7 @@ public class InventoryModel implements IModel<InventoryController> {
     }
     List<ArticleStock> stocksToRemove =
         DBConnection.getConditioned(
-                ArticleStock.class, ArticleStockField.inventoryDate.eq(inventoryDate))
+                ArticleStock.class, ArticleStock_.inventoryDate.eq(inventoryDate))
             .stream()
             .filter(
                 s ->

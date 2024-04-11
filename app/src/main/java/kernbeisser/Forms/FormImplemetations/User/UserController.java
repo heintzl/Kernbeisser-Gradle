@@ -4,7 +4,7 @@ import at.favre.lib.crypto.bcrypt.BCrypt;
 import java.util.function.Supplier;
 import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Permission;
-import kernbeisser.DBEntities.TypeFields.PermissionField;
+import kernbeisser.DBEntities.Permission_;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Enums.Mode;
@@ -185,7 +185,7 @@ public class UserController extends FormController<UserView, UserModel, User> {
     return () ->
         QueryBuilder.selectAll(Permission.class)
             .where(
-                PermissionField.name
+                Permission_.name
                     .in(
                         PermissionConstants.APPLICATION.nameId(),
                         PermissionConstants.IMPORT.nameId(),

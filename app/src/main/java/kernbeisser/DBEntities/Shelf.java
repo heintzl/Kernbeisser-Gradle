@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Repositories.ArticleRepository;
-import kernbeisser.DBEntities.TypeFields.ShelfField;
+import kernbeisser.DBEntities.Shelf_;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
 import kernbeisser.Useful.ActuallyCloneable;
 import lombok.Cleanup;
@@ -83,7 +83,7 @@ public class Shelf implements ActuallyCloneable {
   }
 
   public static int createShelfNo() {
-    return QueryBuilder.select(Shelf.class, max(ShelfField.shelfNo))
+    return QueryBuilder.select(Shelf.class, max(Shelf_.shelfNo))
             .getSingleResultOptional()
             .map(tuple -> tuple.get(0, Integer.class))
             .orElse(0)

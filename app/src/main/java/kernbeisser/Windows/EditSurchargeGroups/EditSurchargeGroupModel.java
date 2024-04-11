@@ -10,8 +10,8 @@ import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.DBEntities.SurchargeGroup;
-import kernbeisser.DBEntities.TypeFields.ArticleField;
-import kernbeisser.DBEntities.TypeFields.SurchargeGroupField;
+import kernbeisser.DBEntities.Article_;
+import kernbeisser.DBEntities.SurchargeGroup_;
 import kernbeisser.Tasks.Catalog.CatalogDataInterpreter;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
@@ -29,7 +29,7 @@ public class EditSurchargeGroupModel implements IModel<EditSurchargeGroupControl
 
   Collection<SurchargeGroup> getAllFromSupplier(Supplier supplier) {
     return QueryBuilder.selectAll(SurchargeGroup.class)
-        .where(SurchargeGroupField.surcharge.eq(supplier))
+        .where(SurchargeGroup_.surcharge.eq(supplier))
         .getResultList();
   }
 
@@ -41,7 +41,7 @@ public class EditSurchargeGroupModel implements IModel<EditSurchargeGroupControl
     SurchargeGroup surchargeGroup = em.find(SurchargeGroup.class, surchargeGroupId);
     List<Article> allArticles =
         QueryBuilder.selectAll(Article.class)
-            .where(ArticleField.supplier.eq(surchargeGroup.getSupplier()))
+            .where(Article_.supplier.eq(surchargeGroup.getSupplier()))
             .getResultList(em);
     if (!allArticles.stream().allMatch(e -> e.getSurchargeGroup().equals(surchargeGroup))) {
       CatalogDataInterpreter.autoLinkArticle(allArticles, surchargeGroup);

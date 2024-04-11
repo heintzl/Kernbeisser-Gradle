@@ -16,7 +16,7 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.ExpressionFactory;
 import kernbeisser.DBConnection.PredicateFactory;
 import kernbeisser.DBConnection.QueryBuilder;
-import kernbeisser.DBEntities.TypeFields.*;
+import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.TransactionType;
@@ -45,14 +45,14 @@ import rs.groump.PermissionSet;
 @EqualsAndHashCode(doNotUseGetters = true)
 public class User implements Serializable, UserRelated, ActuallyCloneable {
   public static final PredicateFactory<User> GENERIC_USERS_PREDICATE =
-      in(upper(UserField.username), "KERNBEISSER", "ADMIN");
+      in(upper(User_.username), "KERNBEISSER", "ADMIN");
 
   public static final PredicateFactory<User> IS_FULL_USER =
       isMember(
-          asExpression(PermissionConstants.FULL_MEMBER.getPermission()), UserField.permissions);
+          asExpression(PermissionConstants.FULL_MEMBER.getPermission()), User_.permissions);
   public static final PredicateFactory<User> IS_TRAIL_USER =
       isMember(
-          asExpression(PermissionConstants.TRIAL_MEMBER.getPermission()), UserField.permissions);
+          asExpression(PermissionConstants.TRIAL_MEMBER.getPermission()), User_.permissions);
   public static final String GENERIC_USERS_CONDITION =
       "upper(username) IN ('KERNBEISSER', 'ADMIN')";
 
@@ -210,8 +210,8 @@ public class User implements Serializable, UserRelated, ActuallyCloneable {
     // orders all users by ug, then looks for invalid userGroups
     for (Tuple tuple :
         QueryBuilder.select(
-                User.class, UserField.userGroup.child(UserGroupField.id), User.IS_FULL_USER)
-            .orderBy(UserField.userGroup.child(UserGroupField.id).asc())
+                User.class, User_.userGroup.child(UserGroup_.id), User.IS_FULL_USER)
+            .orderBy(User_.userGroup.child(UserGroup_.id).asc())
             .getResultList()) {
       int ugId = Objects.requireNonNull(tuple.get(0, Integer.class));
       boolean isFullMember = Objects.requireNonNull(tuple.get(1, Boolean.class));
@@ -236,7 +236,7 @@ public class User implements Serializable, UserRelated, ActuallyCloneable {
   }
 
   public static User getByUsername(String username) throws NoResultException {
-    return QueryBuilder.getByProperty(UserField.username, username);
+    return QueryBuilder.getByProperty(User_.username, username);
   }
 
   public static void refreshActivity() {
@@ -245,19 +245,19 @@ public class User implements Serializable, UserRelated, ActuallyCloneable {
     EntityTransaction et = em.getTransaction();
     et.begin();
     List<Integer> activeUserIds =
-        QueryBuilder.select(TransactionField.fromUser.child(UserField.id))
+        QueryBuilder.select(Transaction_.fromUser.child(User_.id))
             .where(
                 greaterOrEq(
-                    TransactionField.date,
+                    Transaction_.date,
                     asExpression(
                         Instant.now()
                             .minus(Setting.DAYS_BEFORE_INACTIVITY.getIntValue(), ChronoUnit.DAYS))),
-                TransactionField.transactionType.eq(TransactionType.PURCHASE))
+                Transaction_.transactionType.eq(TransactionType.PURCHASE))
             .distinct()
             .getResultList();
     List<User> inactiveUsers =
         QueryBuilder.selectAll(User.class)
-            .where(UserField.active.eq(true), UserField.id.in(activeUserIds).not())
+            .where(User_.active.eq(true), User_.id.in(activeUserIds).not())
             .getResultList(em);
     for (User u : inactiveUsers) {
       u.setSetUpdatedBy(false);
@@ -271,29 +271,29 @@ public class User implements Serializable, UserRelated, ActuallyCloneable {
     String searchPattern = s + "%";
     return QueryBuilder.selectAll(User.class)
         .where(
-            UserField.unreadable.eq(false),
+            User_.unreadable.eq(false),
             GENERIC_USERS_PREDICATE.not(),
             or(
-                like(UserField.firstName, searchPattern),
-                like(UserField.surname, searchPattern),
-                like(UserField.username, searchPattern)))
-        .orderBy(UserField.firstName.asc())
+                like(User_.firstName, searchPattern),
+                like(User_.surname, searchPattern),
+                like(User_.username, searchPattern)))
+        .orderBy(User_.firstName.asc())
         .limit(max)
         .getResultList();
   }
 
   public static User getById(int parseInt) {
-    return QueryBuilder.selectAll(User.class).where(UserField.id.eq(parseInt)).getSingleResult();
+    return QueryBuilder.selectAll(User.class).where(User_.id.eq(parseInt)).getSingleResult();
   }
 
   public static void checkAdminConsistency() throws InvalidValue {
     try {
-      User adminUser = QueryBuilder.getByProperty(UserField.username, "Admin");
+      User adminUser = QueryBuilder.getByProperty(User_.username, "Admin");
       if (QueryBuilder.selectAll(Transaction.class)
           .where(
               or(
-                  TransactionField.toUserGroup.eq(adminUser.userGroup),
-                  TransactionField.fromUserGroup.eq(adminUser.userGroup)))
+                  Transaction_.toUserGroup.eq(adminUser.userGroup),
+                  Transaction_.fromUserGroup.eq(adminUser.userGroup)))
           .hasResult()) {
         throw new InvalidValue("Found transactions involving the admin user!");
       }
@@ -311,7 +311,7 @@ public class User implements Serializable, UserRelated, ActuallyCloneable {
       EntityTransaction et = em.getTransaction();
       et.begin();
       return QueryBuilder.selectAll(User.class)
-          .where(UserField.username.eq("kernbeisser"))
+          .where(User_.username.eq("kernbeisser"))
           .getSingleResult(em);
     } catch (NoResultException e) {
       EntityTransaction et = em.getTransaction();
@@ -333,11 +333,11 @@ public class User implements Serializable, UserRelated, ActuallyCloneable {
   public static Collection<User> getAllUserFullNames(boolean withKbUser, boolean orderSurname) {
     var qb =
         QueryBuilder.selectAll(User.class)
-            .where(UserField.unreadable.eq(false), GENERIC_USERS_PREDICATE.not());
+            .where(User_.unreadable.eq(false), GENERIC_USERS_PREDICATE.not());
     if (orderSurname) {
-      qb.orderBy(UserField.surname.asc(), UserField.firstName.asc());
+      qb.orderBy(User_.surname.asc(), User_.firstName.asc());
     } else {
-      qb.orderBy(UserField.firstName.asc(), UserField.surname.asc());
+      qb.orderBy(User_.firstName.asc(), User_.surname.asc());
     }
     var result = qb.getResultList();
     if (withKbUser) result.addFirst(getKernbeisserUser());
@@ -514,17 +514,17 @@ public class User implements Serializable, UserRelated, ActuallyCloneable {
     return QueryBuilder.selectAll(Transaction.class)
         .where(
             or(
-                TransactionField.fromUserGroup.eq(getUserGroup()),
-                TransactionField.toUserGroup.eq(getUserGroup())))
-        .orderBy(TransactionField.date.asc())
+                Transaction_.fromUserGroup.eq(getUserGroup()),
+                Transaction_.toUserGroup.eq(getUserGroup())))
+        .orderBy(Transaction_.date.asc())
         .getResultList();
   }
 
   public Collection<Purchase> getAllPurchases() {
     return QueryBuilder.selectAll(Purchase.class)
         .where(
-            PurchaseField.session
-                .child(SaleSessionField.customer.child(UserField.userGroup))
+            Purchase_.session
+                .child(SaleSession_.customer.child(User_.userGroup))
                 .eq(userGroup))
         .getResultList();
   }
@@ -534,8 +534,8 @@ public class User implements Serializable, UserRelated, ActuallyCloneable {
     List<Transaction> result =
         QueryBuilder.selectAll(Transaction.class)
             .where(
-                or(TransactionField.toUserGroup.eq(ug), TransactionField.fromUserGroup.eq(ug)),
-                lessOrEq(TransactionField.date, ExpressionFactory.asExpression(instant)))
+                or(Transaction_.toUserGroup.eq(ug), Transaction_.fromUserGroup.eq(ug)),
+                lessOrEq(Transaction_.date, ExpressionFactory.asExpression(instant)))
             .getResultList();
     double value = 0;
     for (Transaction transaction : result) {

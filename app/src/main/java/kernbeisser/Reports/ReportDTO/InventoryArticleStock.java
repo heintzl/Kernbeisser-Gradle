@@ -13,7 +13,7 @@ import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.ArticleStock;
 import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.DBEntities.Shelf;
-import kernbeisser.DBEntities.TypeFields.ArticleStockField;
+import kernbeisser.DBEntities.ArticleStock_;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Useful.Tools;
@@ -88,7 +88,7 @@ public class InventoryArticleStock {
     LocalDate currentInventoryDate = Setting.INVENTORY_SCHEDULED_DATE.getDateValue();
     List<InventoryArticleStock> stocksWithoutSums =
         DBConnection.getConditioned(
-                ArticleStock.class, ArticleStockField.inventoryDate.eq(currentInventoryDate))
+                ArticleStock.class, ArticleStock_.inventoryDate.eq(currentInventoryDate))
             .stream()
             .filter(s -> s.getCounted() != 0.0)
             .map(InventoryArticleStock::new)

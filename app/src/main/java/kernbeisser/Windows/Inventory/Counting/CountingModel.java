@@ -8,14 +8,14 @@ import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.ArticleStock;
 import kernbeisser.DBEntities.Shelf;
-import kernbeisser.DBEntities.TypeFields.ShelfField;
+import kernbeisser.DBEntities.Shelf_;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
 
 public class CountingModel implements IModel<CountingController> {
 
   public List<Shelf> getAllShelves() {
-    return QueryBuilder.selectAll(Shelf.class).orderBy(ShelfField.shelfNo.desc()).getResultList();
+    return QueryBuilder.selectAll(Shelf.class).orderBy(Shelf_.shelfNo.desc()).getResultList();
   }
 
   public void addArticleToShelf(Shelf shelf, Article article) {

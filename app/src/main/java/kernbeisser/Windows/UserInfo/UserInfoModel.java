@@ -9,7 +9,7 @@ import java.util.Map;
 import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.Transaction;
-import kernbeisser.DBEntities.TypeFields.TransactionField;
+import kernbeisser.DBEntities.Transaction_;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Windows.MVC.IModel;
@@ -37,14 +37,14 @@ public class UserInfoModel implements IModel<UserInfoController> {
     var resultList =
         QueryBuilder.select(
                 Transaction.class,
-                TransactionField.id,
-                TransactionField.value,
-                TransactionField.toUserGroup.eq(userGroup))
+                Transaction_.id,
+                Transaction_.value,
+                Transaction_.toUserGroup.eq(userGroup))
             .where(
                 or(
-                    TransactionField.fromUserGroup.eq(userGroup),
-                    TransactionField.toUserGroup.eq(userGroup)))
-            .orderBy(TransactionField.date.asc())
+                    Transaction_.fromUserGroup.eq(userGroup),
+                    Transaction_.toUserGroup.eq(userGroup)))
+            .orderBy(Transaction_.date.asc())
             .getResultList();
     Map<Long, Double> idValueAfterMap = new HashMap<>(resultList.size());
     for (Tuple tuple : resultList) {

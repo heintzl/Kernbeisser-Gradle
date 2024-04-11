@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.QueryBuilder;
-import kernbeisser.DBEntities.TypeFields.UserSettingValueField;
+import kernbeisser.DBEntities.UserSettingValue_;
 import kernbeisser.Enums.UserSetting;
 import kernbeisser.Security.Access.UserRelated;
 import lombok.Cleanup;
@@ -55,7 +55,7 @@ public class UserSettingValue implements UserRelated {
 
   private static Collection<UserSettingValue> getAllForUser(User user) {
     return QueryBuilder.selectAll(UserSettingValue.class)
-        .where(UserSettingValueField.user.eq(user))
+        .where(UserSettingValue_.user.eq(user))
         .getResultList();
   }
 
@@ -96,7 +96,7 @@ public class UserSettingValue implements UserRelated {
     UserSettingValue usv =
         QueryBuilder.selectAll(UserSettingValue.class)
             .where(
-                UserSettingValueField.user.eq(user), UserSettingValueField.userSetting.eq(setting))
+                UserSettingValue_.user.eq(user), UserSettingValue_.userSetting.eq(setting))
             .getSingleResultOptional(em)
             .orElseGet(
                 () -> {

@@ -19,8 +19,8 @@ import java.util.List;
 import kernbeisser.CustomComponents.ObjectTree.Node;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.QueryBuilder;
-import kernbeisser.DBEntities.TypeFields.ArticleField;
-import kernbeisser.DBEntities.TypeFields.PriceListField;
+import kernbeisser.DBEntities.Article_;
+import kernbeisser.DBEntities.PriceList_;
 import kernbeisser.Forms.ObjectForm.Components.Source;
 import kernbeisser.Useful.Tools;
 import lombok.*;
@@ -88,7 +88,7 @@ public class PriceList implements Serializable {
 
   private static PriceList getPriceList(String name) throws NoResultException {
     return QueryBuilder.selectAll(PriceList.class)
-        .where(PriceListField.name.eq(name))
+        .where(PriceList_.name.eq(name))
         .getSingleResult();
   }
 
@@ -111,14 +111,14 @@ public class PriceList implements Serializable {
 
   public static Collection<PriceList> getAllHeadPriceLists() {
     return QueryBuilder.selectAll(PriceList.class)
-        .where(PriceListField.superPriceList.isNull())
+        .where(PriceList_.superPriceList.isNull())
         .getResultList();
   }
 
   public List<PriceList> getAllPriceLists() {
     return QueryBuilder.selectAll(PriceList.class)
-        .where(PriceListField.superPriceList.eq(this))
-        .orderBy(PriceListField.name.asc())
+        .where(PriceList_.superPriceList.eq(this))
+        .orderBy(PriceList_.name.asc())
         .getResultList();
   }
 
@@ -137,7 +137,7 @@ public class PriceList implements Serializable {
 
   public List<Article> getAllArticles(EntityManager em) {
     return QueryBuilder.selectAll(Article.class)
-        .where(ArticleField.priceList.eq(this))
+        .where(Article_.priceList.eq(this))
         .getResultList(em);
   }
 
@@ -191,8 +191,8 @@ public class PriceList implements Serializable {
 
   public static Source<PriceList> onlyWithContent() {
     return () ->
-        QueryBuilder.select(ArticleField.priceList)
-            .orderBy(ArticleField.priceList.child(PriceListField.name).asc())
+        QueryBuilder.select(Article_.priceList)
+            .orderBy(Article_.priceList.child(PriceList_.name).asc())
             .distinct()
             .getResultList();
   }

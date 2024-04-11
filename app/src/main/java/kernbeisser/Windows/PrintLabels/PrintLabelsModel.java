@@ -9,7 +9,7 @@ import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Repositories.ArticleRepository;
-import kernbeisser.DBEntities.TypeFields.ArticleField;
+import kernbeisser.DBEntities.Article_;
 import kernbeisser.Enums.ShopRange;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
 import kernbeisser.Forms.ObjectForm.Components.Source;
@@ -61,8 +61,8 @@ public class PrintLabelsModel implements IModel<PrintLabelsController> {
 
   public static Collection<Article> getAllArticles() {
     return QueryBuilder.selectAll(Article.class)
-        .where(ArticleField.shopRange.eq(ShopRange.NOT_IN_RANGE).not())
-        .orderBy(ArticleField.name.asc())
+        .where(Article_.shopRange.eq(ShopRange.NOT_IN_RANGE).not())
+        .orderBy(Article_.name.asc())
         .getResultList();
   }
 

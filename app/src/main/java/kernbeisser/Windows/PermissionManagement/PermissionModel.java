@@ -9,7 +9,7 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.PredicateFactory;
 import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Permission;
-import kernbeisser.DBEntities.TypeFields.UserField;
+import kernbeisser.DBEntities.User_;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Security.PermissionKeyGroups;
 import kernbeisser.Useful.Tools;
@@ -66,7 +66,7 @@ public class PermissionModel implements IModel<PermissionController> {
     // TODO: fix that inefficient query
     List<User> resultList =
         QueryBuilder.selectAll(User.class)
-            .where(PredicateFactory.isMember(asExpression(permission), UserField.permissions))
+            .where(PredicateFactory.isMember(asExpression(permission), User_.permissions))
             .getResultList(em);
     for (User e : resultList) {
       e.getPermissions().remove(permission);

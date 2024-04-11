@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Converters.SettingValueConverter;
-import kernbeisser.DBEntities.TypeFields.SettingValueField;
+import kernbeisser.DBEntities.SettingValue_;
 import kernbeisser.Enums.Setting;
 import lombok.Cleanup;
 import lombok.EqualsAndHashCode;
@@ -66,7 +66,7 @@ public class SettingValue {
     try {
       SettingValue settingValue =
           QueryBuilder.selectAll(SettingValue.class)
-              .where(SettingValueField.setting.eq(setting))
+              .where(SettingValue_.setting.eq(setting))
               .getSingleResult(em);
       settingValue.value = value;
       em.persist(settingValue);

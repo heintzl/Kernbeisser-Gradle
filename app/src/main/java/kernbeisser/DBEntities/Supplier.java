@@ -9,8 +9,8 @@ import java.time.Instant;
 import java.util.Collection;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.QueryBuilder;
-import kernbeisser.DBEntities.TypeFields.SupplierField;
-import kernbeisser.DBEntities.TypeFields.SurchargeGroupField;
+import kernbeisser.DBEntities.Supplier_;
+import kernbeisser.DBEntities.SurchargeGroup_;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
 import kernbeisser.Useful.ActuallyCloneable;
@@ -105,9 +105,9 @@ public class Supplier implements Serializable, ActuallyCloneable {
     try {
       return QueryBuilder.selectAll(SurchargeGroup.class)
           .where(
-              SurchargeGroupField.parent.isNull(),
-              SurchargeGroupField.supplier.eq(this),
-              SurchargeGroupField.name.eq(SurchargeGroup.defaultListNameQualifier(this)))
+              SurchargeGroup_.parent.isNull(),
+              SurchargeGroup_.supplier.eq(this),
+              SurchargeGroup_.name.eq(SurchargeGroup.defaultListNameQualifier(this)))
           .getSingleResult();
     } catch (NoResultException e) {
       SurchargeGroup defaultGroup = new SurchargeGroup();
@@ -125,7 +125,7 @@ public class Supplier implements Serializable, ActuallyCloneable {
 
   public static Supplier getSupplierByShortName(String shortName) throws NoResultException {
     return QueryBuilder.selectAll(Supplier.class)
-        .where(SupplierField.shortName.eq(shortName))
+        .where(Supplier_.shortName.eq(shortName))
         .getSingleResult();
   }
 
@@ -187,11 +187,11 @@ public class Supplier implements Serializable, ActuallyCloneable {
     return QueryBuilder.selectAll(Supplier.class)
         .where(
             or(
-                like(SupplierField.name, containsPattern),
-                like(SupplierField.keeper, containsPattern),
-                like(SupplierField.phoneNumber, containsPattern),
-                like(SupplierField.email, containsPattern),
-                like(SupplierField.fax, containsPattern)))
+                like(Supplier_.name, containsPattern),
+                like(Supplier_.keeper, containsPattern),
+                like(Supplier_.phoneNumber, containsPattern),
+                like(Supplier_.email, containsPattern),
+                like(Supplier_.fax, containsPattern)))
         .limit(max)
         .getResultList();
   }

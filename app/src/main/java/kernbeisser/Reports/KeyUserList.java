@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import kernbeisser.DBConnection.QueryBuilder;
-import kernbeisser.DBEntities.TypeFields.UserField;
+import kernbeisser.DBEntities.User_;
 import kernbeisser.DBEntities.User;
 
 public class KeyUserList extends Report {
@@ -39,7 +39,7 @@ public class KeyUserList extends Report {
       sorter = Comparator.comparing(User::getFullName);
     }
     return QueryBuilder.selectAll(User.class)
-        .where(UserField.unreadable.eq(false))
+        .where(User_.unreadable.eq(false))
         .getResultList()
         .stream()
         .filter(u -> !u.isUnreadable())

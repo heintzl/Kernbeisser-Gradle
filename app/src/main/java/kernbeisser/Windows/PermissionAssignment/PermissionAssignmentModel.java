@@ -12,7 +12,7 @@ import kernbeisser.CustomComponents.ClipboardFilter;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Permission;
-import kernbeisser.DBEntities.TypeFields.UserField;
+import kernbeisser.DBEntities.User_;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
@@ -48,7 +48,7 @@ public class PermissionAssignmentModel implements IModel<PermissionAssignmentCon
     return QueryBuilder.selectAll(User.class)
         .where(
             User.GENERIC_USERS_PREDICATE.not(),
-            isMember(asExpression(permission), UserField.permissions))
+            isMember(asExpression(permission), User_.permissions))
         .getResultList(em);
   }
 
@@ -97,7 +97,7 @@ public class PermissionAssignmentModel implements IModel<PermissionAssignmentCon
         Arrays.stream(rows).map(r -> r.replace("\t", "&")).collect(Collectors.toList());
     return QueryBuilder.selectAll(User.class)
         .where(
-            concat(concat(UserField.surname, asExpression("&")), UserField.firstName).in(userNames))
+            concat(concat(User_.surname, asExpression("&")), User_.firstName).in(userNames))
         .getResultList();
   }
 

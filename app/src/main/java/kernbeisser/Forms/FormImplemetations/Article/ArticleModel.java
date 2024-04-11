@@ -12,10 +12,10 @@ import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.DBEntities.SurchargeGroup;
-import kernbeisser.DBEntities.TypeFields.ArticleField;
-import kernbeisser.DBEntities.TypeFields.PriceListField;
-import kernbeisser.DBEntities.TypeFields.SupplierField;
-import kernbeisser.DBEntities.TypeFields.SurchargeGroupField;
+import kernbeisser.DBEntities.Article_;
+import kernbeisser.DBEntities.PriceList_;
+import kernbeisser.DBEntities.Supplier_;
+import kernbeisser.DBEntities.SurchargeGroup_;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Useful.Tools;
@@ -25,11 +25,11 @@ import lombok.Cleanup;
 public class ArticleModel implements IModel<ArticleController> {
 
   boolean kbNumberExists(int kbNumber) {
-    return QueryBuilder.propertyWithThatValueExists(ArticleField.kbNumber, kbNumber);
+    return QueryBuilder.propertyWithThatValueExists(Article_.kbNumber, kbNumber);
   }
 
   boolean barcodeExists(long barcode) {
-    return QueryBuilder.propertyWithThatValueExists(ArticleField.barcode, barcode);
+    return QueryBuilder.propertyWithThatValueExists(Article_.barcode, barcode);
   }
 
   MetricUnits[] getAllUnits() {
@@ -41,12 +41,12 @@ public class ArticleModel implements IModel<ArticleController> {
   }
 
   Collection<Supplier> getAllSuppliers() {
-    return QueryBuilder.selectAll(Supplier.class).orderBy(SupplierField.name.asc()).getResultList();
+    return QueryBuilder.selectAll(Supplier.class).orderBy(Supplier_.name.asc()).getResultList();
   }
 
   Collection<PriceList> getAllPriceLists() {
     return QueryBuilder.selectAll(PriceList.class)
-        .orderBy(PriceListField.name.asc())
+        .orderBy(PriceList_.name.asc())
         .getResultList();
   }
 
@@ -59,19 +59,19 @@ public class ArticleModel implements IModel<ArticleController> {
   }
 
   public static boolean nameExists(String name) {
-    return QueryBuilder.propertyWithThatValueExists(ArticleField.name, name);
+    return QueryBuilder.propertyWithThatValueExists(Article_.name, name);
   }
 
   public Collection<SurchargeGroup> getAllSurchargeGroupsFor(Supplier s) {
     return QueryBuilder.selectAll(SurchargeGroup.class)
-        .where(SurchargeGroupField.surcharge.eq(s))
-        .orderBy(SurchargeGroupField.name.asc())
+        .where(SurchargeGroup_.surcharge.eq(s))
+        .orderBy(SurchargeGroup_.name.asc())
         .getResultList();
   }
 
   public Optional<Article> findArticleWithMostIdenticalName(Article a) {
     return QueryBuilder.selectAll(Article.class)
-        .where(ArticleField.supplier.eq(a.getSupplier()), ArticleField.id.eq(a.getId()).not())
+        .where(Article_.supplier.eq(a.getSupplier()), Article_.id.eq(a.getId()).not())
         .getResultList()
         .stream()
         .min(
@@ -82,8 +82,8 @@ public class ArticleModel implements IModel<ArticleController> {
   public boolean suppliersItemNumberExists(Supplier supplier, int suppliersItemNumber) {
     return !QueryBuilder.selectAll(Article.class)
         .where(
-            ArticleField.supplier.eq(supplier),
-            ArticleField.suppliersItemNumber.eq(suppliersItemNumber))
+            Article_.supplier.eq(supplier),
+            Article_.suppliersItemNumber.eq(suppliersItemNumber))
         .getResultList()
         .isEmpty();
   }

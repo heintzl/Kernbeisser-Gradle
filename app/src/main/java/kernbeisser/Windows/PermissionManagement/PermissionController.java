@@ -11,7 +11,7 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Permission;
-import kernbeisser.DBEntities.TypeFields.PermissionField;
+import kernbeisser.DBEntities.Permission_;
 import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Security.PermissionKeyGroups;
 import kernbeisser.Security.PermissionKeys;
@@ -59,7 +59,7 @@ public class PermissionController extends Controller<PermissionView, PermissionM
     if (selectedPermissionKerOrdering.isEmpty()) return;
     List<Permission> permissions =
         DBConnection.getConditioned(
-            Permission.class, PermissionField.name.eq(PermissionConstants.ADMIN.nameId()).not());
+            Permission.class, Permission_.name.eq(PermissionConstants.ADMIN.nameId()).not());
     Collections.reverse(permissions);
     Column<PermissionKey> nameColumn =
         Columns.create(

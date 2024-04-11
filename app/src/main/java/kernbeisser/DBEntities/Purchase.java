@@ -5,7 +5,7 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.function.Predicate;
 import kernbeisser.DBConnection.QueryBuilder;
-import kernbeisser.DBEntities.TypeFields.ShoppingItemField;
+import kernbeisser.DBEntities.ShoppingItem_;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Security.Access.UserRelated;
 import lombok.EqualsAndHashCode;
@@ -62,7 +62,7 @@ public class Purchase implements UserRelated {
 
   public Collection<ShoppingItem> getAllItems() {
     return QueryBuilder.selectAll(ShoppingItem.class)
-        .where(ShoppingItemField.purchase.eq(this))
+        .where(ShoppingItem_.purchase.eq(this))
         .getResultList();
   }
 

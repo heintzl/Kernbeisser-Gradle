@@ -1,3 +1,5 @@
 rootProject.name = 'kernbeisser'
 include 'security'
 include 'app'
+include 'kbmetamodel'
+

@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.QueryBuilder;
-import kernbeisser.DBEntities.TypeFields.ArticlePrintPoolField;
+import kernbeisser.DBEntities.ArticlePrintPool_;
 import kernbeisser.Security.StaticPermissionChecks;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
@@ -46,7 +46,7 @@ public class ArticlePrintPool {
   public static int get(Article article) {
     StaticPermissionChecks.getStaticInstance().checkShouldReadArticlePrintPoolAgain();
     return QueryBuilder.selectAll(ArticlePrintPool.class)
-        .where(ArticlePrintPoolField.article.eq(article))
+        .where(ArticlePrintPool_.article.eq(article))
         .getSingleResultOptional()
         .map(ArticlePrintPool::getNumber)
         .orElse(0);
@@ -67,7 +67,7 @@ public class ArticlePrintPool {
 
   private static Long getArticlePrintPoolId(Article article) {
     return QueryBuilder.selectAll(ArticlePrintPool.class)
-        .where(ArticlePrintPoolField.article.eq(article))
+        .where(ArticlePrintPool_.article.eq(article))
         .getSingleResultOptional()
         .map(ArticlePrintPool::getId)
         .orElse(null);

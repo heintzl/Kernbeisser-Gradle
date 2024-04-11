@@ -11,9 +11,9 @@ import java.util.Objects;
 import kernbeisser.CustomComponents.ObjectTree.CachedNode;
 import kernbeisser.CustomComponents.ObjectTree.Node;
 import kernbeisser.DBConnection.QueryBuilder;
-import kernbeisser.DBEntities.TypeFields.ArticleField;
-import kernbeisser.DBEntities.TypeFields.SupplierField;
-import kernbeisser.DBEntities.TypeFields.SurchargeGroupField;
+import kernbeisser.DBEntities.Article_;
+import kernbeisser.DBEntities.Supplier_;
+import kernbeisser.DBEntities.SurchargeGroup_;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
 import kernbeisser.Useful.ActuallyCloneable;
@@ -61,9 +61,9 @@ public class SurchargeGroup implements Serializable, ActuallyCloneable {
     return QueryBuilder.selectAll(SurchargeGroup.class)
         .where(
             or(
-                like(SurchargeGroupField.name, searchPattern),
-                like(SurchargeGroupField.supplier.child(SupplierField.name), searchPattern),
-                like(SurchargeGroupField.supplier.child(SupplierField.shortName), searchPattern)))
+                like(SurchargeGroup_.name, searchPattern),
+                like(SurchargeGroup_.supplier.child(Supplier_.name), searchPattern),
+                like(SurchargeGroup_.supplier.child(Supplier_.shortName), searchPattern)))
         .limit(max)
         .getResultList();
   }
@@ -112,7 +112,7 @@ public class SurchargeGroup implements Serializable, ActuallyCloneable {
 
   public List<SurchargeGroup> getSubGroups() {
     return QueryBuilder.selectAll(SurchargeGroup.class)
-        .where(SurchargeGroupField.parent.eq(this))
+        .where(SurchargeGroup_.parent.eq(this))
         .getResultList();
   }
 
@@ -122,7 +122,7 @@ public class SurchargeGroup implements Serializable, ActuallyCloneable {
           @Override
           public List<SurchargeGroup> getSubGroups() {
             return QueryBuilder.selectAll(SurchargeGroup.class)
-                .where(SurchargeGroupField.supplier.eq(s), SurchargeGroupField.parent.isNull())
+                .where(SurchargeGroup_.supplier.eq(s), SurchargeGroup_.parent.isNull())
                 .getResultList();
           }
         };
@@ -136,7 +136,7 @@ public class SurchargeGroup implements Serializable, ActuallyCloneable {
 
   public Collection<Article> getArticles() {
     return QueryBuilder.selectAll(Article.class)
-        .where(ArticleField.surchargeGroup.eq(this))
+        .where(Article_.surchargeGroup.eq(this))
         .getResultList();
   }
 

@@ -9,7 +9,7 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.PredicateFactory;
 import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Permission;
-import kernbeisser.DBEntities.TypeFields.PermissionField;
+import kernbeisser.DBEntities.Permission_;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Security.PermissionKeyGroups;
 import kernbeisser.Security.PermissionKeys;
@@ -80,7 +80,7 @@ public enum PermissionConstants {
             EntityTransaction et = em.getTransaction();
             et.begin();
             return QueryBuilder.selectAll(Permission.class)
-                .where(PredicateFactory.like(PermissionField.name, "@" + constants.name()))
+                .where(PredicateFactory.like(Permission_.name, "@" + constants.name()))
                 .getSingleResult(em);
           } catch (NoResultException e) {
             EntityTransaction et = em.getTransaction();
