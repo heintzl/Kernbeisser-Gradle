@@ -13,8 +13,8 @@ import javax.swing.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.*;
-import kernbeisser.DBEntities.TypeFields.PurchaseField;
-import kernbeisser.DBEntities.TypeFields.SaleSessionField;
+import kernbeisser.DBEntities.Purchase_;
+import kernbeisser.DBEntities.SaleSession_;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Exeptions.InvalidVATValueException;
 import kernbeisser.Exeptions.NoTransactionsFoundException;
@@ -45,7 +45,7 @@ public class AccountingReport extends Report {
   private List<Purchase> getPurchases() throws NoResultException {
     List<Purchase> purchases =
         QueryBuilder.selectAll(Purchase.class)
-            .where(PurchaseField.session.child(SaleSessionField.transaction).in(transactions))
+            .where(Purchase_.session.child(SaleSession_.transaction).in(transactions))
             .getResultList();
     if (purchases.isEmpty()) {
       throw new NoTransactionsFoundException();

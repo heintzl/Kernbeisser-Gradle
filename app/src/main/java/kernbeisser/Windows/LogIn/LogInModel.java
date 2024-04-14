@@ -6,7 +6,7 @@ import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.NoResultException;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.QueryBuilder;
-import kernbeisser.DBEntities.TypeFields.UserField;
+import kernbeisser.DBEntities.User_;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Exeptions.CannotLogInException;
 import kernbeisser.Exeptions.PermissionRequired;
@@ -45,7 +45,7 @@ public final class LogInModel implements IModel {
     try {
       User user =
           QueryBuilder.selectAll(User.class)
-              .where(UserField.username.eq(username))
+              .where(User_.username.eq(username))
               .getSingleResult();
       if (BCrypt.verifyer().verify(password, user.getPassword().toCharArray()).verified) {
         loggedInId = user.getId();

@@ -13,7 +13,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import kernbeisser.DBConnection.*;
 import kernbeisser.DBEntities.*;
-import kernbeisser.DBEntities.TypeFields.*;
+import kernbeisser.DBEntities.*;
 import kernbeisser.EntityWrapper.ObjectState;
 import kernbeisser.Enums.*;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
@@ -63,8 +63,8 @@ public class ArticleRepository {
 
   public static Optional<ObjectState<Article>> getByKbNumber(
       EntityManager em, int kbNumber, boolean filterShopRange) {
-    var qb = QueryBuilder.selectAll(Article.class).where(ArticleField.kbNumber.eq(kbNumber));
-    if (filterShopRange) qb.where(ArticleField.shopRange.in(ShopRange.visibleRanges()));
+    var qb = QueryBuilder.selectAll(Article.class).where(Article_.kbNumber.eq(kbNumber));
+    if (filterShopRange) qb.where(Article_.shopRange.in(ShopRange.visibleRanges()));
     return qb.getResultStream(em)
         .findAny()
         .map(ObjectState::currentState)
@@ -116,8 +116,8 @@ public class ArticleRepository {
     return DBConnection.getConditioned(
             em,
             Article.class,
-            ArticleField.suppliersItemNumber.eq(suppliersNumber),
-            ArticleField.supplier.eq(targetSupplier))
+            Article_.suppliersItemNumber.eq(suppliersNumber),
+            Article_.supplier.eq(targetSupplier))
         .stream()
         .findFirst();
   }
@@ -128,7 +128,7 @@ public class ArticleRepository {
     EntityTransaction et = em.getTransaction();
     et.begin();
     List<Article> articles =
-        DBConnection.getConditioned(em, Article.class, ArticleField.barcode.eq(targetBarcode));
+        DBConnection.getConditioned(em, Article.class, Article_.barcode.eq(targetBarcode));
     return Optional.ofNullable(
         articles.stream()
             .filter(ArticleRepository::articleIsActiveOffer)
@@ -149,8 +149,8 @@ public class ArticleRepository {
       et.begin();
       return QueryBuilder.selectAll(Article.class)
           .where(
-              ArticleField.name.eq(rawPrice.getName()),
-              ArticleField.kbNumber.in(rawPriceIdentifiers))
+              Article_.name.eq(rawPrice.getName()),
+              Article_.kbNumber.in(rawPriceIdentifiers))
           .getSingleResult(em);
     } catch (NoResultException e) {
       ArticleConstants identifierEnum = ArticleConstants.CUSTOM_PRODUCT;
@@ -203,7 +203,7 @@ public class ArticleRepository {
   private static TypedQuery<Article> createQuery(EntityManager em, String search) {
     if (search.startsWith("PL:")) {
       return QueryBuilder.selectAll(Article.class)
-          .where(ArticleField.priceList.child(PriceListField.name).eq(search.replace("PL:", "")))
+          .where(Article_.priceList.child(PriceList_.name).eq(search.replace("PL:", "")))
           .buildQuery(em);
     }
     int n = Tools.tryParseInt(search);
@@ -212,21 +212,21 @@ public class ArticleRepository {
     return QueryBuilder.selectAll(Article.class)
         .where(
             or(
-                ArticleField.kbNumber.eq(n),
-                ArticleField.suppliersItemNumber.eq(Tools.tryParseInt(search)),
-                like(lower(ArticleField.name), ds),
-                ArticleField.barcode.eq(l),
-                like(ArticleField.barcode.as(String.class), "%" + search)))
-        .orderBy(ArticleField.name.asc())
+                Article_.kbNumber.eq(n),
+                Article_.suppliersItemNumber.eq(Tools.tryParseInt(search)),
+                like(lower(Article_.name), ds),
+                Article_.barcode.eq(l),
+                like(Article_.barcode.as(String.class), "%" + search)))
+        .orderBy(Article_.name.asc())
         .buildQuery(em);
   }
 
   // TODO find better solution this one only makes sense when trying to find hundreds of free ids...
   public static int nextFreeKBNumber(EntityManager em, int min) {
     List<Integer> usedKbNumbers =
-        QueryBuilder.select(ArticleField.kbNumber)
-            .where(greaterOrEq(ArticleField.kbNumber, asExpression(min)))
-            .orderBy(ArticleField.kbNumber.asc())
+        QueryBuilder.select(Article_.kbNumber)
+            .where(greaterOrEq(Article_.kbNumber, asExpression(min)))
+            .orderBy(Article_.kbNumber.asc())
             .getResultList(em);
     for (int id = min; ; id++) {
       if (!usedKbNumbers.contains(id)) return id;
@@ -240,8 +240,8 @@ public class ArticleRepository {
   public static Article nextArticleTo(
       EntityManager em, int suppliersItemNumber, Supplier supplier) {
     return QueryBuilder.selectAll(Article.class)
-        .where(ArticleField.supplier.eq(supplier))
-        .orderBy(diff(ArticleField.suppliersItemNumber, asExpression(suppliersItemNumber)).asc())
+        .where(Article_.supplier.eq(supplier))
+        .orderBy(diff(Article_.suppliersItemNumber, asExpression(suppliersItemNumber)).asc())
         .buildQuery(em)
         .setMaxResults(1)
         .getResultStream()
@@ -253,8 +253,8 @@ public class ArticleRepository {
       EntityManager em, int suppliersItemNumber, Supplier supplier, PriceList excludedPriceList) {
     return QueryBuilder.selectAll(Article.class)
         .where(
-            ArticleField.supplier.eq(supplier), ArticleField.priceList.eq(excludedPriceList).not())
-        .orderBy(diff(ArticleField.suppliersItemNumber, asExpression(suppliersItemNumber)).asc())
+            Article_.supplier.eq(supplier), Article_.priceList.eq(excludedPriceList).not())
+        .orderBy(diff(Article_.suppliersItemNumber, asExpression(suppliersItemNumber)).asc())
         .getResultStream(em)
         .findFirst()
         .orElse(null);
@@ -266,7 +266,7 @@ public class ArticleRepository {
 
   public static Optional<Offer> findOfferOn(Article article) {
     return QueryBuilder.selectAll(Offer.class)
-        .where(OfferField.offerArticle.eq(article))
+        .where(Offer_.offerArticle.eq(article))
         .getResultList()
         .stream()
         .filter(e -> e.getFromDate().isBefore(Instant.now()))
@@ -276,10 +276,10 @@ public class ArticleRepository {
 
   public static Map<Integer, Instant> getLastDeliveries() {
     return QueryBuilder.select(
-            ShoppingItem.class, ShoppingItemField.kbNumber, max(ShoppingItemField.createDate))
-        .where(ShoppingItemField.purchase.isNull())
-        .groupBy(ShoppingItemField.kbNumber)
-        .orderBy(ShoppingItemField.kbNumber.asc())
+            ShoppingItem.class, ShoppingItem_.kbNumber, max(ShoppingItem_.createDate))
+        .where(ShoppingItem_.purchase.isNull())
+        .groupBy(ShoppingItem_.kbNumber)
+        .orderBy(ShoppingItem_.kbNumber.asc())
         .getResultList()
         .stream()
         .collect(
@@ -330,11 +330,11 @@ public class ArticleRepository {
   }
 
   public static Collection<Article> getPrintPool() {
-    return QueryBuilder.select(ArticlePrintPoolField.article).distinct().getResultList();
+    return QueryBuilder.select(ArticlePrintPool_.article).distinct().getResultList();
   }
 
   public static int getArticlePrintPoolSize() {
-    return QueryBuilder.select(ArticlePrintPool.class, sum(ArticlePrintPoolField.number))
+    return QueryBuilder.select(ArticlePrintPool.class, sum(ArticlePrintPool_.number))
         .getSingleResultOptional()
         .map(tuple -> tuple.get(0, Integer.class))
         .orElse(0);
@@ -348,14 +348,14 @@ public class ArticleRepository {
     Instant expireDate =
         Instant.now().minus(Setting.INVENTORY_INACTIVE_ARTICLE.getIntValue(), ChronoUnit.DAYS);
     List<Integer> articleIds =
-        QueryBuilder.select(ShoppingItemField.articleId)
-            .where(greaterOrEq(ShoppingItemField.createDate, asExpression(expireDate)))
+        QueryBuilder.select(ShoppingItem_.articleId)
+            .where(greaterOrEq(ShoppingItem_.createDate, asExpression(expireDate)))
             .distinct()
             .getResultStream(em)
             .map(e -> e.intValue())
             .toList();
     return QueryBuilder.selectAll(Article.class)
-        .where(ArticleField.id.in(articleIds))
+        .where(Article_.id.in(articleIds))
         .getResultList(em);
   }
 
@@ -371,7 +371,7 @@ public class ArticleRepository {
               DBConnection.getConditioned(
                       em,
                       Article.class,
-                      ArticleField.kbNumber.eq(
+                      Article_.kbNumber.eq(
                           ArticleConstants.CUSTOM_PRODUCT.getUniqueIdentifier()))
                   .stream()
                   .findFirst()
@@ -449,12 +449,12 @@ public class ArticleRepository {
             .collect(Collectors.toList());
     return QueryBuilder.selectAll(CatalogEntry.class)
         .where(
-            CatalogEntryField.aktionspreis.eq(false),
-            CatalogEntryField.artikelNr.in(articleNos),
+            CatalogEntry_.aktionspreis.eq(false),
+            CatalogEntry_.artikelNr.in(articleNos),
             or(
-                CatalogEntryField.ladeneinheit.isNull().not(),
-                CatalogEntryField.gebindePfand.eq(0.0).not(),
-                CatalogEntryField.einzelPfand.eq(0.0).not()))
+                CatalogEntry_.ladeneinheit.isNull().not(),
+                CatalogEntry_.gebindePfand.eq(0.0).not(),
+                CatalogEntry_.einzelPfand.eq(0.0).not()))
         .getResultList()
         .stream()
         .collect(Collectors.toMap(CatalogEntry::getArtikelNr, c -> c));

@@ -10,9 +10,9 @@ import java.util.stream.Collectors;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.PredicateFactory;
 import kernbeisser.DBConnection.QueryBuilder;
-import kernbeisser.DBEntities.TypeFields.TransactionField;
-import kernbeisser.DBEntities.TypeFields.UserField;
-import kernbeisser.DBEntities.TypeFields.UserGroupField;
+import kernbeisser.DBEntities.Transaction_;
+import kernbeisser.DBEntities.User_;
+import kernbeisser.DBEntities.UserGroup_;
 import kernbeisser.Exeptions.InconsistentUserGroupValueException;
 import kernbeisser.Exeptions.MissingFullMemberException;
 import kernbeisser.Security.Access.UserRelated;
@@ -100,12 +100,12 @@ public class UserGroup implements UserRelated {
     EntityTransaction et = em.getTransaction();
     et.begin();
     Collection<Integer> userGroupIds =
-        QueryBuilder.select(UserField.userGroup.child(UserGroupField.id))
-            .where(UserField.unreadable.eq(false), User.GENERIC_USERS_PREDICATE.not())
+        QueryBuilder.select(User_.userGroup.child(UserGroup_.id))
+            .where(User_.unreadable.eq(false), User.GENERIC_USERS_PREDICATE.not())
             .getResultList(em);
     HashSet<Integer> ugIdSet = new HashSet<>(userGroupIds);
     return QueryBuilder.selectAll(UserGroup.class)
-        .where(in(UserGroupField.id, ugIdSet))
+        .where(in(UserGroup_.id, ugIdSet))
         .getResultList(em);
   }
 
@@ -114,8 +114,8 @@ public class UserGroup implements UserRelated {
     UserGroup result = new UserGroup();
     result.membersAsString =
         QueryBuilder.select(
-                User.class, UserField.id, UserField.firstName, UserField.surname, User.IS_FULL_USER)
-            .where(UserField.userGroup.eq(this))
+                User.class, User_.id, User_.firstName, User_.surname, User.IS_FULL_USER)
+            .where(User_.userGroup.eq(this))
             .getResultList()
             .stream()
             .map(
@@ -133,17 +133,17 @@ public class UserGroup implements UserRelated {
   }
 
   public Collection<User> getMembers() {
-    return QueryBuilder.selectAll(User.class).where(UserField.userGroup.eq(this)).getResultList();
+    return QueryBuilder.selectAll(User.class).where(User_.userGroup.eq(this)).getResultList();
   }
 
   public static Collection<UserGroup> defaultSearch(String s, int i) {
     String userSearchPattern = s + "%";
-    return QueryBuilder.select(UserField.userGroup)
+    return QueryBuilder.select(User_.userGroup)
         .where(
             or(
-                like(UserField.username, userSearchPattern),
-                like(UserField.firstName, userSearchPattern),
-                like(UserField.surname, userSearchPattern)))
+                like(User_.username, userSearchPattern),
+                like(User_.firstName, userSearchPattern),
+                like(User_.surname, userSearchPattern)))
         .distinct()
         .getResultList();
   }
@@ -151,8 +151,8 @@ public class UserGroup implements UserRelated {
   public String getMemberString() {
     StringBuilder sb = new StringBuilder();
     for (Tuple tuple :
-        QueryBuilder.select(UserField.firstName, UserField.surname)
-            .where(UserField.userGroup.eq(this))
+        QueryBuilder.select(User_.firstName, User_.surname)
+            .where(User_.userGroup.eq(this))
             .getResultList()) {
       sb.append(User.getFullName(tuple.get(0, String.class), tuple.get(1, String.class), false))
           .append(", ");
@@ -168,11 +168,11 @@ public class UserGroup implements UserRelated {
     EntityTransaction et = em.getTransaction();
     et.begin();
     Map<Integer, Double> userGroupIdValueMap = getValueMapAt(em, dataOfLastTransaction);
-    QueryBuilder.select(UserField.userGroup.child(UserGroupField.id))
+    QueryBuilder.select(User_.userGroup.child(UserGroup_.id))
         .where(
             or(
                 User.GENERIC_USERS_PREDICATE,
-                and(UserField.unreadable.eq(true), UserField.unreadable.eq(!withUnreadables))))
+                and(User_.unreadable.eq(true), User_.unreadable.eq(!withUnreadables))))
         .getResultList(em)
         .forEach(userGroupIdValueMap::remove);
     return userGroupIdValueMap;
@@ -182,12 +182,12 @@ public class UserGroup implements UserRelated {
       EntityManager em, Instant dateOfLastTransaction) {
     List<Tuple> transactionsUntilDate =
         QueryBuilder.select(
-                TransactionField.fromUserGroup.child(UserGroupField.id),
-                TransactionField.toUserGroup.child(UserGroupField.id),
-                TransactionField.value)
+                Transaction_.fromUserGroup.child(UserGroup_.id),
+                Transaction_.toUserGroup.child(UserGroup_.id),
+                Transaction_.value)
             .where(
                 PredicateFactory.lessOrEq(
-                    TransactionField.date, asExpression(dateOfLastTransaction)))
+                    Transaction_.date, asExpression(dateOfLastTransaction)))
             .getResultList(em);
     Map<Integer, Double> userGroupIdValueMap = new HashMap<>(200);
     for (Tuple tuple : transactionsUntilDate) {
@@ -220,7 +220,7 @@ public class UserGroup implements UserRelated {
     Map<Integer, Double> overValueTransactionSumThreshold = new HashMap<>();
     Map<Integer, Double> valueMap = getValueMapAt(em, Instant.now());
     for (Tuple tuple :
-        QueryBuilder.select(UserGroupField.id, UserGroupField.value).getResultList()) {
+        QueryBuilder.select(UserGroup_.id, UserGroup_.value).getResultList()) {
       Integer id = tuple.get(0, Integer.class);
       Double value = tuple.get(1, Double.class);
       Double transactionSum = valueMap.getOrDefault(id, 0.0);
@@ -241,7 +241,7 @@ public class UserGroup implements UserRelated {
 
   private static UserGroup getWithTransactionSum(int id, double sum) {
     UserGroup userGroup =
-        QueryBuilder.selectAll(UserGroup.class).where(UserGroupField.id.eq(id)).getSingleResult();
+        QueryBuilder.selectAll(UserGroup.class).where(UserGroup_.id.eq(id)).getSingleResult();
     userGroup.transactionSum = sum;
     return userGroup;
   }

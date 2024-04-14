@@ -3,7 +3,7 @@ package kernbeisser.DBEntities;
 import jakarta.persistence.*;
 import java.util.Collection;
 import kernbeisser.DBConnection.QueryBuilder;
-import kernbeisser.DBEntities.TypeFields.IgnoredDialogField;
+import kernbeisser.DBEntities.IgnoredDialog_;
 import lombok.Getter;
 
 @Entity
@@ -24,7 +24,7 @@ public class IgnoredDialog {
 
   public static Collection<IgnoredDialog> getAllFor(User user) {
     return QueryBuilder.selectAll(IgnoredDialog.class)
-        .where(IgnoredDialogField.user.eq(user))
+        .where(IgnoredDialog_.user.eq(user))
         .getResultList();
   }
 }

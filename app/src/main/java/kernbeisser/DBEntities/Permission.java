@@ -7,8 +7,8 @@ import jakarta.persistence.*;
 import java.util.*;
 import kernbeisser.DBConnection.ExpressionFactory;
 import kernbeisser.DBConnection.QueryBuilder;
-import kernbeisser.DBEntities.TypeFields.PermissionField;
-import kernbeisser.DBEntities.TypeFields.UserField;
+import kernbeisser.DBEntities.Permission_;
+import kernbeisser.DBEntities.User_;
 import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Useful.Tools;
 import lombok.*;
@@ -51,7 +51,7 @@ public class Permission {
 
   public static Collection<Permission> defaultSearch(String s, int max) {
     return QueryBuilder.selectAll(Permission.class)
-        .where(like(PermissionField.name, s + "%"))
+        .where(like(Permission_.name, s + "%"))
         .limit(max)
         .getResultList();
   }
@@ -71,7 +71,7 @@ public class Permission {
 
   public Collection<User> getAllUsers() {
     return QueryBuilder.selectAll(User.class)
-        .where(isMember(ExpressionFactory.asExpression(this), UserField.permissions))
+        .where(isMember(ExpressionFactory.asExpression(this), User_.permissions))
         .getResultList();
   }
 

@@ -1,7 +1,5 @@
 package kernbeisser.VersionIntegrationTools.UpdatingTools;
 
-import static kernbeisser.DBEntities.TypeFields.PreOrderField.catalogEntry;
-import static kernbeisser.DBEntities.TypeFields.PreOrderField.delivery;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
@@ -13,7 +11,8 @@ import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.CatalogEntry;
 import kernbeisser.DBEntities.PreOrder;
-import kernbeisser.DBEntities.TypeFields.CatalogEntryField;
+import kernbeisser.DBEntities.PreOrder_;
+import kernbeisser.DBEntities.CatalogEntry_;
 import kernbeisser.VersionIntegrationTools.VersionUpdatingTool;
 import lombok.Cleanup;
 
@@ -26,15 +25,15 @@ public class MigrateOpenPreOrders implements VersionUpdatingTool {
     et.begin();
     Collection<PreOrder> relevantPreorders =
         QueryBuilder.selectAll(PreOrder.class)
-            .where(delivery.isNull(), catalogEntry.isNull())
+            .where(PreOrder_.delivery.isNull(), PreOrder_.catalogEntry.isNull())
             .getResultList(em);
     for (PreOrder preOrder : relevantPreorders) {
       int kkNUmber = preOrder.getArticle().getSuppliersItemNumber();
       Optional<CatalogEntry> entry =
           QueryBuilder.selectAll(CatalogEntry.class)
               .where(
-                  CatalogEntryField.artikelNr.eq(Integer.toString(kkNUmber)),
-                  CatalogEntryField.aktionspreis.eq(false))
+                  CatalogEntry_.artikelNr.eq(Integer.toString(kkNUmber)),
+                  CatalogEntry_.aktionspreis.eq(false))
               .getResultStream(em)
               .findFirst();
       PreOrder existingPreOrder = em.find(PreOrder.class, preOrder.getId());

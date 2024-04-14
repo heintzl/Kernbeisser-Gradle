@@ -3,7 +3,7 @@ package kernbeisser.DBEntities;
 import jakarta.persistence.*;
 import java.util.List;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntities.TypeFields.PostField;
+import kernbeisser.DBEntities.Post_;
 import kernbeisser.Enums.PostContext;
 import kernbeisser.Useful.Tools;
 import lombok.*;
@@ -63,7 +63,7 @@ public class Post {
   }
 
   public static Post getByContext(PostContext postContext) {
-    List<Post> posts = DBConnection.getConditioned(Post.class, PostField.context.eq(postContext));
+    List<Post> posts = DBConnection.getConditioned(Post.class, Post_.context.eq(postContext));
     if (posts.isEmpty()) {
       return new Post(postContext);
     } else {

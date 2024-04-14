@@ -74,8 +74,10 @@ dependencies {
     implementation 'org.objenesis:objenesis:1.2'
 
     implementation project(":security")
+    implementation project(":kbmetamodel")
     implementation 'org.projectlombok:lombok:1.18.30'
     annotationProcessor 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor files(project(":kbmetamodel").file("build/libs/kbmetamodel.jar"))
 
     //Tests
     testCompileOnly 'org.projectlombok:lombok:1.18.30'

@@ -23,7 +23,7 @@ import kernbeisser.DBEntities.IgnoredDifference;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.DBEntities.SurchargeGroup;
-import kernbeisser.DBEntities.TypeFields.ArticleField;
+import kernbeisser.DBEntities.Article_;
 import kernbeisser.Enums.ShopRange;
 import kernbeisser.Tasks.Catalog.CatalogImporter;
 import lombok.Getter;
@@ -63,7 +63,7 @@ public class CatalogMergeSession {
 
   private Map<Integer, Article> loadCurrentState() {
     return QueryBuilder.selectAll(Article.class)
-        .where(ArticleField.supplier.eq(Supplier.getKKSupplier()))
+        .where(Article_.supplier.eq(Supplier.getKKSupplier()))
         .getResultMap(Article::getSuppliersItemNumber, article -> article);
   }
 
@@ -98,10 +98,10 @@ public class CatalogMergeSession {
             UniqueValidator.forbidNull(CatalogEntry::getArtikelNr),
             UniqueValidator.allowNull(
                 CatalogEntry::getEanLadenEinheit,
-                QueryBuilder.select(ArticleField.barcode)
+                QueryBuilder.select(Article_.barcode)
                     .where(
-                        ArticleField.supplier.eq(kkSupplier).not(),
-                        ArticleField.barcode.isNull().not())
+                        Article_.supplier.eq(kkSupplier).not(),
+                        Article_.barcode.isNull().not())
                     .getResultList()));
     return mapToArticleMerge(
             readSource(source).filter(e -> !uniqueValidator.brakesUniqueConstraints(e)),
@@ -204,10 +204,10 @@ public class CatalogMergeSession {
   public void pushToDB(Iterator<ArticleMerge> articleMerges, boolean checkVerified) {
     Session session = em.unwrap(Session.class);
     HashSet<Long> barcodes =
-        new HashSet<>(QueryBuilder.select(ArticleField.barcode).getResultList(em));
+        new HashSet<>(QueryBuilder.select(Article_.barcode).getResultList(em));
     UniqueNumberIncrementingFactory kbNumberFactory =
         new UniqueNumberIncrementingFactory(
-            new HashSet<>(QueryBuilder.select(ArticleField.kbNumber).getResultList()), FILL_OFFSET);
+            new HashSet<>(QueryBuilder.select(Article_.kbNumber).getResultList()), FILL_OFFSET);
     articleMerges.forEachRemaining(
         articleMerge -> {
           if (checkVerified) checkMergeStatus(articleMerge);

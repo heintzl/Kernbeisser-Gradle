@@ -11,7 +11,7 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.PriceList;
-import kernbeisser.DBEntities.TypeFields.ArticleField;
+import kernbeisser.DBEntities.Article_;
 import kernbeisser.Enums.ShopRange;
 import kernbeisser.Forms.ObjectForm.Components.Source;
 import kernbeisser.Windows.CollectionView.CollectionController;
@@ -43,7 +43,7 @@ public class EditPriceListModel implements IModel<EditPriceListController> {
 
   public Collection<Article> getAllArticles() {
     return QueryBuilder.selectAll(Article.class)
-        .where(ArticleField.shopRange.eq(ShopRange.NOT_IN_RANGE).not())
+        .where(Article_.shopRange.eq(ShopRange.NOT_IN_RANGE).not())
         .getResultList();
   }
 

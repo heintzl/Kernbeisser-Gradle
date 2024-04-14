@@ -12,7 +12,7 @@ import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.ArticleStock;
 import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.DBEntities.Shelf;
-import kernbeisser.DBEntities.TypeFields.ArticleStockField;
+import kernbeisser.DBEntities.ArticleStock_;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Useful.Tools;
 import lombok.Getter;
@@ -34,8 +34,8 @@ public class InventoryShelf {
     List<ArticleStock> shelfStocks =
         DBConnection.getConditioned(
             ArticleStock.class,
-            ArticleStockField.shelf.eq(shelf),
-            ArticleStockField.inventoryDate.eq(localDate));
+            ArticleStock_.shelf.eq(shelf),
+            ArticleStock_.inventoryDate.eq(localDate));
 
     List<Integer> stockArticleIds =
         shelfStocks.stream().map(s -> s.getArticle().getId()).collect(Collectors.toList());

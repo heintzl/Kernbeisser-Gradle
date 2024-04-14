@@ -23,7 +23,7 @@ import kernbeisser.DBConnection.PredicateFactory;
 import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.SurchargeGroup;
-import kernbeisser.DBEntities.TypeFields.ArticleField;
+import kernbeisser.DBEntities.Article_;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.UserSetting;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
@@ -463,7 +463,7 @@ public class Tools {
     Map<SurchargeGroup, Map<Double, List<String>>> result = new HashMap<>();
     Map<SurchargeGroup, List<Article>> articleMap =
         QueryBuilder.selectAll(Article.class)
-            .where(ArticleField.obsoleteSurcharge.isNull().not())
+            .where(Article_.obsoleteSurcharge.isNull().not())
             .getResultStream(em)
             .collect(Collectors.groupingBy(Article::getSurchargeGroup, Collectors.toList()));
     Map<SurchargeGroup, Map<Double, Long>> surchargeMap = new HashMap<>();

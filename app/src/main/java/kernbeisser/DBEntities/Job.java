@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 import kernbeisser.DBConnection.QueryBuilder;
-import kernbeisser.DBEntities.TypeFields.JobField;
+import kernbeisser.DBEntities.Job_;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
 import kernbeisser.Useful.ActuallyCloneable;
 import kernbeisser.Useful.Tools;
@@ -53,7 +53,7 @@ public class Job implements ActuallyCloneable {
 
   public static Collection<Job> defaultSearch(String s, int max) {
     return QueryBuilder.selectAll(Job.class)
-        .where(or(like(JobField.name, s + "%"), like(JobField.description, "%" + s + "%")))
+        .where(or(like(Job_.name, s + "%"), like(Job_.description, "%" + s + "%")))
         .limit(max)
         .getResultList();
   }

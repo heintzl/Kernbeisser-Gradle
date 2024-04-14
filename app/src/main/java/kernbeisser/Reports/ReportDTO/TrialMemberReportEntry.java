@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.Optional;
 import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.SaleSession;
-import kernbeisser.DBEntities.TypeFields.SaleSessionField;
-import kernbeisser.DBEntities.TypeFields.TransactionField;
-import kernbeisser.DBEntities.TypeFields.UserField;
+import kernbeisser.DBEntities.SaleSession_;
+import kernbeisser.DBEntities.Transaction_;
+import kernbeisser.DBEntities.User_;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Useful.Date;
@@ -39,14 +39,14 @@ public class TrialMemberReportEntry {
     List<Tuple> resultList =
         QueryBuilder.select(
                 SaleSession.class,
-                SaleSessionField.customer,
-                SaleSessionField.transaction.child(TransactionField.value),
-                SaleSessionField.transaction.child(TransactionField.date))
+                SaleSession_.customer,
+                SaleSession_.transaction.child(Transaction_.value),
+                SaleSession_.transaction.child(Transaction_.date))
             .where(
                 isMember(
                     asExpression(PermissionConstants.TRIAL_MEMBER.getPermission()),
-                    SaleSessionField.customer.child(UserField.permissions)))
-            .orderBy(SaleSessionField.customer.asc())
+                    SaleSession_.customer.child(User_.permissions)))
+            .orderBy(SaleSession_.customer.asc())
             .getResultList();
     for (Tuple tuple : resultList) {
       User user = tuple.get(0, User.class);

@@ -8,7 +8,7 @@ import java.util.Optional;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Repositories.ArticleRepository;
-import kernbeisser.DBEntities.TypeFields.ArticleStockField;
+import kernbeisser.DBEntities.ArticleStock_;
 import kernbeisser.Enums.Setting;
 import lombok.Cleanup;
 import lombok.Data;
@@ -37,9 +37,9 @@ public class ArticleStock {
   public static Optional<ArticleStock> ofArticle(EntityManager em, Article article, Shelf shelf) {
     return QueryBuilder.selectAll(ArticleStock.class)
         .where(
-            ArticleStockField.article.eq(article),
-            ArticleStockField.shelf.eq(shelf),
-            ArticleStockField.inventoryDate.eq(Setting.INVENTORY_SCHEDULED_DATE.getDateValue()))
+            ArticleStock_.article.eq(article),
+            ArticleStock_.shelf.eq(shelf),
+            ArticleStock_.inventoryDate.eq(Setting.INVENTORY_SCHEDULED_DATE.getDateValue()))
         .getSingleResultOptional(em);
   }
 

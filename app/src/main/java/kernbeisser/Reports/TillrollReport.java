@@ -11,8 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.ShoppingItem;
-import kernbeisser.DBEntities.TypeFields.PurchaseField;
-import kernbeisser.DBEntities.TypeFields.ShoppingItemField;
+import kernbeisser.DBEntities.Purchase_;
+import kernbeisser.DBEntities.ShoppingItem_;
 
 public class TillrollReport extends Report {
   private final Instant start;
@@ -45,9 +45,9 @@ public class TillrollReport extends Report {
     return QueryBuilder.selectAll(ShoppingItem.class)
         .where(
             greaterOrEq(
-                ShoppingItemField.purchase.child(PurchaseField.createDate), asExpression(start)),
+                ShoppingItem_.purchase.child(Purchase_.createDate), asExpression(start)),
             lessThan(
-                ShoppingItemField.purchase.child(PurchaseField.createDate),
+                ShoppingItem_.purchase.child(Purchase_.createDate),
                 asExpression(endExclusive)))
         .getResultList();
   }

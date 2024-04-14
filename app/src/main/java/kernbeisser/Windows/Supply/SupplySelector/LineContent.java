@@ -14,7 +14,7 @@ import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.*;
 import kernbeisser.DBEntities.Repositories.ArticleRepository;
-import kernbeisser.DBEntities.TypeFields.CatalogEntryField;
+import kernbeisser.DBEntities.CatalogEntry_;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.VAT;
@@ -111,8 +111,8 @@ public class LineContent {
           fileName + ": Fehlerhafte Zeilen wurden übersprungen:",
           JOptionPane.WARNING_MESSAGE);
     }
-    var articleCondition = CatalogEntryField.artikelNr.in(kkNumbers);
-    var actionCondition = CatalogEntryField.aktionspreis.eq(1).not();
+    var articleCondition = CatalogEntry_.artikelNr.in(kkNumbers);
+    var actionCondition = CatalogEntry_.aktionspreis.eq(1).not();
     Map<String, CatalogEntry> catalogEntries =
         DBConnection.getConditioned(CatalogEntry.class, articleCondition, actionCondition).stream()
             .collect(Collectors.toMap(CatalogEntry::getArtikelNr, e -> e));

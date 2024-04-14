@@ -14,7 +14,7 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.ExpressionFactory;
 import kernbeisser.DBConnection.PredicateFactory;
 import kernbeisser.DBConnection.QueryBuilder;
-import kernbeisser.DBEntities.TypeFields.TransactionField;
+import kernbeisser.DBEntities.Transaction_;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.InvalidTransactionException;
@@ -269,17 +269,17 @@ public class Transaction implements UserRelated {
   }
 
   public static long getLastReportNo() {
-    return QueryBuilder.select(Transaction.class, max(TransactionField.accountingReportNo))
+    return QueryBuilder.select(Transaction.class, max(Transaction_.accountingReportNo))
         .getSingleResultOptional()
         .map(tuple -> tuple.get(0, Long.class))
         .orElse(0L);
   }
 
   public static Instant getLastOfReportNo(long reportNo) throws NoResultException {
-    return QueryBuilder.select(Transaction.class, max(TransactionField.date))
+    return QueryBuilder.select(Transaction.class, max(Transaction_.date))
         .where(
             PredicateFactory.lessOrEq(
-                TransactionField.accountingReportNo, ExpressionFactory.asExpression(reportNo)))
+                Transaction_.accountingReportNo, ExpressionFactory.asExpression(reportNo)))
         .getSingleResult()
         .get(0, Instant.class);
   }
@@ -300,8 +300,8 @@ public class Transaction implements UserRelated {
   public static List<Transaction> getTransactionsByReportNo(long reportNo) {
     List<Transaction> transactions =
         QueryBuilder.selectAll(Transaction.class)
-            .where(TransactionField.accountingReportNo.eq(reportNo))
-            .orderBy(TransactionField.id.asc())
+            .where(Transaction_.accountingReportNo.eq(reportNo))
+            .orderBy(Transaction_.id.asc())
             .getResultList();
     if (transactions.isEmpty()) {
       throw new NoTransactionsFoundException();
@@ -314,9 +314,9 @@ public class Transaction implements UserRelated {
     List<Transaction> transactions =
         QueryBuilder.selectAll(Transaction.class)
             .where(
-                TransactionField.accountingReportNo.isNull(),
-                or(TransactionField.fromUser.eq(kbUser), TransactionField.toUser.eq(kbUser)))
-            .orderBy(TransactionField.id.asc())
+                Transaction_.accountingReportNo.isNull(),
+                or(Transaction_.fromUser.eq(kbUser), Transaction_.toUser.eq(kbUser)))
+            .orderBy(Transaction_.id.asc())
             .getResultList();
     if (transactions.isEmpty()) {
       throw new NoTransactionsFoundException();

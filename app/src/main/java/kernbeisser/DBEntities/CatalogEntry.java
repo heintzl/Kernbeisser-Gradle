@@ -11,7 +11,7 @@ import java.util.Optional;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.PredicateFactory;
 import kernbeisser.DBConnection.QueryBuilder;
-import kernbeisser.DBEntities.TypeFields.CatalogEntryField;
+import kernbeisser.DBEntities.CatalogEntry_;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
@@ -214,22 +214,22 @@ public class CatalogEntry implements ActuallyCloneable {
   public static List<CatalogEntry> getByArticleNo(
       String articleNo, boolean withActions, boolean withInactive) {
     var queryBuilder =
-        QueryBuilder.selectAll(CatalogEntry.class).where(CatalogEntryField.artikelNr.eq(articleNo));
+        QueryBuilder.selectAll(CatalogEntry.class).where(CatalogEntry_.artikelNr.eq(articleNo));
     if (!withInactive) {
-      queryBuilder.where(CatalogEntryField.aenderungskennung.in("V", "X").not());
+      queryBuilder.where(CatalogEntry_.aenderungskennung.in("V", "X").not());
     }
     if (withActions) {
       queryBuilder
           .where(
               PredicateFactory.or(
-                  CatalogEntryField.aktionspreis.eq(1).not(),
+                  CatalogEntry_.aktionspreis.eq(1).not(),
                   between(
                       Instant.now(),
-                      CatalogEntryField.aktionspreisGueltigAb,
-                      CatalogEntryField.aktionspreisGueltigBis)))
-          .orderBy(CatalogEntryField.aktionspreis.desc());
+                      CatalogEntry_.aktionspreisGueltigAb,
+                      CatalogEntry_.aktionspreisGueltigBis)))
+          .orderBy(CatalogEntry_.aktionspreis.desc());
     } else {
-      queryBuilder.where(CatalogEntryField.aktionspreis.eq(1).not());
+      queryBuilder.where(CatalogEntry_.aktionspreis.eq(1).not());
     }
     return queryBuilder.getResultList();
   }
@@ -240,7 +240,7 @@ public class CatalogEntry implements ActuallyCloneable {
 
   public static Optional<CatalogEntry> getByBarcode(String barcode) {
     return QueryBuilder.selectAll(CatalogEntry.class)
-        .where(CatalogEntryField.eanLadenEinheit.eq(barcode))
+        .where(CatalogEntry_.eanLadenEinheit.eq(barcode))
         .getSingleResultOptional();
   }
 

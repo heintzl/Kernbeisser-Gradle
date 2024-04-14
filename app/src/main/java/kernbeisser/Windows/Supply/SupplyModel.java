@@ -6,7 +6,7 @@ import java.util.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.*;
 import kernbeisser.DBEntities.Repositories.ArticleRepository;
-import kernbeisser.DBEntities.TypeFields.PreOrderField;
+import kernbeisser.DBEntities.PreOrder_;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
@@ -106,8 +106,8 @@ public class SupplyModel implements IModel<SupplyController> {
     List<PreOrder> userPreorders =
         DBConnection.getConditioned(
             PreOrder.class,
-            PreOrderField.delivery.isNull(),
-            PreOrderField.user.eq(User.getKernbeisserUser()).not());
+            PreOrder_.delivery.isNull(),
+            PreOrder_.user.eq(User.getKernbeisserUser()).not());
     Map<CatalogEntry, Integer> entryCounts = new HashMap<>(userPreorders.size());
     for (PreOrder preorder : userPreorders) {
       CatalogEntry entry = preorder.getCatalogEntry();

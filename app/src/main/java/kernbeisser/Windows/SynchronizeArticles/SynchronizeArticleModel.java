@@ -12,8 +12,8 @@ import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.DBEntities.SurchargeGroup;
-import kernbeisser.DBEntities.TypeFields.ArticleField;
-import kernbeisser.DBEntities.TypeFields.SurchargeGroupField;
+import kernbeisser.DBEntities.Article_;
+import kernbeisser.DBEntities.SurchargeGroup_;
 import kernbeisser.Tasks.Catalog.CatalogDataInterpreter;
 import kernbeisser.Tasks.Catalog.Merge.ArticleMerge;
 import kernbeisser.Tasks.Catalog.Merge.CatalogMergeSession;
@@ -30,7 +30,7 @@ public class SynchronizeArticleModel implements IModel<SynchronizeArticleControl
       HashMap<KornkraftGroup, SurchargeGroup> surchargeGroupHashMap, EntityManager em) {
     Map<String, SurchargeGroup> nameRef =
         QueryBuilder.selectAll(SurchargeGroup.class)
-            .where(SurchargeGroupField.supplier.eq(Supplier.getKKSupplier()))
+            .where(SurchargeGroup_.supplier.eq(Supplier.getKKSupplier()))
             .getResultMap(em, SurchargeGroup::pathString, sg -> sg);
     surchargeGroupHashMap.replaceAll((a, b) -> nameRef.get(b.pathString()));
   }
@@ -57,7 +57,7 @@ public class SynchronizeArticleModel implements IModel<SynchronizeArticleControl
         CatalogDataInterpreter.createNumberRefMap(catalog, surchargeGroupHashMap);
     List<Article> articleBases =
         QueryBuilder.selectAll(Article.class)
-            .where(ArticleField.supplier.eq(Supplier.getKKSupplier()))
+            .where(Article_.supplier.eq(Supplier.getKKSupplier()))
             .getResultList(em);
     CatalogDataInterpreter.linkArticles(articleBases, kornkraftGroupHashMap);
     CatalogDataInterpreter.autoLinkArticle(

@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Transaction;
-import kernbeisser.DBEntities.TypeFields.TransactionField;
+import kernbeisser.DBEntities.Transaction_;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Enums.StatementType;
@@ -69,8 +69,8 @@ public class TransactionStatement extends Report {
         QueryBuilder.selectAll(Transaction.class)
             .where(
                 or(
-                    TransactionField.fromUserGroup.eq(userGroup),
-                    TransactionField.toUserGroup.eq(userGroup)))
+                    Transaction_.fromUserGroup.eq(userGroup),
+                    Transaction_.toUserGroup.eq(userGroup)))
             .getResultList();
   }
 

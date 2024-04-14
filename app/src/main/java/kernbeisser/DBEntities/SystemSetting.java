@@ -7,7 +7,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.QueryBuilder;
-import kernbeisser.DBEntities.TypeFields.SystemSettingField;
+import kernbeisser.DBEntities.SystemSetting_;
 import kernbeisser.VersionIntegrationTools.Version;
 import lombok.Cleanup;
 import lombok.EqualsAndHashCode;
@@ -73,7 +73,7 @@ public class SystemSetting {
     try {
       SystemSetting settingValue =
           QueryBuilder.selectAll(SystemSetting.class)
-              .where(SystemSettingField.setting.eq(key))
+              .where(SystemSetting_.setting.eq(key))
               .getSingleResult(em);
       settingValue.value = value;
       em.persist(settingValue);
