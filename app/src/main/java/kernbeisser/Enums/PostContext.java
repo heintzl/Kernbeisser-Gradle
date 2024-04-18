@@ -7,7 +7,8 @@ import rs.groump.AccessManager;
 import rs.groump.PermissionKey;
 
 public enum PostContext {
-  ON_SALE_SESSION_CLOSE("Ladendienst-Ende", PermissionKey.POST_ON_SALE_SESSION_CLOSE);
+  ON_SALE_SESSION_CLOSE("Ladendienst-Ende", PermissionKey.POST_ON_SALE_SESSION_CLOSE),
+  ON_SHOPPINGMASK_CHECKOUT("Vor dem Bezahlen...", PermissionKey.POST_ON_SHOPPINGMASK_CHECKOUT);
 
   @Getter private final String title;
   @Getter private final PermissionKey writePermissionKey;

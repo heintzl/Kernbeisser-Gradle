@@ -10,16 +10,14 @@ import kernbeisser.DBEntities.*;
 import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.Dialogs.RememberDialog;
 import kernbeisser.EntityWrapper.ObjectState;
-import kernbeisser.Enums.ArticleType;
-import kernbeisser.Enums.MetricUnits;
-import kernbeisser.Enums.Setting;
-import kernbeisser.Enums.VAT;
+import kernbeisser.Enums.*;
 import kernbeisser.Exeptions.NotEnoughCreditException;
 import kernbeisser.Exeptions.UndefinedInputException;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.Pay.PayController;
+import kernbeisser.Windows.PostPanel.PostPanelController;
 import kernbeisser.Windows.ShoppingMask.ArticleSelector.ArticleSelectorController;
 import kernbeisser.Windows.UserInfo.UserInfoController;
 import kernbeisser.Windows.ViewContainers.SubWindow;
@@ -32,7 +30,7 @@ public class ShoppingMaskController extends Controller<ShoppingMaskView, Shoppin
 
   private BarcodeCapture barcodeCapture;
   private KeyCapture keyCapture;
-
+  private final PostContext POST_ON_CLOSE = PostContext.ON_SHOPPINGMASK_CHECKOUT;
   private final ShoppingMaskView view;
 
   public ShoppingMaskController(SaleSession saleSession) throws NotEnoughCreditException {
@@ -83,7 +81,7 @@ public class ShoppingMaskController extends Controller<ShoppingMaskView, Shoppin
   }
 
   void emptyShoppingCart() {
-    if (shoppingCartController.getItems().size() != 0 && view.confirmEmptyCart())
+    if (!shoppingCartController.getItems().isEmpty() && view.confirmEmptyCart())
       shoppingCartController.emptyCart();
   }
 
@@ -380,16 +378,37 @@ public class ShoppingMaskController extends Controller<ShoppingMaskView, Shoppin
     }
   }
 
+  private void launchPayWindow() {
+    new PayController(
+            model.getSaleSession(),
+            shoppingCartController.getItems(),
+            () -> {
+              shoppingCartController.getItems().clear();
+              view.back();
+            })
+        .openIn(new SubWindow(view.traceViewContainer()));
+  }
+
+  void openPost(boolean checkout) {
+    PostPanelController checkoutPostPanel =
+        new PostPanelController(PostContext.ON_SHOPPINGMASK_CHECKOUT);
+    if (checkout) {
+      checkoutPostPanel =
+          checkoutPostPanel.withConfirmation(
+              b -> {
+                if (b) launchPayWindow();
+              });
+    }
+    checkoutPostPanel.openIn(new SubWindow(view.traceViewContainer()));
+  }
+
   void startPay() {
-    if (shoppingCartController.getItems().size() > 0) {
-      new PayController(
-              model.getSaleSession(),
-              shoppingCartController.getItems(),
-              () -> {
-                shoppingCartController.getItems().clear();
-                view.back();
-              })
-          .openIn(new SubWindow(view.traceViewContainer()));
+    if (!shoppingCartController.getItems().isEmpty()) {
+      if (Post.getByContext(POST_ON_CLOSE).getActive()) {
+        openPost(true);
+      } else {
+        launchPayWindow();
+      }
     } else {
       view.messageCartIsEmpty();
     }
@@ -397,7 +416,7 @@ public class ShoppingMaskController extends Controller<ShoppingMaskView, Shoppin
 
   @Override
   public boolean commitClose() {
-    return shoppingCartController.getItems().size() == 0 || view.confirmClose();
+    return shoppingCartController.getItems().isEmpty() || view.confirmClose();
   }
 
   void openSearchWindow() {
