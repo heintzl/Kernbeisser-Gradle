@@ -91,6 +91,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
   private JComboBox<VAT> vat;
   private JLabel solidarity;
   private JTextField producer;
+  private JButton editPost;
   private ButtonGroup optGrpArticleType;
   private ButtonGroup optGrpReduction;
 
@@ -116,6 +117,10 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
 
   private void doCheckout() {
     controller.startPay();
+  }
+
+  public void setEditPostVisible(boolean visible) {
+    editPost.setVisible(visible);
   }
 
   void openSearchWindow() {
@@ -917,6 +922,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     westPanel.setFocusTraversalPolicy(traversalPolicy);
 
     articleTypeChange(ArticleType.ARTICLE_NUMBER);
+    editPost.addActionListener(e -> controller.openPost(false));
 
     SwingUtilities.invokeLater(
         () -> {

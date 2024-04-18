@@ -60,6 +60,7 @@ public enum PermissionKey {
   ACTION_ORDER_OWN_CONTAINER(ActionPermission.class),
   ACTION_GRANT_CASHIER_PERMISSION(ActionPermission.class),
   POST_ON_SALE_SESSION_CLOSE(ActionPermission.class),
+  POST_ON_SHOPPINGMASK_CHECKOUT(ActionPermission.class),
   ADD_ARTICLE(Article.class),
   REMOVE_ARTICLE(Article.class),
   EDIT_ARTICLE(Article.class),
@@ -526,6 +527,7 @@ public enum PermissionKey {
             .put("ACTION_OPEN_PRINT_LABELS", "Etiketten drucken")
             .put("ACTION_OPEN_INVENTORY", "Inventur starten")
             .put("ACTION_OPEN_CATALOG_IMPORT", "Kornkraft Katalog importieren")
+            .put("POST_ON_SALE_SESSION_CLOSE", "Nachricht bei LD-Abschluss bearbeiten")
             .put("POST_ON_SALE_SESSION_CLOSE", "Nachricht bei LD-Abschluss bearbeiten")
             .build();
     return permissionHints.getOrDefault(permissionName, permissionName);
