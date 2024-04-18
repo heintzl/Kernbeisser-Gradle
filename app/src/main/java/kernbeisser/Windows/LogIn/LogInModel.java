@@ -17,13 +17,13 @@ import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 import rs.groump.Access;
 import rs.groump.AccessManager;
 import rs.groump.Key;
 import rs.groump.PermissionKey;
 
-@Log
+@Log4j2
 public final class LogInModel implements IModel {
 
   @Getter private static int loggedInId;
