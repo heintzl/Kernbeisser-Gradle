@@ -24,7 +24,7 @@ import rs.groump.Key;
 import rs.groump.PermissionKey;
 
 @Log4j2
-public final class LogInModel implements IModel {
+public final class LogInModel {
 
   @Getter private static int loggedInId;
   private static UserRelatedAccessManager userRelatedAccessManager;
