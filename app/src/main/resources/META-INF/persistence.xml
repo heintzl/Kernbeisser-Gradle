@@ -32,6 +32,7 @@
         <class>kernbeisser.DBEntities.IgnoredDialog</class>
         <class>kernbeisser.DBEntities.ArticlePrintPool</class>
         <class>kernbeisser.DBEntities.Post</class>
+        <class>kernbeisser.DBEntities.PermissionGrant</class>
         <properties>
             <property name="jakarta.persistence.schema-generation.database.action" value="update"/>
             <property name="jakarta.persistence.sql-load-script-source" value="META-INF/data.sql"/>

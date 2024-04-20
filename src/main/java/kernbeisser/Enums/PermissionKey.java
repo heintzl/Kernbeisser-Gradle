@@ -161,6 +161,13 @@ public enum PermissionKey {
   ADD_JOB(Job.class),
   EDIT_JOB(Job.class),
   REMOVE_JOB(Job.class),
+  EDIT_GRANT(PermissionGrant.class),
+  GRANT_ID_READ(PermissionGrant.class),
+  GRANT_ID_WRITE(PermissionGrant.class),
+  GRANT_ON_READ(PermissionGrant.class),
+  GRANT_ON_WRITE(PermissionGrant.class),
+  GRANT_BY_READ(PermissionGrant.class),
+  GRANT_BY_WRITE(PermissionGrant.class),
   JOB_ID_READ(Job.class),
   JOB_ID_WRITE(Job.class),
   JOB_NAME_READ(Job.class),
@@ -528,7 +535,7 @@ public enum PermissionKey {
             .put("ACTION_OPEN_INVENTORY", "Inventur starten")
             .put("ACTION_OPEN_CATALOG_IMPORT", "Kornkraft Katalog importieren")
             .put("POST_ON_SALE_SESSION_CLOSE", "Nachricht bei LD-Abschluss bearbeiten")
-            .put("POST_ON_SALE_SESSION_CLOSE", "Nachricht bei LD-Abschluss bearbeiten")
+            .put("POST_ON_SHOPPINGMASK_CHECKOUT", "Nachricht vor Bezahlen bearbeiten")
             .build();
     return permissionHints.getOrDefault(permissionName, permissionName);
   }
