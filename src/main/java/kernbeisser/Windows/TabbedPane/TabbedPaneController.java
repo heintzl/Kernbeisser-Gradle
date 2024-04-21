@@ -79,7 +79,7 @@ public class TabbedPaneController extends Controller<TabbedPaneView, TabbedPaneM
   }
 
   public boolean isInstanceOpen(Class<?> c) {
-    return model.stream().parallel().anyMatch(e -> e.getLoaded().getClass().equals(c));
+    return model.getTabs().stream().parallel().anyMatch(e -> e.getLoaded().getClass().equals(c));
   }
 
   public void setSelectedIndex(int index) {

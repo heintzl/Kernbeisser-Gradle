@@ -56,6 +56,6 @@ public class PermissionGranterAssignmentView
 
   @Override
   public String getTitle() {
-    return "Berechtigung erteilen";
+    return "Berechtigungweitergabe";
   }
 }
