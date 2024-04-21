@@ -1,10 +1,14 @@
 package kernbeisser.DBEntities;
 
+import com.google.common.collect.Maps;
 import static kernbeisser.DBConnection.PredicateFactory.isMember;
 import static kernbeisser.DBConnection.PredicateFactory.like;
 
 import jakarta.persistence.*;
 import java.util.*;
+import java.util.stream.Collectors;
+import javax.persistence.*;
+import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.ExpressionFactory;
 import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Permission_;
@@ -79,5 +83,48 @@ public class Permission {
     PermissionSet permissionKeys = new PermissionSet();
     permissionKeys.addAll(keySet);
     return permissionKeys;
+  }
+
+  //TODO Review query
+  public List<Permission> getGranters() {
+    return DBConnection.getAll(PermissionGrant.class).stream()
+        .filter(g -> g.getOn().equals(this))
+        .map(PermissionGrant::getBy)
+        .collect(Collectors.toList());
+  }
+
+  public List<Permission> getGrantees() {
+    return DBConnection.getAll(PermissionGrant.class).stream()
+        .filter(g -> g.getBy().equals(this))
+        .map(PermissionGrant::getOn)
+        .collect(Collectors.toList());
+  }
+
+  public void addGranters(Permission... permission) {
+
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    for (Permission p : permission) {
+      em.merge(new PermissionGrant(this, p));
+    }
+  }
+
+  public void removeGranters(Permission... permissions) {
+
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    Map<String, PermissionGrant> indexedGrants =
+        Maps.uniqueIndex(
+            DBConnection.getAll(PermissionGrant.class), (g -> g.getOn().id + "#" + g.getBy().id));
+    for (Permission p : permissions) {
+      PermissionGrant grantToDelete = indexedGrants.get(this.id + "#" + p.id);
+      if (grantToDelete != null) {
+        em.remove(em.find(PermissionGrant.class, grantToDelete.getId()));
+      }
+    }
   }
 }
