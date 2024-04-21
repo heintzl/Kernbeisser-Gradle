@@ -40,6 +40,7 @@
             <property name="hibernate.generate_statistics" value="false"/>
             <property name="hibernate.cache.use_second_level_cache" value="false"/>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MariaDBDialect"/>
+            <property name="hibernate.jpa.static_metamodel.population" value="disabled"/>
             <!--
             <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.format_sql" value="true"/>
