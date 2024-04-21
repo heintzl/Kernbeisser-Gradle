@@ -23,6 +23,7 @@ public enum PermissionKey {
 
   // Window Permissions
   ACTION_OPEN_PERMISSION_ASSIGNMENT(ActionPermission.class),
+  ACTION_OPEN_PERMISSION_GRANT_ASSIGNMENT(ActionPermission.class),
   ACTION_OPEN_ADMIN_TOOLS(ActionPermission.class),
   ACTION_OPEN_MANAGE_PRICELISTS(ActionPermission.class),
   ACTION_OPEN_SOLO_SHOPPING_MASK(ActionPermission.class),
@@ -161,13 +162,6 @@ public enum PermissionKey {
   ADD_JOB(Job.class),
   EDIT_JOB(Job.class),
   REMOVE_JOB(Job.class),
-  EDIT_GRANT(PermissionGrant.class),
-  GRANT_ID_READ(PermissionGrant.class),
-  GRANT_ID_WRITE(PermissionGrant.class),
-  GRANT_ON_READ(PermissionGrant.class),
-  GRANT_ON_WRITE(PermissionGrant.class),
-  GRANT_BY_READ(PermissionGrant.class),
-  GRANT_BY_WRITE(PermissionGrant.class),
   JOB_ID_READ(Job.class),
   JOB_ID_WRITE(Job.class),
   JOB_NAME_READ(Job.class),
@@ -198,6 +192,12 @@ public enum PermissionKey {
   PERMISSION_NAME_WRITE(Permission.class),
   PERMISSION_KEY_SET_READ(Permission.class),
   PERMISSION_KEY_SET_WRITE(Permission.class),
+  PERMISSION_GRANT_ID_READ(PermissionGrant.class),
+  PERMISSION_GRANT_ID_WRITE(PermissionGrant.class),
+  PERMISSION_GRANT_ON_READ(PermissionGrant.class),
+  PERMISSION_GRANT_ON_WRITE(PermissionGrant.class),
+  PERMISSION_GRANT_BY_READ(PermissionGrant.class),
+  PERMISSION_GRANT_BY_WRITE(PermissionGrant.class),
   POST_ID_READ(Post.class),
   POST_ID_WRITE(Post.class),
   POST_CONTENT_READ(Post.class),
@@ -501,6 +501,9 @@ public enum PermissionKey {
             .put("ACTION_OPEN_APPLICATION_SETTINGS", "Programmeinstellungen bearbeiten")
             .put("ACTION_OPEN_PERMISSION_MANAGEMENT", "Berechtigungen bearbeiten")
             .put("ACTION_OPEN_PERMISSION_ASSIGNMENT", "Berechtigungen zuweisen")
+            .put(
+                "ACTION_OPEN_PERMISSION_GRANT_ASSIGNMENT",
+                "Berechtigungen zur Berechtigungsweitergabe zuweisen")
             .put("ACTION_OPEN_SPECIAL_PRICE_EDITOR", "Aktionsartikel bearbeiten")
             .put("ACTION_OPEN_TRANSACTION", "Guthaben überweisen")
             .put("ACTION_OPEN_ACCOUNTING_REPORTS", "Berichte")
