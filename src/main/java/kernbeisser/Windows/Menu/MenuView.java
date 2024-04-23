@@ -36,6 +36,8 @@ import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.ManagePriceLists.ManagePriceListsController;
 import kernbeisser.Windows.PermissionAssignment.PermissionAssignmentController;
+import kernbeisser.Windows.PermissionAssignment.PermissionAssignmentModel;
+import kernbeisser.Windows.PermissionGranterAssignment.PermissionGranterAssignmentController;
 import kernbeisser.Windows.PermissionManagement.PermissionController;
 import kernbeisser.Windows.PreOrder.PreOrderController;
 import kernbeisser.Windows.Setting.SettingController;
@@ -68,7 +70,7 @@ public class MenuView implements IView<MenuController> {
   private ControllerButton changeDBConnection;
   private ControllerButton editApplicationSettings;
   private ControllerButton order;
-  private ControllerButton placeHolderControllerButton2;
+  private ControllerButton permissionGranterAssignment;
   private ControllerButton openSelfShoppingMask;
   private ControllerButton addBeginner;
   private ControllerButton editJobs;
@@ -80,7 +82,6 @@ public class MenuView implements IView<MenuController> {
   private ControllerButton doUserDefiniedTransaction;
   private JButton logout;
   private ControllerButton permissionAssignment;
-  private JButton grantCashierRole;
   private JButton beginnInventory;
   private JPanel menugroupMyAccount;
   private ControllerButton internalTransaction;
@@ -192,9 +193,7 @@ public class MenuView implements IView<MenuController> {
             Controller::openTab,
             false);
     if (openSelfPreorder.isEnabled()) openSelfPreorder.setEnabled(inheritsFullMembership);
-    // NOT IMPLEMENTED
-    placeHolderControllerButton2 = ControllerButton.empty();
-    placeHolderControllerButton2.setVisible(false);
+
     openSelfShoppingMask =
         new ControllerButton(
             () -> {
@@ -270,10 +269,12 @@ public class MenuView implements IView<MenuController> {
     permissionAssignment =
         new ControllerButton(
             PermissionAssignmentController::new, PermissionAssignmentController.class);
-    grantCashierRole =
+    permissionAssignment.setEnabled(PermissionAssignmentModel.isAccessible());
+
+    permissionGranterAssignment =
         new ControllerButton(
-            PermissionAssignmentController::cashierPermissionController,
-            PermissionAssignmentController.class);
+            PermissionGranterAssignmentController::new,
+            PermissionGranterAssignmentController.class);
     beginnInventory = new ControllerButton(InventoryController::new, InventoryController.class);
   }
 

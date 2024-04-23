@@ -18,7 +18,8 @@ public enum Version {
   NEW_ARTICLE_PROPERTIES(AddArticleSupplyPermissions.class),
   CATALOG_IMPORT(AddCatalogImportPermission.class),
   SALE_SESSION_CLOSE_POPUP(AddSaleSessionClosePermission.class),
-  PREORDER_FROM_CATALOG(MigrateOpenPreOrders.class);
+  PREORDER_FROM_CATALOG(MigrateOpenPreOrders.class),
+  CONFIRMATION_PANEL(AddOnShoppingMaskCheckoutPermission.class);
 
   public static final Logger logger = LogManager.getLogger(Version.class);
   private final Class<? extends VersionUpdatingTool> updatingToolClass;

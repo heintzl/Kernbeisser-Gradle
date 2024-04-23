@@ -23,6 +23,7 @@ public enum PermissionKey {
 
   // Window Permissions
   ACTION_OPEN_PERMISSION_ASSIGNMENT(ActionPermission.class),
+  ACTION_OPEN_PERMISSION_GRANT_ASSIGNMENT(ActionPermission.class),
   ACTION_OPEN_ADMIN_TOOLS(ActionPermission.class),
   ACTION_OPEN_MANAGE_PRICELISTS(ActionPermission.class),
   ACTION_OPEN_SOLO_SHOPPING_MASK(ActionPermission.class),
@@ -60,6 +61,7 @@ public enum PermissionKey {
   ACTION_ORDER_OWN_CONTAINER(ActionPermission.class),
   ACTION_GRANT_CASHIER_PERMISSION(ActionPermission.class),
   POST_ON_SALE_SESSION_CLOSE(ActionPermission.class),
+  POST_ON_SHOPPINGMASK_CHECKOUT(ActionPermission.class),
   ADD_ARTICLE(Article.class),
   REMOVE_ARTICLE(Article.class),
   EDIT_ARTICLE(Article.class),
@@ -190,6 +192,12 @@ public enum PermissionKey {
   PERMISSION_NAME_WRITE(Permission.class),
   PERMISSION_KEY_SET_READ(Permission.class),
   PERMISSION_KEY_SET_WRITE(Permission.class),
+  PERMISSION_GRANT_ID_READ(PermissionGrant.class),
+  PERMISSION_GRANT_ID_WRITE(PermissionGrant.class),
+  PERMISSION_GRANT_ON_READ(PermissionGrant.class),
+  PERMISSION_GRANT_ON_WRITE(PermissionGrant.class),
+  PERMISSION_GRANT_BY_READ(PermissionGrant.class),
+  PERMISSION_GRANT_BY_WRITE(PermissionGrant.class),
   POST_ID_READ(Post.class),
   POST_ID_WRITE(Post.class),
   POST_CONTENT_READ(Post.class),
@@ -493,6 +501,9 @@ public enum PermissionKey {
             .put("ACTION_OPEN_APPLICATION_SETTINGS", "Programmeinstellungen bearbeiten")
             .put("ACTION_OPEN_PERMISSION_MANAGEMENT", "Berechtigungen bearbeiten")
             .put("ACTION_OPEN_PERMISSION_ASSIGNMENT", "Berechtigungen zuweisen")
+            .put(
+                "ACTION_OPEN_PERMISSION_GRANT_ASSIGNMENT",
+                "Berechtigungen zur Berechtigungsweitergabe zuweisen")
             .put("ACTION_OPEN_SPECIAL_PRICE_EDITOR", "Aktionsartikel bearbeiten")
             .put("ACTION_OPEN_TRANSACTION", "Guthaben überweisen")
             .put("ACTION_OPEN_ACCOUNTING_REPORTS", "Berichte")
@@ -527,6 +538,7 @@ public enum PermissionKey {
             .put("ACTION_OPEN_INVENTORY", "Inventur starten")
             .put("ACTION_OPEN_CATALOG_IMPORT", "Kornkraft Katalog importieren")
             .put("POST_ON_SALE_SESSION_CLOSE", "Nachricht bei LD-Abschluss bearbeiten")
+            .put("POST_ON_SHOPPINGMASK_CHECKOUT", "Nachricht vor Bezahlen bearbeiten")
             .build();
     return permissionHints.getOrDefault(permissionName, permissionName);
   }

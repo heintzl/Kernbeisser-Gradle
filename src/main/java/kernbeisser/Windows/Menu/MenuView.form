@@ -113,7 +113,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="85225" layout-manager="GridLayoutManager" row-count="9" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+              <grid id="85225" layout-manager="GridLayoutManager" row-count="8" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                 <margin top="10" left="10" bottom="10" right="10"/>
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -166,7 +166,7 @@
                   </component>
                   <vspacer id="6d71b">
                     <constraints>
-                      <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                      <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
                     </constraints>
                   </vspacer>
                   <component id="97114" class="kernbeisser.CustomComponents.ControllerButton" binding="supply" custom-create="true">
@@ -178,17 +178,9 @@
                       <text value="Lieferung eingeben"/>
                     </properties>
                   </component>
-                  <component id="71f7f" class="javax.swing.JButton" binding="grantCashierRole" custom-create="true">
-                    <constraints>
-                      <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                    </constraints>
-                    <properties>
-                      <text value="Ladendienst-Mitglieder verwalten"/>
-                    </properties>
-                  </component>
                   <component id="d17bf" class="javax.swing.JButton" binding="beginnInventory" custom-create="true">
                     <constraints>
-                      <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                      <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <text value="Inventur beginnen"/>
@@ -196,7 +188,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="fbb58" layout-manager="GridLayoutManager" row-count="5" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+              <grid id="fbb58" layout-manager="GridLayoutManager" row-count="4" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                 <margin top="10" left="10" bottom="10" right="10"/>
                 <constraints>
                   <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -217,19 +209,9 @@
                   </component>
                   <vspacer id="1d6bf">
                     <constraints>
-                      <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                      <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
                     </constraints>
                   </vspacer>
-                  <component id="2b320" class="kernbeisser.CustomComponents.ControllerButton" binding="placeHolderControllerButton2" custom-create="true" default-binding="true">
-                    <constraints>
-                      <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                    </constraints>
-                    <properties>
-                      <enabled value="false"/>
-                      <font/>
-                      <text value="&lt;PlaceHolder&gt;"/>
-                    </properties>
-                  </component>
                   <component id="c851a" class="kernbeisser.CustomComponents.ControllerButton" binding="changePermissions" custom-create="true">
                     <constraints>
                       <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
@@ -240,12 +222,12 @@
                       <text value="Berechtigungen bearbeiten"/>
                     </properties>
                   </component>
-                  <component id="db292" class="kernbeisser.CustomComponents.ControllerButton" binding="permissionAssignment" custom-create="true">
+                  <component id="41d9c" class="kernbeisser.CustomComponents.ControllerButton" binding="permissionGranterAssignment" custom-create="true">
                     <constraints>
                       <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
-                      <text value="Berechtigungen erteilen"/>
+                      <text value="Berechtigungsweitergabe"/>
                     </properties>
                   </component>
                 </children>
@@ -297,7 +279,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="df58a" layout-manager="GridLayoutManager" row-count="6" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+              <grid id="df58a" layout-manager="GridLayoutManager" row-count="7" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                 <margin top="10" left="10" bottom="10" right="10"/>
                 <constraints>
                   <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -319,7 +301,7 @@
                   </component>
                   <vspacer id="94752">
                     <constraints>
-                      <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                      <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
                     </constraints>
                   </vspacer>
                   <component id="b9e3c" class="kernbeisser.CustomComponents.ControllerButton" binding="doTransactionPayIn" custom-create="true">
@@ -362,6 +344,14 @@
                       <label value="Sonderzahlungen und interne Überweisungen"/>
                       <requestFocusEnabled value="false"/>
                       <text value="Sonderzahlungen und interne Überweisungen"/>
+                    </properties>
+                  </component>
+                  <component id="db292" class="kernbeisser.CustomComponents.ControllerButton" binding="permissionAssignment" custom-create="true">
+                    <constraints>
+                      <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="Berechtigungen erteilen"/>
                     </properties>
                   </component>
                 </children>

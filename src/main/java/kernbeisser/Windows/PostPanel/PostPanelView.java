@@ -18,6 +18,7 @@ public class PostPanelView implements IView<PostPanelController> {
   private JButton reset;
   private JButton preview;
   private JCheckBox active;
+  private JButton proceed;
 
   @Linked private PostPanelController controller;
 
@@ -26,7 +27,8 @@ public class PostPanelView implements IView<PostPanelController> {
     editorPane.setVisible(false);
     displayPane.setEditorKit(new HTMLEditorKit());
     displayPane.setEditable(false);
-    back.addActionListener(e -> back());
+    back.addActionListener(e -> controller.back(false));
+    proceed.addActionListener(e -> controller.back(true));
     edit.addActionListener(e -> controller.toggleEditing());
     reset.addActionListener(e -> reset());
     preview.setVisible(false);
@@ -69,6 +71,11 @@ public class PostPanelView implements IView<PostPanelController> {
     edit.setText("Bearbeiten");
     preview.setVisible(false);
     reset.setVisible(false);
+  }
+
+  public void activateConfirmation() {
+    back.setText("Zurück");
+    proceed.setVisible(true);
   }
 
   public void setActiveVisible(boolean visible) {

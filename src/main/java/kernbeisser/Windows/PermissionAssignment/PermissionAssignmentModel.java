@@ -8,30 +8,20 @@ import kernbeisser.CustomComponents.ClipboardFilter;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
-import kernbeisser.Enums.PermissionKey;
+import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Security.Access.Access;
 import kernbeisser.Security.Access.AccessManager;
-import kernbeisser.Security.Key;
-import kernbeisser.Useful.Tools;
+import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
 import lombok.Setter;
 import lombok.var;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.util.Supplier;
 
 public class PermissionAssignmentModel implements IModel<PermissionAssignmentController> {
 
   @Setter private Permission recent;
   private boolean showFilterExplanation = true;
-
-  public List<Permission> getPermissions() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    return em.createQuery("select p from Permission p", Permission.class).getResultList();
-  }
 
   public Optional<Permission> getRecent() {
     return Optional.ofNullable(recent);
@@ -58,8 +48,9 @@ public class PermissionAssignmentModel implements IModel<PermissionAssignmentCon
         .getResultList();
   }
 
-  @Key(PermissionKey.ACTION_GRANT_CASHIER_PERMISSION)
-  private void checkGrantCashierPermission() {}
+  public static boolean isAccessible() {
+    return !getCurrentGrantPermissions().isEmpty();
+  }
 
   public void setPermission(
       Permission permission,
@@ -82,23 +73,16 @@ public class PermissionAssignmentModel implements IModel<PermissionAssignmentCon
     hadBefore.removeAll(notToRemove);
     Collection<User> willGet =
         loaded.stream().map(e -> em.find(User.class, e.getId())).collect(Collectors.toList());
-    boolean skipUserAccessChecking =
-        ignoreUserPermission && Tools.canInvoke(this::checkGrantCashierPermission);
-    if (skipUserAccessChecking) {
-      for (Object u : CollectionUtils.union(willGet, hadBefore)) {
-        Access.putException(u, AccessManager.NO_ACCESS_CHECKING);
-      }
+    if ((hadBefore.isEmpty() && willGet.isEmpty()) || !isAccessible() || !confirm.get()) {
+      return;
     }
-    if (!(hadBefore.isEmpty() && willGet.isEmpty()) && confirm.get()) {
-      hadBefore.stream().peek(e -> e.getPermissions().remove(permission)).forEach(em::persist);
-      willGet.stream().peek(e -> e.getPermissions().add(permission)).forEach(em::persist);
-    }
+    Access.runWithAccessManager(
+        AccessManager.NO_ACCESS_CHECKING,
+        () -> {
+          hadBefore.stream().peek(e -> e.getPermissions().remove(permission)).forEach(em::persist);
+          willGet.stream().peek(e -> e.getPermissions().add(permission)).forEach(em::persist);
+        });
     em.flush();
-    if (skipUserAccessChecking) {
-      for (Object u : CollectionUtils.union(willGet, hadBefore)) {
-        Access.removeException(u);
-      }
-    }
   }
 
   private Collection<User> getUserRowFilter(String[] rows) {
@@ -124,5 +108,24 @@ public class PermissionAssignmentModel implements IModel<PermissionAssignmentCon
     showFilterExplanation = false;
     return new ClipboardFilter<>(
         this::getUserRowFilter, explanation, "clpBoardFilterPermissionAssignment");
+  }
+
+  public static List<Permission> getCurrentGrantPermissions() {
+    final List<Permission> result = new ArrayList<>();
+    Access.runWithAccessManager(
+        AccessManager.NO_ACCESS_CHECKING,
+        () -> {
+          if (LogInModel.getLoggedIn()
+              .getPermissions()
+              .contains(PermissionConstants.ADMIN.getPermission())) {
+            result.addAll(DBConnection.getAll(Permission.class));
+          } else {
+            result.addAll(
+                LogInModel.getLoggedIn().getPermissions().stream()
+                    .flatMap(p -> p.getGrantees().stream())
+                    .collect(Collectors.toList()));
+          }
+        });
+    return result;
   }
 }
