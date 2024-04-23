@@ -11,7 +11,9 @@ import kernbeisser.CustomComponents.ClipboardFilter;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
+import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.ObjectForm.Components.Source;
+import kernbeisser.Security.Key;
 import kernbeisser.Windows.CollectionView.CollectionController;
 import kernbeisser.Windows.CollectionView.CollectionView;
 import kernbeisser.Windows.MVC.Controller;
@@ -24,10 +26,9 @@ public class PermissionAssignmentController
     extends Controller<PermissionAssignmentView, PermissionAssignmentModel> {
 
   @Linked private final CollectionController<User> user;
-  private boolean onlyCashier = false;
+  private boolean isGranter = false;
 
-  @Key(PermissionKey.ACTION_OPEN_PERMISSION_ASSIGNMENT)
-  public PermissionAssignmentController() throws AccessDeniedException {
+  public PermissionAssignmentController() throws PermissionKeyRequiredException {
     super(new PermissionAssignmentModel());
     user = getUserSource();
   }
@@ -35,7 +36,7 @@ public class PermissionAssignmentController
   @Key(PermissionKey.ACTION_GRANT_CASHIER_PERMISSION)
   private PermissionAssignmentController(boolean dummy) throws AccessDeniedException {
     super(new PermissionAssignmentModel());
-    this.onlyCashier = true;
+    this.isGranter = true;
     user = getUserSource();
   }
 
@@ -51,13 +52,13 @@ public class PermissionAssignmentController
   @Override
   public void fillView(PermissionAssignmentView permissionAssignmentView) {
     permissionAssignmentView.setPermissions(
-        model.getPermissions().stream()
+        PermissionAssignmentModel.getCurrentGrantPermissions().stream()
             .filter(
                 p ->
                     (!p.getName()
                             .matches(
                                 "@KEY_PERMISSION|@IN_RELATION_TO_OWN_USER|@IMPORT|@APPLICATION")
-                        && (p.getName().equals("@CASHIER") || !onlyCashier)))
+                        && (p.getName().equals("@CASHIER") || !isGranter)))
             .collect(Collectors.toList()));
     user.getView().addSearchbox(CollectionView.BOTH);
     JCheckBox toggleClipBoardFilter = new JCheckBox("Auf Zwischenablage filtern");
@@ -98,7 +99,7 @@ public class PermissionAssignmentController
         model.getRecent().get(),
         user.getModel().getLoaded(),
         () -> getView().confirmChanges(),
-        onlyCashier);
+        isGranter);
   }
 
   public static PermissionAssignmentController cashierPermissionController() {
@@ -108,6 +109,6 @@ public class PermissionAssignmentController
   @Override
   protected void closed() {
     model.setPermission(
-        model.getRecent().get(), user.getModel().getLoaded(), () -> true, onlyCashier);
+        model.getRecent().get(), user.getModel().getLoaded(), () -> true, isGranter);
   }
 }
