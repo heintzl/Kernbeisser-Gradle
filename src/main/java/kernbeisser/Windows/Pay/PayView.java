@@ -1,15 +1,14 @@
 package kernbeisser.Windows.Pay;
 
+import com.intellij.uiDesigner.core.GridConstraints;
+import com.intellij.uiDesigner.core.GridLayoutManager;
+import com.intellij.uiDesigner.core.Spacer;
 import java.awt.*;
 import java.util.List;
 import java.util.Locale;
 import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
 import javax.swing.text.StyleContext;
-
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
-import com.intellij.uiDesigner.core.Spacer;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartView;
 import kernbeisser.DBEntities.ShoppingItem;
@@ -21,173 +20,266 @@ import org.jetbrains.annotations.NotNull;
 
 public class PayView implements IView<PayController> {
 
-    private JPanel main;
-    private JPanel shoppingListPanel;
-    private ShoppingCartView shoppingCartView;
+  private JPanel main;
+  private JPanel shoppingListPanel;
+  private ShoppingCartView shoppingCartView;
 
-    JCheckBox printReceipt;
-    private JButton commitPayment;
-    private JButton cancel;
-    JButton setCustomerStandard;
-    private PayController controller;
+  JCheckBox printReceipt;
+  private JButton commitPayment;
+  private JButton cancel;
+  JButton setCustomerStandard;
+  private PayController controller;
 
-    @Linked
-    private ShoppingCartController shoppingCartController;
+  @Linked private ShoppingCartController shoppingCartController;
 
-    private void createUIComponents() {
-        shoppingCartView = shoppingCartController.getView();
+  private void createUIComponents() {
+    shoppingCartView = shoppingCartController.getView();
+  }
+
+  public void fillShoppingCart(List<ShoppingItem> items) {
+    double sum = 0;
+    for (ShoppingItem item : items) {
+      sum += item.getRetailPrice();
     }
 
-    public void fillShoppingCart(List<ShoppingItem> items) {
-        double sum = 0;
-        for (ShoppingItem item : items) {
-            sum += item.getRetailPrice();
-        }
+    var view = shoppingCartController.getView();
+    view.setSum(sum);
+    view.setValue(controller.getUserValue() - sum);
+    view.setObjects(items);
+  }
 
-        var view = shoppingCartController.getView();
-        view.setSum(sum);
-        view.setValue(controller.getUserValue() - sum);
-        view.setObjects(items);
+  public void confirmLogging(String name, double value) {
+    if (JOptionPane.showConfirmDialog(
+            getTopComponent(),
+            String.format(
+                "Ist der Einkauf in Höhe von %.2f€ von %s in das Log-Buch eintragen worden?",
+                value, name),
+            "Log-Bucheintrag",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.QUESTION_MESSAGE)
+        != 0) {
+      JOptionPane.showMessageDialog(
+          getTopComponent(),
+          "Alle Einkäufe müssen im Log-Buch notiert werden\n"
+              + "für den Fall, dass gespeicherte Daten verloren gehen.");
+      confirmLogging(name, value);
     }
+  }
 
-    public void confirmLogging(String name, double value) {
-        if (JOptionPane.showConfirmDialog(
-                getTopComponent(),
-                String.format(
-                        "Ist der Einkauf in Höhe von %.2f€ von %s in das Log-Buch eintragen worden?",
-                        value, name),
-                "Log-Bucheintrag",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE)
-                != 0) {
-            JOptionPane.showMessageDialog(
-                    getTopComponent(),
-                    "Alle Einkäufe müssen im Log-Buch notiert werden\n"
-                            + "für den Fall, dass gespeicherte Daten verloren gehen.");
-            confirmLogging(name, value);
-        }
-    }
+  void setCommitPaymentWarning() {
+    commitPayment.setForeground(Color.RED.darker());
+    commitPayment.setFont(commitPayment.getFont().deriveFont(Font.BOLD));
+  }
 
-    void setCommitPaymentWarning() {
-        commitPayment.setForeground(Color.RED.darker());
-        commitPayment.setFont(commitPayment.getFont().deriveFont(Font.BOLD));
-    }
+  @Override
+  public void initialize(PayController controller) {
+    this.controller = controller;
+    printReceipt.setSelected(true);
+    commitPayment.addActionListener(
+        e -> {
+          controller.commitPayment(printReceipt.isSelected());
+        });
+    cancel.addActionListener(
+        e -> {
+          this.back();
+        });
+  }
 
-    @Override
-    public void initialize(PayController controller) {
-        this.controller = controller;
-        printReceipt.setSelected(true);
-        commitPayment.addActionListener(
-                e -> {
-                    controller.commitPayment(printReceipt.isSelected());
-                });
-        cancel.addActionListener(
-                e -> {
-                    this.back();
-                });
-    }
+  @Override
+  public @NotNull JComponent getContent() {
+    return main;
+  }
 
-    @Override
-    public @NotNull JComponent getContent() {
-        return main;
-    }
+  public void notEnoughValue() {
+    JOptionPane.showMessageDialog(
+        getTopComponent(),
+        "Du hast nicht die Berechtigung unter das minimale Guthaben von "
+            + String.format("%.2f€", Setting.DEFAULT_MIN_VALUE.getDoubleValue())
+            + " zu gehen.");
+  }
 
-    public void notEnoughValue() {
-        JOptionPane.showMessageDialog(
-                getTopComponent(),
-                "Du hast nicht die Berechtigung unter das minimale Guthaben von "
-                        + String.format("%.2f€", Setting.DEFAULT_MIN_VALUE.getDoubleValue())
-                        + " zu gehen.");
-    }
+  {
+    // GUI initializer generated by IntelliJ IDEA GUI Designer
+    // >>> IMPORTANT!! <<<
+    // DO NOT EDIT OR ADD ANY CODE HERE!
+    $$$setupUI$$$();
+  }
 
-    {
-// GUI initializer generated by IntelliJ IDEA GUI Designer
-// >>> IMPORTANT!! <<<
-// DO NOT EDIT OR ADD ANY CODE HERE!
-        $$$setupUI$$$();
-    }
+  /**
+   * Method generated by IntelliJ IDEA GUI Designer >>> IMPORTANT!! <<< DO NOT edit this method OR
+   * call it in your code!
+   *
+   * @noinspection ALL
+   */
+  private void $$$setupUI$$$() {
+    createUIComponents();
+    main = new JPanel();
+    main.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+    final JPanel panel1 = new JPanel();
+    panel1.setLayout(new BorderLayout(0, 0));
+    main.add(
+        panel1,
+        new GridConstraints(
+            0,
+            0,
+            1,
+            1,
+            GridConstraints.ANCHOR_CENTER,
+            GridConstraints.FILL_NONE,
+            GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW,
+            GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW,
+            null,
+            null,
+            null,
+            0,
+            false));
+    final JLabel label1 = new JLabel();
+    Font label1Font = this.$$$getFont$$$(null, Font.BOLD, 16, label1.getFont());
+    if (label1Font != null) label1.setFont(label1Font);
+    label1.setForeground(new Color(-12828928));
+    label1.setHorizontalAlignment(0);
+    label1.setHorizontalTextPosition(0);
+    label1.setMaximumSize(new Dimension(94, 32));
+    label1.setMinimumSize(new Dimension(94, 32));
+    label1.setPreferredSize(new Dimension(94, 32));
+    label1.setText("Abrechnung");
+    panel1.add(label1, BorderLayout.NORTH);
+    shoppingListPanel = new JPanel();
+    shoppingListPanel.setLayout(new BorderLayout(0, 0));
+    shoppingListPanel.setBackground(new Color(-1));
+    shoppingListPanel.setOpaque(false);
+    shoppingListPanel.setPreferredSize(new Dimension(2000, 2000));
+    panel1.add(shoppingListPanel, BorderLayout.CENTER);
+    shoppingListPanel.add(shoppingCartView.$$$getRootComponent$$$(), BorderLayout.CENTER);
+    final JPanel panel2 = new JPanel();
+    panel2.setLayout(new GridLayoutManager(1, 5, new Insets(5, 5, 5, 5), -1, -1));
+    panel2.setMaximumSize(new Dimension(2147483647, 40));
+    panel2.setMinimumSize(new Dimension(317, 40));
+    panel2.setPreferredSize(new Dimension(317, 40));
+    panel1.add(panel2, BorderLayout.SOUTH);
+    printReceipt = new JCheckBox();
+    printReceipt.setText("Bon drucken");
+    panel2.add(
+        printReceipt,
+        new GridConstraints(
+            0,
+            2,
+            1,
+            1,
+            GridConstraints.ANCHOR_WEST,
+            GridConstraints.FILL_NONE,
+            GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW,
+            GridConstraints.SIZEPOLICY_FIXED,
+            null,
+            null,
+            null,
+            0,
+            false));
+    cancel = new JButton();
+    cancel.setText("Abbrechen");
+    panel2.add(
+        cancel,
+        new GridConstraints(
+            0,
+            3,
+            1,
+            1,
+            GridConstraints.ANCHOR_CENTER,
+            GridConstraints.FILL_HORIZONTAL,
+            GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW,
+            GridConstraints.SIZEPOLICY_FIXED,
+            null,
+            null,
+            null,
+            0,
+            false));
+    commitPayment = new JButton();
+    commitPayment.setText("Bezahlen");
+    panel2.add(
+        commitPayment,
+        new GridConstraints(
+            0,
+            4,
+            1,
+            1,
+            GridConstraints.ANCHOR_CENTER,
+            GridConstraints.FILL_HORIZONTAL,
+            GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW,
+            GridConstraints.SIZEPOLICY_FIXED,
+            null,
+            null,
+            null,
+            0,
+            false));
+    setCustomerStandard = new JButton();
+    setCustomerStandard.setText("Standard setzen");
+    setCustomerStandard.setVisible(true);
+    panel2.add(
+        setCustomerStandard,
+        new GridConstraints(
+            0,
+            1,
+            1,
+            1,
+            GridConstraints.ANCHOR_CENTER,
+            GridConstraints.FILL_HORIZONTAL,
+            GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW,
+            GridConstraints.SIZEPOLICY_FIXED,
+            null,
+            null,
+            null,
+            0,
+            false));
+    final Spacer spacer1 = new Spacer();
+    panel2.add(
+        spacer1,
+        new GridConstraints(
+            0,
+            0,
+            1,
+            1,
+            GridConstraints.ANCHOR_CENTER,
+            GridConstraints.FILL_HORIZONTAL,
+            GridConstraints.SIZEPOLICY_WANT_GROW,
+            1,
+            null,
+            null,
+            null,
+            0,
+            false));
+  }
 
-    /**
-     * Method generated by IntelliJ IDEA GUI Designer
-     * >>> IMPORTANT!! <<<
-     * DO NOT edit this method OR call it in your code!
-     *
-     * @noinspection ALL
-     */
-    private void $$$setupUI$$$() {
-        createUIComponents();
-        main = new JPanel();
-        main.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
-        final JPanel panel1 = new JPanel();
-        panel1.setLayout(new BorderLayout(0, 0));
-        main.add(panel1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
-        final JLabel label1 = new JLabel();
-        Font label1Font = this.$$$getFont$$$(null, Font.BOLD, 16, label1.getFont());
-        if (label1Font != null) label1.setFont(label1Font);
-        label1.setForeground(new Color(-12828928));
-        label1.setHorizontalAlignment(0);
-        label1.setHorizontalTextPosition(0);
-        label1.setMaximumSize(new Dimension(94, 32));
-        label1.setMinimumSize(new Dimension(94, 32));
-        label1.setPreferredSize(new Dimension(94, 32));
-        label1.setText("Abrechnung");
-        panel1.add(label1, BorderLayout.NORTH);
-        shoppingListPanel = new JPanel();
-        shoppingListPanel.setLayout(new BorderLayout(0, 0));
-        shoppingListPanel.setBackground(new Color(-1));
-        shoppingListPanel.setOpaque(false);
-        shoppingListPanel.setPreferredSize(new Dimension(2000, 2000));
-        panel1.add(shoppingListPanel, BorderLayout.CENTER);
-        shoppingListPanel.add(shoppingCartView.$$$getRootComponent$$$(), BorderLayout.CENTER);
-        final JPanel panel2 = new JPanel();
-        panel2.setLayout(new GridLayoutManager(1, 5, new Insets(5, 5, 5, 5), -1, -1));
-        panel2.setMaximumSize(new Dimension(2147483647, 40));
-        panel2.setMinimumSize(new Dimension(317, 40));
-        panel2.setPreferredSize(new Dimension(317, 40));
-        panel1.add(panel2, BorderLayout.SOUTH);
-        printReceipt = new JCheckBox();
-        printReceipt.setText("Bon drucken");
-        panel2.add(printReceipt, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        cancel = new JButton();
-        cancel.setText("Abbrechen");
-        panel2.add(cancel, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        commitPayment = new JButton();
-        commitPayment.setText("Bezahlen");
-        panel2.add(commitPayment, new GridConstraints(0, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        setCustomerStandard = new JButton();
-        setCustomerStandard.setText("Standard setzen");
-        setCustomerStandard.setVisible(true);
-        panel2.add(setCustomerStandard, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final Spacer spacer1 = new Spacer();
-        panel2.add(spacer1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+  /** @noinspection ALL */
+  private Font $$$getFont$$$(String fontName, int style, int size, Font currentFont) {
+    if (currentFont == null) return null;
+    String resultName;
+    if (fontName == null) {
+      resultName = currentFont.getName();
+    } else {
+      Font testFont = new Font(fontName, Font.PLAIN, 10);
+      if (testFont.canDisplay('a') && testFont.canDisplay('1')) {
+        resultName = fontName;
+      } else {
+        resultName = currentFont.getName();
+      }
     }
+    Font font =
+        new Font(
+            resultName,
+            style >= 0 ? style : currentFont.getStyle(),
+            size >= 0 ? size : currentFont.getSize());
+    boolean isMac = System.getProperty("os.name", "").toLowerCase(Locale.ENGLISH).startsWith("mac");
+    Font fontWithFallback =
+        isMac
+            ? new Font(font.getFamily(), font.getStyle(), font.getSize())
+            : new StyleContext().getFont(font.getFamily(), font.getStyle(), font.getSize());
+    return fontWithFallback instanceof FontUIResource
+        ? fontWithFallback
+        : new FontUIResource(fontWithFallback);
+  }
 
-    /**
-     * @noinspection ALL
-     */
-    private Font $$$getFont$$$(String fontName, int style, int size, Font currentFont) {
-        if (currentFont == null) return null;
-        String resultName;
-        if (fontName == null) {
-            resultName = currentFont.getName();
-        } else {
-            Font testFont = new Font(fontName, Font.PLAIN, 10);
-            if (testFont.canDisplay('a') && testFont.canDisplay('1')) {
-                resultName = fontName;
-            } else {
-                resultName = currentFont.getName();
-            }
-        }
-        Font font = new Font(resultName, style >= 0 ? style : currentFont.getStyle(), size >= 0 ? size : currentFont.getSize());
-        boolean isMac = System.getProperty("os.name", "").toLowerCase(Locale.ENGLISH).startsWith("mac");
-        Font fontWithFallback = isMac ? new Font(font.getFamily(), font.getStyle(), font.getSize()) : new StyleContext().getFont(font.getFamily(), font.getStyle(), font.getSize());
-        return fontWithFallback instanceof FontUIResource ? fontWithFallback : new FontUIResource(fontWithFallback);
-    }
-
-    /**
-     * @noinspection ALL
-     */
-    public JComponent $$$getRootComponent$$$() {
-        return main;
-    }
+  /** @noinspection ALL */
+  public JComponent $$$getRootComponent$$$() {
+    return main;
+  }
 }
