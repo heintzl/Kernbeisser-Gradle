@@ -33,13 +33,6 @@ public class PermissionAssignmentController
     user = getUserSource();
   }
 
-  @Key(PermissionKey.ACTION_GRANT_CASHIER_PERMISSION)
-  private PermissionAssignmentController(boolean dummy) throws AccessDeniedException {
-    super(new PermissionAssignmentModel());
-    this.isGranter = true;
-    user = getUserSource();
-  }
-
   private CollectionController<User> getUserSource() {
     return new CollectionController<>(
         new ArrayList<>(),
@@ -56,9 +49,7 @@ public class PermissionAssignmentController
             .filter(
                 p ->
                     (!p.getName()
-                            .matches(
-                                "@KEY_PERMISSION|@IN_RELATION_TO_OWN_USER|@IMPORT|@APPLICATION")
-                        && (p.getName().equals("@CASHIER") || !isGranter)))
+                        .matches("@KEY_PERMISSION|@IN_RELATION_TO_OWN_USER|@IMPORT|@APPLICATION")))
             .collect(Collectors.toList()));
     user.getView().addSearchbox(CollectionView.BOTH);
     JCheckBox toggleClipBoardFilter = new JCheckBox("Auf Zwischenablage filtern");
@@ -100,10 +91,6 @@ public class PermissionAssignmentController
         user.getModel().getLoaded(),
         () -> getView().confirmChanges(),
         isGranter);
-  }
-
-  public static PermissionAssignmentController cashierPermissionController() {
-    return new PermissionAssignmentController(true);
   }
 
   @Override
