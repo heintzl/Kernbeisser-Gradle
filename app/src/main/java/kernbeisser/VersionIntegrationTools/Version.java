@@ -16,7 +16,8 @@ public enum Version {
   NEW_ARTICLE_PROPERTIES(AddArticleSupplyPermissions::new),
   CATALOG_IMPORT(AddCatalogImportPermission::new),
   SALE_SESSION_CLOSE_POPUP(AddSaleSessionClosePermission::new),
-  PREORDER_FROM_CATALOG(MigrateOpenPreOrders::new);
+  PREORDER_FROM_CATALOG(MigrateOpenPreOrders::new),
+  CONFIRMATION_PANEL(AddOnShoppingMaskCheckoutPermission::new);
 
   private final Supplier<VersionUpdatingTool> versionUpdatingToolSupplier;
 

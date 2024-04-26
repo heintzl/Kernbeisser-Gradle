@@ -9,8 +9,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import kernbeisser.DBConnection.QueryBuilder;
-import kernbeisser.DBEntities.User_;
 import kernbeisser.DBEntities.User;
+import kernbeisser.DBEntities.User_;
 
 public class KeyUserList extends Report {
 

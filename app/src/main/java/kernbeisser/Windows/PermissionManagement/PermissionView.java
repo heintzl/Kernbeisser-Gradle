@@ -9,8 +9,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CancellationException;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -31,7 +33,8 @@ import rs.groump.PermissionKey;
 
 public class PermissionView implements IView<PermissionController> {
 
-  @Getter private ObjectTable<PermissionKey> permission;
+  @Getter
+  private ObjectTable<PermissionKey> permission;
   private JPanel main;
   private AdvancedComboBox<PermissionKeyGroups> category;
   private JButton back;
@@ -40,7 +43,8 @@ public class PermissionView implements IView<PermissionController> {
   private JButton exportPermissions;
   private JButton importPermissions;
 
-  @Linked private PermissionController controller;
+  @Linked
+  private PermissionController controller;
 
   String getPermissionName() {
     return JOptionPane.showInputDialog(this, "Bitte gib den Namen der neuen Berechtigung ein");
@@ -56,12 +60,12 @@ public class PermissionView implements IView<PermissionController> {
     int i = 0;
     for (Column<PermissionKey> permissionColumn : permissionColumns) {
       int s =
-          (int)
-              (permission
-                      .getFontMetrics(permission.getFont())
-                      .getStringBounds(permissionColumn.getName(), null)
-                      .getWidth()
-                  + 10);
+              (int)
+                      (permission
+                              .getFontMetrics(permission.getFont())
+                              .getStringBounds(permissionColumn.getName(), null)
+                              .getWidth()
+                              + 10);
       permission.getColumnModel().getColumn(i).setMinWidth(s);
       permission.getColumnModel().getColumn(i).setPreferredWidth(s + (i == 0 ? 100 : 0));
       i++;
@@ -86,19 +90,19 @@ public class PermissionView implements IView<PermissionController> {
     delete.addActionListener(e -> controller.deletePermission());
     category.addActionListener(e -> controller.loadSolutions());
     category.setRenderer(
-        new DefaultListCellRenderer() {
-          @Override
-          public Component getListCellRendererComponent(
-              JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+            new DefaultListCellRenderer() {
+              @Override
+              public Component getListCellRendererComponent(
+                      JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
 
-            return super.getListCellRendererComponent(
-                list,
-                value instanceof Class<?> ? ((Class<?>) value).getSimpleName() : value,
-                index,
-                isSelected,
-                cellHasFocus);
-          }
-        });
+                return super.getListCellRendererComponent(
+                        list,
+                        value instanceof Class<?> ? ((Class<?>) value).getSimpleName() : value,
+                        index,
+                        isSelected,
+                        cellHasFocus);
+              }
+            });
     back.addActionListener(e -> back());
     exportPermissions.addActionListener(this::exportPermissions);
     importPermissions.addActionListener(this::importPermissions);
@@ -118,61 +122,61 @@ public class PermissionView implements IView<PermissionController> {
     JFileChooser jFileChooser = new JFileChooser(importPath);
     jFileChooser.setFileFilter(new FileNameExtensionFilter("Berechtigungs-JSON", "json"));
     jFileChooser.addActionListener(
-        e -> {
-          if (jFileChooser.getSelectedFile() != null) {
-            try {
-              if (controller.importFrom(jFileChooser.getSelectedFile())) {
-                JOptionPane.showMessageDialog(
-                    getTopComponent(), "Alle Berechtigungen erfolgreich importiert");
+            e -> {
+              if (jFileChooser.getSelectedFile() != null) {
+                try {
+                  if (controller.importFrom(jFileChooser.getSelectedFile())) {
+                    JOptionPane.showMessageDialog(
+                            getTopComponent(), "Alle Berechtigungen erfolgreich importiert");
+                  }
+                } catch (FileNotFoundException fileNotFoundException) {
+                  JOptionPane.showMessageDialog(
+                          getTopComponent(),
+                          "Die angegebene Datei "
+                                  + jFileChooser.getSelectedFile()
+                                  + " kann nicht gefunden werden");
+                }
+                DBConnection.reload();
               }
-            } catch (FileNotFoundException fileNotFoundException) {
-              JOptionPane.showMessageDialog(
-                  getTopComponent(),
-                  "Die angegebene Datei "
-                      + jFileChooser.getSelectedFile()
-                      + " kann nicht gefunden werden");
-            }
-            DBConnection.reload();
-          }
-        });
+            });
     jFileChooser.showDialog(getTopComponent(), "Importieren");
   }
 
   private void exportPermissions(ActionEvent event) {
     Optional<ExportTypes> typeSelection =
-        SelectionDialog.select(
-            getTopComponent(),
-            "In welchem Format sollen die Berechtigungen exportiert werden?",
-            Arrays.asList(ExportTypes.JSON, ExportTypes.CSV));
+            SelectionDialog.select(
+                    getTopComponent(),
+                    "In welchem Format sollen die Berechtigungen exportiert werden?",
+                    Arrays.asList(ExportTypes.JSON, ExportTypes.CSV));
     if (!typeSelection.isPresent()) return;
     ExportTypes type = typeSelection.get();
     JFileChooser jFileChooser = new JFileChooser();
     jFileChooser.setFileFilter(
-        new FileNameExtensionFilter(
-            "Berechtigungs-" + type.getName(), type.getFileNameExtension()));
+            new FileNameExtensionFilter(
+                    "Berechtigungs-" + type.getName(), type.getFileNameExtension()));
     jFileChooser.addActionListener(
-        e -> {
-          if (jFileChooser.getSelectedFile() != null) {
-            try {
-              switch (type) {
-                case JSON:
-                  controller.exportTo(jFileChooser.getSelectedFile());
-                  break;
-                case CSV:
-                  controller.exportCsv(jFileChooser.getSelectedFile());
-                  break;
-                default:
-                  throw new IllegalStateException("Unexpected value: " + type);
+            e -> {
+              if (jFileChooser.getSelectedFile() != null) {
+                try {
+                  switch (type) {
+                    case JSON:
+                      controller.exportTo(jFileChooser.getSelectedFile());
+                      break;
+                    case CSV:
+                      controller.exportCsv(jFileChooser.getSelectedFile());
+                      break;
+                    default:
+                      throw new IllegalStateException("Unexpected value: " + type);
+                  }
+                } catch (IOException ioException) {
+                  JOptionPane.showMessageDialog(
+                          getTopComponent(),
+                          "Auf die angegebene Datei "
+                                  + jFileChooser.getSelectedFile()
+                                  + " kann nicht zugegriffen werden");
+                }
               }
-            } catch (IOException ioException) {
-              JOptionPane.showMessageDialog(
-                  getTopComponent(),
-                  "Auf die angegebene Datei "
-                      + jFileChooser.getSelectedFile()
-                      + " kann nicht zugegriffen werden");
-            }
-          }
-        });
+            });
     jFileChooser.showDialog(getTopComponent(), "Speichern");
   }
 
@@ -183,22 +187,22 @@ public class PermissionView implements IView<PermissionController> {
 
   public void nameIsNotUnique() {
     JOptionPane.showMessageDialog(
-        getTopComponent(),
-        "Der gewählte Name ist bereits vergeben,\n" + "bitte wähle einen anderen.");
+            getTopComponent(),
+            "Der gewählte Name ist bereits vergeben,\n" + "bitte wähle einen anderen.");
   }
 
   public boolean permissionIsInUse() {
     return JOptionPane.showConfirmDialog(
             getTopComponent(),
             "Die Berechtigung ist noch an Nutzer vergeben,\n"
-                + "soll allen Nutzern die Berechtigung entzogen werden\n"
-                + "und die Berechtigung anschließend gelöscht werden?")
-        == 0;
+                    + "soll allen Nutzern die Berechtigung entzogen werden\n"
+                    + "und die Berechtigung anschließend gelöscht werden?")
+            == 0;
   }
 
   public void successfulDeleted() {
     JOptionPane.showMessageDialog(
-        getTopComponent(), "Die Berechtigung wurde erfolgreich gelöscht.");
+            getTopComponent(), "Die Berechtigung wurde erfolgreich gelöscht.");
   }
 
   @Override
@@ -210,14 +214,14 @@ public class PermissionView implements IView<PermissionController> {
     JPanel jPanel = new JPanel();
     jPanel.add(new JLabel("Welche Berechtigung soll gelöscht werden?"));
     AdvancedComboBox<Permission> permissionAdvancedComboBox =
-        new AdvancedComboBox<>(Permission::getName);
+            new AdvancedComboBox<>(Permission::getName);
     allPermissions.stream()
-        .filter(e -> !e.getName().startsWith("@"))
-        .forEach(permissionAdvancedComboBox::addItem);
+            .filter(e -> !e.getName().startsWith("@"))
+            .forEach(permissionAdvancedComboBox::addItem);
     jPanel.add(permissionAdvancedComboBox);
     if (JOptionPane.showConfirmDialog(
             getTopComponent(), jPanel, "Berechtigung auswählen", JOptionPane.OK_CANCEL_OPTION)
-        == 0) {
+            == 0) {
       return permissionAdvancedComboBox.getSelected().orElseThrow(CancellationException::new);
     } else {
       throw new CancellationException();
@@ -225,9 +229,9 @@ public class PermissionView implements IView<PermissionController> {
   }
 
   {
-    // GUI initializer generated by IntelliJ IDEA GUI Designer
-    // >>> IMPORTANT!! <<<
-    // DO NOT EDIT OR ADD ANY CODE HERE!
+// GUI initializer generated by IntelliJ IDEA GUI Designer
+// >>> IMPORTANT!! <<<
+// DO NOT EDIT OR ADD ANY CODE HERE!
     $$$setupUI$$$();
   }
 
@@ -244,219 +248,39 @@ public class PermissionView implements IView<PermissionController> {
     final JScrollPane scrollPane1 = new JScrollPane();
     scrollPane1.setAutoscrolls(false);
     scrollPane1.setHorizontalScrollBarPolicy(30);
-    main.add(
-        scrollPane1,
-        new GridConstraints(
-            1,
-            0,
-            1,
-            1,
-            GridConstraints.ANCHOR_CENTER,
-            GridConstraints.FILL_BOTH,
-            GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW,
-            GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW,
-            null,
-            null,
-            null,
-            0,
-            false));
+    main.add(scrollPane1, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
     permission.setAutoResizeMode(0);
     permission.setPreferredScrollableViewportSize(new Dimension(450, 400));
     scrollPane1.setViewportView(permission);
     final JPanel panel1 = new JPanel();
     panel1.setLayout(new GridLayoutManager(1, 6, new Insets(0, 0, 0, 0), -1, -1));
-    main.add(
-        panel1,
-        new GridConstraints(
-            2,
-            0,
-            1,
-            1,
-            GridConstraints.ANCHOR_CENTER,
-            GridConstraints.FILL_BOTH,
-            GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW,
-            GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW,
-            null,
-            null,
-            null,
-            0,
-            false));
+    main.add(panel1, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
     back = new JButton();
     back.setText("Fertig");
-    panel1.add(
-        back,
-        new GridConstraints(
-            0,
-            5,
-            1,
-            1,
-            GridConstraints.ANCHOR_CENTER,
-            GridConstraints.FILL_HORIZONTAL,
-            GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW,
-            GridConstraints.SIZEPOLICY_FIXED,
-            null,
-            null,
-            null,
-            0,
-            false));
+    panel1.add(back, new GridConstraints(0, 5, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     final Spacer spacer1 = new Spacer();
-    panel1.add(
-        spacer1,
-        new GridConstraints(
-            0,
-            4,
-            1,
-            1,
-            GridConstraints.ANCHOR_CENTER,
-            GridConstraints.FILL_HORIZONTAL,
-            GridConstraints.SIZEPOLICY_WANT_GROW,
-            1,
-            null,
-            null,
-            null,
-            0,
-            false));
+    panel1.add(spacer1, new GridConstraints(0, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
     add = new JButton();
     add.setText("Hinzufügen");
-    panel1.add(
-        add,
-        new GridConstraints(
-            0,
-            0,
-            1,
-            1,
-            GridConstraints.ANCHOR_CENTER,
-            GridConstraints.FILL_HORIZONTAL,
-            GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW,
-            GridConstraints.SIZEPOLICY_FIXED,
-            null,
-            null,
-            null,
-            0,
-            false));
+    panel1.add(add, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     delete = new JButton();
     delete.setText("Löschen");
-    panel1.add(
-        delete,
-        new GridConstraints(
-            0,
-            1,
-            1,
-            1,
-            GridConstraints.ANCHOR_CENTER,
-            GridConstraints.FILL_HORIZONTAL,
-            GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW,
-            GridConstraints.SIZEPOLICY_FIXED,
-            null,
-            null,
-            null,
-            0,
-            false));
+    panel1.add(delete, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     exportPermissions = new JButton();
     exportPermissions.setText("Berechtigungen exportieren");
-    panel1.add(
-        exportPermissions,
-        new GridConstraints(
-            0,
-            2,
-            1,
-            1,
-            GridConstraints.ANCHOR_CENTER,
-            GridConstraints.FILL_HORIZONTAL,
-            GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW,
-            GridConstraints.SIZEPOLICY_FIXED,
-            null,
-            null,
-            null,
-            0,
-            false));
+    panel1.add(exportPermissions, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     importPermissions = new JButton();
     importPermissions.setText("Berechtigungen importieren");
-    panel1.add(
-        importPermissions,
-        new GridConstraints(
-            0,
-            3,
-            1,
-            1,
-            GridConstraints.ANCHOR_CENTER,
-            GridConstraints.FILL_HORIZONTAL,
-            GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW,
-            GridConstraints.SIZEPOLICY_FIXED,
-            null,
-            null,
-            null,
-            0,
-            false));
+    panel1.add(importPermissions, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     final JPanel panel2 = new JPanel();
     panel2.setLayout(new GridLayoutManager(1, 3, new Insets(0, 0, 0, 0), -1, -1));
-    main.add(
-        panel2,
-        new GridConstraints(
-            0,
-            0,
-            1,
-            1,
-            GridConstraints.ANCHOR_CENTER,
-            GridConstraints.FILL_BOTH,
-            GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW,
-            GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW,
-            null,
-            null,
-            null,
-            0,
-            false));
+    main.add(panel2, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
     final Spacer spacer2 = new Spacer();
-    panel2.add(
-        spacer2,
-        new GridConstraints(
-            0,
-            2,
-            1,
-            1,
-            GridConstraints.ANCHOR_CENTER,
-            GridConstraints.FILL_HORIZONTAL,
-            GridConstraints.SIZEPOLICY_WANT_GROW,
-            1,
-            null,
-            null,
-            null,
-            0,
-            false));
+    panel2.add(spacer2, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
     final JLabel label1 = new JLabel();
     label1.setText("Kategorie");
-    panel2.add(
-        label1,
-        new GridConstraints(
-            0,
-            0,
-            1,
-            1,
-            GridConstraints.ANCHOR_WEST,
-            GridConstraints.FILL_NONE,
-            GridConstraints.SIZEPOLICY_FIXED,
-            GridConstraints.SIZEPOLICY_FIXED,
-            null,
-            null,
-            null,
-            0,
-            false));
-    panel2.add(
-        category,
-        new GridConstraints(
-            0,
-            1,
-            1,
-            1,
-            GridConstraints.ANCHOR_CENTER,
-            GridConstraints.FILL_NONE,
-            GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW,
-            GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW,
-            null,
-            null,
-            null,
-            0,
-            false));
+    panel2.add(label1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    panel2.add(category, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
   }
 
   /**
@@ -465,4 +289,5 @@ public class PermissionView implements IView<PermissionController> {
   public JComponent $$$getRootComponent$$$() {
     return main;
   }
+
 }

@@ -5,7 +5,6 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Setter;
-import lombok.var;
 import org.apache.logging.log4j.util.Supplier;
 
 public class PermissionGranterAssignmentModel
@@ -19,7 +18,7 @@ public class PermissionGranterAssignmentModel
 
   public List<Permission> allPermissions() {
     List<Permission> result = DBConnection.getAll(Permission.class);
-    result.sort(Comparator.comparing(Permission::getName));
+    result.sort(Comparator.comparing(Permission::getNeatName));
     return result;
   }
 

@@ -8,7 +8,6 @@ import java.util.Optional;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Repositories.ArticleRepository;
-import kernbeisser.DBEntities.ArticleStock_;
 import kernbeisser.Enums.Setting;
 import lombok.Cleanup;
 import lombok.Data;

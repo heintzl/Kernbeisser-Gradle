@@ -7,14 +7,13 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.DBEntities.Permission;
-import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.ObjectForm.Components.Source;
-import kernbeisser.Security.Key;
 import kernbeisser.Windows.CollectionView.CollectionController;
 import kernbeisser.Windows.CollectionView.CollectionView;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
+import rs.groump.Key;
+import rs.groump.PermissionKey;
 
 public class PermissionGranterAssignmentController
     extends Controller<PermissionGranterAssignmentView, PermissionGranterAssignmentModel> {
@@ -22,7 +21,7 @@ public class PermissionGranterAssignmentController
   @Linked private final CollectionController<Permission> permission;
 
   @Key(PermissionKey.ACTION_OPEN_PERMISSION_GRANT_ASSIGNMENT)
-  public PermissionGranterAssignmentController() throws PermissionKeyRequiredException {
+  public PermissionGranterAssignmentController() {
     super(new PermissionGranterAssignmentModel());
     permission = getPermissionSource();
   }

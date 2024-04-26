@@ -5,7 +5,6 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.function.Predicate;
 import kernbeisser.DBConnection.QueryBuilder;
-import kernbeisser.DBEntities.ShoppingItem_;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Security.Access.UserRelated;
 import lombok.EqualsAndHashCode;

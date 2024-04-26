@@ -1,10 +1,10 @@
 package kernbeisser.DBEntities;
 
-import javax.persistence.*;
-import kernbeisser.Enums.PermissionKey;
-import kernbeisser.Security.Key;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
+import rs.groump.Key;
+import rs.groump.PermissionKey;
 
 @Entity
 @Table(

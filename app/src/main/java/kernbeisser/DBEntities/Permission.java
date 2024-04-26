@@ -1,18 +1,15 @@
 package kernbeisser.DBEntities;
 
-import com.google.common.collect.Maps;
 import static kernbeisser.DBConnection.PredicateFactory.isMember;
 import static kernbeisser.DBConnection.PredicateFactory.like;
 
+import com.google.common.collect.Maps;
 import jakarta.persistence.*;
 import java.util.*;
 import java.util.stream.Collectors;
-import javax.persistence.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.ExpressionFactory;
 import kernbeisser.DBConnection.QueryBuilder;
-import kernbeisser.DBEntities.Permission_;
-import kernbeisser.DBEntities.User_;
 import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Useful.Tools;
 import lombok.*;
@@ -85,7 +82,7 @@ public class Permission {
     return permissionKeys;
   }
 
-  //TODO Review query
+  // TODO Review query
   public List<Permission> getGranters() {
     return DBConnection.getAll(PermissionGrant.class).stream()
         .filter(g -> g.getOn().equals(this))

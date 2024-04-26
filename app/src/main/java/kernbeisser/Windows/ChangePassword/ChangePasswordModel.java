@@ -5,8 +5,8 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.QueryBuilder;
-import kernbeisser.DBEntities.User_;
 import kernbeisser.DBEntities.User;
+import kernbeisser.DBEntities.User_;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
 
@@ -22,9 +22,7 @@ public class ChangePasswordModel implements IModel<ChangePasswordController> {
 
   public boolean checkPassword(String password) {
     String currentPassword =
-        QueryBuilder.select(User_.password)
-            .where(User_.id.eq(user.getId()))
-            .getSingleResult();
+        QueryBuilder.select(User_.password).where(User_.id.eq(user.getId())).getSingleResult();
     BCrypt.Result r =
         BCrypt.verifyer().verify(password.toCharArray(), (currentPassword.toCharArray()));
     return r.verified;

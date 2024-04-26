@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Converters.SettingValueConverter;
-import kernbeisser.DBEntities.SettingValue_;
 import kernbeisser.Enums.Setting;
 import lombok.Cleanup;
 import lombok.EqualsAndHashCode;

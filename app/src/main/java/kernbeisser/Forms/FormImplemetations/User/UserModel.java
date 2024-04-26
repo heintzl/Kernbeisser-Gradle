@@ -8,8 +8,8 @@ import java.util.HashSet;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.ExpressionFactory;
 import kernbeisser.DBConnection.QueryBuilder;
-import kernbeisser.DBEntities.User_;
 import kernbeisser.DBEntities.User;
+import kernbeisser.DBEntities.User_;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
 
@@ -48,9 +48,7 @@ public class UserModel implements IModel<UserController> {
   boolean fullNameExists(User user) {
     return QueryBuilder.select(User_.id)
         .where(
-            concat(
-                    concat(User_.firstName, ExpressionFactory.asExpression(" ")),
-                    User_.surname)
+            concat(concat(User_.firstName, ExpressionFactory.asExpression(" ")), User_.surname)
                 .eq(user.getFullName().trim()),
             User_.id.eq(user.getId()).not())
         .hasResult();

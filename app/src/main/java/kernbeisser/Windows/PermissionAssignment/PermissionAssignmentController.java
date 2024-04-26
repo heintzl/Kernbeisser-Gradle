@@ -11,16 +11,11 @@ import kernbeisser.CustomComponents.ClipboardFilter;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.DBEntities.Permission;
 import kernbeisser.DBEntities.User;
-import kernbeisser.Exeptions.PermissionKeyRequiredException;
 import kernbeisser.Forms.ObjectForm.Components.Source;
-import kernbeisser.Security.Key;
 import kernbeisser.Windows.CollectionView.CollectionController;
 import kernbeisser.Windows.CollectionView.CollectionView;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
-import rs.groump.AccessDeniedException;
-import rs.groump.Key;
-import rs.groump.PermissionKey;
 
 public class PermissionAssignmentController
     extends Controller<PermissionAssignmentView, PermissionAssignmentModel> {
@@ -28,7 +23,7 @@ public class PermissionAssignmentController
   @Linked private final CollectionController<User> user;
   private boolean isGranter = false;
 
-  public PermissionAssignmentController() throws PermissionKeyRequiredException {
+  public PermissionAssignmentController() {
     super(new PermissionAssignmentModel());
     user = getUserSource();
   }

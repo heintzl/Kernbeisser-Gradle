@@ -21,14 +21,21 @@ public class FieldIdentifier<P, V> implements ExpressionFactory<P, V> {
   public FieldIdentifier(Class<P> type, String name) {
     this.name = name;
     this.tableClass = type;
-      try {
-          this.propertyClass = optainPropertyClass(tableClass, name);
-      } catch (NoSuchFieldException e) {
-        throw new RuntimeException("Could not bind the Metamodel "+tableClass+ ":"+name + " the Metamodel does not match the actual model", e);
-      }
+    try {
+      this.propertyClass = optainPropertyClass(tableClass, name);
+    } catch (NoSuchFieldException e) {
+      throw new RuntimeException(
+          "Could not bind the Metamodel "
+              + tableClass
+              + ":"
+              + name
+              + " the Metamodel does not match the actual model",
+          e);
+    }
   }
 
-  private Class<V> optainPropertyClass(Class<P> typeClass, String attributeName) throws NoSuchFieldException {
+  private Class<V> optainPropertyClass(Class<P> typeClass, String attributeName)
+      throws NoSuchFieldException {
     return (Class<V>) typeClass.getDeclaredField(attributeName).getType();
   }
 

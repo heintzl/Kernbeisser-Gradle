@@ -13,7 +13,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import kernbeisser.DBConnection.*;
 import kernbeisser.DBEntities.*;
-import kernbeisser.DBEntities.*;
 import kernbeisser.EntityWrapper.ObjectState;
 import kernbeisser.Enums.*;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
@@ -148,9 +147,7 @@ public class ArticleRepository {
       EntityTransaction et = em.getTransaction();
       et.begin();
       return QueryBuilder.selectAll(Article.class)
-          .where(
-              Article_.name.eq(rawPrice.getName()),
-              Article_.kbNumber.in(rawPriceIdentifiers))
+          .where(Article_.name.eq(rawPrice.getName()), Article_.kbNumber.in(rawPriceIdentifiers))
           .getSingleResult(em);
     } catch (NoResultException e) {
       ArticleConstants identifierEnum = ArticleConstants.CUSTOM_PRODUCT;
@@ -252,8 +249,7 @@ public class ArticleRepository {
   public static Article nextArticleTo(
       EntityManager em, int suppliersItemNumber, Supplier supplier, PriceList excludedPriceList) {
     return QueryBuilder.selectAll(Article.class)
-        .where(
-            Article_.supplier.eq(supplier), Article_.priceList.eq(excludedPriceList).not())
+        .where(Article_.supplier.eq(supplier), Article_.priceList.eq(excludedPriceList).not())
         .orderBy(diff(Article_.suppliersItemNumber, asExpression(suppliersItemNumber)).asc())
         .getResultStream(em)
         .findFirst()
@@ -371,8 +367,7 @@ public class ArticleRepository {
               DBConnection.getConditioned(
                       em,
                       Article.class,
-                      Article_.kbNumber.eq(
-                          ArticleConstants.CUSTOM_PRODUCT.getUniqueIdentifier()))
+                      Article_.kbNumber.eq(ArticleConstants.CUSTOM_PRODUCT.getUniqueIdentifier()))
                   .stream()
                   .findFirst()
                   .orElseGet(ArticleRepository::createCustomArticlePreset);
