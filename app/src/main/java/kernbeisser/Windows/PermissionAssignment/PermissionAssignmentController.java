@@ -16,13 +16,19 @@ import kernbeisser.Windows.CollectionView.CollectionController;
 import kernbeisser.Windows.CollectionView.CollectionView;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
+import rs.groump.Key;
+import rs.groump.PermissionKey;
 
 public class PermissionAssignmentController
     extends Controller<PermissionAssignmentView, PermissionAssignmentModel> {
 
   @Linked private final CollectionController<User> user;
-  private boolean isGranter = false;
 
+  @Key({
+    PermissionKey.ACTION_OPEN_PERMISSION_ASSIGNMENT,
+    PermissionKey.USER_PERMISSIONS_WRITE,
+    PermissionKey.USER_PERMISSIONS_READ
+  })
   public PermissionAssignmentController() {
     super(new PermissionAssignmentModel());
     user = getUserSource();
@@ -84,13 +90,12 @@ public class PermissionAssignmentController
     model.setPermission(
         model.getRecent().get(),
         user.getModel().getLoaded(),
-        () -> getView().confirmChanges(),
-        isGranter);
+        () -> getView().confirmChanges());
   }
 
   @Override
   protected void closed() {
     model.setPermission(
-        model.getRecent().get(), user.getModel().getLoaded(), () -> true, isGranter);
+        model.getRecent().get(), user.getModel().getLoaded(), () -> true);
   }
 }

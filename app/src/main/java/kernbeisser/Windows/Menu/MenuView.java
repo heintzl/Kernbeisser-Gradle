@@ -264,7 +264,7 @@ public class MenuView implements IView<MenuController> {
     permissionAssignment =
         new ControllerButton(
             PermissionAssignmentController::new, PermissionAssignmentController.class);
-    permissionAssignment.setEnabled(PermissionAssignmentModel.isAccessible());
+    //permissionAssignment.setEnabled(PermissionAssignmentModel.isAccessible());
 
     permissionGranterAssignment =
         new ControllerButton(
