@@ -23,101 +23,102 @@ import org.jetbrains.annotations.NotNull;
 
 public class SimpleLogInView implements IView<SimpleLogInController> {
 
-    private JButton logIn;
-    private JPasswordField password;
-    private JTextField username;
-    private JPanel main;
-    private JButton quit;
-    private JProgressBar loadingMenuIndicator;
+  private JButton logIn;
+  private JPasswordField password;
+  private JTextField username;
+  private JPanel main;
+  private JButton quit;
+  private JProgressBar loadingMenuIndicator;
 
-    @Linked
-    private SimpleLogInController controller;
+  @Linked private SimpleLogInController controller;
 
-    char[] getPassword() {
-        return password.getPassword();
-    }
+  char[] getPassword() {
+    return password.getPassword();
+  }
 
-    String getUsername() {
-        return username.getText();
-    }
+  String getUsername() {
+    return username.getText();
+  }
 
-    public void accessDenied() {
-        JOptionPane.showMessageDialog(
-                getTopComponent(), "Zugriff verweigert. Anmeldedaten sind ungültig!");
-    }
+  public void accessDenied() {
+    JOptionPane.showMessageDialog(
+        getTopComponent(), "Zugriff verweigert. Anmeldedaten sind ungültig!");
+  }
 
-    public void permissionRequired() {
-        JOptionPane.showMessageDialog(
-                getTopComponent(),
-                "Zugriff verweigert.\n"
-                        + "Dein Benutzerkonto hat leider nicht die Berechtigung sich anzumelden.\n"
-                        + "Du kannst es bei einem Admin freischalten lassen.");
-    }
+  public void permissionRequired() {
+    JOptionPane.showMessageDialog(
+        getTopComponent(),
+        "Zugriff verweigert.\n"
+            + "Dein Benutzerkonto hat leider nicht die Berechtigung sich anzumelden.\n"
+            + "Du kannst es bei einem Admin freischalten lassen.");
+  }
 
-    @Override
-    public void initialize(SimpleLogInController controller) {
-        logIn.addActionListener(e -> controller.logIn());
-        password.addActionListener(
-                e -> {
-                    controller.logIn();
-                });
-        username.addActionListener(e -> password.requestFocus());
-        // TODO the following lines are for testing only! Remove from production code
-        File file = new File("testUser.txt");
-        if (file.exists()) {
-            try {
-                List<String> fileLines = Files.readAllLines(file.toPath());
-                username.setText(fileLines.get(0));
-                password.setText(fileLines.get(1));
-                if (fileLines.size() > 2) {
-                    if (fileLines.get(2).equals("!AutoLogin")) {
-                        controller.logIn();
-                    }
-                }
-            } catch (IOException e) {
-                UnexpectedExceptionHandler.showUnexpectedErrorWarning(e);
-            }
+  @Override
+  public void initialize(SimpleLogInController controller) {
+    logIn.addActionListener(e -> controller.logIn());
+    password.addActionListener(
+        e -> {
+          controller.logIn();
+        });
+    username.addActionListener(e -> password.requestFocus());
+    // TODO the following lines are for testing only! Remove from production code
+    File file = new File("testUser.txt");
+    if (file.exists()) {
+      try {
+        List<String> fileLines = Files.readAllLines(file.toPath());
+        username.setText(fileLines.get(0));
+        password.setText(fileLines.get(1));
+        if (fileLines.size() > 2) {
+          if (fileLines.get(2).equals("!AutoLogin")) {
+            controller.logIn();
+          }
         }
-        // TODO test code; remove  up to here
-        quit.setIcon(
-                IconFontSwing.buildIcon(
-                        FontAwesome.POWER_OFF,
-                        25 * Setting.LABEL_SCALE_FACTOR.getFloatValue(),
-                        new Color(182, 46, 4)));
-        quit.addActionListener(e -> back());
+      } catch (IOException e) {
+        UnexpectedExceptionHandler.showUnexpectedErrorWarning(e);
+      }
     }
+    // TODO test code; remove  up to here
+    quit.setIcon(
+        IconFontSwing.buildIcon(
+            FontAwesome.POWER_OFF,
+            25 * Setting.LABEL_SCALE_FACTOR.getFloatValue(),
+            new Color(182, 46, 4)));
+    quit.addActionListener(e -> back());
+  }
 
-    void indicateProgress(boolean inProgress) {
-        loadingMenuIndicator.setVisible(inProgress);
-        logIn.setEnabled(!inProgress);
-    }
+  void indicateProgress(boolean inProgress) {
+    loadingMenuIndicator.setVisible(inProgress);
+    logIn.setEnabled(!inProgress);
+  }
 
-    public void messageLoginAgain() {
-        JOptionPane.showMessageDialog(
-                getContent(),
-                "Bitte melde Dich noch einmal an!",
-                "Passwort geändert",
-                JOptionPane.INFORMATION_MESSAGE);
-    }
+  public void messageLoginAgain() {
+    JOptionPane.showMessageDialog(
+        getContent(),
+        "Bitte melde Dich noch einmal an!",
+        "Passwort geändert",
+        JOptionPane.INFORMATION_MESSAGE);
+  }
 
-    public void clearPassword() {
-        password.setText("");
-    }
+  public void clearPassword() {
+    password.setText("");
+  }
 
-    @Override
-    public @NotNull JComponent getContent() {
-        return main;
-    }
+  @Override
+  public @NotNull JComponent getContent() {
+    return main;
+  }
 
-    @Override
-    public IconCode getTabIcon() {
-        return FontAwesome.SIGN_IN;
-    }
+  @Override
+  public IconCode getTabIcon() {
+    return FontAwesome.SIGN_IN;
+  }
 
-    @Override
-    public String getTitle() {
-        return "Anmelden";
-    }
+  @Override
+  public String getTitle() {
+    return "Anmelden";
+  }
+
+  // @spotless:off
 
     {
 // GUI initializer generated by IntelliJ IDEA GUI Designer
@@ -126,13 +127,12 @@ public class SimpleLogInView implements IView<SimpleLogInController> {
         $$$setupUI$$$();
     }
 
-  /**
-   * Method generated by IntelliJ IDEA GUI Designer >>> IMPORTANT!! <<< DO NOT edit this method OR
-   * call it in your code!
-   *
-   * @noinspection ALL
-   */
-  private void $$$setupUI$$$() {
+    /** Method generated by IntelliJ IDEA GUI Designer
+     * >>> IMPORTANT!! <<<
+     * DO NOT edit this method OR call it in your code!
+     * @noinspection ALL
+     */
+    private void $$$setupUI$$$() {
         main = new JPanel();
         main.setLayout(new GridLayoutManager(5, 1, new Insets(5, 5, 5, 5), -1, -1));
         final JLabel label1 = new JLabel();
@@ -179,10 +179,8 @@ public class SimpleLogInView implements IView<SimpleLogInController> {
         panel2.add(spacer5, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
     }
 
-  /**
-   * @noinspection ALL
-   */
-  private Font $$$getFont$$$(String fontName, int style, int size, Font currentFont) {
+    /** @noinspection ALL */
+    private Font $$$getFont$$$(String fontName, int style, int size, Font currentFont) {
         if (currentFont == null) return null;
         String resultName;
         if (fontName == null) {
@@ -201,11 +199,10 @@ public class SimpleLogInView implements IView<SimpleLogInController> {
         return fontWithFallback instanceof FontUIResource ? fontWithFallback : new FontUIResource(fontWithFallback);
     }
 
-  /**
-   * @noinspection ALL
-   */
-  public JComponent $$$getRootComponent$$$() {
+    /** @noinspection ALL */
+    public JComponent $$$getRootComponent$$$() {
         return main;
     }
 
+    // @spotless:on
 }

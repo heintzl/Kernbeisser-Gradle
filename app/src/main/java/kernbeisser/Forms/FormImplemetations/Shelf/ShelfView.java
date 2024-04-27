@@ -23,84 +23,85 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 public class ShelfView implements IView<ShelfController> {
-    private JPanel main;
-    private ObjectTable<PriceList> shelfPriceLists;
-    private ObjectTable<Article> shelfExtraArticles;
-    private AccessCheckingField<Shelf, String> shelfLocation;
-    private AccessCheckingField<Shelf, String> shelfComment;
-    private AccessCheckingCollectionEditor<Shelf, Set<PriceList>, PriceList> editShelfPriceLists;
-    private AccessCheckingCollectionEditor<Shelf, Set<Article>, Article> extraArticles;
-    private AccessCheckingField<Shelf, Integer> shelfNo;
-    private JLabel extraArticleLabel;
-    @Getter
-    private ObjectForm<Shelf> objectForm;
+  private JPanel main;
+  private ObjectTable<PriceList> shelfPriceLists;
+  private ObjectTable<Article> shelfExtraArticles;
+  private AccessCheckingField<Shelf, String> shelfLocation;
+  private AccessCheckingField<Shelf, String> shelfComment;
+  private AccessCheckingCollectionEditor<Shelf, Set<PriceList>, PriceList> editShelfPriceLists;
+  private AccessCheckingCollectionEditor<Shelf, Set<Article>, Article> extraArticles;
+  private AccessCheckingField<Shelf, Integer> shelfNo;
+  private JLabel extraArticleLabel;
+  @Getter private ObjectForm<Shelf> objectForm;
 
-    private ObjectForm<Shelf> createObjectForm() {
-        return new ObjectForm<>(
-                shelfLocation,
-                shelfNo,
-                shelfComment,
-                editShelfPriceLists,
-                extraArticles,
-                new DataListener<>(Shelf::getPriceLists, shelfPriceLists::setObjects),
-                new DataListener<>(Shelf::getArticles, shelfExtraArticles::setObjects));
-    }
+  private ObjectForm<Shelf> createObjectForm() {
+    return new ObjectForm<>(
+        shelfLocation,
+        shelfNo,
+        shelfComment,
+        editShelfPriceLists,
+        extraArticles,
+        new DataListener<>(Shelf::getPriceLists, shelfPriceLists::setObjects),
+        new DataListener<>(Shelf::getArticles, shelfExtraArticles::setObjects));
+  }
 
-    @Override
-    public void initialize(ShelfController controller) {
-        objectForm = createObjectForm();
-        objectForm.setObjectDistinction("Das Regal");
-        objectForm.registerUniqueCheck(shelfNo, controller::isShelfNoUniqe);
-        objectForm.registerUniqueCheck(shelfLocation, controller::isLocationUniqe);
-    }
+  @Override
+  public void initialize(ShelfController controller) {
+    objectForm = createObjectForm();
+    objectForm.setObjectDistinction("Das Regal");
+    objectForm.registerUniqueCheck(shelfNo, controller::isShelfNoUniqe);
+    objectForm.registerUniqueCheck(shelfLocation, controller::isLocationUniqe);
+  }
 
-    @Override
-    public @NotNull JComponent getContent() {
-        return main;
-    }
+  @Override
+  public @NotNull JComponent getContent() {
+    return main;
+  }
 
-    private void refreshPriceListTable() {
-        shelfPriceLists.setObjects(editShelfPriceLists.getData());
-    }
+  private void refreshPriceListTable() {
+    shelfPriceLists.setObjects(editShelfPriceLists.getData());
+  }
 
-    public void refreshExtraArticleTable() {
-        shelfExtraArticles.setObjects(extraArticles.getData());
-    }
+  public void refreshExtraArticleTable() {
+    shelfExtraArticles.setObjects(extraArticles.getData());
+  }
 
-    private void createUIComponents() {
-        shelfPriceLists = new ObjectTable<>(Columns.create("Name", PriceList::getName));
-        editShelfPriceLists =
-                new AccessCheckingCollectionEditor<>(
-                        Shelf::getPriceLists,
-                        PriceList.onlyWithContent(),
-                        Columns.create("Name", PriceList::getName))
-                        .withCloseEvent(this::refreshPriceListTable)
-                        .withSearchbox(CollectionView.AVAILABLE);
-        shelfExtraArticles =
-                new ObjectTable<>(
-                        Columns.create("Artikelname", Article::getName),
-                        Columns.create("Artikelnummer", Article::getKbNumber).withSorter(Column.NUMBER_SORTER),
-                        Columns.create("Artikelpreisliste", Article::getPriceList));
-        extraArticles =
-                new AccessCheckingCollectionEditor<>(
-                        Shelf::getArticles,
-                        ShelfController.getAllArticleSource(),
-                        Columns.create("Artikelname", Article::getName),
-                        Columns.create("Artikelnummer", Article::getKbNumber)
-                                .withSorter(Column.NUMBER_SORTER),
-                        Columns.create("Artikelpreisliste", Article::getPriceList))
-                        .withCloseEvent(this::refreshExtraArticleTable)
-                        .withSearchbox(CollectionView.AVAILABLE);
-        shelfComment =
-                new AccessCheckingField<>(Shelf::getComment, Shelf::setComment, AccessCheckingField.NONE);
-        shelfLocation =
-                new AccessCheckingField<>(Shelf::getLocation, Shelf::setLocation, AccessCheckingField.NONE);
-        shelfNo =
-                new AccessCheckingField<>(
-                        Shelf::getShelfNo, Shelf::setShelfNo, AccessCheckingField.UNSIGNED_INT_FORMER);
-        extraArticleLabel = new JLabel("Extra Artikel");
-        extraArticleLabel.setIcon(Icons.barcodeIcon);
-    }
+  private void createUIComponents() {
+    shelfPriceLists = new ObjectTable<>(Columns.create("Name", PriceList::getName));
+    editShelfPriceLists =
+        new AccessCheckingCollectionEditor<>(
+                Shelf::getPriceLists,
+                PriceList.onlyWithContent(),
+                Columns.create("Name", PriceList::getName))
+            .withCloseEvent(this::refreshPriceListTable)
+            .withSearchbox(CollectionView.AVAILABLE);
+    shelfExtraArticles =
+        new ObjectTable<>(
+            Columns.create("Artikelname", Article::getName),
+            Columns.create("Artikelnummer", Article::getKbNumber).withSorter(Column.NUMBER_SORTER),
+            Columns.create("Artikelpreisliste", Article::getPriceList));
+    extraArticles =
+        new AccessCheckingCollectionEditor<>(
+                Shelf::getArticles,
+                ShelfController.getAllArticleSource(),
+                Columns.create("Artikelname", Article::getName),
+                Columns.create("Artikelnummer", Article::getKbNumber)
+                    .withSorter(Column.NUMBER_SORTER),
+                Columns.create("Artikelpreisliste", Article::getPriceList))
+            .withCloseEvent(this::refreshExtraArticleTable)
+            .withSearchbox(CollectionView.AVAILABLE);
+    shelfComment =
+        new AccessCheckingField<>(Shelf::getComment, Shelf::setComment, AccessCheckingField.NONE);
+    shelfLocation =
+        new AccessCheckingField<>(Shelf::getLocation, Shelf::setLocation, AccessCheckingField.NONE);
+    shelfNo =
+        new AccessCheckingField<>(
+            Shelf::getShelfNo, Shelf::setShelfNo, AccessCheckingField.UNSIGNED_INT_FORMER);
+    extraArticleLabel = new JLabel("Extra Artikel");
+    extraArticleLabel.setIcon(Icons.barcodeIcon);
+  }
+
+  // @spotless:off
 
     {
 // GUI initializer generated by IntelliJ IDEA GUI Designer
@@ -109,13 +110,12 @@ public class ShelfView implements IView<ShelfController> {
         $$$setupUI$$$();
     }
 
-  /**
-   * Method generated by IntelliJ IDEA GUI Designer >>> IMPORTANT!! <<< DO NOT edit this method OR
-   * call it in your code!
-   *
-   * @noinspection ALL
-   */
-  private void $$$setupUI$$$() {
+    /** Method generated by IntelliJ IDEA GUI Designer
+     * >>> IMPORTANT!! <<<
+     * DO NOT edit this method OR call it in your code!
+     * @noinspection ALL
+     */
+    private void $$$setupUI$$$() {
         createUIComponents();
         main = new JPanel();
         main.setLayout(new GridLayoutManager(8, 6, new Insets(0, 0, 0, 0), -1, -1));
@@ -152,11 +152,10 @@ public class ShelfView implements IView<ShelfController> {
         main.add(label4, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
-  /**
-   * @noinspection ALL
-   */
-  public JComponent $$$getRootComponent$$$() {
+    /** @noinspection ALL */
+    public JComponent $$$getRootComponent$$$() {
         return main;
     }
 
+    // @spotless:on
 }

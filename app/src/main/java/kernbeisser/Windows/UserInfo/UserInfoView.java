@@ -46,240 +46,239 @@ import rs.groump.AccessManager;
 
 public class UserInfoView implements IView<UserInfoController> {
 
-    public static final String ACCESS_DENIED = "[Keine Berechtigung]";
+  public static final String ACCESS_DENIED = "[Keine Berechtigung]";
 
-    private JPanel main;
-    private JTabbedPane tabbedPane;
-    private ObjectTable<Purchase> shoppingHistory;
-    private ObjectTable<Transaction> valueHistory;
-    private AccessCheckingLabel<User> phoneNumber1;
-    private AccessCheckingLabel<User> username;
-    private AccessCheckingLabel<User> firstName;
-    private AccessCheckingLabel<User> surname;
-    private AccessCheckingLabel<User> email;
-    private AccessCheckingLabel<User> phoneNumber2;
-    private AccessCheckingLabel<User> townCode;
-    private AccessCheckingLabel<User> street;
-    private AccessCheckingLabel<User> shares;
-    private AccessCheckingLabel<User> solidarySurcharge;
-    private AccessCheckingLabel<User> createDate;
-    private AccessCheckingLabel<User> updateDate;
-    private ObjectTable<Permission> permissions;
-    private ObjectTable<Job> jobs;
-    private ObjectTable<User> userGroup;
-    private AccessCheckingLabel<User> key;
-    private AccessCheckingLabel<User> city;
-    private JButton printBon;
-    private JRadioButton optCurrent;
-    private JRadioButton optLast;
-    private JButton printStatement;
-    @Getter
-    private JButton editUser;
-    private JButton close;
-    private AdvancedComboBox<StatementType> statementType;
+  private JPanel main;
+  private JTabbedPane tabbedPane;
+  private ObjectTable<Purchase> shoppingHistory;
+  private ObjectTable<Transaction> valueHistory;
+  private AccessCheckingLabel<User> phoneNumber1;
+  private AccessCheckingLabel<User> username;
+  private AccessCheckingLabel<User> firstName;
+  private AccessCheckingLabel<User> surname;
+  private AccessCheckingLabel<User> email;
+  private AccessCheckingLabel<User> phoneNumber2;
+  private AccessCheckingLabel<User> townCode;
+  private AccessCheckingLabel<User> street;
+  private AccessCheckingLabel<User> shares;
+  private AccessCheckingLabel<User> solidarySurcharge;
+  private AccessCheckingLabel<User> createDate;
+  private AccessCheckingLabel<User> updateDate;
+  private ObjectTable<Permission> permissions;
+  private ObjectTable<Job> jobs;
+  private ObjectTable<User> userGroup;
+  private AccessCheckingLabel<User> key;
+  private AccessCheckingLabel<User> city;
+  private JButton printBon;
+  private JRadioButton optCurrent;
+  private JRadioButton optLast;
+  private JButton printStatement;
+  @Getter private JButton editUser;
+  private JButton close;
+  private AdvancedComboBox<StatementType> statementType;
 
-    @Getter
-    private ObjectForm<User> userObjectForm;
+  @Getter private ObjectForm<User> userObjectForm;
 
-    @Linked
-    private UserInfoController controller;
+  @Linked private UserInfoController controller;
 
-    void setUserGroupMembers(Collection<User> users) {
-        userGroup.setObjects(users);
+  void setUserGroupMembers(Collection<User> users) {
+    userGroup.setObjects(users);
+  }
+
+  void setShoppingHistory(Collection<Purchase> purchases) {
+    this.shoppingHistory.setObjects(purchases);
+  }
+
+  void setValueHistory(Collection<Transaction> valueChanges) {
+    if (valueChanges.isEmpty()) {
+      Access.runWithAccessManager(
+          AccessManager.ACCESS_GRANTED,
+          () -> {
+            Transaction noHistory = new Transaction();
+            noHistory.setInfo("keine Umsätze");
+            noHistory.setValue(0.0);
+            noHistory.setFromUser(controller.getModel().getUser());
+            noHistory.setToUser(controller.getModel().getUser());
+            noHistory.setTransactionType(TransactionType.INFO);
+            noHistory.setDate(Instant.now());
+            valueChanges.add(noHistory);
+          });
     }
+    this.valueHistory.setObjects(valueChanges);
+  }
 
-    void setShoppingHistory(Collection<Purchase> purchases) {
-        this.shoppingHistory.setObjects(purchases);
+  void setJobs(Collection<Job> jobs) {
+    this.jobs.setObjects(jobs);
+  }
+
+  void setPermissions(Collection<Permission> permissions) {
+    this.permissions.setObjects(permissions);
+  }
+
+  void setValueHistoryColumns(Collection<Column<Transaction>> columns) {
+    valueHistory.setColumns(columns);
+  }
+
+  public void createUIComponents() {
+    valueHistory =
+        new ObjectTable<Transaction>(
+            Columns.create("Art", Transaction::getTransactionType),
+            Columns.create("Von", t -> t.getFromUser().getFullName()),
+            Columns.create("An", t -> t.getToUser().getFullName()),
+            Columns.<Transaction>create(
+                    "Eingang",
+                    e ->
+                        controller.getModel().incoming(e)
+                            ? String.format("%.2f€", e.getValue())
+                            : "")
+                .withSorter(Column.NUMBER_SORTER),
+            Columns.<Transaction>create(
+                    "Ausgang",
+                    e ->
+                        controller.getModel().incoming(e)
+                            ? ""
+                            : String.format("%.2f€", e.getValue()))
+                .withSorter(Column.NUMBER_SORTER),
+            Columns.<Transaction>create(
+                    "Verbleibend", t -> String.format("%.2f€", controller.getTransactionSum(t)))
+                .withSorter(Column.NUMBER_SORTER),
+            Columns.create("Info", Transaction::getInfo),
+            Columns.<Transaction>create("Datum", t -> Date.INSTANT_DATE_TIME.format(t.getDate()))
+                .withSorter(Column.DATE_SORTER(Date.INSTANT_DATE_TIME)));
+
+    permissions = new ObjectTable<>(Columns.create("Name", Permission::getNeatName));
+    userGroup =
+        new ObjectTable<User>(
+            Columns.create("Benutzername", User::getUsername),
+            Columns.create("Vorname", User::getFirstName),
+            Columns.create("Nachname", User::getSurname),
+            Columns.create("Mitgliedschaft", Users::getMembership));
+
+    jobs =
+        new ObjectTable<Job>(
+            Columns.create("Name", Job::getName),
+            Columns.create("Beschreibung", Job::getDescription));
+
+    shoppingHistory =
+        new ObjectTable<Purchase>(
+                Columns.<Purchase>create(
+                        "Datum", e -> Date.INSTANT_DATE_TIME.format(e.getCreateDate()))
+                    .withSorter(Column.DATE_SORTER(Date.INSTANT_DATE_TIME)),
+                Columns.create("Verkäufer", e -> e.getSession().getSeller()),
+                Columns.create("Käufer", e -> e.getSession().getCustomer()),
+                Columns.create("Summe", e -> format("%.2f€", e.getSum()), SwingConstants.RIGHT))
+            .allowCaching();
+
+    phoneNumber1 = new AccessCheckingLabel<>(User::getPhoneNumber1);
+    username = new AccessCheckingLabel<>(User::getUsername);
+    firstName = new AccessCheckingLabel<>(User::getFirstName);
+    surname = new AccessCheckingLabel<>(User::getSurname);
+    email = new AccessCheckingLabel<>(User::getEmail);
+    phoneNumber2 = new AccessCheckingLabel<>(User::getPhoneNumber2);
+    townCode = new AccessCheckingLabel<>(User::getTownCode);
+    street = new AccessCheckingLabel<>(User::getStreet);
+    shares = new AccessCheckingLabel<>(e -> String.valueOf(e.getShares()));
+    solidarySurcharge =
+        new AccessCheckingLabel<>(
+            e -> String.format("%.1f%%", e.getUserGroup().getSolidaritySurcharge() * 100));
+    createDate = new AccessCheckingLabel<>(e -> Date.INSTANT_DATE_TIME.format(e.getCreateDate()));
+    updateDate = new AccessCheckingLabel<>(e -> Date.INSTANT_DATE_TIME.format(e.getUpdateDate()));
+    key =
+        new AccessCheckingLabel<>(
+            e -> String.valueOf(e.getKernbeisserKey()).replace("-1", "Kein Schlüssel"));
+    city = new AccessCheckingLabel<>(User::getTown);
+  }
+
+  FormEditorController<User> generateUserController() {
+    return FormEditorController.create(LogInModel.getLoggedIn(), new UserController(), Mode.EDIT);
+  }
+
+  int getSelectedTabIndex() {
+    return tabbedPane.getSelectedIndex();
+  }
+
+  public Optional<Purchase> getSelectedPurchase() {
+    return shoppingHistory.getSelectedObject();
+  }
+
+  private String getBuildDate() {
+    try {
+      File jarFile =
+          new File(this.getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
+      return Date.INSTANT_DATE.format(Files.getLastModifiedTime(jarFile.toPath()).toInstant());
+    } catch (IOException | URISyntaxException e) {
+      return "(nicht gefunden)";
     }
+  }
 
-    void setValueHistory(Collection<Transaction> valueChanges) {
-        if (valueChanges.isEmpty()) {
-            Access.runWithAccessManager(
-                    AccessManager.ACCESS_GRANTED,
-                    () -> {
-                        Transaction noHistory = new Transaction();
-                        noHistory.setInfo("keine Umsätze");
-                        noHistory.setValue(0.0);
-                        noHistory.setFromUser(controller.getModel().getUser());
-                        noHistory.setToUser(controller.getModel().getUser());
-                        noHistory.setTransactionType(TransactionType.INFO);
-                        noHistory.setDate(Instant.now());
-                        valueChanges.add(noHistory);
-                    });
-        }
-        this.valueHistory.setObjects(valueChanges);
+  @Override
+  public void initialize(UserInfoController controller) {
+    for (Component component : firstName.getParent().getComponents()) {
+      if (component instanceof JLabel) {
+        component.setForeground(Colors.LABEL_FOREGROUND.getColor());
+      }
     }
+    tabbedPane.addChangeListener(e -> controller.loadCurrentSite());
+    shoppingHistory.addDoubleClickListener(e -> controller.openPurchase());
+    shoppingHistory.addSelectionListener(
+        e -> {
+          printBon.setEnabled(true);
+        });
+    printBon.setEnabled(false);
+    printBon.addActionListener(e -> controller.openPurchase());
+    printStatement.addActionListener(
+        e ->
+            controller.printStatement(
+                (StatementType) statementType.getSelectedItem(), optCurrent.isSelected()));
+    editUser.addActionListener(e -> controller.editUser());
+    editUser.setIcon(
+        IconFontSwing.buildIcon(
+            FontAwesome.PENCIL, Tools.scaleWithLabelScalingFactor(16), new Color(0xFF00CCFF)));
+    close.addActionListener(e -> back());
+    userObjectForm =
+        new ObjectForm<>(
+            phoneNumber1,
+            username,
+            firstName,
+            surname,
+            email,
+            phoneNumber2,
+            townCode,
+            street,
+            shares,
+            solidarySurcharge,
+            createDate,
+            updateDate,
+            key,
+            city);
+  }
 
-    void setJobs(Collection<Job> jobs) {
-        this.jobs.setObjects(jobs);
-    }
+  @Override
+  public @NotNull JComponent getContent() {
+    return main;
+  }
 
-    void setPermissions(Collection<Permission> permissions) {
-        this.permissions.setObjects(permissions);
-    }
+  @Override
+  public String getTitle() {
+    return "Benutzerinformationen von "
+        + Tools.runIfPossible(controller.getModel().getUser()::getFirstName).orElse(ACCESS_DENIED)
+        + ", "
+        + Tools.runIfPossible(controller.getModel().getUser()::getSurname).orElse(ACCESS_DENIED);
+  }
 
-    void setValueHistoryColumns(Collection<Column<Transaction>> columns) {
-        valueHistory.setColumns(columns);
-    }
+  public void setOptCurrentSelected(boolean b) {
+    optCurrent.setSelected(b);
+  }
 
-    public void createUIComponents() {
-        valueHistory =
-                new ObjectTable<Transaction>(
-                        Columns.create("Art", Transaction::getTransactionType),
-                        Columns.create("Von", t -> t.getFromUser().getFullName()),
-                        Columns.create("An", t -> t.getToUser().getFullName()),
-                        Columns.<Transaction>create(
-                                        "Eingang",
-                                        e ->
-                                                controller.getModel().incoming(e)
-                                                        ? String.format("%.2f€", e.getValue())
-                                                        : "")
-                                .withSorter(Column.NUMBER_SORTER),
-                        Columns.<Transaction>create(
-                                        "Ausgang",
-                                        e ->
-                                                controller.getModel().incoming(e)
-                                                        ? ""
-                                                        : String.format("%.2f€", e.getValue()))
-                                .withSorter(Column.NUMBER_SORTER),
-                        Columns.<Transaction>create(
-                                        "Verbleibend", t -> String.format("%.2f€", controller.getTransactionSum(t)))
-                                .withSorter(Column.NUMBER_SORTER),
-                        Columns.create("Info", Transaction::getInfo),
-                        Columns.<Transaction>create("Datum", t -> Date.INSTANT_DATE_TIME.format(t.getDate()))
-                                .withSorter(Column.DATE_SORTER(Date.INSTANT_DATE_TIME)));
+  public void setTransactionStatementTypeItems(List<StatementType> asList) {
+    statementType.setItems(asList);
+  }
 
-        permissions = new ObjectTable<>(Columns.create("Name", Permission::getNeatName));
-        userGroup =
-                new ObjectTable<User>(
-                        Columns.create("Benutzername", User::getUsername),
-                        Columns.create("Vorname", User::getFirstName),
-                        Columns.create("Nachname", User::getSurname),
-                        Columns.create("Mitgliedschaft", Users::getMembership));
+  public void messageSelectPurchaseFirst() {
+    JOptionPane.showMessageDialog(getContent(), "Bitte wähle zunächst einen Einkauf aus.");
+  }
 
-        jobs =
-                new ObjectTable<Job>(
-                        Columns.create("Name", Job::getName),
-                        Columns.create("Beschreibung", Job::getDescription));
-
-        shoppingHistory =
-                new ObjectTable<Purchase>(
-                        Columns.<Purchase>create(
-                                        "Datum", e -> Date.INSTANT_DATE_TIME.format(e.getCreateDate()))
-                                .withSorter(Column.DATE_SORTER(Date.INSTANT_DATE_TIME)),
-                        Columns.create("Verkäufer", e -> e.getSession().getSeller()),
-                        Columns.create("Käufer", e -> e.getSession().getCustomer()),
-                        Columns.create("Summe", e -> format("%.2f€", e.getSum()), SwingConstants.RIGHT))
-                        .allowCaching();
-
-        phoneNumber1 = new AccessCheckingLabel<>(User::getPhoneNumber1);
-        username = new AccessCheckingLabel<>(User::getUsername);
-        firstName = new AccessCheckingLabel<>(User::getFirstName);
-        surname = new AccessCheckingLabel<>(User::getSurname);
-        email = new AccessCheckingLabel<>(User::getEmail);
-        phoneNumber2 = new AccessCheckingLabel<>(User::getPhoneNumber2);
-        townCode = new AccessCheckingLabel<>(User::getTownCode);
-        street = new AccessCheckingLabel<>(User::getStreet);
-        shares = new AccessCheckingLabel<>(e -> String.valueOf(e.getShares()));
-        solidarySurcharge =
-                new AccessCheckingLabel<>(
-                        e -> String.format("%.1f%%", e.getUserGroup().getSolidaritySurcharge() * 100));
-        createDate = new AccessCheckingLabel<>(e -> Date.INSTANT_DATE_TIME.format(e.getCreateDate()));
-        updateDate = new AccessCheckingLabel<>(e -> Date.INSTANT_DATE_TIME.format(e.getUpdateDate()));
-        key =
-                new AccessCheckingLabel<>(
-                        e -> String.valueOf(e.getKernbeisserKey()).replace("-1", "Kein Schlüssel"));
-        city = new AccessCheckingLabel<>(User::getTown);
-    }
-
-    FormEditorController<User> generateUserController() {
-        return FormEditorController.create(LogInModel.getLoggedIn(), new UserController(), Mode.EDIT);
-    }
-
-    int getSelectedTabIndex() {
-        return tabbedPane.getSelectedIndex();
-    }
-
-    public Optional<Purchase> getSelectedPurchase() {
-        return shoppingHistory.getSelectedObject();
-    }
-
-    private String getBuildDate() {
-        try {
-            File jarFile =
-                    new File(this.getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
-            return Date.INSTANT_DATE.format(Files.getLastModifiedTime(jarFile.toPath()).toInstant());
-        } catch (IOException | URISyntaxException e) {
-            return "(nicht gefunden)";
-        }
-    }
-
-    @Override
-    public void initialize(UserInfoController controller) {
-        for (Component component : firstName.getParent().getComponents()) {
-            if (component instanceof JLabel) {
-                component.setForeground(Colors.LABEL_FOREGROUND.getColor());
-            }
-        }
-        tabbedPane.addChangeListener(e -> controller.loadCurrentSite());
-        shoppingHistory.addDoubleClickListener(e -> controller.openPurchase());
-        shoppingHistory.addSelectionListener(
-                e -> {
-                    printBon.setEnabled(true);
-                });
-        printBon.setEnabled(false);
-        printBon.addActionListener(e -> controller.openPurchase());
-        printStatement.addActionListener(
-                e ->
-                        controller.printStatement(
-                                (StatementType) statementType.getSelectedItem(), optCurrent.isSelected()));
-        editUser.addActionListener(e -> controller.editUser());
-        editUser.setIcon(
-                IconFontSwing.buildIcon(
-                        FontAwesome.PENCIL, Tools.scaleWithLabelScalingFactor(16), new Color(0xFF00CCFF)));
-        close.addActionListener(e -> back());
-        userObjectForm =
-                new ObjectForm<>(
-                        phoneNumber1,
-                        username,
-                        firstName,
-                        surname,
-                        email,
-                        phoneNumber2,
-                        townCode,
-                        street,
-                        shares,
-                        solidarySurcharge,
-                        createDate,
-                        updateDate,
-                        key,
-                        city);
-    }
-
-    @Override
-    public @NotNull JComponent getContent() {
-        return main;
-    }
-
-    @Override
-    public String getTitle() {
-        return "Benutzerinformationen von "
-                + Tools.runIfPossible(controller.getModel().getUser()::getFirstName).orElse(ACCESS_DENIED)
-                + ", "
-                + Tools.runIfPossible(controller.getModel().getUser()::getSurname).orElse(ACCESS_DENIED);
-    }
-
-    public void setOptCurrentSelected(boolean b) {
-        optCurrent.setSelected(b);
-    }
-
-    public void setTransactionStatementTypeItems(List<StatementType> asList) {
-        statementType.setItems(asList);
-    }
-
-    public void messageSelectPurchaseFirst() {
-        JOptionPane.showMessageDialog(getContent(), "Bitte wähle zunächst einen Einkauf aus.");
-    }
+  // @spotless:off
 
     {
 // GUI initializer generated by IntelliJ IDEA GUI Designer
@@ -288,13 +287,12 @@ public class UserInfoView implements IView<UserInfoController> {
         $$$setupUI$$$();
     }
 
-  /**
-   * Method generated by IntelliJ IDEA GUI Designer >>> IMPORTANT!! <<< DO NOT edit this method OR
-   * call it in your code!
-   *
-   * @noinspection ALL
-   */
-  private void $$$setupUI$$$() {
+    /** Method generated by IntelliJ IDEA GUI Designer
+     * >>> IMPORTANT!! <<<
+     * DO NOT edit this method OR call it in your code!
+     * @noinspection ALL
+     */
+    private void $$$setupUI$$$() {
         createUIComponents();
         main = new JPanel();
         main.setLayout(new GridLayoutManager(1, 5, new Insets(0, 0, 0, 0), -1, -1));
@@ -533,10 +531,8 @@ public class UserInfoView implements IView<UserInfoController> {
         buttonGroup.add(optLast);
     }
 
-  /**
-   * @noinspection ALL
-   */
-  private Font $$$getFont$$$(String fontName, int style, int size, Font currentFont) {
+    /** @noinspection ALL */
+    private Font $$$getFont$$$(String fontName, int style, int size, Font currentFont) {
         if (currentFont == null) return null;
         String resultName;
         if (fontName == null) {
@@ -555,11 +551,10 @@ public class UserInfoView implements IView<UserInfoController> {
         return fontWithFallback instanceof FontUIResource ? fontWithFallback : new FontUIResource(fontWithFallback);
     }
 
-  /**
-   * @noinspection ALL
-   */
-  public JComponent $$$getRootComponent$$$() {
+    /** @noinspection ALL */
+    public JComponent $$$getRootComponent$$$() {
         return main;
     }
 
+    // @spotless:on
 }

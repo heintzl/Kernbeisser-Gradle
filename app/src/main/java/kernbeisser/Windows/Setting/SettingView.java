@@ -21,102 +21,104 @@ import org.jetbrains.annotations.NotNull;
 
 public class SettingView implements IView<SettingController> {
 
-    private ObjectTable<Setting> settingValues;
-    private JButton cancel;
-    private JPanel main;
-    private JButton applyChange;
-    private JTextField value;
-    private JLabel setting;
-    private JButton resetSettings;
-    private SettingController controller;
+  private ObjectTable<Setting> settingValues;
+  private JButton cancel;
+  private JPanel main;
+  private JButton applyChange;
+  private JTextField value;
+  private JLabel setting;
+  private JButton resetSettings;
+  private SettingController controller;
 
-    @Override
-    public void initialize(SettingController controller) {
-        resetSettings.addActionListener(e -> controller.resetAllSettings());
-        resetSettings.setIcon(
-                IconFontSwing.buildIcon(FontAwesome.TRASH, 20, resetSettings.getForeground()));
-        resetSettings.setHorizontalTextPosition(SwingConstants.LEFT);
-        settingValues.setColumns(
-                Columns.create("Einstellung", Setting::toString, SwingConstants.LEFT),
-                Columns.create("Wert", Setting::getValue, SwingConstants.LEFT),
-                Columns.create("Standard", Setting::getDefaultValue, SwingConstants.LEFT));
-        settingValues.addSelectionListener(controller::select);
-        applyChange.addActionListener(e -> controller.apply());
-        cancel.addActionListener(e -> controller.cancel());
-    }
+  @Override
+  public void initialize(SettingController controller) {
+    resetSettings.addActionListener(e -> controller.resetAllSettings());
+    resetSettings.setIcon(
+        IconFontSwing.buildIcon(FontAwesome.TRASH, 20, resetSettings.getForeground()));
+    resetSettings.setHorizontalTextPosition(SwingConstants.LEFT);
+    settingValues.setColumns(
+        Columns.create("Einstellung", Setting::toString, SwingConstants.LEFT),
+        Columns.create("Wert", Setting::getValue, SwingConstants.LEFT),
+        Columns.create("Standard", Setting::getDefaultValue, SwingConstants.LEFT));
+    settingValues.addSelectionListener(controller::select);
+    applyChange.addActionListener(e -> controller.apply());
+    cancel.addActionListener(e -> controller.cancel());
+  }
 
-    void setValues(Collection<Setting> values) {
-        settingValues.setObjects(values);
-    }
+  void setValues(Collection<Setting> values) {
+    settingValues.setObjects(values);
+  }
 
-    void setValue(String s) {
-        value.setText(s);
-    }
+  void setValue(String s) {
+    value.setText(s);
+  }
 
-    String getValue() {
-        return value.getText();
-    }
+  String getValue() {
+    return value.getText();
+  }
 
-    void setSelectedSetting(Setting selectedSetting) {
-        setting.setText(selectedSetting.toString());
-    }
+  void setSelectedSetting(Setting selectedSetting) {
+    setting.setText(selectedSetting.toString());
+  }
 
-    Optional<Setting> getSelectedValue() {
-        return settingValues.getSelectedObject();
-    }
+  Optional<Setting> getSelectedValue() {
+    return settingValues.getSelectedObject();
+  }
 
-    @Override
-    public @NotNull JComponent getContent() {
-        return main;
-    }
+  @Override
+  public @NotNull JComponent getContent() {
+    return main;
+  }
 
-    private void createUIComponents() {
-        settingValues = new ObjectTable<>();
-    }
+  private void createUIComponents() {
+    settingValues = new ObjectTable<>();
+  }
 
-    public void setEditEnable(boolean b) {
-        applyChange.setEnabled(b);
-    }
+  public void setEditEnable(boolean b) {
+    applyChange.setEnabled(b);
+  }
 
-    boolean commitType(String type) {
-        return JOptionPane.showConfirmDialog(
-                getTopComponent(),
-                "Der eingegebene Wert ist anders als erwartet\n"
-                        + "Erwartet: "
-                        + type
-                        + "\n"
-                        + "Soll der Wert trotzdem verändert werden? (Dies kann Fehler hervorrufen)")
-                == 0;
-    }
+  boolean commitType(String type) {
+    return JOptionPane.showConfirmDialog(
+            getTopComponent(),
+            "Der eingegebene Wert ist anders als erwartet\n"
+                + "Erwartet: "
+                + type
+                + "\n"
+                + "Soll der Wert trotzdem verändert werden? (Dies kann Fehler hervorrufen)")
+        == 0;
+  }
 
-    public boolean commitResetSettings() {
-        return JOptionPane.showConfirmDialog(
-                getTopComponent(),
-                "Sollen wirklich alle Einstellungen außer "
-                        + Setting.DB_INITIALIZED.name()
-                        + " zurückgesetzt werden?")
-                == 0;
-    }
+  public boolean commitResetSettings() {
+    return JOptionPane.showConfirmDialog(
+            getTopComponent(),
+            "Sollen wirklich alle Einstellungen außer "
+                + Setting.DB_INITIALIZED.name()
+                + " zurückgesetzt werden?")
+        == 0;
+  }
 
-    public static boolean confirmAccounting() {
-        return JOptionPane.showConfirmDialog(
-                null,
-                "Dieser Wert darf nur in Absprache mit der Buchhaltung geändert werden!\n"
-                        + "Bist Du 100% sicher, dass Du den Wert anpassen musst?",
-                "Riskante Anpassung",
-                JOptionPane.YES_NO_OPTION)
-                == JOptionPane.YES_OPTION;
-    }
+  public static boolean confirmAccounting() {
+    return JOptionPane.showConfirmDialog(
+            null,
+            "Dieser Wert darf nur in Absprache mit der Buchhaltung geändert werden!\n"
+                + "Bist Du 100% sicher, dass Du den Wert anpassen musst?",
+            "Riskante Anpassung",
+            JOptionPane.YES_NO_OPTION)
+        == JOptionPane.YES_OPTION;
+  }
 
-    @Override
-    public IconCode getTabIcon() {
-        return FontAwesome.WRENCH;
-    }
+  @Override
+  public IconCode getTabIcon() {
+    return FontAwesome.WRENCH;
+  }
 
-    @Override
-    public String getTitle() {
-        return "Einstellungen";
-    }
+  @Override
+  public String getTitle() {
+    return "Einstellungen";
+  }
+
+  // @spotless:off
 
     {
 // GUI initializer generated by IntelliJ IDEA GUI Designer
@@ -125,13 +127,12 @@ public class SettingView implements IView<SettingController> {
         $$$setupUI$$$();
     }
 
-  /**
-   * Method generated by IntelliJ IDEA GUI Designer >>> IMPORTANT!! <<< DO NOT edit this method OR
-   * call it in your code!
-   *
-   * @noinspection ALL
-   */
-  private void $$$setupUI$$$() {
+    /** Method generated by IntelliJ IDEA GUI Designer
+     * >>> IMPORTANT!! <<<
+     * DO NOT edit this method OR call it in your code!
+     * @noinspection ALL
+     */
+    private void $$$setupUI$$$() {
         createUIComponents();
         main = new JPanel();
         main.setLayout(new GridLayoutManager(3, 1, new Insets(5, 5, 5, 5), -1, -1));
@@ -176,10 +177,8 @@ public class SettingView implements IView<SettingController> {
         panel2.add(resetSettings, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
-  /**
-   * @noinspection ALL
-   */
-  private Font $$$getFont$$$(String fontName, int style, int size, Font currentFont) {
+    /** @noinspection ALL */
+    private Font $$$getFont$$$(String fontName, int style, int size, Font currentFont) {
         if (currentFont == null) return null;
         String resultName;
         if (fontName == null) {
@@ -198,11 +197,10 @@ public class SettingView implements IView<SettingController> {
         return fontWithFallback instanceof FontUIResource ? fontWithFallback : new FontUIResource(fontWithFallback);
     }
 
-  /**
-   * @noinspection ALL
-   */
-  public JComponent $$$getRootComponent$$$() {
+    /** @noinspection ALL */
+    public JComponent $$$getRootComponent$$$() {
         return main;
     }
 
+    // @spotless:on
 }

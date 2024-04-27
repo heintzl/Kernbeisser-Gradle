@@ -104,17 +104,14 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
   private ButtonGroup optGrpArticleType;
   private ButtonGroup optGrpReduction;
 
-  @Linked
-  private ShoppingMaskController controller;
-  @Linked
-  private ShoppingCartController cartController;
+  @Linked private ShoppingMaskController controller;
+  @Linked private ShoppingCartController cartController;
 
   private ArticleType currentArticleType;
   private boolean isWeighable;
   static Vector<Component> traversalOrder = new Vector<>(1);
   static FocusTraversal traversalPolicy;
-  @Getter
-  private boolean isPreordered = false;
+  @Getter private boolean isPreordered = false;
 
   EnumSet<ArticleType> articleTypesWithSettablePrice;
   EnumSet<ArticleType> depositArticleTypes;
@@ -150,10 +147,10 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     customerCredit.setText(format("{0, number, 0.00}\u20AC", userGroup.getValue()));
     solidarity.setText(format("{0, number, 0.0} %", userGroup.getSolidaritySurcharge() * 100));
     salesPersonInfo.setText(
-            saleSession.getSeller().getFullName()
-                    + (saleSession.getSecondSeller() != null
-                    ? " / " + saleSession.getSecondSeller().getFullName()
-                    : ""));
+        saleSession.getSeller().getFullName()
+            + (saleSession.getSecondSeller() != null
+                ? " / " + saleSession.getSecondSeller().getFullName()
+                : ""));
   }
 
   private void supplierChange() {
@@ -326,9 +323,9 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
 
     addAmount.setVisible(type == ArticleType.ARTICLE_NUMBER || type == ArticleType.CUSTOM_PRODUCT);
     addPrice.setVisible(
-            !isPreordered
-                    && type != ArticleType.CUSTOM_PRODUCT
-                    && articleTypesWithSettablePrice.contains(type));
+        !isPreordered
+            && type != ArticleType.CUSTOM_PRODUCT
+            && articleTypesWithSettablePrice.contains(type));
     addNetPrice.setVisible(isPreordered && articleTypesWithSettablePrice.contains(type));
     addDeposit.setVisible(depositArticleTypes.contains(type));
 
@@ -356,7 +353,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
       setVat(VAT.HIGH);
     }
     variablePercentage.setEnabled(
-            priceVariablePercentage.isEnabled() && priceVariablePercentage.isSelected());
+        priceVariablePercentage.isEnabled() && priceVariablePercentage.isSelected());
 
     if (type == ArticleType.PRODUCE || type == ArticleType.BAKED_GOODS) {
       RawPrice rawPrice = type == ArticleType.PRODUCE ? RawPrice.PRODUCE : RawPrice.BAKERY;
@@ -445,8 +442,8 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     try {
       netPrice.setText(formattedPrice(controller.getUnitNetPrice(article, isPreordered)));
       retailPrice.setText(
-              formattedPrice(
-                      controller.recalculateRetailPrice(article, getDiscount(), isPreordered, false)));
+          formattedPrice(
+              controller.recalculateRetailPrice(article, getDiscount(), isPreordered, false)));
     } catch (NullPointerException e) {
       netPrice.setText("");
       retailPrice.setText("");
@@ -457,7 +454,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
       priceUnit += "/" + unit;
       itemMultiplierUnit.setText(unit);
     } else if (getArticleType() == ArticleType.ARTICLE_NUMBER
-            || getArticleType() == ArticleType.CUSTOM_PRODUCT) {
+        || getArticleType() == ArticleType.CUSTOM_PRODUCT) {
       priceUnit += "/" + ArticleRepository.getPriceUnit(article).getShortName();
       itemMultiplierUnit.setText(ArticleRepository.getMultiplierUnit(article).getShortName());
     } else {
@@ -466,7 +463,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     netPriceUnit.setText(priceUnit);
     retailPriceUnit.setText(priceUnit);
     containerSize.setText(
-            new DecimalFormat("##.###").format(article.getContainerSize() * (isWeighable ? 1000 : 1)));
+        new DecimalFormat("##.###").format(article.getContainerSize() * (isWeighable ? 1000 : 1)));
     containerUnit.setText(ArticleRepository.getContainerUnits(article).getShortName());
     deposit.setText(String.format("%.2f", article.getSingleDeposit()));
     updateAllControls(currentArticleType);
@@ -481,8 +478,8 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
       Article article = controller.extractArticleFromUI();
       try {
         double retailPrice =
-                controller.recalculateRetailPrice(
-                        article, getDiscount(), isPreordered(), overWriteNetPrice);
+            controller.recalculateRetailPrice(
+                article, getDiscount(), isPreordered(), overWriteNetPrice);
         if (retailPrice <= 0) {
           throw new NullPointerException();
         }
@@ -506,8 +503,8 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
   void messageNoArticleFound() {
     Tools.beep();
     JOptionPane.showMessageDialog(
-            mainPanel,
-            "Es konnte kein Artikel mit der angegeben Artikelnummer / Lieferantennummer gefunden werden");
+        mainPanel,
+        "Es konnte kein Artikel mit der angegeben Artikelnummer / Lieferantennummer gefunden werden");
   }
 
   void messageInvalidDiscount() {
@@ -519,32 +516,32 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
   public void messageInvalidBarcode(String barcode) {
     Tools.beep();
     JOptionPane.showMessageDialog(
-            getContent(),
-            "Ungültiger Barcode: " + barcode,
-            "Barcodefehler",
-            JOptionPane.WARNING_MESSAGE);
+        getContent(),
+        "Ungültiger Barcode: " + barcode,
+        "Barcodefehler",
+        JOptionPane.WARNING_MESSAGE);
   }
 
   public void messageDepositStorno() {
     Tools.beep();
     JOptionPane.showMessageDialog(
-            getContent(), "Pfand kann nicht storniert werden!", "Storno", JOptionPane.WARNING_MESSAGE);
+        getContent(), "Pfand kann nicht storniert werden!", "Storno", JOptionPane.WARNING_MESSAGE);
     deposit.setText("");
   }
 
   public void messageCartIsEmpty() {
     Tools.beep();
     JOptionPane.showMessageDialog(
-            getContent(), "Es gibt nichts zu bezahlen!", "Leerer Einkauf", JOptionPane.WARNING_MESSAGE);
+        getContent(), "Es gibt nichts zu bezahlen!", "Leerer Einkauf", JOptionPane.WARNING_MESSAGE);
   }
 
   public void messageNoSupplier() {
     Tools.beep();
     JOptionPane.showMessageDialog(
-            getContent(),
-            "Um nach der Lieferantennummer suchen zu können,\nmuss als erstes ein Lieferant ausgewählt werden.",
-            "Lieferant nicht ausgewählt",
-            JOptionPane.WARNING_MESSAGE);
+        getContent(),
+        "Um nach der Lieferantennummer suchen zu können,\nmuss als erstes ein Lieferant ausgewählt werden.",
+        "Lieferant nicht ausgewählt",
+        JOptionPane.WARNING_MESSAGE);
   }
 
   public String inputStornoRetailPrice(double itemRetailPrice, boolean retry) {
@@ -553,24 +550,24 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     String response;
     if (retry) { // item is piece, first try
       message =
-              "Die Eingabe ist ungültig. Bitte hier einen gültigen Einzelpreis angeben, für den Fall, dass er sich seit "
-                      + "dem ursprünglichen Einkauf geändert hat:";
+          "Die Eingabe ist ungültig. Bitte hier einen gültigen Einzelpreis angeben, für den Fall, dass er sich seit "
+              + "dem ursprünglichen Einkauf geändert hat:";
     } else { // item is piece later try
       message =
-              "Negative Menge: Soll der Artikel wirklich storniert werden? Dann kann hier der Einzelpreis angepasst"
-                      + " werden, für den Fall, dass er sich seit dem ursprünglichen Einkauf geändert hat:";
+          "Negative Menge: Soll der Artikel wirklich storniert werden? Dann kann hier der Einzelpreis angepasst"
+              + " werden, für den Fall, dass er sich seit dem ursprünglichen Einkauf geändert hat:";
     }
     Tools.beep();
     response =
-            (String)
-                    JOptionPane.showInputDialog(
-                            getContent(),
-                            message,
-                            stornoMessageTitle,
-                            JOptionPane.QUESTION_MESSAGE,
-                            null,
-                            null,
-                            initValue);
+        (String)
+            JOptionPane.showInputDialog(
+                getContent(),
+                message,
+                stornoMessageTitle,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                null,
+                initValue);
     if (response != null) {
       response = response.trim();
     }
@@ -583,7 +580,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
             "Soll der Einkauf wirklich abgebrochen werden?",
             "Einkauf abbrechen",
             JOptionPane.YES_NO_OPTION)
-            == 0;
+        == 0;
   }
 
   public boolean confirmStorno() {
@@ -593,7 +590,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
             "Soll die Ware wirklich storniert werden?",
             stornoMessageTitle,
             JOptionPane.YES_NO_OPTION)
-            == 0;
+        == 0;
   }
 
   public boolean confirmEmptyCart() {
@@ -603,7 +600,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
             "Sollen wirklich alle Artikel gelöscht werden?",
             "Alle Artikel löschen",
             JOptionPane.YES_NO_OPTION)
-            == 0;
+        == 0;
   }
 
   public boolean confirmPriceWarning() {
@@ -613,7 +610,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
             "Der Preis ist ganz schön hoch. Bist Du sicher, dass alle Eingaben stimmen?",
             "Teurer Einkauf",
             JOptionPane.YES_NO_OPTION)
-            == 0;
+        == 0;
   }
 
   public boolean confirmAmountWarning() {
@@ -623,28 +620,28 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
             "Die Menge ist ganz schön hoch. Bist Du sicher, dass alle Eingaben stimmen?",
             "Hohe Menge",
             JOptionPane.YES_NO_OPTION)
-            == 0;
+        == 0;
   }
 
   public void messageRoundedMultiplier(String roundedMultiplier) {
     Tools.beep();
     JOptionPane.showMessageDialog(
-            getContent(),
-            "Die Menge an Artikeln muss ganzzahlig sein. Sie wird auf "
-                    + roundedMultiplier
-                    + " gerundet.",
-            "Ungültige Mengenangabe",
-            JOptionPane.WARNING_MESSAGE);
+        getContent(),
+        "Die Menge an Artikeln muss ganzzahlig sein. Sie wird auf "
+            + roundedMultiplier
+            + " gerundet.",
+        "Ungültige Mengenangabe",
+        JOptionPane.WARNING_MESSAGE);
   }
 
   public boolean messageUnderMin() {
     Tools.beep();
     JOptionPane.showMessageDialog(
-            getContent(),
-            "Mit diesem Artikel würde das Mindestguthaben unterschritten. Bitte Guthaben auffüllen, um "
-                    + "weiter einzukaufen!",
-            "Zuviel eingekauft",
-            JOptionPane.ERROR_MESSAGE);
+        getContent(),
+        "Mit diesem Artikel würde das Mindestguthaben unterschritten. Bitte Guthaben auffüllen, um "
+            + "weiter einzukaufen!",
+        "Zuviel eingekauft",
+        JOptionPane.ERROR_MESSAGE);
     return false;
   }
 
@@ -771,29 +768,29 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
   @Override
   public void initialize(ShoppingMaskController controller) {
     float fontSize =
-            UserSetting.FONT_SCALE_FACTOR.getFloatValue(LogInModel.getLoggedIn()) * 8f + 4f;
+        UserSetting.FONT_SCALE_FACTOR.getFloatValue(LogInModel.getLoggedIn()) * 8f + 4f;
     resizeFonts(ShoppingItemPanel, fontSize);
     articleTypesWithSettablePrice =
-            EnumSet.of(ArticleType.CUSTOM_PRODUCT, ArticleType.BAKED_GOODS, ArticleType.PRODUCE);
+        EnumSet.of(ArticleType.CUSTOM_PRODUCT, ArticleType.BAKED_GOODS, ArticleType.PRODUCE);
     depositArticleTypes = EnumSet.of(ArticleType.DEPOSIT, ArticleType.RETURN_DEPOSIT);
     checkout.addActionListener(e -> doCheckout());
     emptyShoppingCart.addActionListener(e -> controller.emptyShoppingCart());
     cancelSalesSession.addActionListener(e -> doCancel());
     float iconSize = fontSize * 1.25f;
     searchArticle.setIcon(
-            IconFontSwing.buildIcon(FontAwesome.SEARCH, iconSize, new Color(49, 114, 128)));
+        IconFontSwing.buildIcon(FontAwesome.SEARCH, iconSize, new Color(49, 114, 128)));
     searchArticle.addActionListener(e -> openSearchWindow());
     addPrice.setIcon(
-            IconFontSwing.buildIcon(FontAwesome.SHOPPING_CART, iconSize, new Color(49, 114, 128)));
+        IconFontSwing.buildIcon(FontAwesome.SHOPPING_CART, iconSize, new Color(49, 114, 128)));
     addPrice.addActionListener(e -> addToCart());
     addNetPrice.setIcon(
-            IconFontSwing.buildIcon(FontAwesome.SHOPPING_CART, iconSize, new Color(49, 114, 128)));
+        IconFontSwing.buildIcon(FontAwesome.SHOPPING_CART, iconSize, new Color(49, 114, 128)));
     addNetPrice.addActionListener(e -> addToCart());
     addDeposit.setIcon(
-            IconFontSwing.buildIcon(FontAwesome.SHOPPING_CART, iconSize, new Color(49, 114, 128)));
+        IconFontSwing.buildIcon(FontAwesome.SHOPPING_CART, iconSize, new Color(49, 114, 128)));
     addDeposit.addActionListener(e -> addToCart());
     addAmount.setIcon(
-            IconFontSwing.buildIcon(FontAwesome.SHOPPING_CART, iconSize, new Color(49, 114, 128)));
+        IconFontSwing.buildIcon(FontAwesome.SHOPPING_CART, iconSize, new Color(49, 114, 128)));
     addAmount.addActionListener(e -> addToCart());
 
     optProduce.addItemListener(e -> articleTypeChange(ArticleType.PRODUCE));
@@ -804,57 +801,57 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     optDepositReturn.addItemListener(e -> articleTypeChange(ArticleType.RETURN_DEPOSIT));
 
     kbNumber.addKeyListener(
-            new KeyAdapter() {
-              @Override
-              public void keyReleased(KeyEvent e) {
-                controller.searchByKbNumber();
-              }
-            });
+        new KeyAdapter() {
+          @Override
+          public void keyReleased(KeyEvent e) {
+            controller.searchByKbNumber();
+          }
+        });
     kbNumber.addActionListener(this::articleSelectedListener);
 
     DBConnection.getAll(Supplier.class).stream()
-            .sorted(Comparator.comparing(Supplier::getName))
-            .forEach(s -> supplier.addItem(s));
+        .sorted(Comparator.comparing(Supplier::getName))
+        .forEach(s -> supplier.addItem(s));
     supplier.addActionListener(e -> supplierChange());
 
     suppliersItemNumber.addActionListener(this::articleSelectedListener);
     suppliersItemNumber.addKeyListener(
-            new KeyAdapter() {
-              private String lastSearch = "";
+        new KeyAdapter() {
+          private String lastSearch = "";
 
-              @Override
-              public void keyReleased(KeyEvent e) {
-                String number = suppliersItemNumber.getText();
-                if (number.isEmpty() || number.equals(lastSearch)) {
-                  return;
-                }
-                controller.searchBySupplierItemsNumber();
-                lastSearch = suppliersItemNumber.getText();
-              }
-            });
+          @Override
+          public void keyReleased(KeyEvent e) {
+            String number = suppliersItemNumber.getText();
+            if (number.isEmpty() || number.equals(lastSearch)) {
+              return;
+            }
+            controller.searchBySupplierItemsNumber();
+            lastSearch = suppliersItemNumber.getText();
+          }
+        });
     suppliersItemNumber.setToolTipText(
-            "für die Suche nach der Lieferantennummer muss erst ein Lieferant ausgewählt werden");
+        "für die Suche nach der Lieferantennummer muss erst ein Lieferant ausgewählt werden");
 
     articleName.addActionListener(e -> articleNameOrVatChange());
     vat.addActionListener(e -> articleNameOrVatChange());
 
     netPrice.addKeyListener(
-            new KeyAdapter() {
-              @Override
-              public void keyReleased(KeyEvent e) {
-                if (netPrice.isEnabled() && getNetPrice() > 0.0) {
-                  recalculateRetailPrice(true);
-                }
-                priceEntered(e.getKeyCode());
-              }
-            });
+        new KeyAdapter() {
+          @Override
+          public void keyReleased(KeyEvent e) {
+            if (netPrice.isEnabled() && getNetPrice() > 0.0) {
+              recalculateRetailPrice(true);
+            }
+            priceEntered(e.getKeyCode());
+          }
+        });
     retailPrice.addKeyListener(
-            new KeyAdapter() {
-              @Override
-              public void keyReleased(KeyEvent e) {
-                priceEntered(e.getKeyCode());
-              }
-            });
+        new KeyAdapter() {
+          @Override
+          public void keyReleased(KeyEvent e) {
+            priceEntered(e.getKeyCode());
+          }
+        });
     deposit.addActionListener(e -> addToCart());
     itemMultiplier.addActionListener(e -> addToCart());
     for (VAT val : VAT.values()) {
@@ -864,55 +861,55 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     containerSize.setEnabled(false);
 
     priceStandard.addItemListener(
-            e -> {
-              variablePercentage.setEnabled(false);
-              disablePreordered();
-              rememberReductionSetting.setSelected(false);
-            });
+        e -> {
+          variablePercentage.setEnabled(false);
+          disablePreordered();
+          rememberReductionSetting.setSelected(false);
+        });
 
     price50Percent.addItemListener(
-            e -> {
-              variablePercentage.setEnabled(false);
-              disablePreordered();
-              rememberReductionSetting.setSelected(false);
-            });
+        e -> {
+          variablePercentage.setEnabled(false);
+          disablePreordered();
+          rememberReductionSetting.setSelected(false);
+        });
     price50Percent.addKeyListener(
-            new KeyAdapter() {
-              @Override
-              public void keyReleased(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                  addToCart();
-                }
-              }
-            });
+        new KeyAdapter() {
+          @Override
+          public void keyReleased(KeyEvent e) {
+            if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+              addToCart();
+            }
+          }
+        });
 
     pricePreordered.addItemListener(
-            e -> {
-              variablePercentage.setEnabled(false);
-              enablePreordered();
-              setSupplier(Supplier.getKKSupplier());
-              rememberReductionSetting.setSelected(true);
-            });
+        e -> {
+          variablePercentage.setEnabled(false);
+          enablePreordered();
+          setSupplier(Supplier.getKKSupplier());
+          rememberReductionSetting.setSelected(true);
+        });
     rememberReductionSetting.addActionListener(e -> setDiscount());
     rememberReductionSetting.setToolTipText("Rabatt-Einstellungen für Folgeartikel merken");
     priceVariablePercentage.addItemListener(
-            e -> {
-              variablePercentage.setEnabled(true);
-              variablePercentage.requestFocusInWindow();
-              disablePreordered();
-              rememberReductionSetting.setSelected(false);
-            });
+        e -> {
+          variablePercentage.setEnabled(true);
+          variablePercentage.requestFocusInWindow();
+          disablePreordered();
+          rememberReductionSetting.setSelected(false);
+        });
     variablePercentage.addKeyListener(
-            new KeyAdapter() {
-              @Override
-              public void keyReleased(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                  addToCart();
-                } else {
-                  recalculateRetailPrice(false);
-                }
-              }
-            });
+        new KeyAdapter() {
+          @Override
+          public void keyReleased(KeyEvent e) {
+            if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+              addToCart();
+            } else {
+              recalculateRetailPrice(false);
+            }
+          }
+        });
 
     editUser.setIcon(IconFontSwing.buildIcon(FontAwesome.INFO, 20, new Color(49, 114, 128)));
     editUser.addActionListener(e -> controller.openUserInfo());
@@ -934,14 +931,14 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     editPost.addActionListener(e -> controller.openPost(false));
 
     SwingUtilities.invokeLater(
-            () -> {
-              try {
-                Thread.sleep(100);
-              } catch (InterruptedException e) {
-                e.printStackTrace();
-              }
-              kbNumber.requestFocusInWindow();
-            });
+        () -> {
+          try {
+            Thread.sleep(100);
+          } catch (InterruptedException e) {
+            e.printStackTrace();
+          }
+          kbNumber.requestFocusInWindow();
+        });
   }
 
   private void enablePreordered() {
@@ -1005,6 +1002,8 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     itemMultiplier.requestFocusInWindow();
   }
 
+  // @spotless:off
+
   {
 // GUI initializer generated by IntelliJ IDEA GUI Designer
 // >>> IMPORTANT!! <<<
@@ -1012,10 +1011,9 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     $$$setupUI$$$();
   }
 
-  /**
-   * Method generated by IntelliJ IDEA GUI Designer >>> IMPORTANT!! <<< DO NOT edit this method OR
-   * call it in your code!
-   *
+  /** Method generated by IntelliJ IDEA GUI Designer
+   * >>> IMPORTANT!! <<<
+   * DO NOT edit this method OR call it in your code!
    * @noinspection ALL
    */
   private void $$$setupUI$$$() {
@@ -1893,9 +1891,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     buttonGroup.add(priceVariablePercentage);
   }
 
-  /**
-   * @noinspection ALL
-   */
+  /** @noinspection ALL */
   private Font $$$getFont$$$(String fontName, int style, int size, Font currentFont) {
     if (currentFont == null) return null;
     String resultName;
@@ -1915,11 +1911,10 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     return fontWithFallback instanceof FontUIResource ? fontWithFallback : new FontUIResource(fontWithFallback);
   }
 
-  /**
-   * @noinspection ALL
-   */
+  /** @noinspection ALL */
   public JComponent $$$getRootComponent$$$() {
     return mainPanel;
   }
 
+  // @spotless:on
 }

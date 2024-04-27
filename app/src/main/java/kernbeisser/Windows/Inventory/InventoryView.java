@@ -40,10 +40,8 @@ public class InventoryView implements IView<InventoryController> {
   private boolean pdfOutput = false;
   private boolean printOnlySelected = false;
 
-  @Linked
-  private ObjectViewController<Shelf> shelfViewController;
-  @Linked
-  private InventoryController controller;
+  @Linked private ObjectViewController<Shelf> shelfViewController;
+  @Linked private InventoryController controller;
 
   @Override
   public void initialize(InventoryController controller) {
@@ -55,8 +53,8 @@ public class InventoryView implements IView<InventoryController> {
     datePicker.addDateChangeListener(e -> controller.changeInventoryDate(datePicker.getDate()));
     clearInventory = new JButton("Inventurergebnisse aus Testlauf löschen");
     clearInventory.setToolTipText(
-            "Entfernt Inventurergebnisse, die vor dem eigentlichen Inventurtag "
-                    + "erfasst wurden. \nGeht nur, wenn die Inventur nicht in der Vergangenheit liegt.");
+        "Entfernt Inventurergebnisse, die vor dem eigentlichen Inventurtag "
+            + "erfasst wurden. \nGeht nur, wenn die Inventur nicht in der Vergangenheit liegt.");
     clearInventory.setEnabled(!inventoryDate.isBefore(LocalDate.now()));
     clearInventory.addActionListener(e -> controller.clearInventory());
     shelfViewController.addComponents(dateLabel, datePicker, clearInventory);
@@ -66,9 +64,9 @@ public class InventoryView implements IView<InventoryController> {
     exportShelves.setIcon(Icons.defaultIcon(FontAwesome.DOWNLOAD, new Color(0x00A201)));
     JButton shelfCounting = new JButton("Zählergebnisse eingeben");
     shelfCounting.addActionListener(
-            e ->
-                    controller.openCountingWindow(
-                            shelfViewController.getSearchBoxController().getSelectedObject().orElse(null)));
+        e ->
+            controller.openCountingWindow(
+                shelfViewController.getSearchBoxController().getSelectedObject().orElse(null)));
     shelfCounting.setIcon(Icons.defaultIcon(FontAwesome.LIST, new Color(0x01FF78)));
     JButton print = new JButton("Listen und Ergebnisse drucken");
     print.addActionListener(e -> print());
@@ -90,7 +88,7 @@ public class InventoryView implements IView<InventoryController> {
     fileChooser.setDialogTitle("Regal csv Datei exportieren");
     fileChooser.setFileFilter(new FileNameExtensionFilter("CSV-Datei", "csv"));
     fileChooser.setSelectedFile(
-            new File("Regale" + Date.INSTANT_DATE.format(Instant.now()) + ".csv"));
+        new File("Regale" + Date.INSTANT_DATE.format(Instant.now()) + ".csv"));
     if (fileChooser.showSaveDialog(getTopComponent()) == JFileChooser.APPROVE_OPTION) {
       controller.exportShelves(fileChooser.getSelectedFile());
     }
@@ -107,8 +105,8 @@ public class InventoryView implements IView<InventoryController> {
 
   private void print() {
     boolean selectedShelves =
-            controller.getShelfViewController().getSearchBoxController().getSelectedObjects().size()
-                    > 0;
+        controller.getShelfViewController().getSearchBoxController().getSelectedObjects().size()
+            > 0;
     JPanel printOptions = new JPanel();
     printOptions.setLayout(new GridLayout(0, 1));
     JCheckBox confirmSelected = new JCheckBox("Ausdruck auf die ausgewählten Regale beschränken");
@@ -116,14 +114,14 @@ public class InventoryView implements IView<InventoryController> {
       confirmSelected.setVisible(false);
     }
     Supplier<Boolean> shelfSelectionCurrentlyAllowed =
-            (() -> InventoryReports.shelfSelectionAllowed().contains(selectedReport));
+        (() -> InventoryReports.shelfSelectionAllowed().contains(selectedReport));
     ButtonGroup optReports = new ButtonGroup();
     JLabel reportLabel = new JLabel("Ausdruck auswählen:");
     JCheckBox outputAsPdf = new JCheckBox("PDF als Vorschau erstellen");
     outputAsPdf.setSelected(pdfOutput);
     outputAsPdf.addActionListener(e -> pdfOutput = outputAsPdf.isSelected());
     setConfirmCheckboxState(
-            confirmSelected, selectedShelves && shelfSelectionCurrentlyAllowed.get());
+        confirmSelected, selectedShelves && shelfSelectionCurrentlyAllowed.get());
     confirmSelected.addActionListener(e -> printOnlySelected = confirmSelected.isSelected());
 
     printOptions.add(reportLabel);
@@ -131,11 +129,11 @@ public class InventoryView implements IView<InventoryController> {
       JRadioButton button = new JRadioButton(report.toString());
       button.setSelected(report.equals(selectedReport));
       button.addActionListener(
-              e -> {
-                selectedReport = report;
-                setConfirmCheckboxState(
-                        confirmSelected, selectedShelves && shelfSelectionCurrentlyAllowed.get());
-              });
+          e -> {
+            selectedReport = report;
+            setConfirmCheckboxState(
+                confirmSelected, selectedShelves && shelfSelectionCurrentlyAllowed.get());
+          });
       printOptions.add(button);
       optReports.add(button);
     }
@@ -151,46 +149,46 @@ public class InventoryView implements IView<InventoryController> {
             JOptionPane.OK_CANCEL_OPTION,
             JOptionPane.PLAIN_MESSAGE,
             IconFontSwing.buildIcon(FontAwesome.PRINT, 40, new Color(printIconColor)))
-            == JOptionPane.OK_OPTION) {
+        == JOptionPane.OK_OPTION) {
       controller.print(selectedReport, confirmSelected.isSelected(), outputAsPdf.isSelected());
     }
   }
 
   public void showPriceListsWithoutShelf(Set<PriceList> priceLists) {
     ObjectTable<PriceList> priceListTable =
-            new ObjectTable(
-                    Columns.create("Preisliste", PriceList::getName)
-                            .withColumnAdjustor(column -> column.setPreferredWidth(550)),
-                    Columns.<PriceList>create(
-                                    "Artikel", p -> String.format("%d", p.getAllArticles().size()))
-                            .withSorter(Column.NUMBER_SORTER));
+        new ObjectTable(
+            Columns.create("Preisliste", PriceList::getName)
+                .withColumnAdjustor(column -> column.setPreferredWidth(550)),
+            Columns.<PriceList>create(
+                    "Artikel", p -> String.format("%d", p.getAllArticles().size()))
+                .withSorter(Column.NUMBER_SORTER));
     JPanel tablePanel = new JPanel(new FlowLayout());
     tablePanel.setSize(700, 1000);
     JScrollPane scrollPane =
-            new JScrollPane(
-                    priceListTable,
-                    JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                    JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        new JScrollPane(
+            priceListTable,
+            JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+            JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
     tablePanel.add(scrollPane);
     priceListTable.setObjects(priceLists);
     JOptionPane.showMessageDialog(
-            getContent(), tablePanel, "Nicht zugeordnete Preislisten", JOptionPane.PLAIN_MESSAGE);
+        getContent(), tablePanel, "Nicht zugeordnete Preislisten", JOptionPane.PLAIN_MESSAGE);
   }
 
   public boolean confirmPrint(String confirmMessage) {
     Object[] buttonTexts = {
-            UIManager.get("OptionPane.yesButtonText"), UIManager.get("OptionPane.noButtonText")
+      UIManager.get("OptionPane.yesButtonText"), UIManager.get("OptionPane.noButtonText")
     };
     int value =
-            JOptionPane.showOptionDialog(
-                    getContent(),
-                    confirmMessage,
-                    "Achtung!",
-                    JOptionPane.YES_NO_OPTION,
-                    JOptionPane.WARNING_MESSAGE,
-                    null,
-                    buttonTexts,
-                    buttonTexts[1]);
+        JOptionPane.showOptionDialog(
+            getContent(),
+            confirmMessage,
+            "Achtung!",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.WARNING_MESSAGE,
+            null,
+            buttonTexts,
+            buttonTexts[1]);
     return value == JOptionPane.YES_OPTION;
   }
 
@@ -217,6 +215,8 @@ public class InventoryView implements IView<InventoryController> {
     return FontAwesome.CALCULATOR;
   }
 
+  // @spotless:off
+
   {
 // GUI initializer generated by IntelliJ IDEA GUI Designer
 // >>> IMPORTANT!! <<<
@@ -224,10 +224,9 @@ public class InventoryView implements IView<InventoryController> {
     $$$setupUI$$$();
   }
 
-  /**
-   * Method generated by IntelliJ IDEA GUI Designer >>> IMPORTANT!! <<< DO NOT edit this method OR
-   * call it in your code!
-   *
+  /** Method generated by IntelliJ IDEA GUI Designer
+   * >>> IMPORTANT!! <<<
+   * DO NOT edit this method OR call it in your code!
    * @noinspection ALL
    */
   private void $$$setupUI$$$() {
@@ -243,11 +242,10 @@ public class InventoryView implements IView<InventoryController> {
     main.add(progressIndicator, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
   }
 
-  /**
-   * @noinspection ALL
-   */
+  /** @noinspection ALL */
   public JComponent $$$getRootComponent$$$() {
     return main;
   }
 
+  // @spotless:on
 }

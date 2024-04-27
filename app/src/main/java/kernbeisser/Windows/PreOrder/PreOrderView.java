@@ -63,13 +63,11 @@ public class PreOrderView implements IView<PreOrderController> {
   private JButton findByShopNumber;
   private JPopupMenu popupSelectionColumn;
 
-  @Setter
-  private Mode mode;
+  @Setter private Mode mode;
 
   private User addModeUser;
 
-  @Linked
-  private PreOrderController controller;
+  @Linked private PreOrderController controller;
 
   void setInsertSectionEnabled(boolean b) {
     insertSection.setVisible(b);
@@ -110,13 +108,13 @@ public class PreOrderView implements IView<PreOrderController> {
       displayText += Date.INSTANT_DATE.format(preOrder.getDueDate());
     } else {
       displayText =
-              "NL "
-                      + displayText
-                      + Date.INSTANT_DATE.format(
-                      LocalDate.now()
-                              .with(
-                                      TemporalAdjusters.next(
-                                              Setting.KK_SUPPLY_DAY_OF_WEEK.getEnumValue(DayOfWeek.class))));
+          "NL "
+              + displayText
+              + Date.INSTANT_DATE.format(
+                  LocalDate.now()
+                      .with(
+                          TemporalAdjusters.next(
+                              Setting.KK_SUPPLY_DAY_OF_WEEK.getEnumValue(DayOfWeek.class))));
     }
     return displayText;
   }
@@ -134,74 +132,74 @@ public class PreOrderView implements IView<PreOrderController> {
       popupSelectionColumn.add(popupDeselectAll);
     }
     CustomizableColumn<PreOrder> hiddenSortColumn =
-            Columns.create("", PreOrder::getId)
-                    .withSorter(Column.NUMBER_SORTER)
-                    .withColumnAdjustor(
-                            e -> {
-                              e.setMinWidth(0);
-                              e.setMaxWidth(0);
-                              e.setPreferredWidth(0);
-                            });
+        Columns.create("", PreOrder::getId)
+            .withSorter(Column.NUMBER_SORTER)
+            .withColumnAdjustor(
+                e -> {
+                  e.setMinWidth(0);
+                  e.setMaxWidth(0);
+                  e.setPreferredWidth(0);
+                });
     preOrders =
-            new ObjectTable<>(
-                    Columns.<PreOrder>create("Benutzer", e -> e.getUser().getFullName(true))
-                            .withColumnAdjustor(e -> e.setPreferredWidth(150)),
-                    Columns.<PreOrder>create("Kornkraftnummer", e -> e.getCatalogEntry().getArtikelNr())
-                            .withHorizontalAlignment(SwingConstants.RIGHT)
-                            .withSorter(Column.NUMBER_SORTER),
-                    Columns.<PreOrder>create("Produktname", e -> e.getCatalogEntry().getBezeichnung())
-                            .withColumnAdjustor(e -> e.setPreferredWidth(350)),
-                    Columns.<PreOrder>create("Gebinde", e -> e.getCatalogEntry().getBestelleinheit())
-                            .withColumnAdjustor(e -> e.setPreferredWidth(60)),
-                    Columns.<PreOrder>create(
-                                    "Netto-Preis",
-                                    e ->
-                                            String.format(
-                                                    "%.2f€", PreOrderModel.containerNetPrice(e.getCatalogEntry())))
-                            .withHorizontalAlignment(SwingConstants.RIGHT)
-                            .withSorter(Column.NUMBER_SORTER),
-                    Columns.<PreOrder>create(
-                                    "Aktion bis",
-                                    e ->
-                                            e.getCatalogEntry().isAction()
-                                                    ? Date.INSTANT_DATE.format(
-                                                    e.getCatalogEntry().getAktionspreisGueltigBis())
-                                                    : "-")
-                            .withSorter(Column.DATE_SORTER(Date.INSTANT_DATE))
-                            .withPreferredWidth(60)
-                            .withHorizontalAlignment(SwingConstants.RIGHT),
-                    Columns.<PreOrder>create("Anzahl", PreOrder::getAmount)
-                            .withLeftClickConsumer(controller::editAmount)
-                            .withRightClickConsumer(controller::editAmount)
-                            .withHorizontalAlignment(SwingConstants.CENTER)
-                            .withSorter(Column.NUMBER_SORTER),
-                    Columns.<PreOrder>create(
-                                    "eingegeben am",
-                                    e -> Date.INSTANT_DATE.format(e.getCreateDate()),
-                                    SwingConstants.RIGHT)
-                            .withSorter(Column.DATE_SORTER(Date.INSTANT_DATE)),
-                    Columns.<PreOrder>create(
-                                    "exportiert am",
-                                    e -> e.getOrderedOn() == null ? "" : Date.INSTANT_DATE.format(e.getOrderedOn()),
-                                    SwingConstants.RIGHT)
-                            .withSorter(Column.DATE_SORTER(Date.INSTANT_DATE)),
-                    Columns.create("erwartete Lieferung", PreOrderView::getDueDateAsString));
+        new ObjectTable<>(
+            Columns.<PreOrder>create("Benutzer", e -> e.getUser().getFullName(true))
+                .withColumnAdjustor(e -> e.setPreferredWidth(150)),
+            Columns.<PreOrder>create("Kornkraftnummer", e -> e.getCatalogEntry().getArtikelNr())
+                .withHorizontalAlignment(SwingConstants.RIGHT)
+                .withSorter(Column.NUMBER_SORTER),
+            Columns.<PreOrder>create("Produktname", e -> e.getCatalogEntry().getBezeichnung())
+                .withColumnAdjustor(e -> e.setPreferredWidth(350)),
+            Columns.<PreOrder>create("Gebinde", e -> e.getCatalogEntry().getBestelleinheit())
+                .withColumnAdjustor(e -> e.setPreferredWidth(60)),
+            Columns.<PreOrder>create(
+                    "Netto-Preis",
+                    e ->
+                        String.format(
+                            "%.2f€", PreOrderModel.containerNetPrice(e.getCatalogEntry())))
+                .withHorizontalAlignment(SwingConstants.RIGHT)
+                .withSorter(Column.NUMBER_SORTER),
+            Columns.<PreOrder>create(
+                    "Aktion bis",
+                    e ->
+                        e.getCatalogEntry().isAction()
+                            ? Date.INSTANT_DATE.format(
+                                e.getCatalogEntry().getAktionspreisGueltigBis())
+                            : "-")
+                .withSorter(Column.DATE_SORTER(Date.INSTANT_DATE))
+                .withPreferredWidth(60)
+                .withHorizontalAlignment(SwingConstants.RIGHT),
+            Columns.<PreOrder>create("Anzahl", PreOrder::getAmount)
+                .withLeftClickConsumer(controller::editAmount)
+                .withRightClickConsumer(controller::editAmount)
+                .withHorizontalAlignment(SwingConstants.CENTER)
+                .withSorter(Column.NUMBER_SORTER),
+            Columns.<PreOrder>create(
+                    "eingegeben am",
+                    e -> Date.INSTANT_DATE.format(e.getCreateDate()),
+                    SwingConstants.RIGHT)
+                .withSorter(Column.DATE_SORTER(Date.INSTANT_DATE)),
+            Columns.<PreOrder>create(
+                    "exportiert am",
+                    e -> e.getOrderedOn() == null ? "" : Date.INSTANT_DATE.format(e.getOrderedOn()),
+                    SwingConstants.RIGHT)
+                .withSorter(Column.DATE_SORTER(Date.INSTANT_DATE)),
+            Columns.create("erwartete Lieferung", PreOrderView::getDueDateAsString));
     Column<PreOrder> sortColumn = Columns.create("Id", PreOrder::getId);
     if (!controller.isRestrictToLoggedIn())
       preOrders.addColumnAtIndex(
-              0,
-              Columns.createIconColumn(
-                      "ausgeliefert",
-                      e -> controller.isDelivered(e) ? selected : unselected,
-                      controller::toggleDelivery,
-                      e -> showSelectionPopup(),
-                      100));
+          0,
+          Columns.createIconColumn(
+              "ausgeliefert",
+              e -> controller.isDelivered(e) ? selected : unselected,
+              controller::toggleDelivery,
+              e -> showSelectionPopup(),
+              100));
     if (controller.userMayEdit()) {
       preOrders.addColumn(
-              Columns.createIconColumn(
-                      IconFontSwing.buildIcon(FontAwesome.TRASH, 20, Color.RED),
-                      controller::delete,
-                      e -> e.getOrderedOn() == null));
+          Columns.createIconColumn(
+              IconFontSwing.buildIcon(FontAwesome.TRASH, 20, Color.RED),
+              controller::delete,
+              e -> e.getOrderedOn() == null));
     }
     user = new AdvancedComboBox<>(e -> e.getFullName(true));
     preOrders.addColumnAtIndex(0, hiddenSortColumn);
@@ -241,10 +239,10 @@ public class PreOrderView implements IView<PreOrderController> {
 
   void noItemFound() {
     JOptionPane.showMessageDialog(
-            getTopComponent(),
-            "Es konnte kein Kornkraft-Artikel mit dieser Kornkraft-/"
-                    + Setting.STORE_NAME.getStringValue()
-                    + "-Nummer gefunden werden.");
+        getTopComponent(),
+        "Es konnte kein Kornkraft-Artikel mit dieser Kornkraft-/"
+            + Setting.STORE_NAME.getStringValue()
+            + "-Nummer gefunden werden.");
   }
 
   void resetArticleNr() {
@@ -260,49 +258,48 @@ public class PreOrderView implements IView<PreOrderController> {
   @Override
   public void initialize(PreOrderController controller) {
     kkNumber.addKeyListener(
-            new KeyAdapter() {
-              @Override
-              public void keyReleased(KeyEvent e) {
-                if (controller.searchKK()) {
-                  if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    submitAction();
-                  }
-                }
+        new KeyAdapter() {
+          @Override
+          public void keyReleased(KeyEvent e) {
+            if (controller.searchKK()) {
+              if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                submitAction();
               }
-            });
+            }
+          }
+        });
 
     user.addKeyListener(
-            new KeyAdapter() {
-              @Override
-              public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                  kkNumber.requestFocusInWindow();
-                }
-              }
-            });
+        new KeyAdapter() {
+          @Override
+          public void keyPressed(KeyEvent e) {
+            if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+              kkNumber.requestFocusInWindow();
+            }
+          }
+        });
     user.addActionListener(e -> userAction(false));
     submit.addActionListener(e -> submitAction());
     preOrders.addKeyListener(
-            new KeyAdapter() {
-              @Override
-              public void keyReleased(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_DELETE) {
-                  controller.delete(getSelectedOrders());
-                }
-              }
-            });
+        new KeyAdapter() {
+          @Override
+          public void keyReleased(KeyEvent e) {
+            if (e.getKeyCode() == KeyEvent.VK_DELETE) {
+              controller.delete(getSelectedOrders());
+            }
+          }
+        });
     preOrders.addSelectionListener(e -> enableEditPreorder());
     preOrders.addFocusListener(
-            new FocusListener() {
-              @Override
-              public void focusGained(FocusEvent e) {
-              }
+        new FocusListener() {
+          @Override
+          public void focusGained(FocusEvent e) {}
 
-              @Override
-              public void focusLost(FocusEvent e) {
-                enableEditPreorder();
-              }
-            });
+          @Override
+          public void focusLost(FocusEvent e) {
+            enableEditPreorder();
+          }
+        });
 
     amount.addActionListener(e -> submitAction());
     abhakplanButton.addActionListener(e -> controller.printChecklist());
@@ -420,7 +417,7 @@ public class PreOrderView implements IView<PreOrderController> {
 
   private void enableEditPreorder() {
     editPreOrder.setEnabled(
-            !controller.isRestrictToLoggedIn() && mode == Mode.ADD && preOrders.getSelectedRow() > -1);
+        !controller.isRestrictToLoggedIn() && mode == Mode.ADD && preOrders.getSelectedRow() > -1);
   }
 
   public User getUser() {
@@ -454,62 +451,62 @@ public class PreOrderView implements IView<PreOrderController> {
 
   public void setCaption(String forWho, boolean editable) {
     this.caption.setText(
-            "<html><body><h2>Hier werden die Vorbestellungen für <em>"
-                    + forWho
-                    + "</em> angezeigt."
-                    + (editable ? " Die Bestellungen können hier auch bearbeitet und ergänzt werden." : "")
-                    + "</h2></body></html>");
+        "<html><body><h2>Hier werden die Vorbestellungen für <em>"
+            + forWho
+            + "</em> angezeigt."
+            + (editable ? " Die Bestellungen können hier auch bearbeitet und ergänzt werden." : "")
+            + "</h2></body></html>");
   }
 
   public void messageExportSuccess() {
     Tools.beep();
     JOptionPane.showMessageDialog(
-            getContent(),
-            "Die Vorbestellung wurde erfolgreich exportiert",
-            "Vorbestellungsexport",
-            JOptionPane.INFORMATION_MESSAGE);
+        getContent(),
+        "Die Vorbestellung wurde erfolgreich exportiert",
+        "Vorbestellungsexport",
+        JOptionPane.INFORMATION_MESSAGE);
   }
 
   public void messageNothingToExport() {
     Tools.beep();
     JOptionPane.showMessageDialog(
-            getContent(),
-            "Es gibt keine Vorbestellungen, die noch nicht exportiert wurden!",
-            "Vorbestellungsexport",
-            JOptionPane.INFORMATION_MESSAGE);
+        getContent(),
+        "Es gibt keine Vorbestellungen, die noch nicht exportiert wurden!",
+        "Vorbestellungsexport",
+        JOptionPane.INFORMATION_MESSAGE);
   }
 
   public void messageExportCanceled() {
     Tools.beep();
     JOptionPane.showMessageDialog(
-            getContent(),
-            "Der Export der Vorbestellung wurde abgebrochen oder ist fehlgeschlagen!",
-            "Vorbestellungsexport",
-            JOptionPane.WARNING_MESSAGE);
+        getContent(),
+        "Der Export der Vorbestellung wurde abgebrochen oder ist fehlgeschlagen!",
+        "Vorbestellungsexport",
+        JOptionPane.WARNING_MESSAGE);
   }
 
   public void messageIsNotKKArticle(boolean ísShopOrder) {
     Tools.beep();
     JOptionPane.showMessageDialog(
-            getContent(),
-            "Zur Zeit können hier nur Kornkraft Artikel "
-                    + (ísShopOrder
-                    ? "bestellt werden."
-                    : "vorbestellt werden.\nFür andere Lieferanten bitte einen Bestellzettel ausfüllen."),
-            "Falscher Lieferant",
-            JOptionPane.WARNING_MESSAGE);
+        getContent(),
+        "Zur Zeit können hier nur Kornkraft Artikel "
+            + (ísShopOrder
+                ? "bestellt werden."
+                : "vorbestellt werden.\nFür andere Lieferanten bitte einen Bestellzettel ausfüllen."),
+        "Falscher Lieferant",
+        JOptionPane.WARNING_MESSAGE);
   }
 
   public void notifyNoUserSelected() {
     Tools.beep();
     JOptionPane.showMessageDialog(
-            getContent(),
-            "Die Vorbestellung kann nicht aufgenommen werden,"
-                    + "\nda der Nutzer noch nicht ausgewählt wurde."
-                    + "\nBitte wähle zuerst einen Benutzer aus,"
-                    + "\nauf dessen Namen die Vorbestellung ausgeführt werden soll.",
-            "Kein Benutzer ausgewählt",
-            JOptionPane.WARNING_MESSAGE);
+        getContent(),
+        "Die Vorbestellung kann nicht aufgenommen werden,"
+            + "\nda der Nutzer noch nicht ausgewählt wurde."
+            + "\nBitte wähle zuerst einen Benutzer aus,"
+            + "\nauf dessen Namen die Vorbestellung ausgeführt werden soll.",
+        "Kein Benutzer ausgewählt",
+        JOptionPane.WARNING_MESSAGE);
   }
 
   public boolean confirmDelivery(long numDelivered, long numOverdue) {
@@ -520,48 +517,48 @@ public class PreOrderView implements IView<PreOrderController> {
     String message = "";
     if (numDelivered > 0) {
       message =
-              numDelivered
-                      + " Vorbestellung"
-                      + (numDelivered == 1
-                      ? " ist als ausgeliefert markiert und wird"
-                      : "en sind als ausgeliefert markiert und werden")
-                      + " aus der Vorbestellung entfernt.";
+          numDelivered
+              + " Vorbestellung"
+              + (numDelivered == 1
+                  ? " ist als ausgeliefert markiert und wird"
+                  : "en sind als ausgeliefert markiert und werden")
+              + " aus der Vorbestellung entfernt.";
     }
     if (numOverdue > 0) {
       if (!message.isEmpty()) {
         message += "\n";
       }
       message +=
-              numOverdue
-                      + " überfällige Vorbestellung"
-                      + (numOverdue == 1
-                      ? " bleibt in der Liste und wird"
-                      : "en bleiben in der Liste und werden")
-                      + " hoffentlich bald nachgeliefert...";
+          numOverdue
+              + " überfällige Vorbestellung"
+              + (numOverdue == 1
+                  ? " bleibt in der Liste und wird"
+                  : "en bleiben in der Liste und werden")
+              + " hoffentlich bald nachgeliefert...";
     }
     return JOptionPane.showConfirmDialog(
             getContent(), message, "Vorbestellung schließen", JOptionPane.OK_CANCEL_OPTION)
-            == JOptionPane.OK_OPTION;
+        == JOptionPane.OK_OPTION;
   }
 
   void warningEditDelivered() {
     JOptionPane.showMessageDialog(
-            getContent(),
-            "Diese Vorbestellung ist als ausgeliefert gekennzeichnet.\n"
-                    + "Sie kann nicht mehr bearbeitet werden!",
-            "Vorbestellung bearbeiten",
-            JOptionPane.WARNING_MESSAGE);
+        getContent(),
+        "Diese Vorbestellung ist als ausgeliefert gekennzeichnet.\n"
+            + "Sie kann nicht mehr bearbeitet werden!",
+        "Vorbestellung bearbeiten",
+        JOptionPane.WARNING_MESSAGE);
   }
 
   boolean confirmEditOrdered() {
     return JOptionPane.showConfirmDialog(
             getContent(),
             "Achtung, diese Vorbestellung ist bereits für Kornkraft exportiert worden.\n"
-                    + "Soll sie jetzt wirklich noch bearbeitet werden?",
+                + "Soll sie jetzt wirklich noch bearbeitet werden?",
             "Vorbestellung bearbeiten",
             JOptionPane.YES_NO_OPTION,
             JOptionPane.WARNING_MESSAGE)
-            == JOptionPane.YES_OPTION;
+        == JOptionPane.YES_OPTION;
   }
 
   public void setUserEnabled(boolean enabled) {
@@ -580,23 +577,25 @@ public class PreOrderView implements IView<PreOrderController> {
 
   public String inputShopNumber(boolean inputError) {
     return JOptionPane.showInputDialog(
-            getContent(),
-            (inputError ? "Fehlerhafte Eingabe!\n" : "") + "Laden-Artikelnummer:",
-            "Suche nach Laden-Artikelnummer",
-            JOptionPane.QUESTION_MESSAGE);
+        getContent(),
+        (inputError ? "Fehlerhafte Eingabe!\n" : "") + "Laden-Artikelnummer:",
+        "Suche nach Laden-Artikelnummer",
+        JOptionPane.QUESTION_MESSAGE);
   }
 
   public void messageArticleNotInCatalog(int shopNumber) {
     JOptionPane.showMessageDialog(
-            getContent(),
-            "Zur Ladennummer "
-                    + shopNumber
-                    + " existiert kein gültiger Katalogeintrag!\n"
-                    + "Entweder ist die Nummer falsch, oder der Artikel steht\n"
-                    + "nicht (mehr) im Kornkraft-Katalog.",
-            "Es wurde kein Katalog-Artikel gefunden",
-            JOptionPane.WARNING_MESSAGE);
+        getContent(),
+        "Zur Ladennummer "
+            + shopNumber
+            + " existiert kein gültiger Katalogeintrag!\n"
+            + "Entweder ist die Nummer falsch, oder der Artikel steht\n"
+            + "nicht (mehr) im Kornkraft-Katalog.",
+        "Es wurde kein Katalog-Artikel gefunden",
+        JOptionPane.WARNING_MESSAGE);
   }
+
+  // @spotless:off
 
   {
 // GUI initializer generated by IntelliJ IDEA GUI Designer
@@ -605,10 +604,9 @@ public class PreOrderView implements IView<PreOrderController> {
     $$$setupUI$$$();
   }
 
-  /**
-   * Method generated by IntelliJ IDEA GUI Designer >>> IMPORTANT!! <<< DO NOT edit this method OR
-   * call it in your code!
-   *
+  /** Method generated by IntelliJ IDEA GUI Designer
+   * >>> IMPORTANT!! <<<
+   * DO NOT edit this method OR call it in your code!
    * @noinspection ALL
    */
   private void $$$setupUI$$$() {
@@ -718,9 +716,7 @@ public class PreOrderView implements IView<PreOrderController> {
     main.add(caption, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
   }
 
-  /**
-   * @noinspection ALL
-   */
+  /** @noinspection ALL */
   private Font $$$getFont$$$(String fontName, int style, int size, Font currentFont) {
     if (currentFont == null) return null;
     String resultName;
@@ -740,11 +736,10 @@ public class PreOrderView implements IView<PreOrderController> {
     return fontWithFallback instanceof FontUIResource ? fontWithFallback : new FontUIResource(fontWithFallback);
   }
 
-  /**
-   * @noinspection ALL
-   */
+  /** @noinspection ALL */
   public JComponent $$$getRootComponent$$$() {
     return main;
   }
 
+  // @spotless:on
 }

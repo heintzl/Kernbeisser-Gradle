@@ -22,152 +22,151 @@ import org.jetbrains.annotations.NotNull;
 
 public class CollectionView<T> implements IView<CollectionController<T>> {
 
-    private JButton commit;
-    private JButton cancel;
-    @Getter
-    private ObjectTable<T> available;
-    @Getter
-    private ObjectTable<T> chosen;
-    private JPanel main;
-    private JButton add;
-    private JButton addAll;
-    private JButton removeAll;
-    private JButton remove;
-    private JPanel moveSec;
-    private JScrollPane availableSec;
-    private JPanel actionBar;
-    private JPanel searchPanelChosen;
-    private JPanel searchPanelAvailable;
-    private JPanel additionalControls;
-    private JTextField searchAvailable;
-    private JTextField searchChosen;
-    private JLabel iconAvailable;
-    private JLabel iconChosen;
-    @Linked
-    private CollectionController<T> controller;
-    public static final int NONE = 0;
-    public static final int AVAILABLE = 1;
-    public static final int CHOSEN = 2;
-    public static final int BOTH = 3;
+  private JButton commit;
+  private JButton cancel;
+  @Getter private ObjectTable<T> available;
+  @Getter private ObjectTable<T> chosen;
+  private JPanel main;
+  private JButton add;
+  private JButton addAll;
+  private JButton removeAll;
+  private JButton remove;
+  private JPanel moveSec;
+  private JScrollPane availableSec;
+  private JPanel actionBar;
+  private JPanel searchPanelChosen;
+  private JPanel searchPanelAvailable;
+  private JPanel additionalControls;
+  private JTextField searchAvailable;
+  private JTextField searchChosen;
+  private JLabel iconAvailable;
+  private JLabel iconChosen;
+  @Linked private CollectionController<T> controller;
+  public static final int NONE = 0;
+  public static final int AVAILABLE = 1;
+  public static final int CHOSEN = 2;
+  public static final int BOTH = 3;
 
-    @Override
-    public void initialize(CollectionController<T> controller) {
-        available.addDoubleClickListener(e -> controller.selectAvailable());
-        chosen.addDoubleClickListener(e -> controller.selectChosen());
-        add.addActionListener(e -> controller.selectAvailable());
-        add.setToolTipText("markierte von rechts nach links");
-        addAll.addActionListener(e -> controller.selectAllAvailable());
-        addAll.setToolTipText("alle gefilterten von rechts nach links");
-        remove.addActionListener(e -> controller.selectChosen());
-        remove.setToolTipText("markierte von links nach rechts");
-        removeAll.addActionListener(e -> controller.selectAllChosen());
-        removeAll.setToolTipText(" alle gefilterten von links nach rechts");
-        cancel.addActionListener(e -> back());
-        commit.addActionListener(e -> controller.exitWithSave());
-        searchPanelAvailable.setVisible(false);
-        searchPanelChosen.setVisible(false);
-    }
+  @Override
+  public void initialize(CollectionController<T> controller) {
+    available.addDoubleClickListener(e -> controller.selectAvailable());
+    chosen.addDoubleClickListener(e -> controller.selectChosen());
+    add.addActionListener(e -> controller.selectAvailable());
+    add.setToolTipText("markierte von rechts nach links");
+    addAll.addActionListener(e -> controller.selectAllAvailable());
+    addAll.setToolTipText("alle gefilterten von rechts nach links");
+    remove.addActionListener(e -> controller.selectChosen());
+    remove.setToolTipText("markierte von links nach rechts");
+    removeAll.addActionListener(e -> controller.selectAllChosen());
+    removeAll.setToolTipText(" alle gefilterten von links nach rechts");
+    cancel.addActionListener(e -> back());
+    commit.addActionListener(e -> controller.exitWithSave());
+    searchPanelAvailable.setVisible(false);
+    searchPanelChosen.setVisible(false);
+  }
 
-    void setEditable(boolean editable) {
-        availableSec.setVisible(editable);
-        moveSec.setVisible(editable);
-    }
+  void setEditable(boolean editable) {
+    availableSec.setVisible(editable);
+    moveSec.setVisible(editable);
+  }
 
-    public void setRowFilter(RowFilter<T> rowfilter, int scope) {
-        if ((scope & 1) == 1) {
-            available.setRowFilter(rowfilter);
-        }
-        if ((scope & 2) == 2) {
-            chosen.setRowFilter(rowfilter);
-        }
+  public void setRowFilter(RowFilter<T> rowfilter, int scope) {
+    if ((scope & 1) == 1) {
+      available.setRowFilter(rowfilter);
     }
+    if ((scope & 2) == 2) {
+      chosen.setRowFilter(rowfilter);
+    }
+  }
 
-    public void addSearchbox(int scope) {
-        Icon searchIcon = IconFontSwing.buildIcon(FontAwesome.SEARCH, 15, new Color(0x757EFF));
-        iconAvailable.setIcon(searchIcon);
-        iconChosen.setIcon(searchIcon);
-        if ((scope & 1) == 1) {
-            addSearchbox(searchAvailable, available);
-        }
-        if ((scope & 2) == 2) {
-            addSearchbox(searchChosen, chosen);
-        }
+  public void addSearchbox(int scope) {
+    Icon searchIcon = IconFontSwing.buildIcon(FontAwesome.SEARCH, 15, new Color(0x757EFF));
+    iconAvailable.setIcon(searchIcon);
+    iconChosen.setIcon(searchIcon);
+    if ((scope & 1) == 1) {
+      addSearchbox(searchAvailable, available);
     }
+    if ((scope & 2) == 2) {
+      addSearchbox(searchChosen, chosen);
+    }
+  }
 
-    private void addSearchbox(JTextField textField, ObjectTable<T> objectTable) {
-        textField.getParent().setVisible(true);
-        textField
-                .getDocument()
-                .addDocumentListener(
-                        (DocumentChangeListener)
-                                e ->
-                                        objectTable.setSwingRowFilter(
-                                                new RegexFilter(
-                                                        Pattern.compile(textField.getText(), Pattern.CASE_INSENSITIVE))));
-    }
+  private void addSearchbox(JTextField textField, ObjectTable<T> objectTable) {
+    textField.getParent().setVisible(true);
+    textField
+        .getDocument()
+        .addDocumentListener(
+            (DocumentChangeListener)
+                e ->
+                    objectTable.setSwingRowFilter(
+                        new RegexFilter(
+                            Pattern.compile(textField.getText(), Pattern.CASE_INSENSITIVE))));
+  }
 
-    @Override
-    public @NotNull JComponent getContent() {
-        return main;
-    }
+  @Override
+  public @NotNull JComponent getContent() {
+    return main;
+  }
 
-    Collection<T> getSelectedChosenObjects() {
-        return chosen.getSelectedObjects();
-    }
+  Collection<T> getSelectedChosenObjects() {
+    return chosen.getSelectedObjects();
+  }
 
-    Collection<T> getSelectedAvailableObjects() {
-        return available.getSelectedObjects();
-    }
+  Collection<T> getSelectedAvailableObjects() {
+    return available.getSelectedObjects();
+  }
 
-    Collection<T> getAllChosenObjects() {
-        return chosen.getFilteredObjects();
-    }
+  Collection<T> getAllChosenObjects() {
+    return chosen.getFilteredObjects();
+  }
 
-    Collection<T> getAllAvailableObjects() {
-        return available.getFilteredObjects();
-    }
+  Collection<T> getAllAvailableObjects() {
+    return available.getFilteredObjects();
+  }
 
-    void setColumns(Column<T>[] columns) {
-        available.setColumns(columns);
-        chosen.setColumns(columns);
-    }
+  void setColumns(Column<T>[] columns) {
+    available.setColumns(columns);
+    chosen.setColumns(columns);
+  }
 
-    void setAvailable(Collection<T> collection) {
-        available.setObjects(collection);
-    }
+  void setAvailable(Collection<T> collection) {
+    available.setObjects(collection);
+  }
 
-    private void createUIComponents() {
-        available = new ObjectTable<>();
-        chosen = new ObjectTable<>();
-    }
+  private void createUIComponents() {
+    available = new ObjectTable<>();
+    chosen = new ObjectTable<>();
+  }
 
-    public void setChosen(Collection<T> loaded) {
-        chosen.setObjects(loaded);
-    }
+  public void setChosen(Collection<T> loaded) {
+    chosen.setObjects(loaded);
+  }
 
-    public CollectionView<T> asInjectedComponent() {
-        actionBar.setVisible(false);
-        return this;
-    }
+  public CollectionView<T> asInjectedComponent() {
+    actionBar.setVisible(false);
+    return this;
+  }
 
-    boolean confirmCancel() {
-        return JOptionPane.showConfirmDialog(
-                getContent(),
-                "Soll die Eingabe beendet werden? Alle Änderungen werden verworfen.",
-                "Eingabe abbrechen",
-                JOptionPane.OK_CANCEL_OPTION)
-                == JOptionPane.OK_OPTION;
-    }
+  boolean confirmCancel() {
+    return JOptionPane.showConfirmDialog(
+            getContent(),
+            "Soll die Eingabe beendet werden? Alle Änderungen werden verworfen.",
+            "Eingabe abbrechen",
+            JOptionPane.OK_CANCEL_OPTION)
+        == JOptionPane.OK_OPTION;
+  }
 
-    public void clearSearchBox() {
-        searchAvailable.setText("");
-        searchChosen.setText("");
-    }
+  public void clearSearchBox() {
+    searchAvailable.setText("");
+    searchChosen.setText("");
+  }
 
-    public void addAdditionalControl(JComponent component) {
-        additionalControls.setVisible(true);
-        additionalControls.add(component);
-    }
+  public void addAdditionalControl(JComponent component) {
+    additionalControls.setVisible(true);
+    additionalControls.add(component);
+  }
+
+  // @spotless:off
 
     {
 // GUI initializer generated by IntelliJ IDEA GUI Designer
@@ -176,13 +175,12 @@ public class CollectionView<T> implements IView<CollectionController<T>> {
         $$$setupUI$$$();
     }
 
-  /**
-   * Method generated by IntelliJ IDEA GUI Designer >>> IMPORTANT!! <<< DO NOT edit this method OR
-   * call it in your code!
-   *
-   * @noinspection ALL
-   */
-  private void $$$setupUI$$$() {
+    /** Method generated by IntelliJ IDEA GUI Designer
+     * >>> IMPORTANT!! <<<
+     * DO NOT edit this method OR call it in your code!
+     * @noinspection ALL
+     */
+    private void $$$setupUI$$$() {
         createUIComponents();
         main = new JPanel();
         main.setLayout(new GridLayoutManager(3, 3, new Insets(5, 5, 5, 5), -1, -1));
@@ -251,11 +249,10 @@ public class CollectionView<T> implements IView<CollectionController<T>> {
         iconChosen.setLabelFor(searchChosen);
     }
 
-  /**
-   * @noinspection ALL
-   */
-  public JComponent $$$getRootComponent$$$() {
+    /** @noinspection ALL */
+    public JComponent $$$getRootComponent$$$() {
         return main;
     }
 
+    // @spotless:on
 }

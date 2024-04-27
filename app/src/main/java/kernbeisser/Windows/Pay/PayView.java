@@ -19,84 +19,85 @@ import org.jetbrains.annotations.NotNull;
 
 public class PayView implements IView<PayController> {
 
-    private JPanel main;
-    private JPanel shoppingListPanel;
-    private ShoppingCartView shoppingCartView;
+  private JPanel main;
+  private JPanel shoppingListPanel;
+  private ShoppingCartView shoppingCartView;
 
-    JCheckBox printReceipt;
-    private JButton commitPayment;
-    private JButton cancel;
-    JButton setCustomerStandard;
-    private PayController controller;
+  JCheckBox printReceipt;
+  private JButton commitPayment;
+  private JButton cancel;
+  JButton setCustomerStandard;
+  private PayController controller;
 
-    @Linked
-    private ShoppingCartController shoppingCartController;
+  @Linked private ShoppingCartController shoppingCartController;
 
-    private void createUIComponents() {
-        shoppingCartView = shoppingCartController.getView();
+  private void createUIComponents() {
+    shoppingCartView = shoppingCartController.getView();
+  }
+
+  public void fillShoppingCart(List<ShoppingItem> items) {
+    double sum = 0;
+    for (ShoppingItem item : items) {
+      sum += item.getRetailPrice();
     }
 
-    public void fillShoppingCart(List<ShoppingItem> items) {
-        double sum = 0;
-        for (ShoppingItem item : items) {
-            sum += item.getRetailPrice();
-        }
+    ShoppingCartView view = shoppingCartController.getView();
+    view.setSum(sum);
+    view.setValue(controller.getUserValue() - sum);
+    view.setObjects(items);
+  }
 
-        ShoppingCartView view = shoppingCartController.getView();
-        view.setSum(sum);
-        view.setValue(controller.getUserValue() - sum);
-        view.setObjects(items);
+  public void confirmLogging(String name, double value) {
+    if (JOptionPane.showConfirmDialog(
+            getTopComponent(),
+            String.format(
+                "Ist der Einkauf in Höhe von %.2f€ von %s in das Log-Buch eintragen worden?",
+                value, name),
+            "Log-Bucheintrag",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.QUESTION_MESSAGE)
+        != 0) {
+      JOptionPane.showMessageDialog(
+          getTopComponent(),
+          "Alle Einkäufe müssen im Log-Buch notiert werden\n"
+              + "für den Fall, dass gespeicherte Daten verloren gehen.");
+      confirmLogging(name, value);
     }
+  }
 
-    public void confirmLogging(String name, double value) {
-        if (JOptionPane.showConfirmDialog(
-                getTopComponent(),
-                String.format(
-                        "Ist der Einkauf in Höhe von %.2f€ von %s in das Log-Buch eintragen worden?",
-                        value, name),
-                "Log-Bucheintrag",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE)
-                != 0) {
-            JOptionPane.showMessageDialog(
-                    getTopComponent(),
-                    "Alle Einkäufe müssen im Log-Buch notiert werden\n"
-                            + "für den Fall, dass gespeicherte Daten verloren gehen.");
-            confirmLogging(name, value);
-        }
-    }
+  void setCommitPaymentWarning() {
+    commitPayment.setForeground(Color.RED.darker());
+    commitPayment.setFont(commitPayment.getFont().deriveFont(Font.BOLD));
+  }
 
-    void setCommitPaymentWarning() {
-        commitPayment.setForeground(Color.RED.darker());
-        commitPayment.setFont(commitPayment.getFont().deriveFont(Font.BOLD));
-    }
+  @Override
+  public void initialize(PayController controller) {
+    this.controller = controller;
+    printReceipt.setSelected(true);
+    commitPayment.addActionListener(
+        e -> {
+          controller.commitPayment(printReceipt.isSelected());
+        });
+    cancel.addActionListener(
+        e -> {
+          this.back();
+        });
+  }
 
-    @Override
-    public void initialize(PayController controller) {
-        this.controller = controller;
-        printReceipt.setSelected(true);
-        commitPayment.addActionListener(
-                e -> {
-                    controller.commitPayment(printReceipt.isSelected());
-                });
-        cancel.addActionListener(
-                e -> {
-                    this.back();
-                });
-    }
+  @Override
+  public @NotNull JComponent getContent() {
+    return main;
+  }
 
-    @Override
-    public @NotNull JComponent getContent() {
-        return main;
-    }
+  public void notEnoughValue() {
+    JOptionPane.showMessageDialog(
+        getTopComponent(),
+        "Du hast nicht die Berechtigung unter das minimale Guthaben von "
+            + String.format("%.2f€", Setting.DEFAULT_MIN_VALUE.getDoubleValue())
+            + " zu gehen.");
+  }
 
-    public void notEnoughValue() {
-        JOptionPane.showMessageDialog(
-                getTopComponent(),
-                "Du hast nicht die Berechtigung unter das minimale Guthaben von "
-                        + String.format("%.2f€", Setting.DEFAULT_MIN_VALUE.getDoubleValue())
-                        + " zu gehen.");
-    }
+  // @spotless:off
 
     {
 // GUI initializer generated by IntelliJ IDEA GUI Designer
@@ -105,13 +106,12 @@ public class PayView implements IView<PayController> {
         $$$setupUI$$$();
     }
 
-  /**
-   * Method generated by IntelliJ IDEA GUI Designer >>> IMPORTANT!! <<< DO NOT edit this method OR
-   * call it in your code!
-   *
-   * @noinspection ALL
-   */
-  private void $$$setupUI$$$() {
+    /** Method generated by IntelliJ IDEA GUI Designer
+     * >>> IMPORTANT!! <<<
+     * DO NOT edit this method OR call it in your code!
+     * @noinspection ALL
+     */
+    private void $$$setupUI$$$() {
         createUIComponents();
         main = new JPanel();
         main.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
@@ -159,10 +159,8 @@ public class PayView implements IView<PayController> {
         panel2.add(spacer1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
     }
 
-  /**
-   * @noinspection ALL
-   */
-  private Font $$$getFont$$$(String fontName, int style, int size, Font currentFont) {
+    /** @noinspection ALL */
+    private Font $$$getFont$$$(String fontName, int style, int size, Font currentFont) {
         if (currentFont == null) return null;
         String resultName;
         if (fontName == null) {
@@ -181,11 +179,10 @@ public class PayView implements IView<PayController> {
         return fontWithFallback instanceof FontUIResource ? fontWithFallback : new FontUIResource(fontWithFallback);
     }
 
-  /**
-   * @noinspection ALL
-   */
-  public JComponent $$$getRootComponent$$$() {
+    /** @noinspection ALL */
+    public JComponent $$$getRootComponent$$$() {
         return main;
     }
 
+    // @spotless:on
 }

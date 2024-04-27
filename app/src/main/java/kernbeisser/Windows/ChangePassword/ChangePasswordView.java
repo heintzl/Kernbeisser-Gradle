@@ -15,93 +15,94 @@ import org.jetbrains.annotations.NotNull;
 
 public class ChangePasswordView implements IView<ChangePasswordController> {
 
-    private JPanel main;
-    private JButton changePassword;
-    private JPasswordField currentPassword;
-    private JPasswordField newPassword;
-    private JPasswordField repeatedNewPassword;
-    private JLabel message;
-    private JLabel passwordHint;
-    private JLabel currentPasswordLable;
-    @Linked
-    private ChangePasswordController controller;
+  private JPanel main;
+  private JButton changePassword;
+  private JPasswordField currentPassword;
+  private JPasswordField newPassword;
+  private JPasswordField repeatedNewPassword;
+  private JLabel message;
+  private JLabel passwordHint;
+  private JLabel currentPasswordLable;
+  @Linked private ChangePasswordController controller;
 
-    @Override
-    public void initialize(ChangePasswordController controller) {
-        changePassword.addActionListener(e -> controller.changePassword());
-        newPassword.addKeyListener(
-                new KeyAdapter() {
-                    @Override
-                    public void keyReleased(KeyEvent e) {
-                        controller.refreshPasswordStrength();
-                    }
-                });
-    }
+  @Override
+  public void initialize(ChangePasswordController controller) {
+    changePassword.addActionListener(e -> controller.changePassword());
+    newPassword.addKeyListener(
+        new KeyAdapter() {
+          @Override
+          public void keyReleased(KeyEvent e) {
+            controller.refreshPasswordStrength();
+          }
+        });
+  }
 
-    @Override
-    public @NotNull JComponent getContent() {
-        return main;
-    }
+  @Override
+  public @NotNull JComponent getContent() {
+    return main;
+  }
 
-    String getNewPassword() {
-        return new String(newPassword.getPassword());
-    }
+  String getNewPassword() {
+    return new String(newPassword.getPassword());
+  }
 
-    String getCurrentPassword() {
-        return new String(currentPassword.getPassword());
-    }
+  String getCurrentPassword() {
+    return new String(currentPassword.getPassword());
+  }
 
-    String getRepeatedPassword() {
-        return new String(repeatedNewPassword.getPassword());
-    }
+  String getRepeatedPassword() {
+    return new String(repeatedNewPassword.getPassword());
+  }
 
-    public void passwordsDontMatch() {
-        message.setText("Bitte wiederhole das Passwort korrekt.");
-    }
+  public void passwordsDontMatch() {
+    message.setText("Bitte wiederhole das Passwort korrekt.");
+  }
 
-    void setVerifyWithOldEnable(boolean enable) {
-        currentPasswordLable.setVisible(enable);
-        currentPassword.setVisible(enable);
-    }
+  void setVerifyWithOldEnable(boolean enable) {
+    currentPasswordLable.setVisible(enable);
+    currentPassword.setVisible(enable);
+  }
 
-    void setPasswordStrength(PasswordStrength passwordStrength) {
-        passwordHint.setText("Stärke: " + passwordStrength.getHint());
-        passwordHint.setForeground(passwordStrength.getColor());
-    }
+  void setPasswordStrength(PasswordStrength passwordStrength) {
+    passwordHint.setText("Stärke: " + passwordStrength.getHint());
+    passwordHint.setForeground(passwordStrength.getColor());
+  }
 
-    public void passwordsMatch() {
-        message.setText("");
-    }
+  public void passwordsMatch() {
+    message.setText("");
+  }
 
-    public void passwordCannotChanged() {
-        JOptionPane.showMessageDialog(
-                getTopComponent(), "Das Password entspricht nicht den Vorraussetzungen.");
-    }
+  public void passwordCannotChanged() {
+    JOptionPane.showMessageDialog(
+        getTopComponent(), "Das Password entspricht nicht den Vorraussetzungen.");
+  }
 
-    public void passwordChanged() {
-        JOptionPane.showMessageDialog(getTopComponent(), "Das Password wurde erfolgreich geändert.");
-    }
+  public void passwordChanged() {
+    JOptionPane.showMessageDialog(getTopComponent(), "Das Password wurde erfolgreich geändert.");
+  }
 
-    public void currentPasswordEnteredWrong() {
-        JOptionPane.showMessageDialog(
-                getTopComponent(),
-                "Um das Passwort zu ändern, musst\n" + "du dein altes Passwort bestätigen.");
-    }
+  public void currentPasswordEnteredWrong() {
+    JOptionPane.showMessageDialog(
+        getTopComponent(),
+        "Um das Passwort zu ändern, musst\n" + "du dein altes Passwort bestätigen.");
+  }
 
-    @Override
-    public IconCode getTabIcon() {
-        return FontAwesome.KEY;
-    }
+  @Override
+  public IconCode getTabIcon() {
+    return FontAwesome.KEY;
+  }
 
-    @Override
-    public @NotNull Dimension getSize() {
-        return new Dimension(500, 500);
-    }
+  @Override
+  public @NotNull Dimension getSize() {
+    return new Dimension(500, 500);
+  }
 
-    @Override
-    public String getTitle() {
-        return "Passwort ändern";
-    }
+  @Override
+  public String getTitle() {
+    return "Passwort ändern";
+  }
+
+  // @spotless:off
 
     {
 // GUI initializer generated by IntelliJ IDEA GUI Designer
@@ -110,13 +111,12 @@ public class ChangePasswordView implements IView<ChangePasswordController> {
         $$$setupUI$$$();
     }
 
-  /**
-   * Method generated by IntelliJ IDEA GUI Designer >>> IMPORTANT!! <<< DO NOT edit this method OR
-   * call it in your code!
-   *
-   * @noinspection ALL
-   */
-  private void $$$setupUI$$$() {
+    /** Method generated by IntelliJ IDEA GUI Designer
+     * >>> IMPORTANT!! <<<
+     * DO NOT edit this method OR call it in your code!
+     * @noinspection ALL
+     */
+    private void $$$setupUI$$$() {
         main = new JPanel();
         main.setLayout(new GridLayoutManager(14, 2, new Insets(5, 10, 5, 10), -1, -1));
         changePassword = new JButton();
@@ -170,11 +170,10 @@ public class ChangePasswordView implements IView<ChangePasswordController> {
         main.add(label8, new GridConstraints(11, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
-  /**
-   * @noinspection ALL
-   */
-  public JComponent $$$getRootComponent$$$() {
+    /** @noinspection ALL */
+    public JComponent $$$getRootComponent$$$() {
         return main;
     }
 
+    // @spotless:on
 }

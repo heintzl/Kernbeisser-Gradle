@@ -31,143 +31,143 @@ import org.jetbrains.annotations.NotNull;
 
 public class EditSurchargeGroupView implements IView<EditSurchargeGroupController> {
 
-    private JPanel main;
-    private ObjectTree<SurchargeGroup> objectTree;
-    private JComboBox<Supplier> supplier;
-    private JButton commit;
-    private AccessCheckingField<SurchargeGroup, String> name;
-    private AccessCheckingComboBox<SurchargeGroup, SurchargeGroup> superGroup;
-    private AccessCheckingField<SurchargeGroup, Double> surcharge;
-    private JButton delete;
-    private JButton edit;
-    private JButton add;
-    private JButton selectNoParent;
-    private JButton calculateSurcharge;
-    private ObjectTable<Article> surchargeGroupArticles;
+  private JPanel main;
+  private ObjectTree<SurchargeGroup> objectTree;
+  private JComboBox<Supplier> supplier;
+  private JButton commit;
+  private AccessCheckingField<SurchargeGroup, String> name;
+  private AccessCheckingComboBox<SurchargeGroup, SurchargeGroup> superGroup;
+  private AccessCheckingField<SurchargeGroup, Double> surcharge;
+  private JButton delete;
+  private JButton edit;
+  private JButton add;
+  private JButton selectNoParent;
+  private JButton calculateSurcharge;
+  private ObjectTable<Article> surchargeGroupArticles;
 
-    @Getter
-    private ObjectForm<SurchargeGroup> objectForm;
+  @Getter private ObjectForm<SurchargeGroup> objectForm;
 
-    @Linked
-    private EditSurchargeGroupController controller;
+  @Linked private EditSurchargeGroupController controller;
 
-    @Override
-    public void initialize(EditSurchargeGroupController controller) {
-        supplier.addActionListener(e -> controller.loadForCurrentSupplier());
-        objectForm =
-                new ObjectForm<>(
-                        name,
-                        superGroup,
-                        surcharge,
-                        new DataAnchor<>(
-                                SurchargeGroup::setSupplier, () -> (Supplier) supplier.getSelectedItem()),
-                        new DataListener<>(SurchargeGroup::getArticles, surchargeGroupArticles::setObjects));
-        objectForm.setObjectDistinction("Die Zuschlagsgruppe");
-        objectForm.registerObjectValidator(controller::validate);
-        selectNoParent.addActionListener(e -> superGroup.setSelectedItem(null));
-        add.addActionListener(e -> controller.addSurchargeGroup());
-        edit.addActionListener(e -> controller.editSurchargeGroup());
-        delete.addActionListener(e -> controller.removeSurchargeGroup());
-        name.getDocument()
-                .addDocumentListener((DocumentChangeListener) e1 -> controller.surchargeGroupChanged());
-        surcharge
-                .getDocument()
-                .addDocumentListener((DocumentChangeListener) e1 -> controller.surchargeGroupChanged());
-        edit.setIcon(Icons.defaultIcon(FontAwesome.PENCIL, new Color(0x0095FF)));
-        add.setIcon(Icons.defaultIcon(FontAwesome.PLUS, new Color(0x58C06E)));
-        delete.setIcon(Icons.defaultIcon(FontAwesome.TRASH, new Color(0xAB2525)));
-        superGroup.addActionListener(e -> controller.surchargeGroupChanged());
-        commit.addActionListener(e -> back());
-        superGroup.setAllowNull(true);
-        objectTree.addSelectionListener(controller::surchargeGroupSelected);
-        if (Setting.IS_DEFAULT_SURCHARGES.getBooleanValue()) {
-            calculateSurcharge.setVisible(true);
-            calculateSurcharge.addActionListener(e -> controller.calculateSurchargeValues());
-        }
+  @Override
+  public void initialize(EditSurchargeGroupController controller) {
+    supplier.addActionListener(e -> controller.loadForCurrentSupplier());
+    objectForm =
+        new ObjectForm<>(
+            name,
+            superGroup,
+            surcharge,
+            new DataAnchor<>(
+                SurchargeGroup::setSupplier, () -> (Supplier) supplier.getSelectedItem()),
+            new DataListener<>(SurchargeGroup::getArticles, surchargeGroupArticles::setObjects));
+    objectForm.setObjectDistinction("Die Zuschlagsgruppe");
+    objectForm.registerObjectValidator(controller::validate);
+    selectNoParent.addActionListener(e -> superGroup.setSelectedItem(null));
+    add.addActionListener(e -> controller.addSurchargeGroup());
+    edit.addActionListener(e -> controller.editSurchargeGroup());
+    delete.addActionListener(e -> controller.removeSurchargeGroup());
+    name.getDocument()
+        .addDocumentListener((DocumentChangeListener) e1 -> controller.surchargeGroupChanged());
+    surcharge
+        .getDocument()
+        .addDocumentListener((DocumentChangeListener) e1 -> controller.surchargeGroupChanged());
+    edit.setIcon(Icons.defaultIcon(FontAwesome.PENCIL, new Color(0x0095FF)));
+    add.setIcon(Icons.defaultIcon(FontAwesome.PLUS, new Color(0x58C06E)));
+    delete.setIcon(Icons.defaultIcon(FontAwesome.TRASH, new Color(0xAB2525)));
+    superGroup.addActionListener(e -> controller.surchargeGroupChanged());
+    commit.addActionListener(e -> back());
+    superGroup.setAllowNull(true);
+    objectTree.addSelectionListener(controller::surchargeGroupSelected);
+    if (Setting.IS_DEFAULT_SURCHARGES.getBooleanValue()) {
+      calculateSurcharge.setVisible(true);
+      calculateSurcharge.addActionListener(e -> controller.calculateSurchargeValues());
     }
+  }
 
-    void setAllSuperGroups(Collection<SurchargeGroup> superGroups) {
-        superGroup.removeAllItems();
-        superGroups.forEach(superGroup::addItem);
-    }
+  void setAllSuperGroups(Collection<SurchargeGroup> superGroups) {
+    superGroup.removeAllItems();
+    superGroups.forEach(superGroup::addItem);
+  }
 
-    void setSurchargeGroups(Node<SurchargeGroup> surchargeGroups) {
-        objectTree.load(surchargeGroups);
-    }
+  void setSurchargeGroups(Node<SurchargeGroup> surchargeGroups) {
+    objectTree.load(surchargeGroups);
+  }
 
-    void setSuppliers(Iterable<Supplier> suppliers) {
-        supplier.removeAllItems();
-        suppliers.forEach(supplier::addItem);
-    }
+  void setSuppliers(Iterable<Supplier> suppliers) {
+    supplier.removeAllItems();
+    suppliers.forEach(supplier::addItem);
+  }
 
-    void setSupplier(Supplier sup) {
-        supplier.setSelectedItem(sup);
-    }
+  void setSupplier(Supplier sup) {
+    supplier.setSelectedItem(sup);
+  }
 
-    @Override
-    public @NotNull JComponent getContent() {
-        return main;
-    }
+  @Override
+  public @NotNull JComponent getContent() {
+    return main;
+  }
 
-    @Override
-    public String getTitle() {
-        return "Zuschlagsgruppen bearbeiten";
-    }
+  @Override
+  public String getTitle() {
+    return "Zuschlagsgruppen bearbeiten";
+  }
 
-    @Override
-    public IconCode getTabIcon() {
-        return FontAwesome.PERCENT;
-    }
+  @Override
+  public IconCode getTabIcon() {
+    return FontAwesome.PERCENT;
+  }
 
-    private void createUIComponents() {
-        objectTree = new ObjectTree<>();
-        name =
-                new AccessCheckingField<>(
-                        SurchargeGroup::getName, SurchargeGroup::setName, AccessCheckingField.NOT_NULL);
-        surcharge =
-                new AccessCheckingField<>(
-                        e -> e.getSurcharge() * 100,
-                        (e, v) -> e.setSurcharge(v / 100),
-                        AccessCheckingField.DOUBLE_FORMER);
-        superGroup =
-                new AccessCheckingComboBox<>(
-                        SurchargeGroup::getParent, SurchargeGroup::setParent, controller::getSurchargeGroups);
-        surchargeGroupArticles =
-                new ObjectTable<>(
-                        Columns.create("Artikelname", Article::getName),
-                        Columns.create("Kbnr.", Article::getKbNumber).withSorter(Column.NUMBER_SORTER),
-                        Columns.create("Lieferantennr.", Article::getSuppliersItemNumber)
-                                .withSorter(Column.NUMBER_SORTER),
-                        Columns.create("Sortiment", Article::getShopRange));
-    }
+  private void createUIComponents() {
+    objectTree = new ObjectTree<>();
+    name =
+        new AccessCheckingField<>(
+            SurchargeGroup::getName, SurchargeGroup::setName, AccessCheckingField.NOT_NULL);
+    surcharge =
+        new AccessCheckingField<>(
+            e -> e.getSurcharge() * 100,
+            (e, v) -> e.setSurcharge(v / 100),
+            AccessCheckingField.DOUBLE_FORMER);
+    superGroup =
+        new AccessCheckingComboBox<>(
+            SurchargeGroup::getParent, SurchargeGroup::setParent, controller::getSurchargeGroups);
+    surchargeGroupArticles =
+        new ObjectTable<>(
+            Columns.create("Artikelname", Article::getName),
+            Columns.create("Kbnr.", Article::getKbNumber).withSorter(Column.NUMBER_SORTER),
+            Columns.create("Lieferantennr.", Article::getSuppliersItemNumber)
+                .withSorter(Column.NUMBER_SORTER),
+            Columns.create("Sortiment", Article::getShopRange));
+  }
 
-    public Supplier getSelectedSupplier() {
-        return (Supplier) supplier.getSelectedItem();
-    }
+  public Supplier getSelectedSupplier() {
+    return (Supplier) supplier.getSelectedItem();
+  }
 
-    public void constraintViolationException() {
-        JOptionPane.showMessageDialog(
-                getTopComponent(),
-                "Die Zuschlagsgruppe kann nicht gelöscht werden,\nda noch Artikel auf sie verweisen!");
-    }
+  public void constraintViolationException() {
+    JOptionPane.showMessageDialog(
+        getTopComponent(),
+        "Die Zuschlagsgruppe kann nicht gelöscht werden,\nda noch Artikel auf sie verweisen!");
+  }
 
-    public boolean shouldBecomeAutoLinked() {
-        return JOptionPane.showConfirmDialog(
-                getTopComponent(),
-                "Sollen die Artikel automatisch einer anderen Zuschlagsgruppe zugeteilt werden um anschließend den Vorgang zu wiederholen?")
-                == 0;
-    }
+  public boolean shouldBecomeAutoLinked() {
+    return JOptionPane.showConfirmDialog(
+            getTopComponent(),
+            "Sollen die Artikel automatisch einer anderen Zuschlagsgruppe zugeteilt werden um anschließend den Vorgang zu wiederholen?")
+        == 0;
+  }
 
-    boolean shouldDelete() {
-        return JOptionPane.showConfirmDialog(
-                getTopComponent(), "Soll die Zuschlagsgruppe wirklich gelöscht werden?")
-                == 0;
-    }
+  boolean shouldDelete() {
+    return JOptionPane.showConfirmDialog(
+            getTopComponent(), "Soll die Zuschlagsgruppe wirklich gelöscht werden?")
+        == 0;
+  }
 
-    public void setEditAvailable(boolean b) {
-        edit.setEnabled(b);
-        delete.setEnabled(b);
-    }
+  public void setEditAvailable(boolean b) {
+    edit.setEnabled(b);
+    delete.setEnabled(b);
+  }
+
+  // @spotless:off
 
     {
 // GUI initializer generated by IntelliJ IDEA GUI Designer
@@ -176,13 +176,12 @@ public class EditSurchargeGroupView implements IView<EditSurchargeGroupControlle
         $$$setupUI$$$();
     }
 
-  /**
-   * Method generated by IntelliJ IDEA GUI Designer >>> IMPORTANT!! <<< DO NOT edit this method OR
-   * call it in your code!
-   *
-   * @noinspection ALL
-   */
-  private void $$$setupUI$$$() {
+    /** Method generated by IntelliJ IDEA GUI Designer
+     * >>> IMPORTANT!! <<<
+     * DO NOT edit this method OR call it in your code!
+     * @noinspection ALL
+     */
+    private void $$$setupUI$$$() {
         createUIComponents();
         main = new JPanel();
         main.setLayout(new GridLayoutManager(1, 2, new Insets(2, 2, 2, 2), -1, -1));
@@ -248,11 +247,10 @@ public class EditSurchargeGroupView implements IView<EditSurchargeGroupControlle
         scrollPane2.setViewportView(surchargeGroupArticles);
     }
 
-  /**
-   * @noinspection ALL
-   */
-  public JComponent $$$getRootComponent$$$() {
+    /** @noinspection ALL */
+    public JComponent $$$getRootComponent$$$() {
         return main;
     }
 
+    // @spotless:on
 }

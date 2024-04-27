@@ -33,8 +33,7 @@ import rs.groump.PermissionKey;
 
 public class PermissionView implements IView<PermissionController> {
 
-  @Getter
-  private ObjectTable<PermissionKey> permission;
+  @Getter private ObjectTable<PermissionKey> permission;
   private JPanel main;
   private AdvancedComboBox<PermissionKeyGroups> category;
   private JButton back;
@@ -43,8 +42,7 @@ public class PermissionView implements IView<PermissionController> {
   private JButton exportPermissions;
   private JButton importPermissions;
 
-  @Linked
-  private PermissionController controller;
+  @Linked private PermissionController controller;
 
   String getPermissionName() {
     return JOptionPane.showInputDialog(this, "Bitte gib den Namen der neuen Berechtigung ein");
@@ -60,12 +58,12 @@ public class PermissionView implements IView<PermissionController> {
     int i = 0;
     for (Column<PermissionKey> permissionColumn : permissionColumns) {
       int s =
-              (int)
-                      (permission
-                              .getFontMetrics(permission.getFont())
-                              .getStringBounds(permissionColumn.getName(), null)
-                              .getWidth()
-                              + 10);
+          (int)
+              (permission
+                      .getFontMetrics(permission.getFont())
+                      .getStringBounds(permissionColumn.getName(), null)
+                      .getWidth()
+                  + 10);
       permission.getColumnModel().getColumn(i).setMinWidth(s);
       permission.getColumnModel().getColumn(i).setPreferredWidth(s + (i == 0 ? 100 : 0));
       i++;
@@ -90,19 +88,19 @@ public class PermissionView implements IView<PermissionController> {
     delete.addActionListener(e -> controller.deletePermission());
     category.addActionListener(e -> controller.loadSolutions());
     category.setRenderer(
-            new DefaultListCellRenderer() {
-              @Override
-              public Component getListCellRendererComponent(
-                      JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+        new DefaultListCellRenderer() {
+          @Override
+          public Component getListCellRendererComponent(
+              JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
 
-                return super.getListCellRendererComponent(
-                        list,
-                        value instanceof Class<?> ? ((Class<?>) value).getSimpleName() : value,
-                        index,
-                        isSelected,
-                        cellHasFocus);
-              }
-            });
+            return super.getListCellRendererComponent(
+                list,
+                value instanceof Class<?> ? ((Class<?>) value).getSimpleName() : value,
+                index,
+                isSelected,
+                cellHasFocus);
+          }
+        });
     back.addActionListener(e -> back());
     exportPermissions.addActionListener(this::exportPermissions);
     importPermissions.addActionListener(this::importPermissions);
@@ -122,61 +120,61 @@ public class PermissionView implements IView<PermissionController> {
     JFileChooser jFileChooser = new JFileChooser(importPath);
     jFileChooser.setFileFilter(new FileNameExtensionFilter("Berechtigungs-JSON", "json"));
     jFileChooser.addActionListener(
-            e -> {
-              if (jFileChooser.getSelectedFile() != null) {
-                try {
-                  if (controller.importFrom(jFileChooser.getSelectedFile())) {
-                    JOptionPane.showMessageDialog(
-                            getTopComponent(), "Alle Berechtigungen erfolgreich importiert");
-                  }
-                } catch (FileNotFoundException fileNotFoundException) {
-                  JOptionPane.showMessageDialog(
-                          getTopComponent(),
-                          "Die angegebene Datei "
-                                  + jFileChooser.getSelectedFile()
-                                  + " kann nicht gefunden werden");
-                }
-                DBConnection.reload();
+        e -> {
+          if (jFileChooser.getSelectedFile() != null) {
+            try {
+              if (controller.importFrom(jFileChooser.getSelectedFile())) {
+                JOptionPane.showMessageDialog(
+                    getTopComponent(), "Alle Berechtigungen erfolgreich importiert");
               }
-            });
+            } catch (FileNotFoundException fileNotFoundException) {
+              JOptionPane.showMessageDialog(
+                  getTopComponent(),
+                  "Die angegebene Datei "
+                      + jFileChooser.getSelectedFile()
+                      + " kann nicht gefunden werden");
+            }
+            DBConnection.reload();
+          }
+        });
     jFileChooser.showDialog(getTopComponent(), "Importieren");
   }
 
   private void exportPermissions(ActionEvent event) {
     Optional<ExportTypes> typeSelection =
-            SelectionDialog.select(
-                    getTopComponent(),
-                    "In welchem Format sollen die Berechtigungen exportiert werden?",
-                    Arrays.asList(ExportTypes.JSON, ExportTypes.CSV));
+        SelectionDialog.select(
+            getTopComponent(),
+            "In welchem Format sollen die Berechtigungen exportiert werden?",
+            Arrays.asList(ExportTypes.JSON, ExportTypes.CSV));
     if (!typeSelection.isPresent()) return;
     ExportTypes type = typeSelection.get();
     JFileChooser jFileChooser = new JFileChooser();
     jFileChooser.setFileFilter(
-            new FileNameExtensionFilter(
-                    "Berechtigungs-" + type.getName(), type.getFileNameExtension()));
+        new FileNameExtensionFilter(
+            "Berechtigungs-" + type.getName(), type.getFileNameExtension()));
     jFileChooser.addActionListener(
-            e -> {
-              if (jFileChooser.getSelectedFile() != null) {
-                try {
-                  switch (type) {
-                    case JSON:
-                      controller.exportTo(jFileChooser.getSelectedFile());
-                      break;
-                    case CSV:
-                      controller.exportCsv(jFileChooser.getSelectedFile());
-                      break;
-                    default:
-                      throw new IllegalStateException("Unexpected value: " + type);
-                  }
-                } catch (IOException ioException) {
-                  JOptionPane.showMessageDialog(
-                          getTopComponent(),
-                          "Auf die angegebene Datei "
-                                  + jFileChooser.getSelectedFile()
-                                  + " kann nicht zugegriffen werden");
-                }
+        e -> {
+          if (jFileChooser.getSelectedFile() != null) {
+            try {
+              switch (type) {
+                case JSON:
+                  controller.exportTo(jFileChooser.getSelectedFile());
+                  break;
+                case CSV:
+                  controller.exportCsv(jFileChooser.getSelectedFile());
+                  break;
+                default:
+                  throw new IllegalStateException("Unexpected value: " + type);
               }
-            });
+            } catch (IOException ioException) {
+              JOptionPane.showMessageDialog(
+                  getTopComponent(),
+                  "Auf die angegebene Datei "
+                      + jFileChooser.getSelectedFile()
+                      + " kann nicht zugegriffen werden");
+            }
+          }
+        });
     jFileChooser.showDialog(getTopComponent(), "Speichern");
   }
 
@@ -187,22 +185,22 @@ public class PermissionView implements IView<PermissionController> {
 
   public void nameIsNotUnique() {
     JOptionPane.showMessageDialog(
-            getTopComponent(),
-            "Der gewählte Name ist bereits vergeben,\n" + "bitte wähle einen anderen.");
+        getTopComponent(),
+        "Der gewählte Name ist bereits vergeben,\n" + "bitte wähle einen anderen.");
   }
 
   public boolean permissionIsInUse() {
     return JOptionPane.showConfirmDialog(
             getTopComponent(),
             "Die Berechtigung ist noch an Nutzer vergeben,\n"
-                    + "soll allen Nutzern die Berechtigung entzogen werden\n"
-                    + "und die Berechtigung anschließend gelöscht werden?")
-            == 0;
+                + "soll allen Nutzern die Berechtigung entzogen werden\n"
+                + "und die Berechtigung anschließend gelöscht werden?")
+        == 0;
   }
 
   public void successfulDeleted() {
     JOptionPane.showMessageDialog(
-            getTopComponent(), "Die Berechtigung wurde erfolgreich gelöscht.");
+        getTopComponent(), "Die Berechtigung wurde erfolgreich gelöscht.");
   }
 
   @Override
@@ -214,19 +212,21 @@ public class PermissionView implements IView<PermissionController> {
     JPanel jPanel = new JPanel();
     jPanel.add(new JLabel("Welche Berechtigung soll gelöscht werden?"));
     AdvancedComboBox<Permission> permissionAdvancedComboBox =
-            new AdvancedComboBox<>(Permission::getName);
+        new AdvancedComboBox<>(Permission::getName);
     allPermissions.stream()
-            .filter(e -> !e.getName().startsWith("@"))
-            .forEach(permissionAdvancedComboBox::addItem);
+        .filter(e -> !e.getName().startsWith("@"))
+        .forEach(permissionAdvancedComboBox::addItem);
     jPanel.add(permissionAdvancedComboBox);
     if (JOptionPane.showConfirmDialog(
             getTopComponent(), jPanel, "Berechtigung auswählen", JOptionPane.OK_CANCEL_OPTION)
-            == 0) {
+        == 0) {
       return permissionAdvancedComboBox.getSelected().orElseThrow(CancellationException::new);
     } else {
       throw new CancellationException();
     }
   }
+
+  // @spotless:off
 
   {
 // GUI initializer generated by IntelliJ IDEA GUI Designer
@@ -235,10 +235,9 @@ public class PermissionView implements IView<PermissionController> {
     $$$setupUI$$$();
   }
 
-  /**
-   * Method generated by IntelliJ IDEA GUI Designer >>> IMPORTANT!! <<< DO NOT edit this method OR
-   * call it in your code!
-   *
+  /** Method generated by IntelliJ IDEA GUI Designer
+   * >>> IMPORTANT!! <<<
+   * DO NOT edit this method OR call it in your code!
    * @noinspection ALL
    */
   private void $$$setupUI$$$() {
@@ -283,11 +282,10 @@ public class PermissionView implements IView<PermissionController> {
     panel2.add(category, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
   }
 
-  /**
-   * @noinspection ALL
-   */
+  /** @noinspection ALL */
   public JComponent $$$getRootComponent$$$() {
     return main;
   }
 
+  // @spotless:on
 }
