@@ -27,7 +27,7 @@ public class MetaModelProcessor extends AbstractProcessor {
             StringBuilder stringBuilder = new StringBuilder();
             writeClass(stringBuilder, element);
             try {
-                JavaFileObject sourceFile = processingEnv.getFiler().createSourceFile(element.getSimpleName() + "_");
+                JavaFileObject sourceFile = processingEnv.getFiler().createSourceFile(processingEnv.getElementUtils().getPackageOf(element).getQualifiedName()+"."+element.getSimpleName() + "_");
                 PrintWriter pw = new PrintWriter(sourceFile.openWriter());
                 pw.write(stringBuilder.toString());
                 pw.flush();
@@ -47,7 +47,7 @@ public class MetaModelProcessor extends AbstractProcessor {
         //import FieldIdentifier
         sb.append("import ").append(FIELD_IDENTIFIER_CLASS).append(";\n");
         //write same class name as representing class with an _ appended and opening class
-        sb.append(" public class ").append(element.getSimpleName()).append("_ {").append("\n");
+        sb.append(" public abstract class ").append(element.getSimpleName()).append("_ {").append("\n");
         //write each Field to the class file
         writeMembers(sb, element);
         //close class
