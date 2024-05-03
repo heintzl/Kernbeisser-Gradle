@@ -310,4 +310,11 @@ public class PermissionSet implements Set<PermissionKey> {
     }
     return changed;
   }
+  
+  @Override
+  public boolean equals(Object obj) {
+    if(obj.getClass() != getClass()) return false;
+    PermissionSet other = (PermissionSet) obj;
+    return Arrays.equals(other.bits, this.bits);
+  }
 }
