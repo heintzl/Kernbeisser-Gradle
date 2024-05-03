@@ -95,7 +95,6 @@ public class PermissionAssignmentController
 
   @Override
   protected void closed() {
-    model.setPermission(
-        model.getRecent().get(), user.getModel().getLoaded(), () -> true);
+    applyChanges();
   }
 }
