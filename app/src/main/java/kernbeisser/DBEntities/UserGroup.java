@@ -10,9 +10,6 @@ import java.util.stream.Collectors;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.PredicateFactory;
 import kernbeisser.DBConnection.QueryBuilder;
-import kernbeisser.DBEntities.Transaction_;
-import kernbeisser.DBEntities.User_;
-import kernbeisser.DBEntities.UserGroup_;
 import kernbeisser.Exeptions.InconsistentUserGroupValueException;
 import kernbeisser.Exeptions.MissingFullMemberException;
 import kernbeisser.Security.Access.UserRelated;
@@ -113,8 +110,7 @@ public class UserGroup implements UserRelated {
       boolean withNames, Map<UserGroup, Double> overrideValues) {
     UserGroup result = new UserGroup();
     result.membersAsString =
-        QueryBuilder.select(
-                User.class, User_.id, User_.firstName, User_.surname, User.IS_FULL_USER)
+        QueryBuilder.select(User.class, User_.id, User_.firstName, User_.surname, User.IS_FULL_USER)
             .where(User_.userGroup.eq(this))
             .getResultList()
             .stream()
@@ -186,8 +182,7 @@ public class UserGroup implements UserRelated {
                 Transaction_.toUserGroup.child(UserGroup_.id),
                 Transaction_.value)
             .where(
-                PredicateFactory.lessOrEq(
-                    Transaction_.date, asExpression(dateOfLastTransaction)))
+                PredicateFactory.lessOrEq(Transaction_.date, asExpression(dateOfLastTransaction)))
             .getResultList(em);
     Map<Integer, Double> userGroupIdValueMap = new HashMap<>(200);
     for (Tuple tuple : transactionsUntilDate) {
@@ -219,8 +214,7 @@ public class UserGroup implements UserRelated {
     et.begin();
     Map<Integer, Double> overValueTransactionSumThreshold = new HashMap<>();
     Map<Integer, Double> valueMap = getValueMapAt(em, Instant.now());
-    for (Tuple tuple :
-        QueryBuilder.select(UserGroup_.id, UserGroup_.value).getResultList()) {
+    for (Tuple tuple : QueryBuilder.select(UserGroup_.id, UserGroup_.value).getResultList()) {
       Integer id = tuple.get(0, Integer.class);
       Double value = tuple.get(1, Double.class);
       Double transactionSum = valueMap.getOrDefault(id, 0.0);

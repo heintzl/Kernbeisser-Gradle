@@ -16,7 +16,6 @@ import kernbeisser.Windows.CollectionView.CollectionController;
 import kernbeisser.Windows.CollectionView.CollectionView;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
-import rs.groump.AccessDeniedException;
 import rs.groump.Key;
 import rs.groump.PermissionKey;
 
@@ -24,18 +23,14 @@ public class PermissionAssignmentController
     extends Controller<PermissionAssignmentView, PermissionAssignmentModel> {
 
   @Linked private final CollectionController<User> user;
-  private boolean onlyCashier = false;
 
-  @Key(PermissionKey.ACTION_OPEN_PERMISSION_ASSIGNMENT)
-  public PermissionAssignmentController() throws AccessDeniedException {
+  @Key({
+    PermissionKey.ACTION_OPEN_PERMISSION_ASSIGNMENT,
+    PermissionKey.USER_PERMISSIONS_WRITE,
+    PermissionKey.USER_PERMISSIONS_READ
+  })
+  public PermissionAssignmentController() {
     super(new PermissionAssignmentModel());
-    user = getUserSource();
-  }
-
-  @Key(PermissionKey.ACTION_GRANT_CASHIER_PERMISSION)
-  private PermissionAssignmentController(boolean dummy) throws AccessDeniedException {
-    super(new PermissionAssignmentModel());
-    this.onlyCashier = true;
     user = getUserSource();
   }
 
@@ -51,13 +46,11 @@ public class PermissionAssignmentController
   @Override
   public void fillView(PermissionAssignmentView permissionAssignmentView) {
     permissionAssignmentView.setPermissions(
-        model.getPermissions().stream()
+        PermissionAssignmentModel.getCurrentGrantPermissions().stream()
             .filter(
                 p ->
                     (!p.getName()
-                            .matches(
-                                "@KEY_PERMISSION|@IN_RELATION_TO_OWN_USER|@IMPORT|@APPLICATION")
-                        && (p.getName().equals("@CASHIER") || !onlyCashier)))
+                        .matches("@KEY_PERMISSION|@IN_RELATION_TO_OWN_USER|@IMPORT|@APPLICATION")))
             .collect(Collectors.toList()));
     user.getView().addSearchbox(CollectionView.BOTH);
     JCheckBox toggleClipBoardFilter = new JCheckBox("Auf Zwischenablage filtern");
@@ -97,17 +90,11 @@ public class PermissionAssignmentController
     model.setPermission(
         model.getRecent().get(),
         user.getModel().getLoaded(),
-        () -> getView().confirmChanges(),
-        onlyCashier);
-  }
-
-  public static PermissionAssignmentController cashierPermissionController() {
-    return new PermissionAssignmentController(true);
+        () -> getView().confirmChanges());
   }
 
   @Override
   protected void closed() {
-    model.setPermission(
-        model.getRecent().get(), user.getModel().getLoaded(), () -> true, onlyCashier);
+    applyChanges();
   }
 }

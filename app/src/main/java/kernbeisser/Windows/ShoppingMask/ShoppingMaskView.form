@@ -845,6 +845,12 @@
                     </properties>
                     <border type="none"/>
                     <children>
+                      <component id="cf02f" class="javax.swing.JButton" binding="editPost">
+                        <constraints/>
+                        <properties>
+                          <text value="Popup bearbeiten"/>
+                        </properties>
+                      </component>
                       <component id="f8a0e" class="javax.swing.JButton" binding="cancelSalesSession">
                         <constraints/>
                         <properties>

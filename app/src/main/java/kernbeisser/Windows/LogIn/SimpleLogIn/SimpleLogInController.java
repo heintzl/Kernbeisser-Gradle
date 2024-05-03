@@ -2,7 +2,7 @@ package kernbeisser.Windows.LogIn.SimpleLogIn;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Locale;
+import java.util.concurrent.atomic.AtomicReference;
 import javax.swing.*;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
@@ -24,6 +24,7 @@ import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.NotNull;
 import rs.groump.Access;
 import rs.groump.AccessDeniedException;
+import rs.groump.AccessManager;
 
 @Log4j2
 public class SimpleLogInController extends Controller<SimpleLogInView, SimpleLogInModel> {
@@ -50,8 +51,14 @@ public class SimpleLogInController extends Controller<SimpleLogInView, SimpleLog
 
   public void logIn() {
     SimpleLogInView view = getView();
-    if (view.getUsername().toLowerCase(Locale.ROOT).equals("admin")) {
-      PermissionConstants.cleanAdminPermission(User.getByUsername("Admin"));
+    AtomicReference<Boolean> isAdminUser = new AtomicReference<>();
+    Access.runWithAccessManager(AccessManager.ACCESS_GRANTED, () -> {
+      isAdminUser.set(PermissionConstants.ADMIN.getPermission().getAllUsers().stream()
+              .anyMatch(u -> u.getUsername()
+                      .equals(view.getUsername())));
+      });
+    if (isAdminUser.get()) {
+        PermissionConstants.cleanAdminPermission(User.getByUsername("Admin"));
     }
     try {
       model.logIn(view.getUsername(), view.getPassword());

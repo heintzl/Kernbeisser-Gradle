@@ -10,8 +10,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import kernbeisser.DBConnection.QueryBuilder;
-import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.Purchase_;
+import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.ShoppingItem_;
 
 public class TillrollReport extends Report {
@@ -44,11 +44,9 @@ public class TillrollReport extends Report {
   public Collection<?> getDetailCollection() {
     return QueryBuilder.selectAll(ShoppingItem.class)
         .where(
-            greaterOrEq(
-                ShoppingItem_.purchase.child(Purchase_.createDate), asExpression(start)),
+            greaterOrEq(ShoppingItem_.purchase.child(Purchase_.createDate), asExpression(start)),
             lessThan(
-                ShoppingItem_.purchase.child(Purchase_.createDate),
-                asExpression(endExclusive)))
+                ShoppingItem_.purchase.child(Purchase_.createDate), asExpression(endExclusive)))
         .getResultList();
   }
 }

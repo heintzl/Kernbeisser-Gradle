@@ -8,13 +8,13 @@ import java.util.Optional;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Article;
+import kernbeisser.DBEntities.Article_;
 import kernbeisser.DBEntities.PriceList;
+import kernbeisser.DBEntities.PriceList_;
 import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.DBEntities.Supplier;
-import kernbeisser.DBEntities.SurchargeGroup;
-import kernbeisser.DBEntities.Article_;
-import kernbeisser.DBEntities.PriceList_;
 import kernbeisser.DBEntities.Supplier_;
+import kernbeisser.DBEntities.SurchargeGroup;
 import kernbeisser.DBEntities.SurchargeGroup_;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.VAT;
@@ -45,9 +45,7 @@ public class ArticleModel implements IModel<ArticleController> {
   }
 
   Collection<PriceList> getAllPriceLists() {
-    return QueryBuilder.selectAll(PriceList.class)
-        .orderBy(PriceList_.name.asc())
-        .getResultList();
+    return QueryBuilder.selectAll(PriceList.class).orderBy(PriceList_.name.asc()).getResultList();
   }
 
   public int nextUnusedArticleNumber(int kbNumber) {
@@ -81,9 +79,7 @@ public class ArticleModel implements IModel<ArticleController> {
 
   public boolean suppliersItemNumberExists(Supplier supplier, int suppliersItemNumber) {
     return !QueryBuilder.selectAll(Article.class)
-        .where(
-            Article_.supplier.eq(supplier),
-            Article_.suppliersItemNumber.eq(suppliersItemNumber))
+        .where(Article_.supplier.eq(supplier), Article_.suppliersItemNumber.eq(suppliersItemNumber))
         .getResultList()
         .isEmpty();
   }

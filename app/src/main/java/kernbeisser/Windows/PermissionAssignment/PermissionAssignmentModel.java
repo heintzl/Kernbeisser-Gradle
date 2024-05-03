@@ -12,17 +12,17 @@ import kernbeisser.CustomComponents.ClipboardFilter;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Permission;
-import kernbeisser.DBEntities.User_;
 import kernbeisser.DBEntities.User;
+import kernbeisser.DBEntities.User_;
+import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Useful.Tools;
+import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
 import lombok.Setter;
 import org.apache.logging.log4j.util.Supplier;
 import rs.groump.Access;
 import rs.groump.AccessManager;
-import rs.groump.Key;
-import rs.groump.PermissionKey;
 
 public class PermissionAssignmentModel implements IModel<PermissionAssignmentController> {
 
@@ -60,14 +60,14 @@ public class PermissionAssignmentModel implements IModel<PermissionAssignmentCon
     return assignedUsers(em, permission);
   }
 
-  @Key(PermissionKey.ACTION_GRANT_CASHIER_PERMISSION)
-  private void checkGrantCashierPermission() {}
+  public static boolean isAccessible() {
+    return !getCurrentGrantPermissions().isEmpty();
+  }
 
   public void setPermission(
       Permission permission,
       Collection<User> loaded,
-      Supplier<Boolean> confirm,
-      boolean ignoreUserPermission) {
+      Supplier<Boolean> confirm) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
@@ -77,27 +77,20 @@ public class PermissionAssignmentModel implements IModel<PermissionAssignmentCon
     loaded.removeAll(hadBefore);
     hadBefore.removeAll(notToRemove);
     Collection<User> willGet = loaded.stream().map(e -> em.find(User.class, e.getId())).toList();
-    boolean skipUserAccessChecking =
-        ignoreUserPermission && Tools.canInvoke(this::checkGrantCashierPermission);
-    Access.runWithAccessManager(
-        skipUserAccessChecking ? AccessManager.ACCESS_GRANTED : Access.getAccessManager(),
-        () -> {
-          if (!(hadBefore.isEmpty() && willGet.isEmpty()) && confirm.get()) {
-            hadBefore.stream()
-                .peek(e -> e.getPermissions().remove(permission))
-                .forEach(em::persist);
-            willGet.stream().peek(e -> e.getPermissions().add(permission)).forEach(em::persist);
-          }
-          em.flush();
-        });
+    if (!(hadBefore.isEmpty() && willGet.isEmpty()) && confirm.get()) {
+      hadBefore.stream()
+          .peek(e -> e.getPermissions().remove(permission))
+          .forEach(em::persist);
+      willGet.stream().peek(e -> e.getPermissions().add(permission)).forEach(em::persist);
+    }
+    em.flush();
   }
 
   private Collection<User> getUserRowFilter(String[] rows) {
     List<String> userNames =
         Arrays.stream(rows).map(r -> r.replace("\t", "&")).collect(Collectors.toList());
     return QueryBuilder.selectAll(User.class)
-        .where(
-            concat(concat(User_.surname, asExpression("&")), User_.firstName).in(userNames))
+        .where(concat(concat(User_.surname, asExpression("&")), User_.firstName).in(userNames))
         .getResultList();
   }
 
@@ -109,5 +102,24 @@ public class PermissionAssignmentModel implements IModel<PermissionAssignmentCon
     showFilterExplanation = false;
     return new ClipboardFilter<>(
         this::getUserRowFilter, explanation, "clpBoardFilterPermissionAssignment");
+  }
+
+  public static List<Permission> getCurrentGrantPermissions() {
+    final List<Permission> result = new ArrayList<>();
+    Access.runWithAccessManager(
+        AccessManager.ACCESS_GRANTED,
+        () -> {
+          if (LogInModel.getLoggedIn()
+              .getPermissions()
+              .contains(PermissionConstants.ADMIN.getPermission())) {
+            result.addAll(DBConnection.getAll(Permission.class));
+          } else {
+            result.addAll(
+                LogInModel.getLoggedIn().getPermissions().stream()
+                    .flatMap(p -> p.getGrantees().stream())
+                    .collect(Collectors.toList()));
+          }
+        });
+    return result;
   }
 }

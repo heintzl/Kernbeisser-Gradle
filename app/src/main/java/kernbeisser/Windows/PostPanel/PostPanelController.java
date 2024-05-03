@@ -1,5 +1,6 @@
 package kernbeisser.Windows.PostPanel;
 
+import java.util.function.Consumer;
 import kernbeisser.Enums.PostContext;
 import kernbeisser.Windows.MVC.Controller;
 import org.jetbrains.annotations.NotNull;
@@ -7,6 +8,8 @@ import org.jetbrains.annotations.NotNull;
 public class PostPanelController extends Controller<PostPanelView, PostPanelModel> {
 
   boolean editing = false;
+  boolean confirmation = false;
+  Consumer<Boolean> confirmationConsumer;
 
   public PostPanelController(PostContext postContext) {
     super(new PostPanelModel(postContext));
@@ -45,5 +48,19 @@ public class PostPanelController extends Controller<PostPanelView, PostPanelMode
 
   public void saveContent(String htmlContent) {
     model.saveContent(htmlContent);
+  }
+
+  public void back(boolean confirmed) {
+    if (confirmation) {
+      confirmationConsumer.accept(confirmed);
+    }
+    getView().back();
+  }
+
+  public PostPanelController withConfirmation(Consumer<Boolean> confirmationConsumer) {
+    getView().activateConfirmation();
+    confirmation = true;
+    this.confirmationConsumer = confirmationConsumer;
+    return this;
   }
 }

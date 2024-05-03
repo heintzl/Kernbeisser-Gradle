@@ -7,7 +7,6 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.QueryBuilder;
-import kernbeisser.DBEntities.SystemSetting_;
 import kernbeisser.VersionIntegrationTools.Version;
 import lombok.Cleanup;
 import lombok.EqualsAndHashCode;

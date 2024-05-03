@@ -66,6 +66,9 @@ public class PermissionKeys {
             .put("ACTION_OPEN_APPLICATION_SETTINGS", "Programmeinstellungen bearbeiten")
             .put("ACTION_OPEN_PERMISSION_MANAGEMENT", "Berechtigungen bearbeiten")
             .put("ACTION_OPEN_PERMISSION_ASSIGNMENT", "Berechtigungen zuweisen")
+            .put(
+                "ACTION_OPEN_PERMISSION_GRANT_ASSIGNMENT",
+                "Berechtigungen zur Berechtigungsweitergabe zuweisen")
             .put("ACTION_OPEN_SPECIAL_PRICE_EDITOR", "Aktionsartikel bearbeiten")
             .put("ACTION_OPEN_TRANSACTION", "Guthaben überweisen")
             .put("ACTION_OPEN_ACCOUNTING_REPORTS", "Berichte")
@@ -100,6 +103,7 @@ public class PermissionKeys {
             .put("ACTION_OPEN_INVENTORY", "Inventur starten")
             .put("ACTION_OPEN_CATALOG_IMPORT", "Kornkraft Katalog importieren")
             .put("POST_ON_SALE_SESSION_CLOSE", "Nachricht bei LD-Abschluss bearbeiten")
+            .put("POST_ON_SHOPPINGMASK_CHECKOUT", "Nachricht vor Bezahlen bearbeiten")
             .build();
     return permissionHints.getOrDefault(permissionName, permissionName);
   }

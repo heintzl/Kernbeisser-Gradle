@@ -7,9 +7,9 @@ import java.util.function.Supplier;
 import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Article;
+import kernbeisser.DBEntities.Article_;
 import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.DBEntities.Shelf;
-import kernbeisser.DBEntities.Article_;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Forms.FormController;
 import kernbeisser.Forms.ObjectForm.Components.Source;
@@ -26,8 +26,7 @@ public class ShelfController extends FormController<ShelfView, ShelfModel, Shelf
   }
 
   public static Source<Article> getAllArticleSource() {
-    return () ->
-        QueryBuilder.selectAll(Article.class).orderBy(Article_.name.asc()).getResultList();
+    return () -> QueryBuilder.selectAll(Article.class).orderBy(Article_.name.asc()).getResultList();
   }
 
   @Override

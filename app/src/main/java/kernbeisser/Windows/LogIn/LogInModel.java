@@ -6,14 +6,13 @@ import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.NoResultException;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.QueryBuilder;
-import kernbeisser.DBEntities.User_;
 import kernbeisser.DBEntities.User;
+import kernbeisser.DBEntities.User_;
 import kernbeisser.Exeptions.CannotLogInException;
 import kernbeisser.Exeptions.PermissionRequired;
 import kernbeisser.Security.Access.UserRelated;
 import kernbeisser.Security.Access.UserRelatedAccessManager;
 import kernbeisser.Useful.Tools;
-import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
 import lombok.Getter;
 import lombok.Setter;
@@ -44,9 +43,7 @@ public final class LogInModel {
     et.begin();
     try {
       User user =
-          QueryBuilder.selectAll(User.class)
-              .where(User_.username.eq(username))
-              .getSingleResult();
+          QueryBuilder.selectAll(User.class).where(User_.username.eq(username)).getSingleResult();
       if (BCrypt.verifyer().verify(password, user.getPassword().toCharArray()).verified) {
         loggedInId = user.getId();
         userRelatedAccessManager = new UserRelatedAccessManager(getLoggedIn());

@@ -1,6 +1,5 @@
 package kernbeisser.VersionIntegrationTools.UpdatingTools;
 
-
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import java.util.Collection;
@@ -10,9 +9,9 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.CatalogEntry;
+import kernbeisser.DBEntities.CatalogEntry_;
 import kernbeisser.DBEntities.PreOrder;
 import kernbeisser.DBEntities.PreOrder_;
-import kernbeisser.DBEntities.CatalogEntry_;
 import kernbeisser.VersionIntegrationTools.VersionUpdatingTool;
 import lombok.Cleanup;
 

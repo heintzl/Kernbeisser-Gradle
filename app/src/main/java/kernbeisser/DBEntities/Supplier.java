@@ -9,8 +9,6 @@ import java.time.Instant;
 import java.util.Collection;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.QueryBuilder;
-import kernbeisser.DBEntities.Supplier_;
-import kernbeisser.DBEntities.SurchargeGroup_;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
 import kernbeisser.Useful.ActuallyCloneable;

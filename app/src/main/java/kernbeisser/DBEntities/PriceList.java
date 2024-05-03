@@ -19,8 +19,6 @@ import java.util.List;
 import kernbeisser.CustomComponents.ObjectTree.Node;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.QueryBuilder;
-import kernbeisser.DBEntities.Article_;
-import kernbeisser.DBEntities.PriceList_;
 import kernbeisser.Forms.ObjectForm.Components.Source;
 import kernbeisser.Useful.Tools;
 import lombok.*;

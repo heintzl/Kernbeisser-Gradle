@@ -16,7 +16,6 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.ExpressionFactory;
 import kernbeisser.DBConnection.PredicateFactory;
 import kernbeisser.DBConnection.QueryBuilder;
-import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.TransactionType;
@@ -48,11 +47,9 @@ public class User implements Serializable, UserRelated, ActuallyCloneable {
       in(upper(User_.username), "KERNBEISSER", "ADMIN");
 
   public static final PredicateFactory<User> IS_FULL_USER =
-      isMember(
-          asExpression(PermissionConstants.FULL_MEMBER.getPermission()), User_.permissions);
+      isMember(asExpression(PermissionConstants.FULL_MEMBER.getPermission()), User_.permissions);
   public static final PredicateFactory<User> IS_TRAIL_USER =
-      isMember(
-          asExpression(PermissionConstants.TRIAL_MEMBER.getPermission()), User_.permissions);
+      isMember(asExpression(PermissionConstants.TRIAL_MEMBER.getPermission()), User_.permissions);
   public static final String GENERIC_USERS_CONDITION =
       "upper(username) IN ('KERNBEISSER', 'ADMIN')";
 
@@ -209,8 +206,7 @@ public class User implements Serializable, UserRelated, ActuallyCloneable {
     int memberCount = 1;
     // orders all users by ug, then looks for invalid userGroups
     for (Tuple tuple :
-        QueryBuilder.select(
-                User.class, User_.userGroup.child(UserGroup_.id), User.IS_FULL_USER)
+        QueryBuilder.select(User.class, User_.userGroup.child(UserGroup_.id), User.IS_FULL_USER)
             .orderBy(User_.userGroup.child(UserGroup_.id).asc())
             .getResultList()) {
       int ugId = Objects.requireNonNull(tuple.get(0, Integer.class));
@@ -522,10 +518,7 @@ public class User implements Serializable, UserRelated, ActuallyCloneable {
 
   public Collection<Purchase> getAllPurchases() {
     return QueryBuilder.selectAll(Purchase.class)
-        .where(
-            Purchase_.session
-                .child(SaleSession_.customer.child(User_.userGroup))
-                .eq(userGroup))
+        .where(Purchase_.session.child(SaleSession_.customer.child(User_.userGroup)).eq(userGroup))
         .getResultList();
   }
 

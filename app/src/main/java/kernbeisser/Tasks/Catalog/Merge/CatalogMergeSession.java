@@ -18,12 +18,12 @@ import java.util.stream.Stream;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Article;
+import kernbeisser.DBEntities.Article_;
 import kernbeisser.DBEntities.CatalogEntry;
 import kernbeisser.DBEntities.IgnoredDifference;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.DBEntities.SurchargeGroup;
-import kernbeisser.DBEntities.Article_;
 import kernbeisser.Enums.ShopRange;
 import kernbeisser.Tasks.Catalog.CatalogImporter;
 import lombok.Getter;
@@ -99,9 +99,7 @@ public class CatalogMergeSession {
             UniqueValidator.allowNull(
                 CatalogEntry::getEanLadenEinheit,
                 QueryBuilder.select(Article_.barcode)
-                    .where(
-                        Article_.supplier.eq(kkSupplier).not(),
-                        Article_.barcode.isNull().not())
+                    .where(Article_.supplier.eq(kkSupplier).not(), Article_.barcode.isNull().not())
                     .getResultList()));
     return mapToArticleMerge(
             readSource(source).filter(e -> !uniqueValidator.brakesUniqueConstraints(e)),
@@ -203,8 +201,7 @@ public class CatalogMergeSession {
 
   public void pushToDB(Iterator<ArticleMerge> articleMerges, boolean checkVerified) {
     Session session = em.unwrap(Session.class);
-    HashSet<Long> barcodes =
-        new HashSet<>(QueryBuilder.select(Article_.barcode).getResultList(em));
+    HashSet<Long> barcodes = new HashSet<>(QueryBuilder.select(Article_.barcode).getResultList(em));
     UniqueNumberIncrementingFactory kbNumberFactory =
         new UniqueNumberIncrementingFactory(
             new HashSet<>(QueryBuilder.select(Article_.kbNumber).getResultList()), FILL_OFFSET);
