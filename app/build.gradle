@@ -6,6 +6,11 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '7.0.0'
     id("io.freefair.lombok") version "8.6"
 }
+spotless {
+    java {
+        toggleOffOn()
+    }
+}
 
 group 'Kernbeisser'
 version '2.0'

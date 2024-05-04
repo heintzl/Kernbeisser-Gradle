@@ -65,9 +65,7 @@ public class PermissionAssignmentModel implements IModel<PermissionAssignmentCon
   }
 
   public void setPermission(
-      Permission permission,
-      Collection<User> loaded,
-      Supplier<Boolean> confirm) {
+      Permission permission, Collection<User> loaded, Supplier<Boolean> confirm) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
@@ -78,9 +76,7 @@ public class PermissionAssignmentModel implements IModel<PermissionAssignmentCon
     hadBefore.removeAll(notToRemove);
     Collection<User> willGet = loaded.stream().map(e -> em.find(User.class, e.getId())).toList();
     if (!(hadBefore.isEmpty() && willGet.isEmpty()) && confirm.get()) {
-      hadBefore.stream()
-          .peek(e -> e.getPermissions().remove(permission))
-          .forEach(em::persist);
+      hadBefore.stream().peek(e -> e.getPermissions().remove(permission)).forEach(em::persist);
       willGet.stream().peek(e -> e.getPermissions().add(permission)).forEach(em::persist);
     }
     em.flush();
