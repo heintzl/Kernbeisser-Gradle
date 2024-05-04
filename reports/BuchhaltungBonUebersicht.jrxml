@@ -26,7 +26,7 @@
 		<![CDATA[]]>
 	</queryString>
 	<field name="createDate" class="java.time.Instant"/>
-	<field name="id" class="java.lang.Long"/>
+	<field name="bonNo" class="java.lang.Long"/>
 	<field name="customerIdentification" class="java.lang.String"/>
 	<field name="sum" class="java.lang.Double"/>
 	<field name="session.sessionTypeName" class="java.lang.String"/>
@@ -154,7 +154,7 @@
 				<textElement textAlignment="Right">
 					<font fontName="DejaVu Sans Condensed"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{id}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{bonNo}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="ScaleFont">
 				<reportElement x="44" y="-9" width="326" height="14" uuid="b5b27eb9-28ac-4c0b-8de8-d2eff2aaa9a8">

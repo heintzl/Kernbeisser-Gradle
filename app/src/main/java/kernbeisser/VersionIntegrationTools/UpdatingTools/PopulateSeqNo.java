@@ -14,7 +14,8 @@ public class PopulateSeqNo implements VersionUpdatingTool {
     EntityTransaction et = em.getTransaction();
     et.begin();
     em.createNativeQuery(
-            "UPDATE Transaction t1 Set seqNo = (SELECT count(1) FROM Transaction t2 WHERE t2.id < t1.id)")
+            "UPDATE Transaction t1 SET seqNo = (SELECT count(*) FROM Transaction t2 WHERE t2.id < t1.id)")
         .executeUpdate();
+    em.createNativeQuery("UPDATE Purchase SET bonNo = id").executeUpdate();
   }
 }

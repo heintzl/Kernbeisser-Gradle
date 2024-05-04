@@ -5,10 +5,8 @@ import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.PersistenceException;
 import java.util.List;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntities.Purchase;
-import kernbeisser.DBEntities.SaleSession;
-import kernbeisser.DBEntities.ShoppingItem;
-import kernbeisser.DBEntities.Transaction;
+import kernbeisser.DBConnection.QueryBuilder;
+import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.ShoppingItemSum;
 import kernbeisser.Enums.UserSetting;
 import kernbeisser.Enums.VAT;
@@ -85,17 +83,24 @@ public class PayModel implements IModel<PayController> {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     EntityTransaction et = em.getTransaction();
     try {
+      long lastBonNo =
+          QueryBuilder.select(Purchase_.bonNo)
+              .orderBy(Purchase_.bonNo.desc())
+              .limit(1)
+              .getSingleResultOptional()
+              .orElse(0L);
       et.begin();
       exchangeMoney(em);
       Purchase purchase = new Purchase();
       purchase.setSession(saleSession);
+      purchase.setBonNo(lastBonNo + 1);
       em.persist(saleSession);
       em.persist(purchase);
       persistShoppingCartAndRectifyIndexes(em, purchase);
       et.commit();
-      return purchase.getId();
+      return purchase.getBonNo();
     } finally {
-      // roles back any made changes when the payment was interrupted
+      // rolls back any made changes when the payment was interrupted
       // only happens if the code doesn't reach the commit statement
       if (et.isActive()) {
         et.rollback();
@@ -110,16 +115,17 @@ public class PayModel implements IModel<PayController> {
     transferCompleted.run();
   }
 
-  private static InvoiceReport getInvoiceReport(long purchaseId) {
+  private static InvoiceReport getInvoiceReport(long bonNo) {
+    Purchase purchase = QueryBuilder.getByProperty(Purchase_.bonNo, bonNo);
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    return new InvoiceReport(em.find(Purchase.class, purchaseId));
+    return new InvoiceReport(purchase);
   }
 
-  public static void print(long purchaseId) {
-    getInvoiceReport(purchaseId)
+  public static void print(long bonNo) {
+    getInvoiceReport(bonNo)
         .sendToPrinter("Bon wird erstellt", UnexpectedExceptionHandler::showUnexpectedErrorWarning);
   }
 
