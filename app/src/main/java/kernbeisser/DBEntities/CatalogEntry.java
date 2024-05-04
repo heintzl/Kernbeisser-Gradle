@@ -252,7 +252,8 @@ public class CatalogEntry implements ActuallyCloneable {
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    em.createQuery("DELETE FROM CatalogEntry").executeUpdate();
+    em.createQuery(em.getCriteriaBuilder().createCriteriaDelete(CatalogEntry.class))
+        .executeUpdate();
   }
 
   public boolean matches(String s) {
