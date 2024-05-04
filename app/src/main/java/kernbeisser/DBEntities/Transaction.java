@@ -34,8 +34,9 @@ import rs.groump.AccessManager;
 import rs.groump.Key;
 import rs.groump.PermissionKey;
 
-@Table(uniqueConstraints = {@UniqueConstraint(name = "UX_transaction_seqNo", columnNames = "seqNo")},
-        indexes = {@Index(name = "IX_transaction_date", columnList = "date")})
+@Table(
+    uniqueConstraints = {@UniqueConstraint(name = "UX_transaction_seqNo", columnNames = "seqNo")},
+    indexes = {@Index(name = "IX_transaction_date", columnList = "date")})
 @Entity
 @EqualsAndHashCode(doNotUseGetters = true)
 public class Transaction implements UserRelated {
@@ -47,7 +48,7 @@ public class Transaction implements UserRelated {
   @Setter(onMethod_ = {@Key(PermissionKey.TRANSACTION_ID_WRITE)})
   private long id;
 
-  //introduced with hibernate 6 to ensure strict temporal sequence,
+  // introduced with hibernate 6 to ensure strict temporal sequence,
   // because with the new auto-increment models gaps in id order may be reused
   @Column
   @Getter(onMethod_ = {@Key(PermissionKey.TRANSACTION_ID_READ)})
@@ -223,8 +224,8 @@ public class Transaction implements UserRelated {
       UserGroup fromUG,
       UserGroup toUG) {
     LogInModel.checkRefreshRequirements(fromUG, toUG);
-    long lastSeqNo = QueryBuilder
-            .select(Transaction_.seqNo)
+    long lastSeqNo =
+        QueryBuilder.select(Transaction_.seqNo)
             .orderBy(Transaction_.seqNo.desc())
             .limit(1)
             .getSingleResultOptional()
