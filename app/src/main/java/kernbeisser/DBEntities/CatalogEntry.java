@@ -221,14 +221,14 @@ public class CatalogEntry implements ActuallyCloneable {
       queryBuilder
           .where(
               PredicateFactory.or(
-                  CatalogEntry_.aktionspreis.eq(1).not(),
+                  CatalogEntry_.aktionspreis.eq(false),
                   between(
                       Instant.now(),
                       CatalogEntry_.aktionspreisGueltigAb,
                       CatalogEntry_.aktionspreisGueltigBis)))
           .orderBy(CatalogEntry_.aktionspreis.desc());
     } else {
-      queryBuilder.where(CatalogEntry_.aktionspreis.eq(1).not());
+      queryBuilder.where(CatalogEntry_.aktionspreis.eq(false));
     }
     return queryBuilder.getResultList();
   }
