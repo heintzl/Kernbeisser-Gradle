@@ -26,10 +26,10 @@
 	<field name="itemMultiplier" class="java.lang.Integer"/>
 	<field name="itemRetailPrice" class="java.lang.Double"/>
 	<field name="purchase.createDate" class="java.time.Instant"/>
-	<field name="purchase.id" class="java.lang.Long"/>
+	<field name="purchase.bonNo" class="java.lang.Long"/>
 	<field name="displayAmount" class="java.lang.String"/>
 	<group name="Purchase">
-		<groupExpression><![CDATA[$F{purchase.id}]]></groupExpression>
+		<groupExpression><![CDATA[$F{purchase.bonNo}]]></groupExpression>
 		<groupHeader>
 			<band height="19">
 				<textField>
@@ -39,7 +39,7 @@
 					<textElement textAlignment="Left">
 						<font fontName="DejaVu Sans Condensed" isItalic="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA["Bon Nummer: " + $F{purchase.id}]]></textFieldExpression>
+					<textFieldExpression><![CDATA["Bon Nummer: " + $F{purchase.bonNo}]]></textFieldExpression>
 				</textField>
 				<textField pattern="dd.MM.yyyy HH:mm">
 					<reportElement x="230" y="0" width="150" height="14" uuid="0e295a26-392b-4848-bc0c-2ba61724b912">

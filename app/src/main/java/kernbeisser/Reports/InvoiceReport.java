@@ -23,7 +23,7 @@ public class InvoiceReport extends Report {
   String createOutFileName() {
     return String.format(
         "%d_%s_%s_%s",
-        purchase.getId(),
+        purchase.getBonNo(),
         purchase.getSession().getCustomer().getFirstName(),
         purchase.getSession().getCustomer().getSurname(),
         purchase.getCreateDate().toString());
@@ -49,7 +49,7 @@ public class InvoiceReport extends Report {
       credit = purchase.getSession().getCustomer().valueAt(at) - purchase.getSum();
     }
     Map<String, Object> reportParams = new HashMap<>();
-    reportParams.put("BonNo", purchase.getId());
+    reportParams.put("BonNo", purchase.getBonNo());
     reportParams.put("Customer", purchase.getSession().getCustomer().getFullName());
     reportParams.put("Seller", purchase.getSession().getSeller().getFullName());
     reportParams.put("Credit", credit);

@@ -34,7 +34,9 @@ import rs.groump.AccessManager;
 import rs.groump.Key;
 import rs.groump.PermissionKey;
 
-@Table(indexes = {@Index(name = "IX_transaction_date", columnList = "date")})
+@Table(
+    uniqueConstraints = {@UniqueConstraint(name = "UX_transaction_seqNo", columnNames = "seqNo")},
+    indexes = {@Index(name = "IX_transaction_date", columnList = "date")})
 @Entity
 @EqualsAndHashCode(doNotUseGetters = true)
 public class Transaction implements UserRelated {
@@ -45,6 +47,13 @@ public class Transaction implements UserRelated {
   @Getter(onMethod_ = {@Key(PermissionKey.TRANSACTION_ID_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.TRANSACTION_ID_WRITE)})
   private long id;
+
+  // introduced with hibernate 6 to ensure strict temporal sequence,
+  // because with the new auto-increment models gaps in id order may be reused
+  @Column
+  @Getter(onMethod_ = {@Key(PermissionKey.TRANSACTION_ID_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.TRANSACTION_ID_WRITE)})
+  private long seqNo;
 
   @Column
   @Getter(onMethod_ = {@Key(PermissionKey.TRANSACTION_VALUE_READ)})
@@ -215,7 +224,14 @@ public class Transaction implements UserRelated {
       UserGroup fromUG,
       UserGroup toUG) {
     LogInModel.checkRefreshRequirements(fromUG, toUG);
+    long lastSeqNo =
+        QueryBuilder.select(Transaction_.seqNo)
+            .orderBy(Transaction_.seqNo.desc())
+            .limit(1)
+            .getSingleResultOptional()
+            .orElse(0L);
     Transaction transaction = new Transaction();
+    transaction.seqNo = lastSeqNo + 1;
     transaction.value = value;
     transaction.toUser = to;
     transaction.fromUser = from;
@@ -300,7 +316,7 @@ public class Transaction implements UserRelated {
     List<Transaction> transactions =
         QueryBuilder.selectAll(Transaction.class)
             .where(Transaction_.accountingReportNo.eq(reportNo))
-            .orderBy(Transaction_.id.asc())
+            .orderBy(Transaction_.seqNo.asc())
             .getResultList();
     if (transactions.isEmpty()) {
       throw new NoTransactionsFoundException();
@@ -315,7 +331,7 @@ public class Transaction implements UserRelated {
             .where(
                 Transaction_.accountingReportNo.isNull(),
                 or(Transaction_.fromUser.eq(kbUser), Transaction_.toUser.eq(kbUser)))
-            .orderBy(Transaction_.id.asc())
+            .orderBy(Transaction_.seqNo.asc())
             .getResultList();
     if (transactions.isEmpty()) {
       throw new NoTransactionsFoundException();

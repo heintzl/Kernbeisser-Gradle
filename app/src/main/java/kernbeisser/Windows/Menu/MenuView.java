@@ -43,7 +43,6 @@ import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.ManagePriceLists.ManagePriceListsController;
 import kernbeisser.Windows.PermissionAssignment.PermissionAssignmentController;
-import kernbeisser.Windows.PermissionAssignment.PermissionAssignmentModel;
 import kernbeisser.Windows.PermissionGranterAssignment.PermissionGranterAssignmentController;
 import kernbeisser.Windows.PermissionManagement.PermissionController;
 import kernbeisser.Windows.PreOrder.PreOrderController;
@@ -264,7 +263,7 @@ public class MenuView implements IView<MenuController> {
     permissionAssignment =
         new ControllerButton(
             PermissionAssignmentController::new, PermissionAssignmentController.class);
-    //permissionAssignment.setEnabled(PermissionAssignmentModel.isAccessible());
+    // permissionAssignment.setEnabled(PermissionAssignmentModel.isAccessible());
 
     permissionGranterAssignment =
         new ControllerButton(

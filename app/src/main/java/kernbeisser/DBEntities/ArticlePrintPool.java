@@ -52,7 +52,8 @@ public class ArticlePrintPool {
   }
 
   private static void deleteAll(EntityManager em) {
-    em.createQuery("delete from ArticlePrintPool").executeUpdate();
+    em.createQuery(em.getCriteriaBuilder().createCriteriaDelete(ArticlePrintPool.class))
+        .executeUpdate();
   }
 
   public static void clear() {
