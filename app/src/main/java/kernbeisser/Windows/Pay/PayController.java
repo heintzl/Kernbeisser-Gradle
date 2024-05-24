@@ -38,9 +38,9 @@ public class PayController extends Controller<PayView, PayModel> {
     PayView view = getView();
     // FIXME why pass shoppingCart to model if it was initialized with it?
     try {
-      long purchaseId = model.pay();
+      long bonNo = model.pay();
       if (printReceipt) {
-        PayModel.print(purchaseId);
+        PayModel.print(bonNo);
       }
       view.confirmLogging(
           model.getSaleSession().getCustomer().getFullName(), model.shoppingCartSum());

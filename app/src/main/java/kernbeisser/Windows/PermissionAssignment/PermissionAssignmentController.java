@@ -88,9 +88,7 @@ public class PermissionAssignmentController
     Optional<Collection<User>> before = model.getRecent().map(model::assignedUsers);
     if (!before.isPresent() || before.get().equals(user.getModel().getLoaded())) return;
     model.setPermission(
-        model.getRecent().get(),
-        user.getModel().getLoaded(),
-        () -> getView().confirmChanges());
+        model.getRecent().get(), user.getModel().getLoaded(), () -> getView().confirmChanges());
   }
 
   @Override

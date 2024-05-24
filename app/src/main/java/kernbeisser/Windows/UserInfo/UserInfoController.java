@@ -50,7 +50,7 @@ public class UserInfoController extends Controller<UserInfoView, UserInfoModel> 
   }
 
   public Double getTransactionSum(Transaction t) {
-    return model.getTransactionSums().get(t.getId());
+    return model.getTransactionSums().get(t.getSeqNo());
   }
 
   public void openPurchase() {

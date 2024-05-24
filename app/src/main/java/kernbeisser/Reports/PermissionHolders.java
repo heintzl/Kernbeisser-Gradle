@@ -1,25 +1,26 @@
 package kernbeisser.Reports;
 
 import java.time.LocalDate;
-import java.util.Collection;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Permission;
+import kernbeisser.DBEntities.Permission_;
 
 public class PermissionHolders extends Report {
   private final Collection<Permission> permissions;
 
   public PermissionHolders(boolean withKeys) {
     super(ReportFileNames.PERMISSION_HOLDERS_REPORT_FILENAME);
+    List<String> excludedPermissionNames =
+        new ArrayList<>(Arrays.asList("@IMPORT", "@APPLICATION", "@IN_RELATION_TO_OWN_USER"));
+    if (!withKeys) {
+      excludedPermissionNames.addAll(
+          Arrays.asList("@Key_Permission", "@FULL_MEMBER", "@BASIC_ACCESS"));
+    }
     permissions =
-        DBConnection.getEntityManager()
-            .createQuery(
-                "Select p from Permission p where not p.name in ('@IMPORT', '@APPLICATION', '@IN_RELATION_TO_OWN_USER'"
-                    + (withKeys ? "" : ", '@Key_Permission', '@FULL_MEMBER' ,'@BASIC_ACCESS'")
-                    + ")",
-                Permission.class)
-            .getResultList();
+        DBConnection.getConditioned(
+            Permission.class, Permission_.name.in(excludedPermissionNames).not());
   }
 
   @Override

@@ -209,7 +209,7 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
   }
 
   private String BonNoAndDate(Purchase p) {
-    return p.getId() + " (" + Date.INSTANT_DATE.format(p.getCreateDate()) + ")";
+    return p.getBonNo() + " (" + Date.INSTANT_DATE.format(p.getCreateDate()) + ")";
   }
 
   private void createUIComponents() {

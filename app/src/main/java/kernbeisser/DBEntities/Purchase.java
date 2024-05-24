@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import rs.groump.Key;
 import rs.groump.PermissionKey;
 
-@Table
+@Table(uniqueConstraints = {@UniqueConstraint(name = "UX_purchase_bonNo", columnNames = "bonNo")})
 @Entity
 @EqualsAndHashCode(doNotUseGetters = true)
 public class Purchase implements UserRelated {
@@ -26,6 +26,11 @@ public class Purchase implements UserRelated {
   @Getter(onMethod_ = {@Key(PermissionKey.PURCHASE_ID_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.PURCHASE_ID_WRITE)})
   private long id;
+
+  @Column
+  @Getter(onMethod_ = {@Key(PermissionKey.PURCHASE_ID_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.PURCHASE_ID_WRITE)})
+  private long bonNo;
 
   @ManyToOne
   @JoinColumn(nullable = false)

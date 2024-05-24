@@ -37,7 +37,7 @@ public class UserInfoModel implements IModel<UserInfoController> {
     var resultList =
         QueryBuilder.select(
                 Transaction.class,
-                Transaction_.id,
+                Transaction_.seqNo,
                 Transaction_.value,
                 Transaction_.toUserGroup.eq(userGroup))
             .where(
@@ -48,7 +48,7 @@ public class UserInfoModel implements IModel<UserInfoController> {
             .getResultList();
     Map<Long, Double> idValueAfterMap = new HashMap<>(resultList.size());
     for (Tuple tuple : resultList) {
-      long id = tuple.get(0, Long.class);
+      long seqNo = tuple.get(0, Long.class);
       double value = tuple.get(1, Double.class);
       boolean incoming = tuple.get(2, Boolean.class);
       if (incoming) {
@@ -56,7 +56,7 @@ public class UserInfoModel implements IModel<UserInfoController> {
       } else {
         sum -= value;
       }
-      idValueAfterMap.put(id, sum);
+      idValueAfterMap.put(seqNo, sum);
     }
     return idValueAfterMap;
   }

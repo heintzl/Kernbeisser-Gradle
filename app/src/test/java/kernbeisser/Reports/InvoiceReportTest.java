@@ -46,6 +46,7 @@ class InvoiceReportTest {
     when(session.getSeller()).thenReturn(user);
     when(purchase.getSession()).thenReturn(session);
     when(purchase.getCreateDate()).thenReturn(now);
+    when(purchase.getBonNo()).thenReturn(42L);
     when(purchase.getId()).thenReturn(42L);
     return purchase;
   }

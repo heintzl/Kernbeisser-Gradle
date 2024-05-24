@@ -23,6 +23,8 @@ public class DefaultTab {
   private JButton close;
 
   DefaultTab(Icon icon, String title, Runnable closeOperation, Runnable click) {
+    // @spotless:off
+
     $$$setupUI$$$();
     this.icon.setIcon(icon);
     this.tabTitle.setText(title);
@@ -130,4 +132,5 @@ public class DefaultTab {
         return main;
     }
 
+  // @spotless:on
 }

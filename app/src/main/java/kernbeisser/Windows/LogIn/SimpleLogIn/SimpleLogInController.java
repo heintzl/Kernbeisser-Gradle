@@ -52,13 +52,15 @@ public class SimpleLogInController extends Controller<SimpleLogInView, SimpleLog
   public void logIn() {
     SimpleLogInView view = getView();
     AtomicReference<Boolean> isAdminUser = new AtomicReference<>();
-    Access.runWithAccessManager(AccessManager.ACCESS_GRANTED, () -> {
-      isAdminUser.set(PermissionConstants.ADMIN.getPermission().getAllUsers().stream()
-              .anyMatch(u -> u.getUsername()
-                      .equals(view.getUsername())));
-      });
+    Access.runWithAccessManager(
+        AccessManager.ACCESS_GRANTED,
+        () -> {
+          isAdminUser.set(
+              PermissionConstants.ADMIN.getPermission().getAllUsers().stream()
+                  .anyMatch(u -> u.getUsername().equals(view.getUsername())));
+        });
     if (isAdminUser.get()) {
-        PermissionConstants.cleanAdminPermission(User.getByUsername("Admin"));
+      PermissionConstants.cleanAdminPermission(User.getByUsername("Admin"));
     }
     try {
       model.logIn(view.getUsername(), view.getPassword());
