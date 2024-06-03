@@ -248,7 +248,7 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
   }
 
   public static ShoppingItem createShoppingItem(
-      Supplier kkSupplier, LineContent content, boolean ignoreBarcode) {
+      Supplier kkSupplier, LineContent content, int orderNo, boolean ignoreBarcode) {
     ShoppingItem shoppingItem =
         new ShoppingItem(findOrCreateArticle(kkSupplier, content, ignoreBarcode), 0, false);
     double rawItemMultiplier =
@@ -258,6 +258,7 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
             * -1;
     SupplyModel.checkFractionalItemMultiplier(rawItemMultiplier, content.getKkNumber());
     shoppingItem.setItemMultiplier((int) Math.round(rawItemMultiplier));
+    shoppingItem.setOrderNo(orderNo);
     return shoppingItem;
   }
 

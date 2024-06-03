@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.function.ToDoubleFunction;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.EntityWrapper.ObjectState;
 import kernbeisser.Enums.*;
@@ -143,6 +144,8 @@ public class ShoppingItem implements Serializable {
   @Column private long articleId;
 
   @Column private int articleRev;
+
+  @Column @Setter @Getter private Integer orderNo;
 
   @Column(nullable = false)
   private Instant createDate;

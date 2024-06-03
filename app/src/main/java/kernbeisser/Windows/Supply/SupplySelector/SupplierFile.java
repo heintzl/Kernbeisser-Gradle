@@ -89,7 +89,8 @@ public class SupplierFile {
           collectErrors.add(comparison);
         }
       }
-      shoppingItems.add(SupplyController.createShoppingItem(kkSupplier, content, noBarcode));
+      shoppingItems.add(
+          SupplyController.createShoppingItem(kkSupplier, content, header.getOrderNr(), noBarcode));
     }
     if (!collectErrors.isEmpty()) {
       ObjectTable<ArticleComparedToCatalogEntry> errors =
