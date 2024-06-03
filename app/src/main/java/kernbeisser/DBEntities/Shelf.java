@@ -73,8 +73,8 @@ public class Shelf implements ActuallyCloneable {
     return Stream.concat(
             priceLists.stream()
                 .map(e -> ArticleRepository.getAllActiveArticlesFromPriceList(em, e))
-                .flatMap(Collection::stream)
-                .sorted(Comparator.comparingInt(Article::getKbNumber)),
+                .flatMap(Collection::stream),
+            // .sorted(Comparator.comparingInt(Article::getKbNumber)),
             articles.stream())
         .distinct()
         .sorted(Comparator.comparingInt(Article::getKbNumber))
