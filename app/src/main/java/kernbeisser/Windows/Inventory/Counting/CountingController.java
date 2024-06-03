@@ -3,11 +3,15 @@ package kernbeisser.Windows.Inventory.Counting;
 import java.awt.event.KeyEvent;
 import java.time.LocalDate;
 import java.time.chrono.ChronoLocalDate;
+import java.util.Collection;
+import java.util.concurrent.ExecutionException;
+import javax.swing.*;
 import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.DBEntities.ArticleStock;
 import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.DBEntities.Shelf;
 import kernbeisser.Enums.Setting;
+import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
 import kernbeisser.Useful.Date;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.ShoppingMask.ArticleSelector.ArticleSelectorController;
@@ -64,7 +68,24 @@ public class CountingController extends Controller<CountingView, CountingModel> 
   }
 
   public void loadShelf(Shelf shelf) {
-    getView().setArticleStocks(shelf.getArticleStocks());
+    SwingWorker stockLoaderWorker =
+        new SwingWorker<Collection<ArticleStock>, Void>() {
+          @Override
+          protected Collection<ArticleStock> doInBackground() throws Exception {
+            return shelf.getArticleStocks();
+          }
+
+          @Override
+          protected void done() {
+            try {
+              getView().setArticleStocks(get());
+            } catch (InterruptedException | ExecutionException e) {
+              UnexpectedExceptionHandler.showUnexpectedErrorWarning(e.getCause());
+              ;
+            }
+          }
+        };
+    stockLoaderWorker.execute();
     getView().selectFirst();
   }
 
