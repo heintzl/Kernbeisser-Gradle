@@ -204,28 +204,4 @@ gradle-app.setting
 
 # Artifact manifest
 /**/META-INF/MANIFEST.MF
-/app/src/main/generated/Article_.java
-/app/src/main/generated/ArticlePrintPool_.java
-/app/src/main/generated/ArticleStock_.java
-/app/src/main/generated/CatalogEntry_.java
-/app/src/main/generated/IgnoredDialog_.java
-/app/src/main/generated/IgnoredDifference_.java
-/app/src/main/generated/Job_.java
-/app/src/main/generated/Offer_.java
-/app/src/main/generated/Permission_.java
-/app/src/main/generated/PermissionGrant_.java
-/app/src/main/generated/Post_.java
-/app/src/main/generated/PreOrder_.java
-/app/src/main/generated/PriceList_.java
-/app/src/main/generated/Purchase_.java
-/app/src/main/generated/SaleSession_.java
-/app/src/main/generated/SettingValue_.java
-/app/src/main/generated/Shelf_.java
-/app/src/main/generated/ShoppingItem_.java
-/app/src/main/generated/Supplier_.java
-/app/src/main/generated/SurchargeGroup_.java
-/app/src/main/generated/SystemSetting_.java
-/app/src/main/generated/Transaction_.java
-/app/src/main/generated/User_.java
-/app/src/main/generated/UserGroup_.java
-/app/src/main/generated/UserSettingValue_.java
+/app/src/main/generated
