@@ -82,16 +82,6 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
     supplySelector.setObjects(supplies);
   }
 
-  private String evaluateImported(Boolean imported) {
-    if (imported == TRUE) {
-      return "Ja";
-    } else if (imported == FALSE) {
-      return "Nein";
-    } else {
-      return "Teilweise";
-    }
-  }
-
   private void createUIComponents() {
     supplySelector =
         new ObjectTable<Supply>(
@@ -103,7 +93,7 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
             Columns.create("Anzahl Artikel", Supply::getArticleCount)
                 .withRightClickConsumer(this::listSupplyFiles),
             Columns.create("Summe", e -> String.format("%.2f€", e.getContentSum())),
-            Columns.create("Importiert", e -> evaluateImported(e.isImported())));
+            Columns.create("Importiert", Supply::getImportState));
     supplySelector.setSortKeys(
         new RowSorter.SortKey(3, SortOrder.DESCENDING),
         new RowSorter.SortKey(0, SortOrder.ASCENDING));

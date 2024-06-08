@@ -11,6 +11,7 @@ import java.util.Comparator;
 import java.util.stream.Collectors;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.Enums.Setting;
+import kernbeisser.Enums.SupplyImportState;
 import lombok.AccessLevel;
 import lombok.Cleanup;
 import lombok.Data;
@@ -82,18 +83,18 @@ public class Supply {
         .sum();
   }
 
-  // true if all are imported, false if none, null if some, but not all
-  public Boolean isImported() {
+  // ALL if all are imported, NONE if none, SOME if some, but not all
+  public SupplyImportState getImportState() {
     Boolean assumption = null;
     for (SupplierFile file : supplierFiles) {
       if (assumption == null) {
         assumption = file.isAlreadyImported();
       } else {
         if (file.isAlreadyImported() != assumption) {
-          return null;
+          return SupplyImportState.SOME;
         }
       }
     }
-    return assumption;
+    return (assumption ? SupplyImportState.ALL : SupplyImportState.NONE);
   }
 }
