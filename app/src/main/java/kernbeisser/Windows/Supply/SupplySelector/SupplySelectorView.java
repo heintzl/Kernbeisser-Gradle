@@ -1,5 +1,8 @@
 package kernbeisser.Windows.Supply.SupplySelector;
 
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
+
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
@@ -79,6 +82,16 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
     supplySelector.setObjects(supplies);
   }
 
+  private String evaluateImported(Boolean imported) {
+    if (imported == TRUE) {
+      return "Ja";
+    } else if (imported == FALSE) {
+      return "Nein";
+    } else {
+      return "Teilweise";
+    }
+  }
+
   private void createUIComponents() {
     supplySelector =
         new ObjectTable<Supply>(
@@ -89,7 +102,11 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
                 .withSorter(Column.DATE_SORTER(Date.INSTANT_DATE_TIME)),
             Columns.create("Anzahl Artikel", Supply::getArticleCount)
                 .withRightClickConsumer(this::listSupplyFiles),
-            Columns.create("Summe", e -> String.format("%.2f€", e.getContentSum())));
+            Columns.create("Summe", e -> String.format("%.2f€", e.getContentSum())),
+            Columns.create("Importiert", e -> evaluateImported(e.isImported())));
+    supplySelector.setSortKeys(
+        new RowSorter.SortKey(3, SortOrder.DESCENDING),
+        new RowSorter.SortKey(0, SortOrder.ASCENDING));
 
     lineContents =
         new ObjectTable<>(

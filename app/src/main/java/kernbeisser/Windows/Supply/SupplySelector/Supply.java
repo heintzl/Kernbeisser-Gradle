@@ -81,4 +81,19 @@ public class Supply {
         .mapToDouble(lineContent -> (1 - lineContent.getDiscount()) * lineContent.getTotalPrice())
         .sum();
   }
+
+  // true if all are imported, false if none, null if some, but not all
+  public Boolean isImported() {
+    Boolean assumption = null;
+    for (SupplierFile file : supplierFiles) {
+      if (assumption == null) {
+        assumption = file.isAlreadyImported();
+      } else {
+        if (file.isAlreadyImported() != assumption) {
+          return null;
+        }
+      }
+    }
+    return assumption;
+  }
 }

@@ -8,7 +8,6 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.function.ToDoubleFunction;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.EntityWrapper.ObjectState;
 import kernbeisser.Enums.*;
