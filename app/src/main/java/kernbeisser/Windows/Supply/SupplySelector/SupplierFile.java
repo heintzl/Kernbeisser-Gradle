@@ -15,8 +15,10 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.DBEntities.ShoppingItem;
+import kernbeisser.DBEntities.ShoppingItem_;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Enums.ArticleCatalogState;
 import kernbeisser.Tasks.ArticleComparedToCatalogEntry;
@@ -37,15 +39,20 @@ public class SupplierFile {
   private final List<LineContent> contents;
   private final Instant createDate;
   private final File origin;
+  private final boolean alreadyImported;
 
   @SneakyThrows
   public static SupplierFile parse(File file) {
     List<String> lines = Files.readAllLines(file.toPath(), Catalog.DEFAULT_ENCODING);
+    FileHeader header = FileHeader.parseLine(lines.get(0));
     return new SupplierFile(
-        FileHeader.parseLine(lines.get(0)),
+        header,
         LineContent.parseContents(lines, file.getName(), 1),
         Files.readAttributes(file.toPath(), BasicFileAttributes.class).creationTime().toInstant(),
-        file);
+        file,
+        QueryBuilder.selectAll(ShoppingItem.class)
+            .where(ShoppingItem_.orderNo.eq(header.getOrderNr()))
+            .hasResult());
   }
 
   public Collection<LineContent> getNotInCatalog() {
@@ -89,7 +96,8 @@ public class SupplierFile {
           collectErrors.add(comparison);
         }
       }
-      shoppingItems.add(SupplyController.createShoppingItem(kkSupplier, content, noBarcode));
+      shoppingItems.add(
+          SupplyController.createShoppingItem(kkSupplier, content, header.getOrderNr(), noBarcode));
     }
     if (!collectErrors.isEmpty()) {
       ObjectTable<ArticleComparedToCatalogEntry> errors =

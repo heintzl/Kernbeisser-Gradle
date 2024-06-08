@@ -242,8 +242,12 @@ public class SupplySelectorController extends Controller<SupplySelectorView, Sup
                                   "%.2f€",
                                   e.getContents().stream()
                                       .mapToDouble(LineContent::getTotalPrice)
-                                      .sum())));
+                                      .sum())),
+                      Columns.create("Neu", e -> e.isAlreadyImported() ? "Nein" : "Ja"));
               ot.setObjects(supply.getSupplierFiles());
+              ot.setSortKeys(
+                  new RowSorter.SortKey(2, SortOrder.DESCENDING),
+                  new RowSorter.SortKey(0, SortOrder.ASCENDING));
               SubWindow sw = new SubWindow(getView().traceViewContainer());
               ComponentController cc = new ComponentController(new JScrollPane(ot));
               sw.setTitle(

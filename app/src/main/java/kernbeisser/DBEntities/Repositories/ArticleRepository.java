@@ -200,7 +200,7 @@ public class ArticleRepository {
   private static TypedQuery<Article> createQuery(EntityManager em, String search) {
     if (search.startsWith("PL:")) {
       return QueryBuilder.selectAll(Article.class)
-          .where(Article_.priceList.child(PriceList_.name).eq(search.replace("PL:", "")))
+          .where(Article_.priceList.child(PriceList_.name).eq(search.replace("PL:", "").trim()))
           .buildQuery(em);
     }
     int n = Tools.tryParseInt(search);
@@ -210,7 +210,7 @@ public class ArticleRepository {
         .where(
             or(
                 Article_.kbNumber.eq(n),
-                Article_.suppliersItemNumber.eq(Tools.tryParseInt(search)),
+                Article_.suppliersItemNumber.eq(n),
                 like(lower(Article_.name), ds),
                 Article_.barcode.eq(l),
                 like(Article_.barcode.as(String.class), "%" + search)))
@@ -242,7 +242,7 @@ public class ArticleRepository {
         .buildQuery(em)
         .setMaxResults(1)
         .getResultStream()
-        .findAny()
+        .findFirst()
         .orElse(null);
   }
 
@@ -348,10 +348,10 @@ public class ArticleRepository {
             .where(greaterOrEq(ShoppingItem_.createDate, asExpression(expireDate)))
             .distinct()
             .getResultStream(em)
-            .map(e -> e.intValue())
+            .map(Long::intValue)
             .toList();
     return QueryBuilder.selectAll(Article.class)
-        .where(Article_.id.in(articleIds))
+        .where(Article_.priceList.eq(priceList), Article_.id.in(articleIds))
         .getResultList(em);
   }
 
