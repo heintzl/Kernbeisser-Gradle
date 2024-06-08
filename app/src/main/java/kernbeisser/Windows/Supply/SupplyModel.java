@@ -3,7 +3,9 @@ package kernbeisser.Windows.Supply;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import java.util.*;
+import java.util.function.BiConsumer;
 import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.*;
 import kernbeisser.DBEntities.PreOrder_;
 import kernbeisser.DBEntities.Repositories.ArticleRepository;
@@ -11,6 +13,8 @@ import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
 import kernbeisser.Windows.Supply.SupplySelector.LineContent;
+import kernbeisser.Windows.Supply.SupplySelector.SupplierFile;
+import kernbeisser.Windows.Supply.SupplySelector.Supply;
 import lombok.Cleanup;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,6 +28,7 @@ public class SupplyModel implements IModel<SupplyController> {
   @Setter private Map<Article, Integer> printPoolBefore = new HashMap<>();
   private final List<ShoppingItem> shoppingItems = new ArrayList<>();
   private final Map<Integer, Integer> kkNumberPreorderCounts = new HashMap<>();
+  @Setter private Supply supply;
 
   public SupplyModel() {
     for (Map.Entry<CatalogEntry, Integer> entry : getUserPreorderEntryCount().entrySet()) {
@@ -31,12 +36,36 @@ public class SupplyModel implements IModel<SupplyController> {
     }
   }
 
-  void commit() {
+  void commit(BiConsumer<Integer, Integer> messageSupplier) {
+    final Map<Integer, Collection<Integer>> ignoredKbNumbers = new HashMap<>();
+    int ignoredItems = 0;
+    if (supply != null) {
+      for (SupplierFile file : supply.getSupplierFiles()) {
+        int orderNo = file.getHeader().getOrderNr();
+        Collection<Integer> kbNumbers =
+            QueryBuilder.select(ShoppingItem_.kbNumber)
+                .where(ShoppingItem_.orderNo.eq(orderNo))
+                .getResultList();
+        ignoredKbNumbers.put(orderNo, kbNumbers);
+        ignoredItems += kbNumbers.size();
+      }
+    }
+    final Collection<ShoppingItem> itemsToSave = new ArrayList();
+    if (ignoredItems > 0) {
+      itemsToSave.addAll(
+          shoppingItems.stream()
+              .filter(i -> !ignoredKbNumbers.get(i.getOrderNo()).contains(i.getKbNumber()))
+              .toList());
+      messageSupplier.accept(shoppingItems.size(), ignoredItems);
+    } else {
+      itemsToSave.addAll(shoppingItems);
+    }
+    // Collection<ShoppingItem>
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    for (ShoppingItem item : shoppingItems) {
+    for (ShoppingItem item : itemsToSave) {
       item.setItemMultiplier(-Math.abs(item.getItemMultiplier()));
       em.persist(item);
     }
