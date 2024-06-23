@@ -1,12 +1,11 @@
 package kernbeisser.Forms.FormImplemetations.Article;
 
 import java.awt.event.KeyEvent;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Optional;
+import java.util.*;
 import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.PriceList;
+import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.DBEntities.SurchargeGroup;
 import kernbeisser.Enums.MetricUnits;
@@ -60,7 +59,8 @@ public class ArticleController extends FormController<ArticleView, ArticleModel,
   @Override
   public void remove(Article article) {
     if (!getView().messageCommitDelete(article)) return;
-    super.remove(article);
+    var result = ArticleRepository.deleteAll(List.of(article));
+    getView().message(result.toString());
   }
 
   public int parseAmount(String s) throws SilentParseException {
