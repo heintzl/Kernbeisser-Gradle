@@ -2,9 +2,12 @@ package kernbeisser.DBEntities.Repositories;
 
 import static kernbeisser.DBConnection.ExpressionFactory.*;
 import static kernbeisser.DBConnection.PredicateFactory.*;
+import static kernbeisser.Enums.ArticleDeletionResult.*;
 
 import jakarta.persistence.*;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
@@ -17,6 +20,7 @@ import kernbeisser.EntityWrapper.ObjectState;
 import kernbeisser.Enums.*;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
 import kernbeisser.Tasks.ArticleComparedToCatalogEntry;
+import kernbeisser.Tasks.Articles;
 import kernbeisser.Useful.Tools;
 import lombok.Cleanup;
 import lombok.extern.log4j.Log4j2;
@@ -608,5 +612,102 @@ public class ArticleRepository {
     EntityTransaction et = em.getTransaction();
     et.begin();
     return AuditReaderFactory.get(em).find(Article.class, article.getId(), date);
+  }
+
+  public static Map<ArticleDeletionResult, List<Article>> deleteAll(Collection<Article> articles) {
+
+    Map<ArticleDeletionResult, List<Article>> result = new HashMap<>();
+    result.put(PREORDERED, new ArrayList<>());
+    result.put(RECENTLY_TRADED, new ArrayList<>());
+    result.put(RECENT_INVENTORY, new ArrayList<>());
+    result.put(DISCONTINUED, new ArrayList<>());
+    result.put(ERASED, new ArrayList<>());
+
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+
+    Collection<String> preorderedSupplierNumbers = QueryBuilder
+            .select(PreOrder_.catalogEntry.child(CatalogEntry_.artikelNr))
+            .where(and(PreOrder_.delivery.isNull(), PreOrder_.catalogEntry.child(CatalogEntry_.artikelNr)
+                    .in(articles.stream()
+                      .filter(a -> a.getSupplier().equals(Supplier.getKKSupplier()))
+                      .map(a -> Integer.toString(a.getSuppliersItemNumber()))
+                      .toList()))
+            ).getResultList();
+
+    Map<Integer, LocalDate> articleNumbersLastInventory = QueryBuilder.selectAll(ArticleStock.class)
+            .where(ArticleStock_.article.in(articles))
+            .getResultStream(em)
+            .collect(Collectors.toMap(
+                    s -> s.getArticle().getKbNumber(),
+                    ArticleStock::getInventoryDate,
+                    (s1, s2) -> s1.isBefore(s2) ? s2 : s1));
+
+    em.clear();
+
+    Instant inactivityThreshold = Instant.now().minus(Setting.INVENTORY_INACTIVE_ARTICLE.getIntValue(), ChronoUnit.DAYS);
+    Collection<Integer> recentlyTradedArticleNumbers = QueryBuilder.select(ShoppingItem_.kbNumber)
+            .where(and(
+              ShoppingItem_.kbNumber.in(articles.stream().map(Article::getKbNumber).toList())),
+              or(
+                greaterOrEq(ShoppingItem_.createDate, asExpression(inactivityThreshold)),
+                greaterOrEq(ShoppingItem_.purchase.child(Purchase_.createDate), asExpression(inactivityThreshold))))
+            .getResultList();
+
+    @Cleanup(value = "commit") EntityTransaction et = em.getTransaction();
+    et.begin();
+    for (Article article : articles) {
+      ArticleDeletionResult deletionResult;
+      Integer kbNumber = article.getKbNumber();
+      LocalDate lastInventory = articleNumbersLastInventory.get(kbNumber);
+      if (preorderedSupplierNumbers.contains(Integer.toString(article.getSuppliersItemNumber()))) {
+        deletionResult = PREORDERED;
+      } else if (recentlyTradedArticleNumbers.contains(kbNumber)) {
+        deletionResult = RECENTLY_TRADED;
+      } else if (lastInventory != null) {
+        if (lastInventory.isBefore(LocalDate.ofInstant(inactivityThreshold, ZoneId.systemDefault()))) {
+          deletionResult = DISCONTINUED;
+        } else {
+          deletionResult = RECENT_INVENTORY;
+        }
+      } else {
+        deletionResult = ERASED;
+      }
+      result.get(deletionResult).add(article);
+      if (deletionResult.ordinal() < DISCONTINUED.ordinal()) {
+        continue;
+      }
+      
+      Article dbArticle = em.find(Article.class, article.getId());
+
+      QueryBuilder.selectAll(Shelf.class)
+              .getResultStream(em)
+              .forEach(s -> {
+                Shelf dbShelf = em.find(Shelf.class, s.getId());
+                dbShelf.getArticles().remove(dbArticle);
+                em.merge(dbShelf);
+              });
+
+      em.createQuery("DELETE FROM ArticlePrintPool p WHERE p.article = :a")
+              .setParameter("a", article)
+              .executeUpdate();
+
+      if (deletionResult == ERASED) {
+        em.createQuery("DELETE FROM PreOrder p WHERE p.article = :a")
+                .setParameter("a", article)
+                .executeUpdate();
+        em.remove(dbArticle);
+        continue;
+      }
+      if (deletionResult == DISCONTINUED) {
+        int newKbNumber = - 100000 - dbArticle.getKbNumber();
+        do
+          newKbNumber -= 10000;
+          while (getByKbNumber(newKbNumber, false).isPresent());
+        dbArticle.setKbNumber(newKbNumber);
+        dbArticle.setShopRange(ShopRange.DISCONTINUED);
+        em.merge(dbArticle);
+      }
+    }
+    return result;
   }
 }
