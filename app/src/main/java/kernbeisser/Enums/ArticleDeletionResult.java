@@ -7,7 +7,7 @@ public enum ArticleDeletionResult implements Named {
   RECENTLY_TRADED("Umsatz innerhalb der Karenzzeit"),
   RECENT_INVENTORY("Inventar innerhalb der Karenzzeit"),
   DISCONTINUE("wird ausgelistet"),
-  DELETE("wird entfernt");
+  DELETE("wird gelöscht");
   private final String name;
 
   ArticleDeletionResult(String name) {

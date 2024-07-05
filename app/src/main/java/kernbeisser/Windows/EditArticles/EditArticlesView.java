@@ -90,11 +90,33 @@ public class EditArticlesView implements IView<EditArticlesController> {
         parentComponent, new JScrollPane(table), "Artikel", JOptionPane.INFORMATION_MESSAGE);
   }
 
+  private static final Icon DELETE_ICON =
+      Icons.defaultIcon(FontAwesome.TRASH, new Color(126, 16, 0));
+  private static final Icon DISCONTINUE_ICON =
+      Icons.defaultIcon(FontAwesome.RECYCLE, new Color(40, 151, 0));
+  private static final Icon KEEP_ICON =
+      Icons.defaultIcon(FontAwesome.STOP_CIRCLE, new Color(69, 69, 69));
+
+  private static Icon deletionIcon(ArticleDeletionResult result) {
+    switch (result) {
+      case DELETE -> {
+        return DELETE_ICON;
+      }
+      case DISCONTINUE -> {
+        return DISCONTINUE_ICON;
+      }
+      default -> {
+        return KEEP_ICON;
+      }
+    }
+  }
+
   public static boolean confirmDelete(
       Component parentComponent, Map<ArticleDeletionResult, List<Article>> results) {
     ObjectTable<ArticleDeletionResult> table =
         new ObjectTable<>(
             results.keySet().stream().sorted().toList(),
+            Columns.createIconColumn("", EditArticlesView::deletionIcon),
             Columns.create("Ergebnis", ArticleDeletionResult::toString).withPreferredWidth(400),
             Columns.<ArticleDeletionResult>create("Anzahl", e -> results.get(e).size())
                 .withPreferredWidth(50)
@@ -103,11 +125,24 @@ public class EditArticlesView implements IView<EditArticlesController> {
                 Icons.defaultIcon(FontAwesome.TABLE, Color.BLUE),
                 e -> showArticleList(parentComponent, results.get(e)),
                 e -> !results.get(e).isEmpty()));
+
+    JPanel labelPanel = new JPanel();
+    labelPanel.add(new JLabel(DELETE_ICON));
+    labelPanel.add(new JLabel(DISCONTINUE_ICON));
+    JLabel label =
+        new JLabel("Die so gekennzeichneten Artikel werden  aus dem Artikelstamm entfernt");
+    label.setFont(label.getFont().deriveFont(Font.ITALIC));
+    labelPanel.add(label);
+
+    JPanel tablePanel = new JPanel(new BorderLayout());
+    tablePanel.add(table, BorderLayout.CENTER);
+    tablePanel.add(labelPanel, BorderLayout.SOUTH);
     return JOptionPane.showConfirmDialog(
             parentComponent,
-            new JScrollPane(table),
-            "Die gekennzeichneten Artikel werden  aus dem Artikelstamm entfernt",
-            JOptionPane.OK_CANCEL_OPTION)
+            tablePanel,
+            "Artikel entfernen",
+            JOptionPane.OK_CANCEL_OPTION,
+            JOptionPane.INFORMATION_MESSAGE)
         == JOptionPane.OK_OPTION;
   }
 
