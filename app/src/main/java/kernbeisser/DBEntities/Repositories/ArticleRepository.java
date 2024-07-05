@@ -714,8 +714,7 @@ public class ArticleRepository {
       Article dbArticle = em.find(Article.class, a.getId());
       if (a.getKbNumber() >= 0) {
         int newKbNumber = -100000 - dbArticle.getKbNumber();
-        do newKbNumber -= 10000;
-        while (getByKbNumber(newKbNumber, false).isPresent());
+        while (getByKbNumber(newKbNumber, false).isPresent()) newKbNumber -= 10000;
         dbArticle.setKbNumber(newKbNumber);
       }
       dbArticle.setShopRange(ShopRange.DISCONTINUED);
