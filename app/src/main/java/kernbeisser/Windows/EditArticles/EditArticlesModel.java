@@ -1,11 +1,15 @@
 package kernbeisser.Windows.EditArticles;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import java.util.*;
+import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.Enums.ArticleDeletionResult;
 import kernbeisser.Tasks.ArticleComparedToCatalogEntry;
 import kernbeisser.Windows.MVC.IModel;
+import lombok.Cleanup;
 import lombok.Getter;
 
 public class EditArticlesModel implements IModel<EditArticlesController> {
@@ -21,7 +25,16 @@ public class EditArticlesModel implements IModel<EditArticlesController> {
     return ArticleRepository.mergeCatalog(articles, differences);
   }
 
-  public Map<ArticleDeletionResult, List<Article>> removeSelected(Collection<Article> articles) {
-    return ArticleRepository.deleteAll(articles);
+  public Map<ArticleDeletionResult, List<Article>> prepareRemoval(Collection<Article> articles) {
+    return ArticleRepository.prepareRemoval(articles);
+  }
+
+  public static void remove(Map<ArticleDeletionResult, List<Article>> preparedArticles) {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    ArticleRepository.removeArticles(em, preparedArticles.get(ArticleDeletionResult.DELETE));
+    ArticleRepository.unlistArticles(em, preparedArticles.get(ArticleDeletionResult.DISCONTINUE));
   }
 }

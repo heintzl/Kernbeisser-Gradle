@@ -5,11 +5,16 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import java.awt.*;
 import java.util.List;
+import java.util.Map;
 import javax.swing.*;
+import jiconfont.icons.font_awesome.FontAwesome;
+import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.Article;
+import kernbeisser.Enums.ArticleDeletionResult;
 import kernbeisser.Forms.ObjectView.ObjectViewView;
+import kernbeisser.Useful.Icons;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
@@ -71,6 +76,39 @@ public class EditArticlesView implements IView<EditArticlesController> {
         new Dimension((int) (thisSize.getWidth() * 0.7), (int) (thisSize.getHeight() * 0.7)));
     JOptionPane.showMessageDialog(
         getContent(), logPanel, "Katalog-Übernahme-Ergebnis", JOptionPane.INFORMATION_MESSAGE);
+  }
+
+  private static void showArticleList(Component parentComponent, List<Article> articles) {
+    ObjectTable<Article> table =
+        new ObjectTable<>(
+            articles,
+            Columns.create("kbNumber", Article::getKbNumber)
+                .withSorter(Column.NUMBER_SORTER)
+                .withPreferredWidth(100),
+            Columns.create("Artikel", Article::getName).withPreferredWidth(500));
+    JOptionPane.showMessageDialog(
+        parentComponent, new JScrollPane(table), "Artikel", JOptionPane.INFORMATION_MESSAGE);
+  }
+
+  public static boolean confirmDelete(
+      Component parentComponent, Map<ArticleDeletionResult, List<Article>> results) {
+    ObjectTable<ArticleDeletionResult> table =
+        new ObjectTable<>(
+            results.keySet().stream().sorted().toList(),
+            Columns.create("Ergebnis", ArticleDeletionResult::toString).withPreferredWidth(400),
+            Columns.<ArticleDeletionResult>create("Anzahl", e -> results.get(e).size())
+                .withPreferredWidth(50)
+                .withSorter(Column.NUMBER_SORTER),
+            Columns.createIconColumn(
+                Icons.defaultIcon(FontAwesome.TABLE, Color.BLUE),
+                e -> showArticleList(parentComponent, results.get(e)),
+                e -> !results.get(e).isEmpty()));
+    return JOptionPane.showConfirmDialog(
+            parentComponent,
+            new JScrollPane(table),
+            "Die gekennzeichneten Artikel werden  aus dem Artikelstamm entfernt",
+            JOptionPane.OK_CANCEL_OPTION)
+        == JOptionPane.OK_OPTION;
   }
 
   // @spotless:off

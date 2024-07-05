@@ -24,6 +24,7 @@ import kernbeisser.CustomComponents.ObjectTree.ObjectTree;
 import kernbeisser.CustomComponents.SearchBox.Filters.ArticleFilter;
 import kernbeisser.DBEntities.*;
 import kernbeisser.DBEntities.Repositories.ArticleRepository;
+import kernbeisser.Enums.ArticleDeletionResult;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Forms.FormImplemetations.Article.ArticleController;
 import kernbeisser.Forms.ObjectView.ObjectViewController;
@@ -80,7 +81,8 @@ public class EditArticlesController extends Controller<EditArticlesView, EditArt
                 .withHorizontalAlignment(RIGHT)
                 .withSorter(Column.NUMBER_SORTER),
             Columns.create("Ladennummer", Article::getKbNumber, RIGHT)
-                .withSorter(Column.NUMBER_SORTER),
+                .withSorter(Column.NUMBER_SORTER)
+                .withDefaultFilter(),
             Columns.create("Lieferant", Article::getSupplier, LEFT)
                 .withDefaultFilter()
                 .withColumnAdjustor(e -> e.setPreferredWidth(150)),
@@ -250,11 +252,12 @@ public class EditArticlesController extends Controller<EditArticlesView, EditArt
 
   private void removeSelected() {
     EditArticlesView view = getView();
-    view.message(
-        model
-            .removeSelected(objectViewController.getSearchBoxController().getSelectedObjects())
-            .toString(),
-        "provisorisches Löschergebnis");
-    objectViewController.search();
+    Map<ArticleDeletionResult, List<Article>> preparedArticles =
+        model.prepareRemoval(objectViewController.getSearchBoxController().getSelectedObjects());
+    if (EditArticlesView.confirmDelete(view.getContent(), preparedArticles)) {
+      model.remove(preparedArticles);
+      objectViewController.search();
+    }
+    ;
   }
 }

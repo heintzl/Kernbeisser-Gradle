@@ -613,14 +613,15 @@ public class ArticleRepository {
     return AuditReaderFactory.get(em).find(Article.class, article.getId(), date);
   }
 
-  public static Map<ArticleDeletionResult, List<Article>> deleteAll(Collection<Article> articles) {
+  public static Map<ArticleDeletionResult, List<Article>> prepareRemoval(
+      Collection<Article> articles) {
 
     Map<ArticleDeletionResult, List<Article>> result = new HashMap<>();
     result.put(PREORDERED, new ArrayList<>());
     result.put(RECENTLY_TRADED, new ArrayList<>());
     result.put(RECENT_INVENTORY, new ArrayList<>());
-    result.put(DISCONTINUED, new ArrayList<>());
-    result.put(ERASED, new ArrayList<>());
+    result.put(DISCONTINUE, new ArrayList<>());
+    result.put(DELETE, new ArrayList<>());
 
     @Cleanup EntityManager em = DBConnection.getEntityManager();
 
@@ -679,49 +680,56 @@ public class ArticleRepository {
       } else if (lastInventory != null) {
         if (lastInventory.isBefore(
             LocalDate.ofInstant(inactivityThreshold, ZoneId.systemDefault()))) {
-          deletionResult = DISCONTINUED;
+          deletionResult = DISCONTINUE;
         } else {
           deletionResult = RECENT_INVENTORY;
         }
       } else {
-        deletionResult = ERASED;
+        deletionResult = DELETE;
       }
       result.get(deletionResult).add(article);
-      if (deletionResult.ordinal() < DISCONTINUED.ordinal()) {
-        continue;
-      }
+    }
+    return result;
+  }
 
-      Article dbArticle = em.find(Article.class, article.getId());
+  private static void cleanupArticleReferences(EntityManager em, Collection<Article> articles) {
 
-      QueryBuilder.selectAll(Shelf.class)
-          .getResultStream(em)
-          .forEach(
-              s -> {
-                Shelf dbShelf = em.find(Shelf.class, s.getId());
-                dbShelf.getArticles().remove(dbArticle);
-                em.merge(dbShelf);
-              });
+    QueryBuilder.selectAll(Shelf.class)
+        .getResultStream(em)
+        .forEach(
+            s -> {
+              Shelf dbShelf = em.find(Shelf.class, s.getId());
+              articles.forEach(dbShelf.getArticles()::remove);
+              em.merge(dbShelf);
+            });
 
-      em.createQuery("DELETE FROM ArticlePrintPool p WHERE p.article = :a")
-          .setParameter("a", article)
-          .executeUpdate();
+    em.createQuery("DELETE FROM ArticlePrintPool p WHERE p.article in (:a)")
+        .setParameter("a", articles)
+        .executeUpdate();
+  }
 
-      if (deletionResult == ERASED) {
-        em.createQuery("DELETE FROM PreOrder p WHERE p.article = :a")
-            .setParameter("a", article)
-            .executeUpdate();
-        em.remove(dbArticle);
-        continue;
-      }
-      if (deletionResult == DISCONTINUED) {
+  public static void unlistArticles(EntityManager em, Collection<Article> articles) {
+    cleanupArticleReferences(em, articles);
+    for (Article a : articles) {
+      Article dbArticle = em.find(Article.class, a.getId());
+      if (a.getKbNumber() >= 0) {
         int newKbNumber = -100000 - dbArticle.getKbNumber();
         do newKbNumber -= 10000;
         while (getByKbNumber(newKbNumber, false).isPresent());
         dbArticle.setKbNumber(newKbNumber);
-        dbArticle.setShopRange(ShopRange.DISCONTINUED);
-        em.merge(dbArticle);
       }
+      dbArticle.setShopRange(ShopRange.DISCONTINUED);
+      em.merge(dbArticle);
     }
-    return result;
+  }
+
+  public static void removeArticles(EntityManager em, Collection<Article> articles) {
+    cleanupArticleReferences(em, articles);
+    em.createQuery("DELETE FROM PreOrder p WHERE p.article in (:a) AND p.delivery IS NOT NULL")
+        .setParameter("a", articles)
+        .executeUpdate();
+    em.createQuery("DELETE FROM Article a WHERE a in (:a)")
+        .setParameter("a", articles)
+        .executeUpdate();
   }
 }

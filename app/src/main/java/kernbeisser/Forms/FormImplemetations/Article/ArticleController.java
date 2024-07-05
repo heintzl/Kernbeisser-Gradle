@@ -18,6 +18,8 @@ import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
 import kernbeisser.Forms.ObjectForm.Exceptions.SilentParseException;
 import kernbeisser.Forms.ObjectForm.ObjectForm;
 import kernbeisser.Useful.Tools;
+import kernbeisser.Windows.EditArticles.EditArticlesModel;
+import kernbeisser.Windows.EditArticles.EditArticlesView;
 import rs.groump.Key;
 import rs.groump.PermissionKey;
 
@@ -58,9 +60,12 @@ public class ArticleController extends FormController<ArticleView, ArticleModel,
 
   @Override
   public void remove(Article article) {
-    if (!getView().messageCommitDelete(article)) return;
-    var result = ArticleRepository.deleteAll(List.of(article));
-    getView().message(result.toString());
+    ArticleView view = getView();
+    var preparedArticles = ArticleRepository.prepareRemoval(List.of(article));
+    if (EditArticlesView.confirmDelete(view.getContent(), preparedArticles)) {
+      EditArticlesModel.remove(preparedArticles);
+    }
+    ;
   }
 
   public int parseAmount(String s) throws SilentParseException {
