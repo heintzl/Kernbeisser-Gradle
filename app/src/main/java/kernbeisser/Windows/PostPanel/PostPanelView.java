@@ -7,6 +7,8 @@ import javax.swing.*;
 import javax.swing.text.html.HTMLEditorKit;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
 public class PostPanelView implements IView<PostPanelController> {
@@ -21,6 +23,7 @@ public class PostPanelView implements IView<PostPanelController> {
   private JButton preview;
   private JCheckBox active;
   private JButton proceed;
+  @Setter @Getter private Dimension popupSize;
 
   @Linked private PostPanelController controller;
 
@@ -68,7 +71,8 @@ public class PostPanelView implements IView<PostPanelController> {
 
   public void stopEditSession() {
     previewText();
-    controller.saveContent(displayPane.getText());
+    this.popupSize = getContent().getSize();
+    controller.saveContent(displayPane.getText(), popupSize);
     editorPane.setVisible(false);
     edit.setText("Bearbeiten");
     preview.setVisible(false);
@@ -91,11 +95,6 @@ public class PostPanelView implements IView<PostPanelController> {
   @Override
   public @NotNull JComponent getContent() {
     return main;
-  }
-
-  @Override
-  public @NotNull Dimension getSize() {
-    return new Dimension(500, 500);
   }
 
   @Override

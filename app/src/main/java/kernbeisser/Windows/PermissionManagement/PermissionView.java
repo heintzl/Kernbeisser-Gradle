@@ -45,7 +45,11 @@ public class PermissionView implements IView<PermissionController> {
   @Linked private PermissionController controller;
 
   String getPermissionName() {
-    return JOptionPane.showInputDialog(this, "Bitte gib den Namen der neuen Berechtigung ein");
+    return JOptionPane.showInputDialog(
+        getContent(),
+        "Bitte gib den Namen der neuen Berechtigung ein:",
+        "Berechtigung anlegen",
+        JOptionPane.INFORMATION_MESSAGE);
   }
 
   private void createUIComponents() {

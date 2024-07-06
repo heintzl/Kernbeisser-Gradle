@@ -27,12 +27,14 @@ public class Post {
   private String htmlContent;
 
   @Column @Getter private Boolean active = false;
+  @Column @Getter private Integer popupHeight;
+  @Column @Getter private Integer popupWidth;
 
   private Post(PostContext context) {
     this.context = context;
   }
 
-  public Post setContent(String content) throws AccessDeniedException {
+  public Post setContent(String content, int width, int height) throws AccessDeniedException {
     if (!context.isWriteable()) {
       throw new AccessDeniedException("missing Permission for " + context);
     }
@@ -42,6 +44,8 @@ public class Post {
     EntityTransaction et = em.getTransaction();
     et.begin();
     post.htmlContent = content;
+    post.popupHeight = height;
+    post.popupWidth = width;
     em.merge(post);
     return post;
   }
