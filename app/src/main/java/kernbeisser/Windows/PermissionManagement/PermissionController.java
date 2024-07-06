@@ -123,13 +123,18 @@ public class PermissionController extends Controller<PermissionView, PermissionM
   }
 
   public void addPermission() {
+    String permissionName;
+    do {
+      permissionName = getView().getPermissionName();
+      if (permissionName == null) return;
+    } while (permissionName.isEmpty());
     try {
-      model.addPermission(getView().getPermissionName());
+      model.addPermission(permissionName);
+      loadSolutions();
     } catch (PersistenceException e) {
       getView().nameIsNotUnique();
       addPermission();
     }
-    loadSolutions();
   }
 
   public void deletePermission() {
