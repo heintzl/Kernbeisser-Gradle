@@ -253,6 +253,17 @@ public class SupplyView implements IView<SupplyController> {
         == 0;
   }
 
+  public void messageSupplyExistsInDB(Integer itemsToImport, Integer itemsToIgnore) {
+    message(
+        String.format(
+            "Von %1$d Artikeln wurden bereits %2$d unter dieser Lieferscheinnummer eingelesen.\n"
+                + "Diese Artikel werden daher für diesen Lieferschein ignoriert.\n"
+                + "Die Etiketten werden dennoch in den Druck übernommen.",
+            itemsToImport, itemsToIgnore),
+        "Lieferschein wurde bereits eingelesen",
+        JOptionPane.WARNING_MESSAGE);
+  }
+
   // @spotless:off
 
     {

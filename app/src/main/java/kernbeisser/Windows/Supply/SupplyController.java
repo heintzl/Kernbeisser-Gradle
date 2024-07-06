@@ -126,7 +126,7 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
   }
 
   void commit() {
-    model.commit();
+    model.commit(getView()::messageSupplyExistsInDB);
     if (model.getShoppingItems().size() > 0) {
       model.print();
       new PrintLabelsController().openIn(new SubWindow(getView().traceViewContainer()));
@@ -190,6 +190,7 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
                 setPrintNumber(item);
               }
               getView().setShoppingItems(model.getShoppingItems());
+              getModel().setSupply(supply);
               getModel()
                   .setAppendedProducePrice(
                       supply.getAllLineContents().stream()
