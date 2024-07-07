@@ -8,8 +8,10 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import kernbeisser.CustomComponents.ObjectTree.CachedNode;
 import kernbeisser.CustomComponents.ObjectTree.Node;
+import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
@@ -135,6 +137,26 @@ public class SurchargeGroup implements Serializable, ActuallyCloneable {
     return QueryBuilder.selectAll(Article.class)
         .where(Article_.surchargeGroup.eq(this))
         .getResultList();
+  }
+
+  public static SurchargeGroup getUnlistedGroup() {
+    Optional<SurchargeGroup> unlistedGroup =
+        QueryBuilder.selectAll(SurchargeGroup.class)
+            .where(SurchargeGroup_.name.eq("@Ausgelistet"))
+            .getSingleResultOptional();
+    if (unlistedGroup.isPresent()) {
+      return unlistedGroup.get();
+    }
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    SurchargeGroup sg = new SurchargeGroup();
+    sg.setName("@Ausgelistet");
+    sg.setSurcharge(1.0);
+    em.persist(sg);
+    em.flush();
+    return sg;
   }
 
   @Override

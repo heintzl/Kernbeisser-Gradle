@@ -34,6 +34,7 @@ import rs.groump.AccessManager;
 @Log4j2
 public class ArticleRepository {
   public static final Supplier KK_SUPPLIER = Supplier.getKKSupplier();
+  public static final SurchargeGroup UNLISTED_GROUP = SurchargeGroup.getUnlistedGroup();
 
   private ArticleRepository() {}
 
@@ -713,10 +714,18 @@ public class ArticleRepository {
     for (Article a : articles) {
       Article dbArticle = em.find(Article.class, a.getId());
       if (a.getKbNumber() >= 0) {
-        int newKbNumber = -100000 - dbArticle.getKbNumber();
-        while (getByKbNumber(newKbNumber, false).isPresent()) newKbNumber -= 10000;
-        dbArticle.setKbNumber(newKbNumber);
+        int newNumber = -100000 - a.getKbNumber();
+        while (getByKbNumber(newNumber, false).isPresent()) {
+          newNumber -= 10000;
+        }
+        dbArticle.setKbNumber(newNumber);
+        dbArticle.setSuppliersItemNumber(newNumber);
       }
+      dbArticle.setPriceList(null);
+      dbArticle.setBarcode(null);
+      Supplier supplier = a.getSupplier();
+      dbArticle.setSupplier(null);
+      dbArticle.setSurchargeGroup(UNLISTED_GROUP);
       dbArticle.setShopRange(ShopRange.DISCONTINUED);
       em.merge(dbArticle);
     }
