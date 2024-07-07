@@ -29,7 +29,7 @@ public class EditSurchargeGroupModel implements IModel<EditSurchargeGroupControl
 
   Collection<SurchargeGroup> getAllFromSupplier(Supplier supplier) {
     return QueryBuilder.selectAll(SurchargeGroup.class)
-        .where(SurchargeGroup_.surcharge.eq(supplier))
+        .where(SurchargeGroup_.supplier.eq(supplier))
         .getResultList();
   }
 
