@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import javax.swing.*;
 import javax.swing.RowFilter;
 import javax.swing.table.*;
@@ -232,12 +233,12 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
     getRowSorter().setSortKeys(Arrays.asList(sortKey));
   }
 
-  private void applyStandardFilter(JPopupMenu p, Column<T> c, JTextField text) {
+  private void applyStandardFilter(JPopupMenu menu, Column<T> c, JTextField text) {
     if (text == null) {
       standardColumnFilters.remove(c);
       ((JTextField) ((JPanel) standardFilterPopups.get(c).getComponent(0)).getComponent(1))
           .setText("");
-      p.setVisible(false);
+      menu.setVisible(false);
     } else {
       standardColumnFilters.put(c, text);
     }
@@ -423,16 +424,20 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
   }
 
   private boolean isInStandardFilter(T t) {
-    boolean result = true;
     for (Map.Entry<Column<T>, JTextField> filter : standardColumnFilters.entrySet()) {
-      String text = filter.getKey().getValue(t).toString();
-      result =
-          Pattern.compile(filter.getValue().getText(), Pattern.CASE_INSENSITIVE)
-              .matcher(text)
-              .find();
-      if (!result) break;
+      Object content = filter.getKey().getValue(t);
+      if (content == null) return false;
+      try {
+        boolean match =
+            Pattern.compile(filter.getValue().getText(), Pattern.CASE_INSENSITIVE)
+                .matcher(content.toString())
+                .find();
+        if (!match) return false;
+      } catch (PatternSyntaxException e) {
+        return false;
+      }
     }
-    return result;
+    return true;
   }
 
   public Collection<T> getSelectedObjects() {
