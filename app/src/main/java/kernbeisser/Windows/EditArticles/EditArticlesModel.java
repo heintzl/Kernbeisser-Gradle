@@ -1,7 +1,6 @@
 package kernbeisser.Windows.EditArticles;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityTransaction;
 import java.util.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
@@ -31,9 +30,6 @@ public class EditArticlesModel implements IModel<EditArticlesController> {
 
   public static void remove(Map<ArticleDeletionResult, List<Article>> preparedArticles) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
     ArticleRepository.removeArticles(em, preparedArticles.get(ArticleDeletionResult.DELETE));
     ArticleRepository.unlistArticles(em, preparedArticles.get(ArticleDeletionResult.DISCONTINUE));
   }
