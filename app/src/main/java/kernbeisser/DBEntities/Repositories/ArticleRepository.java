@@ -737,6 +737,7 @@ public class ArticleRepository {
       dbArticle.setShopRange(ShopRange.DISCONTINUED);
       em.merge(dbArticle);
     }
+    et.commit();
   }
 
   public static void removeArticles(EntityManager em, Collection<Article> articles) {
@@ -754,5 +755,6 @@ public class ArticleRepository {
     em.createQuery("DELETE FROM Article a WHERE a in (:a)")
         .setParameter("a", articles)
         .executeUpdate();
+    et.commit();
   }
 }
