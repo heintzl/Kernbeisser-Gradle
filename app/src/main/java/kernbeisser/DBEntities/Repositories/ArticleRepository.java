@@ -711,7 +711,6 @@ public class ArticleRepository {
 
   public static void unlistArticles(EntityManager em, Collection<Article> articles) {
 
-    @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
 
     et.begin();
@@ -741,7 +740,6 @@ public class ArticleRepository {
   }
 
   public static void removeArticles(EntityManager em, Collection<Article> articles) {
-    @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
 
     et.begin();
