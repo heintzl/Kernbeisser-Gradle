@@ -710,7 +710,15 @@ public class ArticleRepository {
   }
 
   public static void unlistArticles(EntityManager em, Collection<Article> articles) {
+
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+
+    et.begin();
     cleanupArticleReferences(em, articles);
+    et.commit();
+
+    et.begin();
     for (Article a : articles) {
       Article dbArticle = em.find(Article.class, a.getId());
       if (a.getKbNumber() >= 0) {
@@ -732,7 +740,14 @@ public class ArticleRepository {
   }
 
   public static void removeArticles(EntityManager em, Collection<Article> articles) {
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+
+    et.begin();
     cleanupArticleReferences(em, articles);
+    et.commit();
+
+    et.begin();
     em.createQuery("DELETE FROM PreOrder p WHERE p.article in (:a) AND p.delivery IS NOT NULL")
         .setParameter("a", articles)
         .executeUpdate();
