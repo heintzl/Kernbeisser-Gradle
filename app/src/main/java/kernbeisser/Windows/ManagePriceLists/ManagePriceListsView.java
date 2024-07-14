@@ -10,7 +10,6 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import javax.swing.*;
-
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
@@ -19,9 +18,7 @@ import kernbeisser.CustomComponents.ObjectTree.Node;
 import kernbeisser.CustomComponents.ObjectTree.ObjectTree;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.PriceList;
-import kernbeisser.DBEntities.Supplier;
 import kernbeisser.DBEntities.SurchargeGroup;
-import kernbeisser.Forms.ObjectForm.Components.AccessCheckingComboBox;
 import kernbeisser.Windows.MVC.ComponentController.ComponentController;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
@@ -70,6 +67,18 @@ public class ManagePriceListsView implements IView<ManagePriceListsController> {
     addArticle.addActionListener(controller::addArticle);
     moveArticles.addActionListener(controller);
     print.addActionListener(controller);
+    articles.addColumn(
+        Columns.create("Name", Article::getName, SwingConstants.LEFT).withDefaultFilter());
+    articles.addColumn(
+        Columns.create("Lieferant", Article::getSupplier, SwingConstants.LEFT).withDefaultFilter());
+    articles.addColumn(
+        Columns.create("Lieferanten Nr.", Article::getSuppliersItemNumber)
+            .withSorter(Column.NUMBER_SORTER)
+            .withDefaultFilter());
+    articles.addColumn(
+        Columns.<Article>create(
+                "Aufschlaggruppe", e -> e.getSurchargeGroup().getNameWithSurcharge())
+            .withDefaultFilter());
   }
 
   @Override
@@ -79,18 +88,7 @@ public class ManagePriceListsView implements IView<ManagePriceListsController> {
 
   private void createUIComponents() {
     priceLists = new ObjectTree<>(controller.getNode());
-    articles =
-        new ObjectTable<>(
-            Columns.create("Name", Article::getName, SwingConstants.LEFT),
-            Columns.create("Lieferant", Article::getSupplier, SwingConstants.LEFT),
-            Columns.create("Lieferanten Nr.", Article::getSuppliersItemNumber)
-                .withSorter(Column.NUMBER_SORTER),
-            Columns.create(
-                "Aufschlagsgruppe",
-                (Article e) ->
-                    String.format(
-                        "%s(%.2f%%)",
-                        e.getSurchargeGroup().getName(), e.getSurchargeGroup().getSurcharge())));
+    articles = new ObjectTable<Article>();
   }
 
   private Optional<Article> getSelectedArticle() {
@@ -204,25 +202,33 @@ public class ManagePriceListsView implements IView<ManagePriceListsController> {
   }
 
   public void warningExactlyOneSupplier() {
-    message("Um die Zuschlaggruppe zu setzen, müssen alle gewählten Artikel den selben Lieferanten haben!",
-            "Zuschlaggruppe setzen",
-            JOptionPane.WARNING_MESSAGE);
+    message(
+        "Um die Zuschlaggruppe zu setzen, müssen alle gewählten Artikel den selben Lieferanten haben!",
+        "Zuschlaggruppe setzen",
+        JOptionPane.WARNING_MESSAGE);
   }
 
   public Optional<SurchargeGroup> selectSurchargeGroup(List<SurchargeGroup> surchargeGroups) {
 
     AtomicReference<SurchargeGroup> result = new AtomicReference<>(surchargeGroups.get(0));
-    AdvancedComboBox<SurchargeGroup> groupComboBox = new AdvancedComboBox<>(SurchargeGroup::getNameWithSurcharge);
+    AdvancedComboBox<SurchargeGroup> groupComboBox =
+        new AdvancedComboBox<>(SurchargeGroup::getNameWithSurcharge);
     groupComboBox.setItems(surchargeGroups);
-    groupComboBox.addActionListener(e -> {result.set((SurchargeGroup) groupComboBox.getSelectedItem());});
+    groupComboBox.addActionListener(
+        e -> {
+          result.set((SurchargeGroup) groupComboBox.getSelectedItem());
+        });
     return Optional.ofNullable(
-            JOptionPane.showConfirmDialog(getContent(),
-            groupComboBox,
-            "Zuschlaggruppe setzen",
-            JOptionPane.OK_CANCEL_OPTION
-    ) == JOptionPane.OK_OPTION?
-            result.get() : null);
+        JOptionPane.showConfirmDialog(
+                    getContent(),
+                    groupComboBox,
+                    "Zuschlaggruppe setzen",
+                    JOptionPane.OK_CANCEL_OPTION)
+                == JOptionPane.OK_OPTION
+            ? result.get()
+            : null);
   }
+
   @Override
   public String getTitle() {
     return "Preislisten bearbeiten";
