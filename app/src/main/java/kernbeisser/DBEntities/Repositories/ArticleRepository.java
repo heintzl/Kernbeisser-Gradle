@@ -755,4 +755,19 @@ public class ArticleRepository {
         .executeUpdate();
     et.commit();
   }
+
+  public static void setSurchargeGroup(
+      Collection<Article> articles, SurchargeGroup surchargeGroup) {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    for (Article a : articles) {
+      Article dbArticle = em.find(Article.class, a.getId());
+      if (dbArticle != null) {
+        dbArticle.setSurchargeGroup(surchargeGroup);
+        em.persist(dbArticle);
+      }
+    }
+  }
 }

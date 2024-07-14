@@ -3,7 +3,7 @@
   <grid id="27dc6" binding="main" layout-manager="GridLayoutManager" row-count="2" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="5" left="5" bottom="5" right="5"/>
     <constraints>
-      <xy x="20" y="20" width="1395" height="674"/>
+      <xy x="20" y="20" width="1635" height="674"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -143,12 +143,14 @@
                   <text value="Artikel Hinzufügen"/>
                 </properties>
               </component>
-              <component id="36bd5" class="javax.swing.JButton" binding="editArticle">
+              <component id="36bd5" class="javax.swing.JButton" binding="setSurcharge">
                 <constraints>
                   <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <text value="Artikel Bearbeiten"/>
+                  <actionCommand value=""/>
+                  <label value="Zuschlaggruppe setzen"/>
+                  <text value="Zuschlaggruppe setzen"/>
                 </properties>
               </component>
             </children>

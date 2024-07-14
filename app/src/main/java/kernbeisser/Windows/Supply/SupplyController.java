@@ -211,6 +211,10 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
       Supplier kkSupplier, LineContent content, boolean noBarcode) {
     Optional<Article> articleInDb =
         ArticleRepository.getBySuppliersItemNumber(kkSupplier, content.getKkNumber());
+    ShopRange shopRange =
+        (content.getContainerMultiplier() - Tools.ifNull(content.getUserPreorderCount(), 0) > 0
+            ? ShopRange.PERMANENT_RANGE
+            : ShopRange.IN_RANGE);
     if (articleInDb.isPresent()) {
       boolean dirty = false;
       @Cleanup EntityManager em = DBConnection.getEntityManager();
@@ -222,12 +226,13 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
       boolean newWeighable = content.isWeighableKb();
 
       String logInfo = "Article [" + article.getSuppliersItemNumber() + "]:";
-      if (!article.getShopRange().isVisible()
-          && content.getContainerMultiplier() - Tools.ifNull(content.getUserPreorderCount(), 0)
-              > 0) {
-        article.setShopRange(ShopRange.IN_RANGE);
-        dirty = true;
-        logInfo += " updated shop range -";
+      ShopRange articleShopRange = article.getShopRange();
+      if (!articleShopRange.equals(ShopRange.PERMANENT_RANGE)) {
+        if (!articleShopRange.equals(shopRange)) {
+          article.setShopRange(shopRange);
+          dirty = true;
+          logInfo += " updated shop range [" + article.getShopRange() + "] -";
+        }
       }
       if (Math.abs(article.getNetPrice() - newPrice) >= 0.01) {
         dirty = true;
@@ -245,7 +250,7 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
       }
       return article;
     }
-    return createArticle(content, noBarcode);
+    return createArticle(content, noBarcode, shopRange);
   }
 
   public static ShoppingItem createShoppingItem(
@@ -271,7 +276,8 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
             content.getContainerMultiplier() * content.getContainerSize() * content.getAmount());
   }
 
-  private static @NotNull Article createArticle(LineContent content, boolean ignoreBarcode) {
+  private static @NotNull Article createArticle(
+      LineContent content, boolean ignoreBarcode, ShopRange shopRange) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup("commit")
     EntityTransaction et = em.getTransaction();
@@ -288,7 +294,7 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
     if (!ignoreBarcode) article.setBarcode(content.getBarcode());
     article.setWeighable(content.isWeighableKb());
     article.setContainerSize(content.getContainerSize());
-    article.setShopRange(ShopRange.PERMANENT_RANGE);
+    article.setShopRange(shopRange);
     article.setSurchargeGroup(pattern.getSurchargeGroup());
     VAT vat = content.getVat();
     if (vat == null) {

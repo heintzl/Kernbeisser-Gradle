@@ -5,10 +5,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
 import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.Optional;
 import kernbeisser.CustomComponents.ObjectTree.Node;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.PriceList;
+import kernbeisser.DBEntities.Repositories.ArticleRepository;
+import kernbeisser.DBEntities.Supplier;
+import kernbeisser.DBEntities.SurchargeGroup;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Forms.FormEditor.FormEditorController;
 import kernbeisser.Forms.FormImplemetations.Article.ArticleController;
@@ -172,11 +175,20 @@ public class ManagePriceListsController
   @Override
   public void fillView(ManagePriceListsView managePriceListsView) {}
 
-  public void editSelectedArticle(ActionEvent actionEvent) {
-    editArticle(
-        getView().getSelectedArticles().stream()
-            .findFirst()
-            .orElseThrow(NoSuchElementException::new));
+  public void setSurchargeGroup(ActionEvent actionEvent) {
+    ManagePriceListsView view = getView();
+    Collection<Article> articles = view.getSelectedArticles();
+    List<Supplier> suppliers = articles.stream().map(Article::getSupplier).distinct().toList();
+    if (suppliers.size() != 1) {
+      view.warningExactlyOneSupplier();
+      return;
+    }
+    List<SurchargeGroup> availableGroups = suppliers.getFirst().getSurchargegroups();
+    Optional<SurchargeGroup> surchargeGroup = view.selectSurchargeGroup(availableGroups);
+    if (surchargeGroup.isPresent()) {
+      ArticleRepository.setSurchargeGroup(articles, surchargeGroup.get());
+      view.refreshNode();
+    }
   }
 
   public void editArticle(Article article) {
