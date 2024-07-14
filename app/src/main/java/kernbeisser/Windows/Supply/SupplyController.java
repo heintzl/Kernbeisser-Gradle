@@ -211,8 +211,10 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
       Supplier kkSupplier, LineContent content, boolean noBarcode) {
     Optional<Article> articleInDb =
         ArticleRepository.getBySuppliersItemNumber(kkSupplier, content.getKkNumber());
-    ShopRange shopRange = (content.getContainerMultiplier() - Tools.ifNull(content.getUserPreorderCount(), 0)
-            > 0 ? ShopRange.PERMANENT_RANGE : ShopRange.IN_RANGE);
+    ShopRange shopRange =
+        (content.getContainerMultiplier() - Tools.ifNull(content.getUserPreorderCount(), 0) > 0
+            ? ShopRange.PERMANENT_RANGE
+            : ShopRange.IN_RANGE);
     if (articleInDb.isPresent()) {
       boolean dirty = false;
       @Cleanup EntityManager em = DBConnection.getEntityManager();
@@ -274,7 +276,8 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
             content.getContainerMultiplier() * content.getContainerSize() * content.getAmount());
   }
 
-  private static @NotNull Article createArticle(LineContent content, boolean ignoreBarcode, ShopRange shopRange) {
+  private static @NotNull Article createArticle(
+      LineContent content, boolean ignoreBarcode, ShopRange shopRange) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup("commit")
     EntityTransaction et = em.getTransaction();

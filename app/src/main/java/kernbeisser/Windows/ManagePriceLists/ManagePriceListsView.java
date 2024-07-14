@@ -5,9 +5,13 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import java.awt.*;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import javax.swing.*;
+
+import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
@@ -15,6 +19,9 @@ import kernbeisser.CustomComponents.ObjectTree.Node;
 import kernbeisser.CustomComponents.ObjectTree.ObjectTree;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.PriceList;
+import kernbeisser.DBEntities.Supplier;
+import kernbeisser.DBEntities.SurchargeGroup;
+import kernbeisser.Forms.ObjectForm.Components.AccessCheckingComboBox;
 import kernbeisser.Windows.MVC.ComponentController.ComponentController;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
@@ -37,7 +44,7 @@ public class ManagePriceListsView implements IView<ManagePriceListsController> {
   private JPanel treeButtonPanel;
   private JPanel contentButtonPanel;
   private JButton addArticle;
-  private JButton editArticle;
+  private JButton setSurcharge;
 
   @Linked private ManagePriceListsController controller;
 
@@ -57,9 +64,9 @@ public class ManagePriceListsView implements IView<ManagePriceListsController> {
     renamePriceList.addActionListener(controller);
     movePriceList.addActionListener(controller);
     editPriceList.addActionListener(controller);
-    articles.selectionComponent(editArticle);
+    articles.selectionComponent(setSurcharge);
     articles.addDoubleClickListener(controller::editArticle);
-    editArticle.addActionListener(controller::editSelectedArticle);
+    setSurcharge.addActionListener(controller::setSurchargeGroup);
     addArticle.addActionListener(controller::addArticle);
     moveArticles.addActionListener(controller);
     print.addActionListener(controller);
@@ -196,6 +203,26 @@ public class ManagePriceListsView implements IView<ManagePriceListsController> {
         JOptionPane.WARNING_MESSAGE);
   }
 
+  public void warningExactlyOneSupplier() {
+    message("Um die Zuschlaggruppe zu setzen, müssen alle gewählten Artikel den selben Lieferanten haben!",
+            "Zuschlaggruppe setzen",
+            JOptionPane.WARNING_MESSAGE);
+  }
+
+  public Optional<SurchargeGroup> selectSurchargeGroup(List<SurchargeGroup> surchargeGroups) {
+
+    AtomicReference<SurchargeGroup> result = new AtomicReference<>(surchargeGroups.get(0));
+    AdvancedComboBox<SurchargeGroup> groupComboBox = new AdvancedComboBox<>(SurchargeGroup::getNameWithSurcharge);
+    groupComboBox.setItems(surchargeGroups);
+    groupComboBox.addActionListener(e -> {result.set((SurchargeGroup) groupComboBox.getSelectedItem());});
+    return Optional.ofNullable(
+            JOptionPane.showConfirmDialog(getContent(),
+            groupComboBox,
+            "Zuschlaggruppe setzen",
+            JOptionPane.OK_CANCEL_OPTION
+    ) == JOptionPane.OK_OPTION?
+            result.get() : null);
+  }
   @Override
   public String getTitle() {
     return "Preislisten bearbeiten";
@@ -270,9 +297,9 @@ public class ManagePriceListsView implements IView<ManagePriceListsController> {
         addArticle = new JButton();
         addArticle.setText("Artikel Hinzufügen");
         contentButtonPanel.add(addArticle, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        editArticle = new JButton();
-        editArticle.setText("Artikel Bearbeiten");
-        contentButtonPanel.add(editArticle, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        setSurcharge = new JButton();
+        setSurcharge.setText("Zuschlaggruppe setzen");
+        contentButtonPanel.add(setSurcharge, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JScrollPane scrollPane2 = new JScrollPane();
         panel3.add(scrollPane2, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         scrollPane2.setViewportView(articles);
