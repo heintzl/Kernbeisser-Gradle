@@ -13,6 +13,7 @@ import kernbeisser.EntityWrapper.ObjectState;
 import kernbeisser.Enums.*;
 import kernbeisser.Exeptions.NotEnoughCreditException;
 import kernbeisser.Exeptions.UndefinedInputException;
+import kernbeisser.Security.StaticPermissionChecks;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
@@ -22,8 +23,7 @@ import kernbeisser.Windows.ShoppingMask.ArticleSelector.ArticleSelectorControlle
 import kernbeisser.Windows.UserInfo.UserInfoController;
 import kernbeisser.Windows.ViewContainers.SubWindow;
 import org.jetbrains.annotations.NotNull;
-import rs.groump.Access;
-import rs.groump.AccessManager;
+import rs.groump.*;
 
 public class ShoppingMaskController extends Controller<ShoppingMaskView, ShoppingMaskModel> {
   @Linked private final ShoppingCartController shoppingCartController;
@@ -41,6 +41,15 @@ public class ShoppingMaskController extends Controller<ShoppingMaskView, Shoppin
             model.getSaleSession().getCustomer().getUserGroup().getSolidaritySurcharge(),
             true);
     this.view = getView();
+  }
+
+  public static boolean hasPreorderPermission() {
+    try {
+      StaticPermissionChecks.getStaticInstance().checkPreorderPermission();
+      return true;
+    } catch (AccessDeniedException e) {
+      return false;
+    }
   }
 
   private double getRelevantPrice() {
@@ -376,6 +385,8 @@ public class ShoppingMaskController extends Controller<ShoppingMaskView, Shoppin
       RememberDialog.showDialog(
           customer, "CustomerDebtWarning", null, infoMessage, "Kein Guthaben vorhanden");
     }
+    view.hasPreorderPermission = hasPreorderPermission();
+    view.setPriceOptions(ArticleType.ARTICLE_NUMBER);
   }
 
   private void launchPayWindow() {

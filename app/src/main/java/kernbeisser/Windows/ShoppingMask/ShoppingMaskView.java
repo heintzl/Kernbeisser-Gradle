@@ -112,6 +112,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
   static Vector<Component> traversalOrder = new Vector<>(1);
   static FocusTraversal traversalPolicy;
   @Getter private boolean isPreordered = false;
+  public boolean hasPreorderPermission;
 
   EnumSet<ArticleType> articleTypesWithSettablePrice;
   EnumSet<ArticleType> depositArticleTypes;
@@ -392,8 +393,8 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     updateAllControls(type);
   }
 
-  private void setPriceOptions(ArticleType type) {
-    if (depositArticleTypes.contains(type)) {
+  public void setPriceOptions(ArticleType type) {
+    if (!hasPreorderPermission || depositArticleTypes.contains(type)) {
       pricePreordered.setEnabled(false);
       isPreordered = false;
     } else {
@@ -883,13 +884,15 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
           }
         });
 
-    pricePreordered.addItemListener(
-        e -> {
-          variablePercentage.setEnabled(false);
-          enablePreordered();
-          setSupplier(Supplier.getKKSupplier());
-          rememberReductionSetting.setSelected(true);
-        });
+    if (controller.hasPreorderPermission()) {
+      pricePreordered.addItemListener(
+          e -> {
+            variablePercentage.setEnabled(false);
+            enablePreordered();
+            setSupplier(Supplier.getKKSupplier());
+            rememberReductionSetting.setSelected(true);
+          });
+    }
     rememberReductionSetting.addActionListener(e -> setDiscount());
     rememberReductionSetting.setToolTipText("Rabatt-Einstellungen für Folgeartikel merken");
     priceVariablePercentage.addItemListener(
