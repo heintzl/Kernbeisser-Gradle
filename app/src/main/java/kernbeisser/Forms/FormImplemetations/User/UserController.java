@@ -10,8 +10,6 @@ import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Enums.Setting;
-import kernbeisser.Exeptions.MissingFullMemberException;
-import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
 import kernbeisser.Forms.FormController;
 import kernbeisser.Forms.ObjectForm.Components.Source;
 import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
@@ -74,11 +72,7 @@ public class UserController extends FormController<UserView, UserModel, User> {
       if (this.isTrialMemberMode()) {
         user.getPermissions().add(PermissionConstants.TRIAL_MEMBER.getPermission());
       }
-      try {
-        user.setUserGroup(new UserGroup());
-      } catch (MissingFullMemberException e) {
-        UnexpectedExceptionHandler.showUnexpectedErrorWarning(e);
-      }
+      user.setNewUserGroup();
       Tools.persist(user.getUserGroup());
       getView().showPasswordToken(passwordToken, user);
     }

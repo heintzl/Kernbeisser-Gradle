@@ -2,9 +2,12 @@ package kernbeisser.DBEntities.Repositories;
 
 import static kernbeisser.DBConnection.ExpressionFactory.*;
 import static kernbeisser.DBConnection.PredicateFactory.*;
+import static kernbeisser.Enums.ArticleDeletionResult.*;
 
 import jakarta.persistence.*;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
@@ -31,6 +34,7 @@ import rs.groump.AccessManager;
 @Log4j2
 public class ArticleRepository {
   public static final Supplier KK_SUPPLIER = Supplier.getKKSupplier();
+  public static final SurchargeGroup UNLISTED_GROUP = SurchargeGroup.getUnlistedGroup();
 
   private ArticleRepository() {}
 
@@ -200,7 +204,7 @@ public class ArticleRepository {
   private static TypedQuery<Article> createQuery(EntityManager em, String search) {
     if (search.startsWith("PL:")) {
       return QueryBuilder.selectAll(Article.class)
-          .where(Article_.priceList.child(PriceList_.name).eq(search.replace("PL:", "")))
+          .where(Article_.priceList.child(PriceList_.name).eq(search.replace("PL:", "").trim()))
           .buildQuery(em);
     }
     int n = Tools.tryParseInt(search);
@@ -210,7 +214,7 @@ public class ArticleRepository {
         .where(
             or(
                 Article_.kbNumber.eq(n),
-                Article_.suppliersItemNumber.eq(Tools.tryParseInt(search)),
+                Article_.suppliersItemNumber.eq(n),
                 like(lower(Article_.name), ds),
                 Article_.barcode.eq(l),
                 like(Article_.barcode.as(String.class), "%" + search)))
@@ -242,7 +246,7 @@ public class ArticleRepository {
         .buildQuery(em)
         .setMaxResults(1)
         .getResultStream()
-        .findAny()
+        .findFirst()
         .orElse(null);
   }
 
@@ -348,10 +352,10 @@ public class ArticleRepository {
             .where(greaterOrEq(ShoppingItem_.createDate, asExpression(expireDate)))
             .distinct()
             .getResultStream(em)
-            .map(e -> e.intValue())
+            .map(Long::intValue)
             .toList();
     return QueryBuilder.selectAll(Article.class)
-        .where(Article_.id.in(articleIds))
+        .where(Article_.priceList.eq(priceList), Article_.id.in(articleIds))
         .getResultList(em);
   }
 
@@ -608,5 +612,162 @@ public class ArticleRepository {
     EntityTransaction et = em.getTransaction();
     et.begin();
     return AuditReaderFactory.get(em).find(Article.class, article.getId(), date);
+  }
+
+  public static Map<ArticleDeletionResult, List<Article>> prepareRemoval(
+      Collection<Article> articles) {
+
+    Map<ArticleDeletionResult, List<Article>> result = new HashMap<>();
+    result.put(PREORDERED, new ArrayList<>());
+    result.put(RECENTLY_TRADED, new ArrayList<>());
+    result.put(RECENT_INVENTORY, new ArrayList<>());
+    result.put(DISCONTINUE, new ArrayList<>());
+    result.put(DELETE, new ArrayList<>());
+
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+
+    Collection<String> preorderedSupplierNumbers =
+        QueryBuilder.select(PreOrder_.catalogEntry.child(CatalogEntry_.artikelNr))
+            .where(
+                and(
+                    PreOrder_.delivery.isNull(),
+                    PreOrder_.catalogEntry
+                        .child(CatalogEntry_.artikelNr)
+                        .in(
+                            articles.stream()
+                                .filter(a -> a.getSupplier().equals(Supplier.getKKSupplier()))
+                                .map(a -> Integer.toString(a.getSuppliersItemNumber()))
+                                .toList())))
+            .getResultList();
+
+    Map<Integer, LocalDate> articleNumbersLastInventory =
+        QueryBuilder.selectAll(ArticleStock.class)
+            .where(ArticleStock_.article.in(articles))
+            .getResultStream(em)
+            .collect(
+                Collectors.toMap(
+                    s -> s.getArticle().getKbNumber(),
+                    ArticleStock::getInventoryDate,
+                    (s1, s2) -> s1.isBefore(s2) ? s2 : s1));
+
+    em.clear();
+
+    Instant inactivityThreshold =
+        Instant.now().minus(Setting.INVENTORY_INACTIVE_ARTICLE.getIntValue(), ChronoUnit.DAYS);
+    Collection<Integer> recentlyTradedArticleNumbers =
+        QueryBuilder.select(ShoppingItem_.kbNumber)
+            .where(
+                and(
+                    ShoppingItem_.kbNumber.in(
+                        articles.stream().map(Article::getKbNumber).toList())),
+                or(
+                    greaterOrEq(ShoppingItem_.createDate, asExpression(inactivityThreshold)),
+                    greaterOrEq(
+                        ShoppingItem_.purchase.child(Purchase_.createDate),
+                        asExpression(inactivityThreshold))))
+            .getResultList();
+
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    for (Article article : articles) {
+      ArticleDeletionResult deletionResult;
+      Integer kbNumber = article.getKbNumber();
+      LocalDate lastInventory = articleNumbersLastInventory.get(kbNumber);
+      if (preorderedSupplierNumbers.contains(Integer.toString(article.getSuppliersItemNumber()))) {
+        deletionResult = PREORDERED;
+      } else if (recentlyTradedArticleNumbers.contains(kbNumber)) {
+        deletionResult = RECENTLY_TRADED;
+      } else if (lastInventory != null) {
+        if (lastInventory.isBefore(
+            LocalDate.ofInstant(inactivityThreshold, ZoneId.systemDefault()))) {
+          deletionResult = DISCONTINUE;
+        } else {
+          deletionResult = RECENT_INVENTORY;
+        }
+      } else {
+        deletionResult = DELETE;
+      }
+      result.get(deletionResult).add(article);
+    }
+    return result;
+  }
+
+  private static void cleanupArticleReferences(EntityManager em, Collection<Article> articles) {
+
+    QueryBuilder.selectAll(Shelf.class)
+        .getResultStream(em)
+        .forEach(
+            s -> {
+              Shelf dbShelf = em.find(Shelf.class, s.getId());
+              articles.forEach(dbShelf.getArticles()::remove);
+              em.merge(dbShelf);
+            });
+
+    em.createQuery("DELETE FROM ArticlePrintPool p WHERE p.article in (:a)")
+        .setParameter("a", articles)
+        .executeUpdate();
+  }
+
+  public static void unlistArticles(EntityManager em, Collection<Article> articles) {
+
+    EntityTransaction et = em.getTransaction();
+
+    et.begin();
+    cleanupArticleReferences(em, articles);
+    et.commit();
+
+    et.begin();
+    for (Article a : articles) {
+      Article dbArticle = em.find(Article.class, a.getId());
+      if (a.getKbNumber() >= 0) {
+        int newNumber = -100000 - a.getKbNumber();
+        while (getByKbNumber(newNumber, false).isPresent()) {
+          newNumber -= 10000;
+        }
+        dbArticle.setKbNumber(newNumber);
+        dbArticle.setSuppliersItemNumber(newNumber);
+      }
+      dbArticle.setPriceList(null);
+      dbArticle.setBarcode(null);
+      Supplier supplier = a.getSupplier();
+      dbArticle.setSupplier(null);
+      dbArticle.setSurchargeGroup(UNLISTED_GROUP);
+      dbArticle.setShopRange(ShopRange.DISCONTINUED);
+      em.merge(dbArticle);
+    }
+    et.commit();
+  }
+
+  public static void removeArticles(EntityManager em, Collection<Article> articles) {
+    EntityTransaction et = em.getTransaction();
+
+    et.begin();
+    cleanupArticleReferences(em, articles);
+    et.commit();
+
+    et.begin();
+    em.createQuery("DELETE FROM PreOrder p WHERE p.article in (:a) AND p.delivery IS NOT NULL")
+        .setParameter("a", articles)
+        .executeUpdate();
+    em.createQuery("DELETE FROM Article a WHERE a in (:a)")
+        .setParameter("a", articles)
+        .executeUpdate();
+    et.commit();
+  }
+
+  public static void setSurchargeGroup(
+      Collection<Article> articles, SurchargeGroup surchargeGroup) {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    for (Article a : articles) {
+      Article dbArticle = em.find(Article.class, a.getId());
+      if (dbArticle != null) {
+        dbArticle.setSurchargeGroup(surchargeGroup);
+        em.persist(dbArticle);
+      }
+    }
   }
 }

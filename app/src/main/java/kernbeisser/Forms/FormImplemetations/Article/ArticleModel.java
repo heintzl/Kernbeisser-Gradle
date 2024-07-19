@@ -62,7 +62,7 @@ public class ArticleModel implements IModel<ArticleController> {
 
   public Collection<SurchargeGroup> getAllSurchargeGroupsFor(Supplier s) {
     return QueryBuilder.selectAll(SurchargeGroup.class)
-        .where(SurchargeGroup_.surcharge.eq(s))
+        .where(SurchargeGroup_.supplier.eq(s))
         .orderBy(SurchargeGroup_.name.asc())
         .getResultList();
   }

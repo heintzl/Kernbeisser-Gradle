@@ -30,6 +30,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.jetbrains.annotations.NotNull;
+import rs.groump.AccessDeniedException;
 import rs.groump.Key;
 import rs.groump.PermissionKey;
 import rs.groump.PermissionSet;
@@ -295,6 +296,7 @@ public class User implements Serializable, UserRelated, ActuallyCloneable {
       }
       if (adminUser.userGroup.getValue() != 0.0)
         throw new InvalidValue("The admin user group has value!");
+    } catch (AccessDeniedException ignored) {
     } catch (Exception e) {
       throw UnexpectedExceptionHandler.showUnexpectedErrorWarning(e);
     }

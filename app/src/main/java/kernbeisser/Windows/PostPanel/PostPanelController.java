@@ -1,15 +1,17 @@
 package kernbeisser.Windows.PostPanel;
 
+import java.awt.*;
 import java.util.function.Consumer;
 import kernbeisser.Enums.PostContext;
 import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.ViewContainers.SubWindow;
 import org.jetbrains.annotations.NotNull;
 
 public class PostPanelController extends Controller<PostPanelView, PostPanelModel> {
 
-  boolean editing = false;
-  boolean confirmation = false;
-  Consumer<Boolean> confirmationConsumer;
+  private boolean editing = false;
+  private boolean confirmation = false;
+  private Consumer<Boolean> confirmationConsumer;
 
   public PostPanelController(PostContext postContext) {
     super(new PostPanelModel(postContext));
@@ -27,6 +29,11 @@ public class PostPanelController extends Controller<PostPanelView, PostPanelMode
     boolean userMayEdit = model.isEditable();
     postPanelView.setEditable(userMayEdit);
     postPanelView.setActiveVisible(userMayEdit);
+    postPanelView.setPopupSize(new Dimension(model.getPopupWidth(), model.getPopupHeight()));
+  }
+
+  public void openIn(SubWindow container) {
+    super.openIn(container.withSize(getView().getPopupSize()));
   }
 
   public void resetContent() {
@@ -46,8 +53,8 @@ public class PostPanelController extends Controller<PostPanelView, PostPanelMode
     editing = !editing;
   }
 
-  public void saveContent(String htmlContent) {
-    model.saveContent(htmlContent);
+  public void saveContent(String htmlContent, Dimension popupSize) {
+    model.saveContent(htmlContent, popupSize.width, popupSize.height);
   }
 
   public void back(boolean confirmed) {

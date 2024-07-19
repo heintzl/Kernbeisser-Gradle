@@ -112,7 +112,7 @@ public class LineContent {
           JOptionPane.WARNING_MESSAGE);
     }
     var articleCondition = CatalogEntry_.artikelNr.in(kkNumbers);
-    var actionCondition = CatalogEntry_.aktionspreis.eq(1).not();
+    var actionCondition = CatalogEntry_.aktionspreis.eq(false);
     Map<String, CatalogEntry> catalogEntries =
         DBConnection.getConditioned(CatalogEntry.class, articleCondition, actionCondition).stream()
             .collect(Collectors.toMap(CatalogEntry::getArtikelNr, e -> e));

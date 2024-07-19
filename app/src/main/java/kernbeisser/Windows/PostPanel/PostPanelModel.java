@@ -32,7 +32,15 @@ public class PostPanelModel implements IModel<PostPanelController> {
     post = post.setActive(active);
   }
 
-  public void saveContent(String htmlContent) {
-    post = post.setContent(htmlContent);
+  public void saveContent(String htmlContent, int width, int height) {
+    post = post.setContent(htmlContent, width, height);
+  }
+
+  public int getPopupWidth() {
+    return post.getPopupWidth();
+  }
+
+  public int getPopupHeight() {
+    return post.getPopupHeight();
   }
 }

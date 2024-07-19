@@ -144,6 +144,8 @@ public class ShoppingItem implements Serializable {
 
   @Column private int articleRev;
 
+  @Column @Setter @Getter private Integer orderNo;
+
   @Column(nullable = false)
   private Instant createDate;
 

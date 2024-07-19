@@ -126,7 +126,7 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
   }
 
   void commit() {
-    model.commit();
+    model.commit(getView()::messageSupplyExistsInDB);
     if (model.getShoppingItems().size() > 0) {
       model.print();
       new PrintLabelsController().openIn(new SubWindow(getView().traceViewContainer()));
@@ -190,6 +190,7 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
                 setPrintNumber(item);
               }
               getView().setShoppingItems(model.getShoppingItems());
+              getModel().setSupply(supply);
               getModel()
                   .setAppendedProducePrice(
                       supply.getAllLineContents().stream()
@@ -210,6 +211,10 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
       Supplier kkSupplier, LineContent content, boolean noBarcode) {
     Optional<Article> articleInDb =
         ArticleRepository.getBySuppliersItemNumber(kkSupplier, content.getKkNumber());
+    ShopRange shopRange =
+        (content.getContainerMultiplier() - Tools.ifNull(content.getUserPreorderCount(), 0) > 0
+            ? ShopRange.PERMANENT_RANGE
+            : ShopRange.IN_RANGE);
     if (articleInDb.isPresent()) {
       boolean dirty = false;
       @Cleanup EntityManager em = DBConnection.getEntityManager();
@@ -221,12 +226,13 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
       boolean newWeighable = content.isWeighableKb();
 
       String logInfo = "Article [" + article.getSuppliersItemNumber() + "]:";
-      if (!article.getShopRange().isVisible()
-          && content.getContainerMultiplier() - Tools.ifNull(content.getUserPreorderCount(), 0)
-              > 0) {
-        article.setShopRange(ShopRange.IN_RANGE);
-        dirty = true;
-        logInfo += " updated shop range -";
+      ShopRange articleShopRange = article.getShopRange();
+      if (!articleShopRange.equals(ShopRange.PERMANENT_RANGE)) {
+        if (!articleShopRange.equals(shopRange)) {
+          article.setShopRange(shopRange);
+          dirty = true;
+          logInfo += " updated shop range [" + article.getShopRange() + "] -";
+        }
       }
       if (Math.abs(article.getNetPrice() - newPrice) >= 0.01) {
         dirty = true;
@@ -244,11 +250,11 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
       }
       return article;
     }
-    return createArticle(content, noBarcode);
+    return createArticle(content, noBarcode, shopRange);
   }
 
   public static ShoppingItem createShoppingItem(
-      Supplier kkSupplier, LineContent content, boolean ignoreBarcode) {
+      Supplier kkSupplier, LineContent content, int orderNo, boolean ignoreBarcode) {
     ShoppingItem shoppingItem =
         new ShoppingItem(findOrCreateArticle(kkSupplier, content, ignoreBarcode), 0, false);
     double rawItemMultiplier =
@@ -258,6 +264,7 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
             * -1;
     SupplyModel.checkFractionalItemMultiplier(rawItemMultiplier, content.getKkNumber());
     shoppingItem.setItemMultiplier((int) Math.round(rawItemMultiplier));
+    shoppingItem.setOrderNo(orderNo);
     return shoppingItem;
   }
 
@@ -269,7 +276,8 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
             content.getContainerMultiplier() * content.getContainerSize() * content.getAmount());
   }
 
-  private static @NotNull Article createArticle(LineContent content, boolean ignoreBarcode) {
+  private static @NotNull Article createArticle(
+      LineContent content, boolean ignoreBarcode, ShopRange shopRange) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup("commit")
     EntityTransaction et = em.getTransaction();
@@ -286,7 +294,7 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
     if (!ignoreBarcode) article.setBarcode(content.getBarcode());
     article.setWeighable(content.isWeighableKb());
     article.setContainerSize(content.getContainerSize());
-    article.setShopRange(ShopRange.PERMANENT_RANGE);
+    article.setShopRange(shopRange);
     article.setSurchargeGroup(pattern.getSurchargeGroup());
     VAT vat = content.getVat();
     if (vat == null) {

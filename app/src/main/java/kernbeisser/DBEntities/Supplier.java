@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Collection;
+import java.util.List;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.Enums.Setting;
@@ -191,6 +192,13 @@ public class Supplier implements Serializable, ActuallyCloneable {
                 like(Supplier_.email, containsPattern),
                 like(Supplier_.fax, containsPattern)))
         .limit(max)
+        .getResultList();
+  }
+
+  public List<SurchargeGroup> getSurchargegroups() {
+    return QueryBuilder.selectAll(SurchargeGroup.class)
+        .where(SurchargeGroup_.supplier.eq(this))
+        .orderBy(SurchargeGroup_.name.asc())
         .getResultList();
   }
 

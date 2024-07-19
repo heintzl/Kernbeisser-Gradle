@@ -104,6 +104,7 @@ public class PermissionKeys {
             .put("ACTION_OPEN_CATALOG_IMPORT", "Kornkraft Katalog importieren")
             .put("POST_ON_SALE_SESSION_CLOSE", "Nachricht bei LD-Abschluss bearbeiten")
             .put("POST_ON_SHOPPINGMASK_CHECKOUT", "Nachricht vor Bezahlen bearbeiten")
+            .put("ACTION_PREORDER_DISCOUNT", "Vorbestellung Abrechnen")
             .build();
     return permissionHints.getOrDefault(permissionName, permissionName);
   }
