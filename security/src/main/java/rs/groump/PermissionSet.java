@@ -310,17 +310,4 @@ public class PermissionSet implements Set<PermissionKey> {
     }
     return changed;
   }
-  
-  @Override
-  public boolean equals(Object obj) {
-    if(!(obj instanceof Collection<?>))return false;
-    if(obj.getClass() == PermissionSet.class) return Arrays.equals(((PermissionSet) obj).bits, this.bits);
-    try {
-      return ((Collection<PermissionKey>) obj).containsAll(this) && this.containsAll((Collection<?>) obj);
-    }catch (ClassCastException classCastException){
-      //Collections do not match type -> therefore are not equal
-      return false;
-    }
-    
-  }
 }
