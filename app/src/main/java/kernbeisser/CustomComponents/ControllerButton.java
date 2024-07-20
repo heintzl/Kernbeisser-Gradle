@@ -1,11 +1,6 @@
 package kernbeisser.CustomComponents;
 
 import java.awt.Color;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CancellationException;
 import java.util.function.Consumer;
@@ -19,7 +14,6 @@ import kernbeisser.Exeptions.ClassIsSingletonException;
 import kernbeisser.Security.Utils.AccessSupplier;
 import kernbeisser.Useful.Icons;
 import kernbeisser.Useful.Tools;
-import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.*;
 import kernbeisser.Windows.MVC.ComponentController.ComponentController;
 import kernbeisser.Windows.TabbedPane.TabbedPaneModel;
@@ -29,6 +23,8 @@ import rs.groump.*;
 public class ControllerButton extends JButton {
 
   @Nullable private String confirmMessage;
+
+  private PermissionKey[] requiredKeys;
 
   public <
           V extends IView<? extends Controller<? extends V, ? extends M>>,
@@ -73,7 +69,7 @@ public class ControllerButton extends JButton {
                 "Das Fenster kann nicht geöffnet werden, da dieses Fenster nur einmal geöffnet werden darf.");
           }
         });
-    setEnabled(checkControllerAccess(controllerInitializer));
+    setEnabled(assumeControllerAccess());
   }
 
   private boolean confirmConfirmMessage() {
@@ -114,30 +110,12 @@ public class ControllerButton extends JButton {
         Controller::openTab);
   }
 
-  // sadly this ist extremely slow, because every window is initialized just to check accessibility.
-  private <C> boolean checkControllerAccess(AccessSupplier<C> controllerInitializer) {
-    try {
-      return Tools.canInvoke(controllerInitializer::get);
-    } catch (ClassIsSingletonException e) {
-      return false;
-    }
+  private boolean assumeControllerAccess() {
+    return Access.getAccessManager().hasAccess(this, PermissionSet.asPermissionSet(requiredKeys));
   }
 
-  private <C> boolean checkControllerAccess(Class<C> clazz) {
-    PermissionSet userPermissions = new PermissionSet();
-    Access.runWithAccessManager(
-        AccessManager.ACCESS_GRANTED,
-        () -> userPermissions.addAll(LogInModel.getLoggedIn().getPermissionSet()));
-    for (Constructor<?> c : clazz.getDeclaredConstructors()) {
-      Annotation keyAnnotation = c.getAnnotation(Key.class);
-      if (keyAnnotation == null) {
-        continue;
-      }
-      PermissionKey[] keys = ((Key) c.getAnnotation(Key.class)).value();
-      if (keys.length > 0 && !userPermissions.hasPermissions(keys)) {
-        return false;
-      }
-    }
-    return true;
+  public ControllerButton withRequiredKeys(PermissionKey... requiredKeys) {
+    this.requiredKeys = requiredKeys;
+    return this;
   }
 }
