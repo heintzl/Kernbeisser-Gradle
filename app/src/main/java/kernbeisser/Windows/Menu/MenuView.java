@@ -140,187 +140,129 @@ public class MenuView implements IView<MenuController> {
     openCashierShoppingMask =
         new ControllerButton(
                 CashierShoppingMaskController::new, CashierShoppingMaskController.class)
-            .withConfirmMessage("Willst Du mit dem Ladendienst beginnen?")
-            .withRequiredKeys(PermissionKey.ACTION_OPEN_CASHIER_SHOPPING_MASK);
+            .withConfirmMessage("Willst Du mit dem Ladendienst beginnen?");
     editPriceList =
-        new ControllerButton(
-                ManagePriceListsController::new,
-                ManagePriceListsController.class,
-                Controller::openTab)
-            .withRequiredKeys(PermissionKey.ACTION_OPEN_MANAGE_PRICE_LISTS);
-    editArticles =
-        new ControllerButton(
-                EditArticlesController::new, EditArticlesController.class, Controller::openTab)
-            .withRequiredKeys(PermissionKey.ACTION_OPEN_EDIT_ARTICLES);
+        new ControllerButton(ManagePriceListsController::new, ManagePriceListsController.class);
+    editArticles = new ControllerButton(EditArticlesController::new, EditArticlesController.class);
     editSurchargeTables =
-        new ControllerButton(EditSurchargeGroupController::new, EditSurchargeGroupController.class)
-            .withRequiredKeys(PermissionKey.ACTION_OPEN_EDIT_SURCHARGE_GROUPS);
+        new ControllerButton(EditSurchargeGroupController::new, EditSurchargeGroupController.class);
     changePassword =
         new ControllerButton(
-            () -> new ChangePasswordController(LogInModel.getLoggedIn(), true),
-            ChangePasswordController.class,
-            c -> c.openIn(new SubWindow(traceViewContainer())).getLoaded());
+                () -> new ChangePasswordController(LogInModel.getLoggedIn(), true),
+                ChangePasswordController.class)
+            .withAction(
+                c -> ((Controller) c).openIn(new SubWindow(traceViewContainer())).getLoaded());
     showUserInfo =
         new ControllerButton(
-            () -> new UserInfoController(LogInModel.getLoggedIn()),
-            UserInfoController.class,
-            c -> c.openIn(new SubWindow(traceViewContainer())).getLoaded());
+                () -> new UserInfoController(LogInModel.getLoggedIn()), UserInfoController.class)
+            .withAction(
+                c -> ((Controller) c).openIn(new SubWindow(traceViewContainer())).getLoaded());
     editUserSettings =
         new ControllerButton(
-                () -> new EditUserSettingController(LogInModel.getLoggedIn()),
-                EditUserSettingController.class,
-                Controller::openTab)
-            .withRequiredKeys(PermissionKey.ACTION_OPEN_EDIT_USER_SETTING);
-    editUsers =
-        new ControllerButton(EditUsers::new, EditUsers.class, Controller::openTab)
-            .withRequiredKeys(PermissionKey.ACTION_OPEN_EDIT_USERS);
+            () -> new EditUserSettingController(LogInModel.getLoggedIn()),
+            EditUserSettingController.class);
+    editUsers = new ControllerButton(EditUsers::new, EditUsers.class);
     doTransactionPayIn =
         new ControllerButton(
-                controller::getPayInTransactionController,
-                TransactionController.class,
-                Controller::openTab)
-            .withRequiredKeys(PermissionKey.ACTION_TRANSACTION_FROM_KB);
-    changePermissions =
-        new ControllerButton(
-                PermissionController::new, PermissionController.class, Controller::openTab)
-            .withRequiredKeys(
-                PermissionKey.ACTION_OPEN_PERMISSION_MANAGEMENT,
-                PermissionKey.PERMISSION_ID_READ,
-                PermissionKey.PERMISSION_ID_WRITE,
-                PermissionKey.PERMISSION_KEY_SET_READ,
-                PermissionKey.PERMISSION_KEY_SET_WRITE,
-                PermissionKey.PERMISSION_NAME_READ,
-                PermissionKey.PERMISSION_NAME_WRITE);
+            controller::getPayInTransactionController,
+            TransactionController.class,
+            PermissionKey.ACTION_TRANSACTION_FROM_KB);
+    changePermissions = new ControllerButton(PermissionController::new, PermissionController.class);
     // NOT IMPLEMENTED
     accountingReports =
-        new ControllerButton(
-                AccountingReportsController::new,
-                AccountingReportsController.class,
-                Controller::openTab)
-            .withRequiredKeys(PermissionKey.ACTION_OPEN_ACCOUNTING_REPORTS);
+        new ControllerButton(AccountingReportsController::new, AccountingReportsController.class);
     changeDBConnection =
         new ControllerButton(
-                controller::getDBLoginController, DBLogInController.class, Controller::openTab)
-            .withRequiredKeys(PermissionKey.ACTION_OPEN_DB_LOG_IN);
-    editJobs =
-        new ControllerButton(EditJobs::new, EditJobs.class, Controller::openTab)
-            .withRequiredKeys(PermissionKey.ACTION_OPEN_EDIT_JOBS);
-    editApplicationSettings =
-        new ControllerButton(SettingController::new, SettingController.class, Controller::openTab)
-            .withRequiredKeys(PermissionKey.ACTION_OPEN_APPLICATION_SETTINGS);
+            controller::getDBLoginController,
+            DBLogInController.class,
+            PermissionKey.ACTION_OPEN_DB_LOG_IN);
+    editJobs = new ControllerButton(EditJobs::new, EditJobs.class);
+    editApplicationSettings = new ControllerButton(SettingController::new, SettingController.class);
     order =
         new ControllerButton(
-                controller::getPreorderController, PreOrderController.class, Controller::openTab)
-            .withRequiredKeys(PermissionKey.ACTION_OPEN_PRE_ORDER);
+            controller::getPreorderController,
+            PreOrderController.class,
+            PermissionKey.ACTION_OPEN_PRE_ORDER);
     openSelfPreorder =
         new ControllerButton(
-                controller::getOwnPreorderController, PreOrderController.class, Controller::openTab)
-            .withRequiredKeys(PermissionKey.ACTION_OPEN_OWN_PRE_ORDER);
+            controller::getOwnPreorderController,
+            PreOrderController.class,
+            PermissionKey.ACTION_OPEN_OWN_PRE_ORDER);
     if (openSelfPreorder.isEnabled()) openSelfPreorder.setEnabled(inheritsFullMembership);
 
     openSelfShoppingMask =
         new ControllerButton(
-                () -> {
-                  try {
-                    return new SoloShoppingMaskController();
-                  } catch (NotEnoughCreditException e) {
-                    Tools.beep();
-                    JOptionPane.showMessageDialog(
-                        getContent(),
-                        "Du kannst keinen Einkauf beginnen, da dein Guthaben nicht ausreicht.\n"
-                            + "Falls du dein Guthaben aufladen möchtest, melde dich bitte beim Ladendienst,\n"
-                            + "dieser wird dich dann an die/den Guthabenbeauftragte/n verweisen.",
-                        "Nicht genug Guthaben",
-                        JOptionPane.WARNING_MESSAGE);
-                    throw new CancellationException();
-                  } catch (MissingFullMemberException f) {
-                    Tools.beep();
-                    JOptionPane.showMessageDialog(
-                        getContent(),
-                        f.getMessage(),
-                        "keine Berechtigung",
-                        JOptionPane.WARNING_MESSAGE);
-                    throw new CancellationException();
-                  }
-                },
-                SoloShoppingMaskController.class,
-                e -> {
-                  if (e != null) {
-                    e.openTab();
-                  }
-                })
-            .withRequiredKeys(PermissionKey.ACTION_OPEN_SOLO_SHOPPING_MASK);
+            () -> {
+              try {
+                return new SoloShoppingMaskController();
+              } catch (NotEnoughCreditException e) {
+                Tools.beep();
+                JOptionPane.showMessageDialog(
+                    getContent(),
+                    "Du kannst keinen Einkauf beginnen, da dein Guthaben nicht ausreicht.\n"
+                        + "Falls du dein Guthaben aufladen möchtest, melde dich bitte beim Ladendienst,\n"
+                        + "dieser wird dich dann an die/den Guthabenbeauftragte/n verweisen.",
+                    "Nicht genug Guthaben",
+                    JOptionPane.WARNING_MESSAGE);
+                throw new CancellationException();
+              } catch (MissingFullMemberException f) {
+                Tools.beep();
+                JOptionPane.showMessageDialog(
+                    getContent(),
+                    f.getMessage(),
+                    "keine Berechtigung",
+                    JOptionPane.WARNING_MESSAGE);
+                throw new CancellationException();
+              }
+            },
+            SoloShoppingMaskController.class);
     if (openSelfShoppingMask.isEnabled()) {
       openSelfShoppingMask.setEnabled(inheritsFullMembership);
     }
     addBeginner =
         new ControllerButton(
-                controller::generateAddBeginnerForm,
-                FormEditorController.class,
-                Controller::openTab)
-            .withRequiredKeys(PermissionKey.ACTION_ADD_TRIAL_MEMBER);
-    editSuppliers =
-        new ControllerButton(EditSuppliers::new, EditSuppliers.class, Controller::openTab)
-            .withRequiredKeys(PermissionKey.ACTION_OPEN_EDIT_SUPPLIERS);
+            controller::generateAddBeginnerForm,
+            FormEditorController.class,
+            PermissionKey.ACTION_ADD_TRIAL_MEMBER);
+    editSuppliers = new ControllerButton(EditSuppliers::new, EditSuppliers.class);
 
     editUserGroup =
         new ControllerButton(
-                () -> new EditUserGroupController(LogInModel.getLoggedIn()),
-                EditUserGroupController.class,
-                Controller::openTab)
-            .withRequiredKeys(PermissionKey.ACTION_OPEN_EDIT_USER_GROUP);
+            () -> new EditUserGroupController(LogInModel.getLoggedIn()),
+            EditUserGroupController.class);
     importCatalog =
-        new ControllerButton(
-                CatalogImportController::new, CatalogImportController.class, Controller::openTab)
-            .withRequiredKeys(PermissionKey.ACTION_OPEN_CATALOG_IMPORT);
-    editCatalog =
-        new ControllerButton(
-                EditCatalogController::new, EditCatalogController.class, Controller::openTab)
-            // from EditCatalogController:29
-            .withRequiredKeys(PermissionKey.ACTION_LOGIN);
+        new ControllerButton(CatalogImportController::new, CatalogImportController.class);
+    editCatalog = new ControllerButton(EditCatalogController::new, EditCatalogController.class);
     synchoniseCatalog =
-        new ControllerButton(
-                SynchronizeArticleController::new,
-                SynchronizeArticleController.class,
-                Controller::openTab)
-            .withRequiredKeys(PermissionKey.ACTION_OPEN_SYNCHRONISE_ARTICLE_WINDOW);
+        new ControllerButton(SynchronizeArticleController::new, SynchronizeArticleController.class);
     offerManagement = ControllerButton.empty();
     supply =
-        new ControllerButton(SupplyController::new, SupplyController.class)
-            .withRequiredKeys(PermissionKey.ACTION_OPEN_SUPPLY);
+        new ControllerButton(
+            SupplyController::new, SupplyController.class, PermissionKey.ACTION_OPEN_ADMIN_TOOLS);
     doUserDefiniedTransaction =
         new ControllerButton(
-                () ->
-                    new TransactionController(
-                        LogInModel.getLoggedIn(), TransactionType.USER_GENERATED),
-                TransactionController.class)
-            .withRequiredKeys(PermissionKey.ACTION_OPEN_TRANSACTION);
+            () ->
+                new TransactionController(LogInModel.getLoggedIn(), TransactionType.USER_GENERATED),
+            TransactionController.class);
     internalTransaction =
         new ControllerButton(
-                controller::getInternalTransactionController,
-                TransactionController.class,
-                Controller::openTab)
-            .withRequiredKeys(PermissionKey.ACTION_TRANSACTION_FROM_OTHER);
+            controller::getInternalTransactionController,
+            TransactionController.class,
+            PermissionKey.ACTION_TRANSACTION_FROM_OTHER);
     permissionAssignment =
         new ControllerButton(
-                PermissionAssignmentController::new, PermissionAssignmentController.class)
-            .withRequiredKeys(
-                PermissionKey.ACTION_OPEN_PERMISSION_ASSIGNMENT,
-                PermissionKey.USER_PERMISSIONS_WRITE,
-                PermissionKey.USER_PERMISSIONS_READ);
-    // permissionAssignment.setEnabled(PermissionAssignmentModel.isAccessible());
+            PermissionAssignmentController::new, PermissionAssignmentController.class);
 
     permissionGranterAssignment =
         new ControllerButton(
-                PermissionGranterAssignmentController::new,
-                PermissionGranterAssignmentController.class)
-            .withRequiredKeys(PermissionKey.ACTION_OPEN_PERMISSION_GRANT_ASSIGNMENT);
-    beginnInventory =
-        new ControllerButton(InventoryController::new, InventoryController.class)
-            .withRequiredKeys(PermissionKey.ACTION_OPEN_INVENTORY);
+            PermissionGranterAssignmentController::new,
+            PermissionGranterAssignmentController.class);
+    beginnInventory = new ControllerButton(InventoryController::new, InventoryController.class);
     databaseView =
-        new ControllerButton(controller::createDatabaseViewController, DatabaseViewController.class)
-            .withRequiredKeys(PermissionKey.ACTION_OPEN_DB_LOG_IN);
+        new ControllerButton(
+            controller::createDatabaseViewController,
+            DatabaseViewController.class,
+            PermissionKey.ACTION_OPEN_DB_LOG_IN);
   }
 
   @Override

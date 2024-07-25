@@ -1,6 +1,8 @@
 package kernbeisser.CustomComponents;
 
 import java.awt.Color;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
 import java.util.Optional;
 import java.util.concurrent.CancellationException;
 import java.util.function.Consumer;
@@ -14,15 +16,19 @@ import kernbeisser.Exeptions.ClassIsSingletonException;
 import kernbeisser.Security.Utils.AccessSupplier;
 import kernbeisser.Useful.Icons;
 import kernbeisser.Useful.Tools;
+import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.*;
 import kernbeisser.Windows.MVC.ComponentController.ComponentController;
 import kernbeisser.Windows.TabbedPane.TabbedPaneModel;
+import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.Nullable;
 import rs.groump.*;
 
 public class ControllerButton extends JButton {
 
   @Nullable private String confirmMessage;
+
+  private Consumer<?> action;
 
   private PermissionKey[] requiredKeys;
 
@@ -31,7 +37,7 @@ public class ControllerButton extends JButton {
           M extends IModel<? extends Controller<? extends V, ? extends M>>,
           C extends Controller<V, M>>
       ControllerButton(AccessSupplier<C> controllerInitializer, Class<C> clazz) {
-    this(controllerInitializer, clazz, Controller::openTab);
+    this(controllerInitializer, clazz, Controller::openTab, checkControllerAccess(clazz));
   }
 
   public <
@@ -39,8 +45,21 @@ public class ControllerButton extends JButton {
           M extends IModel<? extends Controller<? extends V, ? extends M>>,
           C extends Controller<V, M>>
       ControllerButton(
-          AccessSupplier<C> controllerInitializer, Class<C> clazz, Consumer<C> action) {
+          AccessSupplier<C> controllerInitializer, Class<C> clazz, PermissionKey... requiredKeys) {
+    this(controllerInitializer, clazz, Controller::openTab, assumeControllerAccess(requiredKeys));
+  }
 
+  private <
+          V extends IView<? extends Controller<? extends V, ? extends M>>,
+          M extends IModel<? extends Controller<? extends V, ? extends M>>,
+          C extends Controller<V, M>>
+      ControllerButton(
+          AccessSupplier<C> controllerInitializer,
+          Class<C> clazz,
+          Consumer<C> action,
+          boolean enabled) {
+
+    this.action = action;
     setHorizontalAlignment(SwingConstants.LEFT);
     addActionListener(
         e -> {
@@ -69,7 +88,7 @@ public class ControllerButton extends JButton {
                 "Das Fenster kann nicht geöffnet werden, da dieses Fenster nur einmal geöffnet werden darf.");
           }
         });
-    setEnabled(assumeControllerAccess());
+    setEnabled(enabled);
   }
 
   private boolean confirmConfirmMessage() {
@@ -105,17 +124,31 @@ public class ControllerButton extends JButton {
 
   public static ControllerButton empty() {
     return new ControllerButton(
-        () -> new ComponentController(new JPanel()),
-        ComponentController.class,
-        Controller::openTab);
+        () -> new ComponentController(new JPanel()), ComponentController.class);
   }
 
-  private boolean assumeControllerAccess() {
-    return Access.getAccessManager().hasAccess(this, PermissionSet.asPermissionSet(requiredKeys));
+  private static boolean assumeControllerAccess(PermissionKey[] requiredKeys) {
+    PermissionSet userPermissions = new PermissionSet();
+    Access.runWithAccessManager(
+        AccessManager.ACCESS_GRANTED,
+        () -> userPermissions.addAll(LogInModel.getLoggedIn().getPermissionSet()));
+    return requiredKeys.length == 0 || userPermissions.hasPermissions(requiredKeys);
   }
 
-  public ControllerButton withRequiredKeys(PermissionKey... requiredKeys) {
-    this.requiredKeys = requiredKeys;
+  private static <C> boolean checkControllerAccess(Class<C> clazz) {
+    PermissionKey[] keys = {};
+    for (Constructor<?> c : clazz.getDeclaredConstructors()) {
+      Annotation keyAnnotation = c.getAnnotation(Key.class);
+      if (keyAnnotation == null) {
+        continue;
+      }
+      keys = ArrayUtils.addAll(keys, ((Key) c.getAnnotation(Key.class)).value());
+    }
+    return assumeControllerAccess(keys);
+  }
+
+  public <C> ControllerButton withAction(Consumer<C> action) {
+    this.action = action;
     return this;
   }
 }
