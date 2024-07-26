@@ -13,10 +13,8 @@ import lombok.Data;
 
 @Data
 public class ShoppingMaskModel implements IModel<ShoppingMaskController> {
-  private Article selected = null;
   private double value;
   private SaleSession saleSession;
-  private boolean payWindowOpen;
 
   ShoppingMaskModel(SaleSession saleSession) throws NotEnoughCreditException {
     if (saleSession.getCustomer().getUserGroup().getValue() <= 0
