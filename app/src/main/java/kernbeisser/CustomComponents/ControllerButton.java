@@ -16,48 +16,42 @@ import kernbeisser.Exeptions.ClassIsSingletonException;
 import kernbeisser.Security.Utils.AccessSupplier;
 import kernbeisser.Useful.Icons;
 import kernbeisser.Useful.Tools;
-import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.*;
 import kernbeisser.Windows.MVC.ComponentController.ComponentController;
 import kernbeisser.Windows.TabbedPane.TabbedPaneModel;
-import org.apache.commons.lang3.ArrayUtils;
+import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.Nullable;
 import rs.groump.*;
 
-public class ControllerButton extends JButton {
+@Log4j2
+public class ControllerButton<
+        V extends IView<? extends Controller<? extends V, ? extends M>>,
+        M extends IModel<? extends Controller<? extends V, ? extends M>>,
+        C extends Controller<V, M>>
+    extends JButton {
 
   @Nullable private String confirmMessage;
 
-  private Consumer<?> action;
+  private Consumer<C> action;
 
-  private PermissionKey[] requiredKeys;
-
-  public <
-          V extends IView<? extends Controller<? extends V, ? extends M>>,
-          M extends IModel<? extends Controller<? extends V, ? extends M>>,
-          C extends Controller<V, M>>
-      ControllerButton(AccessSupplier<C> controllerInitializer, Class<C> clazz) {
+  public ControllerButton(AccessSupplier<C> controllerInitializer, Class<C> clazz) {
     this(controllerInitializer, clazz, Controller::openTab, checkControllerAccess(clazz));
   }
 
-  public <
-          V extends IView<? extends Controller<? extends V, ? extends M>>,
-          M extends IModel<? extends Controller<? extends V, ? extends M>>,
-          C extends Controller<V, M>>
-      ControllerButton(
-          AccessSupplier<C> controllerInitializer, Class<C> clazz, PermissionKey... requiredKeys) {
-    this(controllerInitializer, clazz, Controller::openTab, assumeControllerAccess(requiredKeys));
+  public ControllerButton(
+      AccessSupplier<C> controllerInitializer, Class<C> clazz, PermissionKey... requiredKeys) {
+    this(
+        controllerInitializer,
+        clazz,
+        Controller::openTab,
+        assumeControllerAccess(PermissionSet.asPermissionSet(requiredKeys)));
   }
 
-  private <
-          V extends IView<? extends Controller<? extends V, ? extends M>>,
-          M extends IModel<? extends Controller<? extends V, ? extends M>>,
-          C extends Controller<V, M>>
-      ControllerButton(
-          AccessSupplier<C> controllerInitializer,
-          Class<C> clazz,
-          Consumer<C> action,
-          boolean enabled) {
+  private ControllerButton(
+      AccessSupplier<C> controllerInitializer,
+      Class<C> clazz,
+      Consumer<C> action,
+      boolean enabled) {
 
     this.action = action;
     setHorizontalAlignment(SwingConstants.LEFT);
@@ -75,10 +69,10 @@ public class ControllerButton extends JButton {
           if (!confirmConfirmMessage()) return;
           try {
             C controller = controllerInitializer.get();
-            action.accept(controller);
+            this.action.accept(controller);
           } catch (CancellationException ignored) {
           } catch (AccessDeniedException exception) {
-            exception.printStackTrace();
+            log.error(exception);
             JOptionPane.showMessageDialog(
                 this,
                 "Das Fenster kann nicht geöffnet werden,\nda du nicht die benötigte Berechtigung hast.");
@@ -109,7 +103,7 @@ public class ControllerButton extends JButton {
     return Optional.ofNullable(index != -1 ? index : null);
   }
 
-  public ControllerButton withIcon(IconCode iconCode) {
+  public ControllerButton<V, M, C> withIcon(IconCode iconCode) {
     setIcon(Icons.defaultIcon(iconCode, new Color(0xFF00CCFF)));
     setRolloverIcon(
         IconFontSwing.buildIcon(
@@ -117,37 +111,33 @@ public class ControllerButton extends JButton {
     return this;
   }
 
-  public ControllerButton withConfirmMessage(String confirmMessage) {
+  public ControllerButton<V, M, C> withConfirmMessage(String confirmMessage) {
     this.confirmMessage = confirmMessage;
     return this;
   }
 
   public static ControllerButton empty() {
-    return new ControllerButton(
+    return new ControllerButton<>(
         () -> new ComponentController(new JPanel()), ComponentController.class);
   }
 
-  private static boolean assumeControllerAccess(PermissionKey[] requiredKeys) {
-    PermissionSet userPermissions = new PermissionSet();
-    Access.runWithAccessManager(
-        AccessManager.ACCESS_GRANTED,
-        () -> userPermissions.addAll(LogInModel.getLoggedIn().getPermissionSet()));
-    return requiredKeys.length == 0 || userPermissions.hasPermissions(requiredKeys);
+  private static boolean assumeControllerAccess(PermissionSet requiredKeys) {
+    return Access.getAccessManager().hasAccess(null, requiredKeys);
   }
 
   private static <C> boolean checkControllerAccess(Class<C> clazz) {
-    PermissionKey[] keys = {};
+    PermissionSet keys = new PermissionSet();
     for (Constructor<?> c : clazz.getDeclaredConstructors()) {
       Annotation keyAnnotation = c.getAnnotation(Key.class);
       if (keyAnnotation == null) {
         continue;
       }
-      keys = ArrayUtils.addAll(keys, ((Key) c.getAnnotation(Key.class)).value());
+      keys.addAll((c.getAnnotation(Key.class)).value());
     }
     return assumeControllerAccess(keys);
   }
 
-  public <C> ControllerButton withAction(Consumer<C> action) {
+  public ControllerButton<V, M, C> withAction(Consumer<C> action) {
     this.action = action;
     return this;
   }
