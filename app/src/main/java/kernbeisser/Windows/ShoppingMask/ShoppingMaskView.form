@@ -848,7 +848,10 @@
                       <component id="cf02f" class="javax.swing.JButton" binding="editPost">
                         <constraints/>
                         <properties>
+                          <doubleBuffered value="true"/>
+                          <enabled value="false"/>
                           <text value="Popup bearbeiten"/>
+                          <visible value="false"/>
                         </properties>
                       </component>
                       <component id="f8a0e" class="javax.swing.JButton" binding="cancelSalesSession">
