@@ -34,57 +34,58 @@ public class ShoppingCartController extends Controller<ShoppingCartView, Shoppin
     // TODO should throw exception if !editable
     if (!editable) return;
     ShoppingItem addedItem = model.addItem(item);
-    if (addedItem == null) return;
-    if (item.getItemMultiplier() != addedItem.getItemMultiplier()) {
-      if (fromShoppingMask) {
-        RememberDialog.showDialog(
-            LogInModel.getLoggedIn(),
-            "ArticleExistsInCart",
-            getView().getContent(),
-            "Der Artikel ist bereits im Einkaufswagen vorhanden.\nDie Menge von "
-                + addedItem.getName()
-                + " wird auf "
-                + (addedItem.getDisplayAmount().equals("")
-                    ? String.format("%.2f €", addedItem.getRetailPrice())
-                    : addedItem.getDisplayAmount())
-                + " geändert.",
-            "Artikel existiert bereits im Einkaufswagen");
-      } else {
-        if (addedItem.getItemMultiplier() <= 0) {
-          model.getItems().remove(addedItem);
+    if (addedItem != null) {
+      if (item.getItemMultiplier() != addedItem.getItemMultiplier()) {
+        if (fromShoppingMask) {
+          RememberDialog.showDialog(
+                  LogInModel.getLoggedIn(),
+                  "ArticleExistsInCart",
+                  getView().getContent(),
+                  "Der Artikel ist bereits im Einkaufswagen vorhanden.\nDie Menge von "
+                          + addedItem.getName()
+                          + " wird auf "
+                          + (addedItem.getDisplayAmount().equals("")
+                          ? String.format("%.2f €", addedItem.getRetailPrice())
+                          : addedItem.getDisplayAmount())
+                          + " geändert.",
+                  "Artikel existiert bereits im Einkaufswagen");
+        } else {
+          if (addedItem.getItemMultiplier() <= 0) {
+            model.getItems().remove(addedItem);
+          }
         }
       }
-    }
-    if (item.getSingleDeposit() != 0) {
-      model.addItem(addedItem.createSingleDeposit(item.getItemMultiplier()));
-    }
-    double containerSize = item.getContainerSize();
-    if (containerSize > 0 && item.getContainerDeposit() != 0) {
-      int containers =
-          ((int) ((addedItem.getItemMultiplier()) / containerSize)
-              - Math.round(extractContainerDeposit(addedItem)));
-      if (containers != 0) {
-        boolean exit = false;
-        String response = getView().inputNoOfContainers(containers, containerSize, false);
-        do {
-          if (response == null || response.equals("")) {
-            exit = true;
-          } else {
-            try {
-              containers = Integer.parseInt(response);
-              if (Math.signum(containers) == Math.signum(item.getItemMultiplier())) {
-                model.addItemBehind(addedItem.createContainerDeposit(containers), addedItem);
-                exit = true;
-              } else if (containers == 0) {
-                exit = true;
-              } else {
-                throw (new NumberFormatException());
+      if (item.getSingleDeposit() != 0) {
+        model.addItem(addedItem.createSingleDeposit(item.getItemMultiplier()));
+      }
+      double containerSize = item.getContainerSize();
+      if (containerSize > 0 && item.getContainerDeposit() != 0) {
+        int containers =
+                ((int) ((addedItem.getItemMultiplier()) / containerSize)
+                        - Math.round(extractContainerDeposit(addedItem)));
+        if (containers != 0) {
+          boolean exit = false;
+          String response = getView().inputNoOfContainers(containers, containerSize, false);
+          do {
+            if (response == null || response.equals("")) {
+              exit = true;
+            } else {
+              try {
+                containers = Integer.parseInt(response);
+                if (Math.signum(containers) == Math.signum(item.getItemMultiplier())) {
+                  model.addItemBehind(addedItem.createContainerDeposit(containers), addedItem);
+                  exit = true;
+                } else if (containers == 0) {
+                  exit = true;
+                } else {
+                  throw (new NumberFormatException());
+                }
+              } catch (NumberFormatException exception) {
+                response = getView().inputNoOfContainers(containers, containerSize, true);
               }
-            } catch (NumberFormatException exception) {
-              response = getView().inputNoOfContainers(containers, containerSize, true);
             }
-          }
-        } while (!exit);
+          } while (!exit);
+        }
       }
     }
     refresh();
