@@ -31,6 +31,6 @@ public enum VAT implements Named {
 
   @Override
   public String getName() {
-    return name.formatted(getValue()*100);
+    return name.formatted(getValue() * 100);
   }
 }

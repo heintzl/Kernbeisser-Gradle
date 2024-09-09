@@ -38,17 +38,17 @@ public class ShoppingCartController extends Controller<ShoppingCartView, Shoppin
       if (item.getItemMultiplier() != addedItem.getItemMultiplier()) {
         if (fromShoppingMask) {
           RememberDialog.showDialog(
-                  LogInModel.getLoggedIn(),
-                  "ArticleExistsInCart",
-                  getView().getContent(),
-                  "Der Artikel ist bereits im Einkaufswagen vorhanden.\nDie Menge von "
-                          + addedItem.getName()
-                          + " wird auf "
-                          + (addedItem.getDisplayAmount().equals("")
-                          ? String.format("%.2f €", addedItem.getRetailPrice())
-                          : addedItem.getDisplayAmount())
-                          + " geändert.",
-                  "Artikel existiert bereits im Einkaufswagen");
+              LogInModel.getLoggedIn(),
+              "ArticleExistsInCart",
+              getView().getContent(),
+              "Der Artikel ist bereits im Einkaufswagen vorhanden.\nDie Menge von "
+                  + addedItem.getName()
+                  + " wird auf "
+                  + (addedItem.getDisplayAmount().equals("")
+                      ? String.format("%.2f €", addedItem.getRetailPrice())
+                      : addedItem.getDisplayAmount())
+                  + " geändert.",
+              "Artikel existiert bereits im Einkaufswagen");
         } else {
           if (addedItem.getItemMultiplier() <= 0) {
             model.getItems().remove(addedItem);
@@ -61,8 +61,8 @@ public class ShoppingCartController extends Controller<ShoppingCartView, Shoppin
       double containerSize = item.getContainerSize();
       if (containerSize > 0 && item.getContainerDeposit() != 0) {
         int containers =
-                ((int) ((addedItem.getItemMultiplier()) / containerSize)
-                        - Math.round(extractContainerDeposit(addedItem)));
+            ((int) ((addedItem.getItemMultiplier()) / containerSize)
+                - Math.round(extractContainerDeposit(addedItem)));
         if (containers != 0) {
           boolean exit = false;
           String response = getView().inputNoOfContainers(containers, containerSize, false);

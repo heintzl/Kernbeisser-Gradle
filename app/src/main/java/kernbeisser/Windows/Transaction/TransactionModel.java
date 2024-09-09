@@ -43,10 +43,10 @@ public class TransactionModel implements IModel<TransactionController> {
   }
 
   void transfer() throws InvalidTransactionException {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    EntityTransaction et = em.getTransaction();
-    et.begin();
     for (Transaction transaction : transactions) {
+      @Cleanup EntityManager em = DBConnection.getEntityManager();
+      EntityTransaction et = em.getTransaction();
+      et.begin();
       String info = transaction.getInfo();
       if (transactionType == TransactionType.PAYIN && (info == null || info.isEmpty())) {
         info = "Guthabeneinzahlung";
@@ -64,9 +64,9 @@ public class TransactionModel implements IModel<TransactionController> {
         em.close();
         throw e;
       }
+      em.flush();
+      et.commit();
     }
-    em.flush();
-    et.commit();
   }
 
   double getSum() {
