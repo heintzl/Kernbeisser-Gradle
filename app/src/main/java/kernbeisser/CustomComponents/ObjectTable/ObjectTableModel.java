@@ -114,6 +114,12 @@ public class ObjectTableModel<T> extends AbstractTableModel {
     fireTableStructureChanged();
   }
 
+  public void removeColumnIf(Predicate<Column<T>> filter) {
+    invalidateCache();
+    this.columns.removeIf(filter);
+    fireTableStructureChanged();
+  }
+
   public void addObject(int index, T in) {
     invalidateCache();
     this.objects.add(index, in);
