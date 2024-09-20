@@ -3,13 +3,11 @@ package kernbeisser.Windows.Transaction;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.NoResultException;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.TransactionType;
-import kernbeisser.Exeptions.InvalidTransactionException;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
 import lombok.Getter;
@@ -42,11 +40,12 @@ public class TransactionModel implements IModel<TransactionController> {
     return transactions;
   }
 
-  void transfer() throws InvalidTransactionException {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    EntityTransaction et = em.getTransaction();
-    et.begin();
+  Map<Transaction, Optional<Exception>> transfer() {
+    final Map<Transaction, Optional<Exception>> transactionExceptions = new HashMap<>();
     for (Transaction transaction : transactions) {
+      @Cleanup EntityManager em = DBConnection.getEntityManager();
+      EntityTransaction et = em.getTransaction();
+      et.begin();
       String info = transaction.getInfo();
       if (transactionType == TransactionType.PAYIN && (info == null || info.isEmpty())) {
         info = "Guthabeneinzahlung";
@@ -59,14 +58,16 @@ public class TransactionModel implements IModel<TransactionController> {
             transaction.getValue(),
             transactionType,
             info);
-      } catch (InvalidTransactionException e) {
+        em.flush();
+        transactionExceptions.put(transaction, Optional.empty());
+        et.commit();
+      } catch (Exception e) {
         et.rollback();
         em.close();
-        throw e;
+        transactionExceptions.put(transaction, Optional.of(e));
       }
     }
-    em.flush();
-    et.commit();
+    return transactionExceptions;
   }
 
   double getSum() {

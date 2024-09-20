@@ -4,8 +4,8 @@ import java.util.function.Supplier;
 import kernbeisser.Useful.Named;
 
 public enum VAT implements Named {
-  LOW("Niedrig (%f%%)", Setting.VAT_LOW::getDoubleValue),
-  HIGH("Hoch (%f%%)", Setting.VAT_HIGH::getDoubleValue);
+  LOW("Niedrig (%.0f%%)", Setting.VAT_LOW::getDoubleValue),
+  HIGH("Hoch (%.0f%%)", Setting.VAT_HIGH::getDoubleValue);
 
   private final String name;
   private Double lazy_value;
@@ -31,6 +31,6 @@ public enum VAT implements Named {
 
   @Override
   public String getName() {
-    return name.formatted(getValue());
+    return name.formatted(getValue() * 100);
   }
 }

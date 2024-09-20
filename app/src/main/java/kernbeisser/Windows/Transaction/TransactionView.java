@@ -10,6 +10,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Optional;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -18,6 +19,7 @@ import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
+import kernbeisser.CustomComponents.ObjectTable.Columns.CustomizableColumn;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.TextFields.DoubleParseField;
@@ -85,6 +87,7 @@ public class TransactionView implements IView<TransactionController> {
   private PermissionField info;
   private JCheckBox toKBValue;
   private JCheckBox hideInactive;
+  private CustomizableColumn<Transaction> errorColumn = Columns.create("Fehler", t -> "");
 
   @Linked private SearchBoxController<User> userSearchBoxController;
   @Linked private TransactionController controller;
@@ -159,14 +162,18 @@ public class TransactionView implements IView<TransactionController> {
     to = new AdvancedComboBox<>(u -> u.getFullName(true));
   }
 
-  void success(int count) {
+  void success(int count, long fail) {
     String suffix = "", suffix1 = "";
+    long done = count - fail;
     if (count != 1) {
       suffix = "en";
+    }
+    if (done != 1) {
       suffix1 = "n";
     }
     JOptionPane.showMessageDialog(
-        getTopComponent(), "Die Überweisung" + suffix + " wurde" + suffix1 + " durchgeführt");
+        getTopComponent(),
+        done + " von " + count + " Überweisung" + suffix + " wurde" + suffix1 + " durchgeführt");
   }
 
   boolean confirmExtraHeightTransaction() {
@@ -192,6 +199,16 @@ public class TransactionView implements IView<TransactionController> {
                 + suffix
                 + " getätigt werden?")
         == 0;
+  }
+
+  void setFailed(Map<Transaction, String> transactionMessages) {
+    errorColumn = Columns.create("Fehler", transactionMessages::get);
+    transactions.addColumn(errorColumn);
+    transactions.repaint();
+  }
+
+  void removeErrorColumn() {
+    transactions.getModel().removeColumnIf(c -> c.getName().equals(errorColumn.getName()));
   }
 
   void invalidFrom() {

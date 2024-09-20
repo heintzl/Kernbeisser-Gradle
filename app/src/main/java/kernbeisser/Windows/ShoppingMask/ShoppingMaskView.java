@@ -40,6 +40,9 @@ import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
+import rs.groump.AccessDeniedException;
+import rs.groump.Key;
+import rs.groump.PermissionKey;
 
 public class ShoppingMaskView implements IView<ShoppingMaskController> {
 
@@ -202,6 +205,12 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
         addToCart();
       }
     }
+  }
+
+  @Key(PermissionKey.POST_ON_SHOPPINGMASK_CHECKOUT)
+  private void activatePostEditor() {
+    editPost.setVisible(true);
+    editPost.setEnabled(true);
   }
 
   private boolean isEmptyArticleName() {
@@ -931,7 +940,12 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     westPanel.setFocusTraversalPolicy(traversalPolicy);
 
     articleTypeChange(ArticleType.ARTICLE_NUMBER);
-    editPost.addActionListener(e -> controller.openPost(false));
+    editPost.setVisible(false);
+    try {
+      activatePostEditor();
+      editPost.addActionListener(e -> controller.openPost(false));
+    } catch (AccessDeniedException ignored) {
+    }
 
     SwingUtilities.invokeLater(
         () -> {

@@ -17,7 +17,7 @@
         <processorPath useClasspath="false">
           <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.30/f195ee86e6c896ea47a1d39defbe20eb59cd149d/lombok-1.18.30.jar" />
         </processorPath>
-        <module name="kernbeisser.app.test" />
+        <module name="Kernbeisser.kernbeisser.app.test" />
       </profile>
       <profile name="Gradle Imported" enabled="true">
         <outputRelativeToContentRoot value="true" />
@@ -33,7 +33,7 @@
           <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.errorprone/error_prone_annotations/2.18.0/89b684257096f548fa39a7df9fdaa409d4d4df91/error_prone_annotations-2.18.0.jar" />
           <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.j2objc/j2objc-annotations/2.8/c85270e307e7b822f1086b93689124b89768e273/j2objc-annotations-2.8.jar" />
         </processorPath>
-        <module name="kernbeisser.kbmetamodel.main" />
+        <module name="de.kernbeisser.kernbeisser.kbmetamodel.main" />
       </profile>
       <profile name="Gradle Imported" enabled="true">
         <outputRelativeToContentRoot value="true" />

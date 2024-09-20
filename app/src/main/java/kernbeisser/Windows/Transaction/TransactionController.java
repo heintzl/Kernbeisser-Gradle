@@ -4,6 +4,9 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 
 import jakarta.persistence.NoResultException;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Predicate;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.DBEntities.Transaction;
@@ -48,20 +51,41 @@ public class TransactionController extends Controller<TransactionView, Transacti
 
   void unsafeTransfer() {
     TransactionView view = getView();
-    try {
-      model.transfer();
-    } catch (InvalidTransactionException e) {
-      log.error(e.toString(), e);
-      view.transactionRejected();
-      return;
-    }
+    Map<Transaction, Optional<Exception>> transactionExceptions = model.transfer();
+
     int count = model.getCount();
-    if (count > 0) {
-      view.success(count);
+    long fail = transactionExceptions.values().stream().filter(Optional::isPresent).count();
+    Map<Transaction, String> transactionMessages = new HashMap<>();
+    for (Map.Entry<Transaction, Optional<Exception>> entry : transactionExceptions.entrySet()) {
+      String message = "";
+      if (entry.getValue().isPresent()) {
+        Exception exception = entry.getValue().get();
+        if (exception instanceof InvalidTransactionException) {
+          message = exception.getMessage();
+          if (message.contains("Permission")) {
+            message = "Kein Ausreichendes Guthaben";
+          } else if (message.contains("UserGroup")) {
+            message = "Überweisung innerhalb einer Benutzergruppe";
+          }
+        }
+      } else {
+        message = "Erfolgreich";
+      }
+      transactionMessages.put(entry.getKey(), message);
     }
-    model.getTransactions().clear();
-    view.setTransactions(model.getTransactions());
+    if (fail > 0) {
+      view.setFailed(transactionMessages);
+    }
+    if (count > 0) {
+      view.success(count, fail);
+    }
+    // model.getTransactions().clear();
+    transactionExceptions.entrySet().stream()
+        .filter(e -> e.getValue().isEmpty())
+        .forEach(e -> model.remove(e.getKey()));
+    view.removeErrorColumn();
     refreshTable();
+    view.setTransactions(model.getTransactions());
     refreshTooltip(view.getFromControl());
   }
 
