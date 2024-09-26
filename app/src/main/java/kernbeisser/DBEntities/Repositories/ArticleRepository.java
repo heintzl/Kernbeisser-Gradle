@@ -273,6 +273,17 @@ public class ArticleRepository {
     return Setting.CONTAINER_SURCHARGE_REDUCTION.getDoubleValue();
   }
 
+  public static double getActionSurchargeReduction() {
+      return Setting.ACTION_SURCHARGE_REDUCTION.getDoubleValue();
+}
+
+public static double calculateSurcharge(Article article, boolean preordered) {
+    double articleSurcharge = article.getSurchargeGroup().getSurcharge();
+    double offerReduction = article.isOffer() ? getActionSurchargeReduction() : 1.0;
+    double preorderReduction = preordered ? getContainerSurchargeReduction() : 1.0;
+    return articleSurcharge * Math.min(offerReduction, preorderReduction);
+  }
+
   public static double calculateRetailPrice(
       double netPrice, VAT vat, double surcharge, double discount, boolean preordered)
       throws NullPointerException {
@@ -296,8 +307,7 @@ public class ArticleRepository {
         calculateRetailPrice(
             calculateUnroundedArticleNetPrice(article, preordered),
             article.getVat(),
-            article.getSurchargeGroup().getSurcharge()
-                * (preordered ? getContainerSurchargeReduction() : 1.0),
+            calculateSurcharge(article, preordered),
             discount,
             preordered));
   }
