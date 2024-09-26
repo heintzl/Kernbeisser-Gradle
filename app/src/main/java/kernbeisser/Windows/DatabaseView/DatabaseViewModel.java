@@ -19,7 +19,6 @@ public class DatabaseViewModel implements IModel<DatabaseViewController> {
         kernbeisser.DBEntities.IgnoredDialog.class,
         kernbeisser.DBEntities.IgnoredDifference.class,
         kernbeisser.DBEntities.Job.class,
-        kernbeisser.DBEntities.Offer.class,
         kernbeisser.DBEntities.Permission.class,
         kernbeisser.DBEntities.Post.class,
         kernbeisser.DBEntities.PreOrder.class,

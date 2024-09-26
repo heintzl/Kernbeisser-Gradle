@@ -132,11 +132,7 @@ public class ArticleRepository {
     et.begin();
     List<Article> articles =
         DBConnection.getConditioned(em, Article.class, Article_.barcode.eq(targetBarcode));
-    return Optional.ofNullable(
-        articles.stream()
-            .filter(ArticleRepository::articleIsActiveOffer)
-            .findAny()
-            .orElse(articles.stream().findFirst().orElse(null)));
+    return Optional.ofNullable(articles.stream().findFirst().orElse(null));
   }
 
   public static Article getOrCreateRawPriceArticle(RawPrice rawPrice) {
@@ -258,20 +254,6 @@ public class ArticleRepository {
         .getResultStream(em)
         .findFirst()
         .orElse(null);
-  }
-
-  public static boolean articleIsActiveOffer(Article article) {
-    return article.isOffer() && findOfferOn(article).isPresent();
-  }
-
-  public static Optional<Offer> findOfferOn(Article article) {
-    return QueryBuilder.selectAll(Offer.class)
-        .where(Offer_.offerArticle.eq(article))
-        .getResultList()
-        .stream()
-        .filter(e -> e.getFromDate().isBefore(Instant.now()))
-        .filter(e -> e.getToDate().isAfter(Instant.now()))
-        .findAny();
   }
 
   public static Map<Integer, Instant> getLastDeliveries() {
