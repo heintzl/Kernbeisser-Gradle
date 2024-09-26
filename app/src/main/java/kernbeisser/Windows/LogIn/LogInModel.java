@@ -53,7 +53,7 @@ public final class LogInModel {
           Access.setAccessManager(AccessManager.ACCESS_DENIED);
           throw new PermissionRequired();
         }
-        log.info("User with user id [" + user.getId() + "] has logged in");
+        log.info("User with user id [%d] has logged in".formatted(user.getId()));
       } else {
         throw new CannotLogInException();
       }
