@@ -324,6 +324,15 @@ public class Tools {
     em.flush();
   }
 
+  public static <T> void merge(T value) {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    em.merge(value);
+    em.flush();
+  }
+
   public static int error = 0;
 
   public static void showHint(JComponent component) {

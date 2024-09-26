@@ -41,6 +41,14 @@ public class Icons {
       IconFontSwing.buildIcon(
           FontAwesome.SQUARE_O, Tools.scaleWithLabelScalingFactor(16), Color.BLACK);
 
+  public static Icon actionActiveIcon =
+      IconFontSwing.buildIcon(
+          FontAwesome.PERCENT, Tools.scaleWithLabelScalingFactor(20), Color.GREEN);
+
+  public static Icon actionInactiveIcon =
+      IconFontSwing.buildIcon(
+          FontAwesome.PERCENT, Tools.scaleWithLabelScalingFactor(20), Color.GRAY);
+
   public static Icon booleanIcon(Boolean b) {
     return ((b != null && b) ? trueIcon : falseIcon);
   }

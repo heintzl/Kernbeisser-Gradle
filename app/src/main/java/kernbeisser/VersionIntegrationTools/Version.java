@@ -1,8 +1,6 @@
 package kernbeisser.VersionIntegrationTools;
 
-import java.util.Arrays;
 import java.util.function.Supplier;
-
 import kernbeisser.DBEntities.SystemSetting;
 import kernbeisser.VersionIntegrationTools.UpdatingTools.*;
 import org.apache.logging.log4j.Logger;
@@ -47,7 +45,7 @@ public enum Version {
   public static void updateFrom(Version version, Logger logger) {
     Version[] versions = Version.values();
     if (versions.length > version.ordinal() + 1)
-    logger.info("Updating database from version %s ...".formatted(version.name()));
+      logger.info("Updating database from version %s ...".formatted(version.name()));
     for (int i = version.ordinal() + 1; i < versions.length; i++) {
       Version targetVersion = versions[i];
       logger.info("... to version %s".formatted(targetVersion.name()));

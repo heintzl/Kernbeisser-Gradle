@@ -18,6 +18,7 @@ public class ArticleFilter implements SearchBoxFilter<Article> {
   @Setter private boolean filterShopRange = true;
   @Setter private boolean filterKK = false;
   @Setter private boolean discontinued = false;
+  @Setter private boolean filterActions = false;
 
   Runnable callback;
 
@@ -37,7 +38,8 @@ public class ArticleFilter implements SearchBoxFilter<Article> {
                   && (!filterNoBarcode || e.getBarcode() == null)
                   && (!filterShowInShop || e.isShowInShop())
                   && (!filterShopRange || e.getShopRange().isVisible())
-                  && (!filterKK || e.getSupplier().equals(kkSupplier));
+                  && (!filterKK || e.getSupplier().equals(kkSupplier))
+                  && (!filterActions || e.isOffer());
     }
     return ArticleRepository.getDefaultAll(query, predicate, 15000);
   }
@@ -85,6 +87,14 @@ public class ArticleFilter implements SearchBoxFilter<Article> {
         });
     onlyDiscontinued.setSelected(discontinued);
     checkBoxes.add(onlyDiscontinued);
+    final JCheckBox onlyActions = new JCheckBox("nur Aktionsartikel");
+    onlyActions.addActionListener(
+        e -> {
+          filterActions = onlyActions.isSelected();
+          callback.run();
+        });
+    onlyActions.setSelected(filterActions);
+    checkBoxes.add(onlyActions);
     return checkBoxes;
   }
 }

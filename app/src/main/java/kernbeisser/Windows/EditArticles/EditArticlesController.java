@@ -1,7 +1,6 @@
 package kernbeisser.Windows.EditArticles;
 
-import static javax.swing.SwingConstants.LEFT;
-import static javax.swing.SwingConstants.RIGHT;
+import static javax.swing.SwingConstants.*;
 
 import jakarta.persistence.NoResultException;
 import java.awt.*;
@@ -31,6 +30,7 @@ import kernbeisser.Forms.ObjectView.ObjectViewController;
 import kernbeisser.Forms.ObjectView.ObjectViewView;
 import kernbeisser.Tasks.ArticleComparedToCatalogEntry;
 import kernbeisser.Useful.Date;
+import kernbeisser.Useful.Icons;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.ComponentController.ComponentController;
 import kernbeisser.Windows.MVC.Controller;
@@ -38,7 +38,6 @@ import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.PrintLabels.PrintLabelsController;
 import kernbeisser.Windows.ViewContainers.SubWindow;
 import org.jetbrains.annotations.NotNull;
-import rs.groump.AccessDeniedException;
 import rs.groump.Key;
 import rs.groump.PermissionKey;
 
@@ -52,6 +51,7 @@ public class EditArticlesController extends Controller<EditArticlesView, EditArt
 
   private boolean hasAdminTools = false;
   private JButton mergeCatalog;
+  private JToggleButton editActions;
 
   private String formatArticleSurcharge(Article article) {
     return article.getSurchargeGroup().getName()
@@ -83,6 +83,9 @@ public class EditArticlesController extends Controller<EditArticlesView, EditArt
             Columns.create("Ladennummer", Article::getKbNumber, RIGHT)
                 .withSorter(Column.NUMBER_SORTER)
                 .withDefaultFilter(),
+            Columns.<Article>createIconColumn("Aktion", a -> Icons.booleanIcon(a.isOffer()))
+                .withHorizontalAlignment(CENTER)
+                .withLeftClickConsumer(this::toggleAction),
             Columns.create("Lieferant", Article::getSupplier, LEFT)
                 .withDefaultFilter()
                 .withColumnAdjustor(e -> e.setPreferredWidth(150)),
@@ -163,10 +166,8 @@ public class EditArticlesController extends Controller<EditArticlesView, EditArt
           PrintLabelsController.getLaunchButton(getView().traceViewContainer()));
     }
     refreshList();
-    try {
-      addAdministrationTools();
-    } catch (AccessDeniedException ignored) {
-    }
+    Tools.canInvoke(this::addAdministrationTools);
+    Tools.canInvoke(this::addEditActionsButton);
   }
 
   public ObjectViewView<Article> getObjectView() {
@@ -184,6 +185,35 @@ public class EditArticlesController extends Controller<EditArticlesView, EditArt
         });
     new ComponentController(priceListObjectTree, "Preisliste auswählen:")
         .openIn(new SubWindow(view.traceViewContainer()));
+  }
+
+  private void toggleAction(Article article) {
+    if (!editActions.isSelected()) {
+      return;
+    }
+    article.setOffer(!article.isOffer());
+    Tools.merge(article);
+    objectViewController.getSearchBoxView().getObjectTable().repaint();
+  }
+
+  private void toggleEditActionsButton() {
+    if (editActions.isSelected()) {
+      editActions.setForeground(Color.GREEN);
+      editActions.setIcon(Icons.actionActiveIcon);
+    } else {
+      editActions.setForeground(Color.BLACK);
+      editActions.setIcon(Icons.actionInactiveIcon);
+    }
+    ;
+  }
+
+  @Key({PermissionKey.ARTICLE_OFFER_WRITE, PermissionKey.ACTION_OPEN_SPECIAL_PRICE_EDITOR})
+  private void addEditActionsButton() {
+    editActions = new JToggleButton("Aktionen bearbeiten");
+    editActions.setIcon(Icons.actionInactiveIcon);
+    editActions.setToolTipText("Macht die Aktions-Spalte bearbeitbar");
+    editActions.addActionListener(e -> toggleEditActionsButton());
+    objectViewController.addButton(editActions);
   }
 
   @Key(PermissionKey.ACTION_OPEN_ADMIN_TOOLS)

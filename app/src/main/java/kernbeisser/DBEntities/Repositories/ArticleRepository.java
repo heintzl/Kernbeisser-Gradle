@@ -274,10 +274,10 @@ public class ArticleRepository {
   }
 
   public static double getActionSurchargeReduction() {
-      return Setting.ACTION_SURCHARGE_REDUCTION.getDoubleValue();
-}
+    return Setting.ACTION_SURCHARGE_REDUCTION.getDoubleValue();
+  }
 
-public static double calculateSurcharge(Article article, boolean preordered) {
+  public static double calculateSurcharge(Article article, boolean preordered) {
     double articleSurcharge = article.getSurchargeGroup().getSurcharge();
     double offerReduction = article.isOffer() ? getActionSurchargeReduction() : 1.0;
     double preorderReduction = preordered ? getContainerSurchargeReduction() : 1.0;

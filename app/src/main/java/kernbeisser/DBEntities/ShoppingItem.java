@@ -210,8 +210,7 @@ public class ShoppingItem implements Serializable {
     }
     this.discount = discount;
     supplier = article.getSupplier();
-    this.surcharge =
-        ArticleRepository.calculateSurcharge(article, hasContainerDiscount);
+    this.surcharge = ArticleRepository.calculateSurcharge(article, hasContainerDiscount);
     if (supplier != null) {
       this.suppliersShortName = article.getSupplier().getShortName();
     }
