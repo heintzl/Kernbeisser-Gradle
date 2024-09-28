@@ -3,6 +3,7 @@ package kernbeisser.VersionIntegrationTools;
 import java.util.function.Supplier;
 import kernbeisser.DBEntities.SystemSetting;
 import kernbeisser.VersionIntegrationTools.UpdatingTools.*;
+import org.apache.logging.log4j.Logger;
 import rs.groump.Access;
 import rs.groump.AccessManager;
 
@@ -18,7 +19,8 @@ public enum Version {
   SALE_SESSION_CLOSE_POPUP(AddSaleSessionClosePermission::new),
   PREORDER_FROM_CATALOG(MigrateOpenPreOrders::new),
   CONFIRMATION_PANEL(AddOnShoppingMaskCheckoutPermission::new),
-  HIBERNATE_6_ID_SEQUENCE(PopulateSeqNo::new);
+  HIBERNATE_6_ID_SEQUENCE(PopulateSeqNo::new),
+  REMOVE_TABLE_OFFER(RemoveOfferFromDB::new);
 
   private final Supplier<VersionUpdatingTool> versionUpdatingToolSupplier;
 
@@ -40,15 +42,19 @@ public enum Version {
     }
   }
 
-  public static void updateFrom(Version version) {
+  public static void updateFrom(Version version, Logger logger) {
     Version[] versions = Version.values();
+    if (versions.length > version.ordinal() + 1)
+      logger.info("Updating database from version %s ...".formatted(version.name()));
     for (int i = version.ordinal() + 1; i < versions.length; i++) {
-      versions[i].runUpdate();
-      SystemSetting.setValue(SystemSetting.DB_VERSION, versions[i].name());
+      Version targetVersion = versions[i];
+      logger.info("... to version %s".formatted(targetVersion.name()));
+      targetVersion.runUpdate();
+      SystemSetting.setValue(SystemSetting.DB_VERSION, targetVersion.name());
     }
   }
 
-  public static void checkAndUpdateVersion() {
-    updateFrom(Version.valueOf(SystemSetting.getValue(SystemSetting.DB_VERSION)));
+  public static void checkAndUpdateVersion(Logger logger) {
+    updateFrom(Version.valueOf(SystemSetting.getValue(SystemSetting.DB_VERSION)), logger);
   }
 }

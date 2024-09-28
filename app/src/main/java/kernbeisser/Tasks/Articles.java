@@ -1,17 +1,13 @@
 package kernbeisser.Tasks;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import kernbeisser.DBEntities.Article;
-import kernbeisser.DBEntities.Offer;
 import kernbeisser.DBEntities.PriceList;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.DBEntities.SurchargeGroup;
 import kernbeisser.Enums.*;
 import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
-import kernbeisser.Useful.Tools;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
@@ -78,42 +74,5 @@ public class Articles {
     article.setVerified(Boolean.parseBoolean(rawArticleValues[36]));
     article.setShopRange(ShopRange.IN_RANGE);
     return article;
-  }
-
-  public static List<Offer> extractOffers(String[] raw) {
-    return extractOffers(
-        Tools.extract(Boolean.class, raw[26], "_", Boolean::parseBoolean),
-        Integer.parseInt(raw[7]) / 100f);
-  }
-
-  private static List<Offer> extractOffers(Boolean[] months, double price) {
-    int from = -1;
-    ArrayList<Offer> out = new ArrayList<>();
-    // LocalDate today = LocalDate.now();
-    // for (int i = 1; i < months.length + 1; i++) {
-    //  if (months[i - 1]) {
-    //    if (from == -1) {
-    //      from = i;
-    //    }
-    //    continue;
-    //  }
-    //  if (from == -1) {
-    //    continue;
-    //  }
-    //  Offer offer = new Offer();
-    //  offer.setSpecialNetPrice(price);
-    //  offer.setFromDate(
-    //      Instant.from(
-    //          LocalDate.of(today.getYear(), from, 1).atStartOfDay(ZoneId.systemDefault())));
-    //  offer.setToDate(
-    //      Instant.from(
-    //          LocalDate.of(today.getYear(), from + (i - 1 - from), 1)
-    //              .atStartOfDay(ZoneId.systemDefault())
-    //              .with(TemporalAdjusters.lastDayOfMonth())));
-    //  offer.setRepeatMode(Repeat.EVERY_YEAR);
-    //  out.add(offer);
-    //  from = -1;
-    // }
-    return out;
   }
 }

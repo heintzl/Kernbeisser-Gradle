@@ -126,17 +126,9 @@ public class ArticleRepository {
   }
 
   public static Optional<Article> getByBarcode(long targetBarcode) throws NoResultException {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
     List<Article> articles =
-        DBConnection.getConditioned(em, Article.class, Article_.barcode.eq(targetBarcode));
-    return Optional.ofNullable(
-        articles.stream()
-            .filter(ArticleRepository::articleIsActiveOffer)
-            .findAny()
-            .orElse(articles.stream().findFirst().orElse(null)));
+        DBConnection.getConditioned(Article.class, Article_.barcode.eq(targetBarcode));
+    return articles.stream().findFirst();
   }
 
   public static Article getOrCreateRawPriceArticle(RawPrice rawPrice) {
@@ -260,20 +252,6 @@ public class ArticleRepository {
         .orElse(null);
   }
 
-  public static boolean articleIsActiveOffer(Article article) {
-    return article.isOffer() && findOfferOn(article).isPresent();
-  }
-
-  public static Optional<Offer> findOfferOn(Article article) {
-    return QueryBuilder.selectAll(Offer.class)
-        .where(Offer_.offerArticle.eq(article))
-        .getResultList()
-        .stream()
-        .filter(e -> e.getFromDate().isBefore(Instant.now()))
-        .filter(e -> e.getToDate().isAfter(Instant.now()))
-        .findAny();
-  }
-
   public static Map<Integer, Instant> getLastDeliveries() {
     return QueryBuilder.select(
             ShoppingItem.class, ShoppingItem_.kbNumber, max(ShoppingItem_.createDate))
@@ -289,6 +267,17 @@ public class ArticleRepository {
 
   public static double getContainerSurchargeReduction() {
     return Setting.CONTAINER_SURCHARGE_REDUCTION.getDoubleValue();
+  }
+
+  public static double getActionSurchargeReduction() {
+    return Setting.ACTION_SURCHARGE_REDUCTION.getDoubleValue();
+  }
+
+  public static double calculateSurcharge(Article article, boolean preordered) {
+    double articleSurcharge = article.getSurchargeGroup().getSurcharge();
+    double offerReduction = article.isOffer() ? getActionSurchargeReduction() : 1.0;
+    double preorderReduction = preordered ? getContainerSurchargeReduction() : 1.0;
+    return articleSurcharge * Math.min(offerReduction, preorderReduction);
   }
 
   public static double calculateRetailPrice(
@@ -314,8 +303,7 @@ public class ArticleRepository {
         calculateRetailPrice(
             calculateUnroundedArticleNetPrice(article, preordered),
             article.getVat(),
-            article.getSurchargeGroup().getSurcharge()
-                * (preordered ? getContainerSurchargeReduction() : 1.0),
+            calculateSurcharge(article, preordered),
             discount,
             preordered));
   }

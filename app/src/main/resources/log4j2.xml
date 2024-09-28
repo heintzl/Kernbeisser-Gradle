@@ -17,7 +17,7 @@
           [%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n
         </pattern>>
       </PatternLayout>
-      <RegexFilter regex=".*(User with user id|ERROR|Exception).*"  onMatch="ACCEPT" onMismatch="DENY"/>
+      <RegexFilter regex=".*(User with user id| (from|to) version |ERROR|Exception).*"  onMatch="ACCEPT" onMismatch="DENY"/>
       <Policies>
         <OnStartupTriggeringPolicy minSize="100000" />
       </Policies>

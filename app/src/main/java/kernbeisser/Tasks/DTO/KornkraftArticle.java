@@ -18,6 +18,5 @@ public class KornkraftArticle {
   private String vk;
   private String kennung;
   private String regaltextzusatz;
-  private OfferPrice aktionspreise;
   private String artikelgruppe;
 }

@@ -31,6 +31,7 @@ public class ObjectViewController<T extends ActuallyCloneable>
 
   @Setter private boolean forceExtraButtonState = true;
 
+  @SafeVarargs
   public ObjectViewController(
       String title,
       FormController<?, ?, T> controller,
@@ -46,7 +47,8 @@ public class ObjectViewController<T extends ActuallyCloneable>
     this.title = title;
   }
 
-  public void setSearchBoxController(Searchable<T> items, Column<T>... columns) {
+  @SafeVarargs
+  public final void setSearchBoxController(Searchable<T> items, Column<T>... columns) {
     searchBoxController = new SearchBoxController<T>(items, columns);
   }
 
@@ -113,7 +115,7 @@ public class ObjectViewController<T extends ActuallyCloneable>
     addButton(button);
   }
 
-  public void addButton(JButton button) {
+  public void addButton(AbstractButton button) {
     ObjectViewView<?> view = getView();
     button.setFont(view.getButtonFont());
     if (forceExtraButtonState) button.setEnabled(false);

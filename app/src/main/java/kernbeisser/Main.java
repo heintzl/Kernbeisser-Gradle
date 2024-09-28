@@ -102,7 +102,7 @@ public class Main {
   }
 
   public static void checkVersion() {
-    Version.checkAndUpdateVersion();
+    Version.checkAndUpdateVersion(log);
   }
 
   public static void buildEnvironment() throws UnsupportedLookAndFeelException {

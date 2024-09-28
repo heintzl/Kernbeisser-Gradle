@@ -3,7 +3,7 @@
   <grid id="27dc6" binding="main" layout-manager="GridLayoutManager" row-count="2" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="10" left="10" bottom="10" right="10"/>
     <constraints>
-      <xy x="20" y="20" width="554" height="763"/>
+      <xy x="20" y="20" width="554" height="810"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -151,7 +151,7 @@
               </grid>
               <component id="66055" class="kernbeisser.Forms.ObjectForm.Components.AccessCheckingComboBox" binding="shopRange" custom-create="true">
                 <constraints>
-                  <grid row="20" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="7" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="20" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="7" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties/>
               </component>
@@ -296,7 +296,7 @@
               </component>
               <component id="74035" class="kernbeisser.Forms.ObjectForm.Components.AccessCheckBox" binding="showInShoppingMask" custom-create="true">
                 <constraints>
-                  <grid row="14" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="14" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
                   <text value="Einblenden in der Einkaufsmaske"/>
@@ -372,6 +372,14 @@
                   <grid row="3" column="1" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties/>
+              </component>
+              <component id="7434e" class="kernbeisser.Forms.ObjectForm.Components.AccessCheckBox" binding="actionArticle" custom-create="true">
+                <constraints>
+                  <grid row="20" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Aktionsartikel"/>
+                </properties>
               </component>
             </children>
           </grid>

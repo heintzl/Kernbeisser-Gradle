@@ -23,14 +23,18 @@ import rs.groump.PermissionKey;
 @Entity
 @Table(
     uniqueConstraints = {
-      @UniqueConstraint(columnNames = {"supplier_id", "suppliersItemNumber", "offer"}),
-      @UniqueConstraint(columnNames = {"kbNumber", "offer"}),
-      @UniqueConstraint(columnNames = {"barcode", "offer"}),
+      @UniqueConstraint(
+          name = "UX_article_supplierId",
+          columnNames = {"supplier_id", "suppliersItemNumber"}),
+      @UniqueConstraint(
+          name = "UX_article_kbNumber",
+          columnNames = {"kbNumber"}),
+      @UniqueConstraint(
+          name = "UX_article_barcode",
+          columnNames = {"barcode"}),
     },
     indexes = {
       @Index(name = "IX_article_name", columnList = "name"),
-      @Index(name = "IX_article_kbNumber", columnList = "kbNumber"),
-      @Index(name = "IX_article_barcode", columnList = "barcode")
     })
 @Data
 @AllArgsConstructor
