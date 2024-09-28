@@ -19,6 +19,7 @@ import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
 import lombok.extern.log4j.Log4j2;
+import org.jetbrains.annotations.NotNull;
 import rs.groump.Key;
 import rs.groump.PermissionKey;
 
@@ -57,29 +58,13 @@ public class TransactionController extends Controller<TransactionView, Transacti
     long fail = transactionExceptions.values().stream().filter(Optional::isPresent).count();
     Map<Transaction, String> transactionMessages = new HashMap<>();
     for (Map.Entry<Transaction, Optional<Exception>> entry : transactionExceptions.entrySet()) {
-      String message = "";
-      if (entry.getValue().isPresent()) {
-        Exception exception = entry.getValue().get();
-        if (exception instanceof InvalidTransactionException) {
-          message = exception.getMessage();
-          if (message.contains("Permission")) {
-            message = "Kein Ausreichendes Guthaben";
-          } else if (message.contains("UserGroup")) {
-            message = "Überweisung innerhalb einer Benutzergruppe";
-          }
-        }
-      } else {
-        message = "Erfolgreich";
-      }
+      String message = getResultMessage(entry);
       transactionMessages.put(entry.getKey(), message);
     }
-    if (fail > 0) {
-      view.setFailed(transactionMessages);
-    }
+    view.setFailed(transactionMessages);
     if (count > 0) {
       view.success(count, fail);
     }
-    // model.getTransactions().clear();
     transactionExceptions.entrySet().stream()
         .filter(e -> e.getValue().isEmpty())
         .forEach(e -> model.remove(e.getKey()));
@@ -87,6 +72,25 @@ public class TransactionController extends Controller<TransactionView, Transacti
     refreshTable();
     view.setTransactions(model.getTransactions());
     refreshTooltip(view.getFromControl());
+  }
+
+  private static @NotNull String getResultMessage(
+      Map.Entry<Transaction, Optional<Exception>> entry) {
+    String message = "";
+    if (entry.getValue().isPresent()) {
+      Exception exception = entry.getValue().get();
+      message = exception.getMessage();
+      if (exception instanceof InvalidTransactionException) {
+        if (message.contains("Permission")) {
+          message = "Kein Ausreichendes Guthaben";
+        } else if (message.contains("UserGroup")) {
+          message = "Überweisung innerhalb einer Benutzergruppe";
+        }
+      }
+    } else {
+      message = "Erfolgreich";
+    }
+    return message;
   }
 
   void addTransaction() {
