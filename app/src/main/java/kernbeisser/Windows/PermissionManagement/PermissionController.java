@@ -114,7 +114,8 @@ public class PermissionController extends Controller<PermissionView, PermissionM
             .collect(Collectors.toCollection(ArrayList::new)));
     List<PermissionKey> values =
         Arrays.stream(selected.getKeys())
-            .filter(key -> selected == PermissionKeyGroups.ACTIONS || !key.name().endsWith("_WRITE"))
+            .filter(
+                key -> selected == PermissionKeyGroups.ACTIONS || !key.name().endsWith("_WRITE"))
             .sorted(Comparator.comparing(p -> PermissionKeys.getPermissionHint(p.toString())))
             .collect(Collectors.toList());
     if (!selected.equals(PermissionKeyGroups.ACTIONS)) values.addFirst(PermissionKey.CHANGE_ALL);

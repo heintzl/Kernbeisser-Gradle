@@ -126,13 +126,9 @@ public class ArticleRepository {
   }
 
   public static Optional<Article> getByBarcode(long targetBarcode) throws NoResultException {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
     List<Article> articles =
-        DBConnection.getConditioned(em, Article.class, Article_.barcode.eq(targetBarcode));
-    return Optional.ofNullable(articles.stream().findFirst().orElse(null));
+        DBConnection.getConditioned(Article.class, Article_.barcode.eq(targetBarcode));
+    return articles.stream().findFirst();
   }
 
   public static Article getOrCreateRawPriceArticle(RawPrice rawPrice) {
