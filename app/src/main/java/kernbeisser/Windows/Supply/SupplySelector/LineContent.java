@@ -18,6 +18,7 @@ import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.VAT;
+import kernbeisser.Exeptions.InvalidValue;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
 import kernbeisser.Tasks.ArticleComparedToCatalogEntry;
 import kernbeisser.Tasks.Catalog.Catalog;
@@ -29,7 +30,6 @@ import lombok.Cleanup;
 import lombok.Data;
 import lombok.Setter;
 import org.apache.commons.lang3.Range;
-import org.eclipse.jdt.core.compiler.InvalidInputException;
 import org.jetbrains.annotations.NotNull;
 
 @Data
@@ -325,9 +325,9 @@ public class LineContent {
     this.setEstimatedSurchargeGroup(article.getSurchargeGroup());
   }
 
-  public double getProduceRetailPrice() throws InvalidInputException {
+  public double getProduceRetailPrice() throws InvalidValue {
     if (this.getStatus() != ResolveStatus.PRODUCE) {
-      throw new InvalidInputException("expected PRODUCE, got " + getStatus().name());
+      throw new InvalidValue("expected PRODUCE, got " + getStatus().name());
     }
     double retailPrice =
         ArticleRepository.calculateRetailPrice(

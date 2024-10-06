@@ -6,11 +6,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import kernbeisser.DBEntities.Repositories.ArticleRepository;
+import kernbeisser.Exeptions.InvalidValue;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
 import kernbeisser.Reports.ReportDTO.PriceListReportArticle;
 import kernbeisser.Windows.Supply.SupplySelector.LineContent;
 import kernbeisser.Windows.Supply.SupplySelector.ResolveStatus;
-import org.eclipse.jdt.core.compiler.InvalidInputException;
 
 public class ProducePriceList extends Report {
   private final Collection<PriceListReportArticle> priceListReportContents;
@@ -25,7 +25,7 @@ public class ProducePriceList extends Report {
       if (c.getStatus() == ResolveStatus.PRODUCE) {
         try {
           priceListReportContents.add(PriceListReportArticle.ofProduceLineContent(c));
-        } catch (InvalidInputException e) {
+        } catch (InvalidValue e) {
           UnexpectedExceptionHandler.showUnexpectedErrorWarning(e);
         }
       }
