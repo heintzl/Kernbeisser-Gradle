@@ -1,0 +1,75 @@
+<!-- Created with Jaspersoft Studio version 7.0.0.final using JasperReports Library version 7.0.0-b478feaa9aab4375eba71de77b4ca138ad2f62aa  -->
+<jasperReport name="Schwundanalyse" language="java" columnCount="1" pageWidth="595" pageHeight="842" orientation="Landscape" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="348b17df-f89e-49c3-a919-6d49e97f00a2">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<style name="Bold" markup="none" bold="true"/>
+	<parameter name="start" forPrompting="false" class="java.sql.Timestamp"/>
+	<parameter name="ende" forPrompting="false" class="java.sql.Timestamp"/>
+	<parameter name="reportFooter" class="java.lang.String"/>
+	<query language="sql"><![CDATA[]]></query>
+	<field name="netPurchaseSum" class="java.lang.Double"/>
+	<field name="name" class="java.lang.String"/>
+	<field name="grossRetailSum" class="java.lang.Double"/>
+	<field name="number" class="java.lang.Integer"/>
+	<background height="400" splitType="Stretch">
+		<property name="com.jaspersoft.studio.unit.height" value="px"/>
+	</background>
+	<title height="22" splitType="Stretch">
+		<element kind="staticText" uuid="a8e30bf7-7991-468f-8542-a3a9d1eff6dc" x="0" y="0" width="280" height="20" markup="html" fontName="DejaVu Sans Condensed" fontSize="14.0" bold="true">
+			<text><![CDATA[Schwundanalyse]]></text>
+		</element>
+		<element kind="textField" uuid="836b1164-c1ef-4f4f-b6e3-99e177ea623e" x="161" y="3" width="70" height="15" fontName="DejaVu Sans Condensed" fontSize="10.0">
+			<expression><![CDATA["Zeitraum von "]]></expression>
+		</element>
+		<element kind="textField" uuid="72ee8b98-2004-4bd8-9e37-e73fa9df5776" x="231" y="3" width="60" height="15" fontName="DejaVu Sans Condensed" fontSize="10.0" pattern="dd.MM.yyyy">
+			<expression><![CDATA[$P{start}]]></expression>
+		</element>
+		<element kind="textField" uuid="eb69c396-e35e-4dc6-807b-95f3b2c2df20" x="284" y="3" width="20" height="15" fontName="DejaVu Sans Condensed" fontSize="10.0">
+			<expression><![CDATA["bis"]]></expression>
+		</element>
+		<element kind="textField" uuid="facb38aa-eb4b-4ea0-b96e-b02c8d5c1d51" x="300" y="3" width="60" height="15" fontName="DejaVu Sans Condensed" fontSize="10.0" pattern="dd.MM.yyyy">
+			<expression><![CDATA[$P{ende}]]></expression>
+		</element>
+	</title>
+	<pageHeader height="20" splitType="Stretch">
+		<element kind="textField" uuid="df7d49d4-36cb-4ae4-b1c3-c4e43f1ddb65" x="420" y="-22" width="130" height="20" fontName="DejaVu Sans Condensed" fontSize="13.0" pattern="dd.MM.yyyy HH:mm" bold="true" hTextAlign="Right" style="Bold">
+			<expression><![CDATA[new java.util.Date()]]></expression>
+		</element>
+	</pageHeader>
+	<columnHeader height="18" splitType="Stretch">
+		<element kind="staticText" uuid="b3fc7b17-c0f3-4671-a263-aa2145158817" x="0" y="2" width="90" height="14" fontName="DejaVu Sans Condensed" fontSize="10.0" bold="true" hTextAlign="Left">
+			<text><![CDATA[Warengruppe]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="185c0b2e-8717-4813-8080-5602a762f222"/>
+		</element>
+		<element kind="staticText" uuid="1eccd8a6-a075-4134-90a3-b975bbd40705" x="90" y="2" width="70" height="14" fontName="DejaVu Sans Condensed" fontSize="10.0" bold="true" hTextAlign="Right">
+			<text><![CDATA[NettoEK]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ebd64202-798a-42b0-b81f-9cde60b2708c"/>
+		</element>
+		<element kind="staticText" uuid="d31a89c0-de4a-49aa-a684-db382a2c6ed4" x="161" y="2" width="68" height="14" fontName="DejaVu Sans Condensed" fontSize="10.0" bold="true" hTextAlign="Right">
+			<text><![CDATA[BruttoVK]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="274c790d-bccd-4b9b-ad18-f5e418e86810"/>
+		</element>
+	</columnHeader>
+	<detail>
+		<band height="16" splitType="Stretch">
+			<element kind="textField" uuid="d480a86e-cb28-42b3-ab9f-dcfb248359d7" x="0" y="-1" width="90" height="14" fontName="DejaVu Sans Condensed">
+				<expression><![CDATA[$F{name}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="9663e4f8-b535-4b45-8c34-656f9a7ffc90"/>
+			</element>
+			<element kind="textField" uuid="3c0d15b9-29b0-40bd-bc22-94c614fe4b43" x="90" y="-1" width="70" height="14" fontName="DejaVu Sans Condensed" pattern="###0.00" hTextAlign="Right">
+				<expression><![CDATA[$F{netPurchaseSum}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="9663e4f8-b535-4b45-8c34-656f9a7ffc90"/>
+			</element>
+			<element kind="textField" uuid="dfba2773-3ed9-44cf-97fd-72a7de3fa08e" x="161" y="0" width="70" height="14" fontName="DejaVu Sans Condensed" pattern="###0.00" hTextAlign="Right">
+				<expression><![CDATA[$F{grossRetailSum}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="9663e4f8-b535-4b45-8c34-656f9a7ffc90"/>
+			</element>
+		</band>
+	</detail>
+	<pageFooter height="15" splitType="Stretch">
+		<element kind="textField" uuid="5c994c4e-a36d-4bbd-804e-3a5598f25e25" x="0" y="5" width="550" height="10" fontName="DejaVu Sans Condensed" fontSize="7.0">
+			<paragraph lineSpacingSize="1.0"/>
+			<expression><![CDATA[$P{reportFooter}]]></expression>
+		</element>
+	</pageFooter>
+	<summary height="76" splitType="Stretch"/>
+</jasperReport>
