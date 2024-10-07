@@ -296,6 +296,10 @@ public class ShoppingItem implements Serializable {
     return calculatePrice(getItemNetPrice());
   }
 
+  public double getUnreducedRetailPrice() {
+    return getNetPrice() * (1 + getVatValue()) * (1 + getSurcharge());
+  }
+
   public MetricUnits getSalesUnits() {
     if (isContainerDiscount()) {
       return MetricUnits.CONTAINER;

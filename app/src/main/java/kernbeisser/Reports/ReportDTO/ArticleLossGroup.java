@@ -11,6 +11,7 @@ public class ArticleLossGroup {
   @Setter private double netPurchaseSum;
   @Setter private double netRetailSum;
   @Setter private double grossRetailSum;
+  @Setter private int count;
 
   public ArticleLossGroup(int number, String name) {
     this.number = number;
@@ -18,5 +19,6 @@ public class ArticleLossGroup {
     netPurchaseSum = 0.0;
     netRetailSum = 0.0;
     grossRetailSum = 0.0;
+    count = 0;
   }
 }

@@ -39,6 +39,7 @@ public class LossAnalysisReport extends Report {
   @Override
   public Collection<ArticleLossGroup> getDetailCollection() {
     Map<Integer, ArticleLossGroup> lossGroups = new HashMap<>();
+    lossGroups.put(1, new ArticleLossGroup(1, "100% Reduktion"));
     lossGroups.put(0, new ArticleLossGroup(0, "andere Waren"));
     for (int i = -1; i > -5; i--) {
       Article abstractArticle =
@@ -60,6 +61,12 @@ public class LossAnalysisReport extends Report {
       ArticleLossGroup lossGroup = lossGroups.get(groupNumber);
       lossGroup.setNetPurchaseSum(lossGroup.getNetPurchaseSum() + item.getNetPrice());
       lossGroup.setGrossRetailSum(lossGroup.getGrossRetailSum() + item.getRetailPrice());
+      if (item.getDiscount() == 100) {
+        lossGroup = lossGroups.get(1);
+        lossGroup.setNetPurchaseSum(lossGroup.getNetPurchaseSum() + item.getNetPrice());
+        lossGroup.setGrossRetailSum(lossGroup.getGrossRetailSum() + item.getUnreducedRetailPrice());
+        lossGroup.setCount(lossGroup.getCount() + 1);
+      }
     }
     return lossGroups.values();
   }
