@@ -18,7 +18,6 @@ import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.VAT;
-import kernbeisser.Exeptions.InvalidValue;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
 import kernbeisser.Tasks.ArticleComparedToCatalogEntry;
 import kernbeisser.Tasks.Catalog.Catalog;
@@ -325,9 +324,9 @@ public class LineContent {
     this.setEstimatedSurchargeGroup(article.getSurchargeGroup());
   }
 
-  public double getProduceRetailPrice() throws InvalidValue {
+  public double getProduceRetailPrice() throws InputMismatchException {
     if (this.getStatus() != ResolveStatus.PRODUCE) {
-      throw new InvalidValue("expected PRODUCE, got " + getStatus().name());
+      throw new InputMismatchException("expected PRODUCE, got " + getStatus().name());
     }
     double retailPrice =
         ArticleRepository.calculateRetailPrice(
