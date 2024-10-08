@@ -1,11 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.12.0.final using JasperReports Library version 6.12.1-ac0eebdb29e4c0985457bab279a6db744d661530  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Zaehlliste" pageWidth="595" pageHeight="842" columnWidth="511" leftMargin="48" rightMargin="36" topMargin="20" bottomMargin="20" uuid="4bbac286-dab4-4299-9984-7be3c020703c">
-	<parameter name="inventoryDate" class="java.time.LocalDate" isForPrompting="false"/>
+<!-- Created with Jaspersoft Studio version 7.0.0.final using JasperReports Library version 7.0.0-b478feaa9aab4375eba71de77b4ca138ad2f62aa  -->
+<jasperReport name="Zaehlliste" language="java" pageWidth="595" pageHeight="842" columnWidth="511" leftMargin="48" rightMargin="36" topMargin="20" bottomMargin="20" uuid="4bbac286-dab4-4299-9984-7be3c020703c">
+	<parameter name="inventoryDate" forPrompting="false" class="java.time.LocalDate"/>
 	<parameter name="reportFooter" class="java.lang.String"/>
-	<queryString>
-		<![CDATA[]]>
-	</queryString>
+	<query language="sql"><![CDATA[]]></query>
 	<field name="article.name" class="java.lang.String"/>
 	<field name="article.kbNumber" class="java.lang.Integer"/>
 	<field name="article.netPrice" class="java.lang.Double"/>
@@ -17,243 +14,122 @@
 	<field name="depositSum" class="java.lang.Double"/>
 	<field name="netSum" class="java.lang.Double"/>
 	<field name="unit" class="java.lang.String"/>
-	<variable name="netSum" class="java.lang.Double" resetType="Group" resetGroup="Shelf" calculation="Sum">
-		<variableExpression><![CDATA[$F{netSum}]]></variableExpression>
+	<variable name="netSum" resetType="Group" calculation="Sum" resetGroup="Shelf" class="java.lang.Double">
+		<expression><![CDATA[$F{netSum}]]></expression>
 	</variable>
-	<variable name="depositSum" class="java.lang.Double" resetType="Group" resetGroup="Shelf" calculation="Sum">
-		<variableExpression><![CDATA[$F{depositSum}]]></variableExpression>
+	<variable name="depositSum" resetType="Group" calculation="Sum" resetGroup="Shelf" class="java.lang.Double">
+		<expression><![CDATA[$F{depositSum}]]></expression>
 	</variable>
-	<group name="Shelf" isStartNewPage="true" isResetPageNumber="true" isReprintHeaderOnEachPage="true" minDetailsToStartFromTop="1">
-		<groupExpression><![CDATA[$F{shelf.shelfNo}]]></groupExpression>
+	<group name="Shelf" minDetailsToStartFromTop="1" startNewPage="true" resetPageNumber="true" reprintHeaderOnEachPage="true">
+		<expression><![CDATA[$F{shelf.shelfNo}]]></expression>
 		<groupHeader>
 			<band height="63">
-				<staticText>
-					<reportElement x="0" y="40" width="50" height="18" uuid="b807eccd-37c2-4275-833a-829353351db3"/>
-					<textElement verticalAlignment="Bottom">
-						<font fontName="DejaVu Sans Condensed" size="10" isItalic="true"/>
-					</textElement>
+				<element kind="staticText" uuid="b807eccd-37c2-4275-833a-829353351db3" x="0" y="40" width="50" height="18" fontName="DejaVu Sans Condensed" fontSize="10.0" italic="true" vTextAlign="Bottom">
 					<text><![CDATA[Gezählt]]></text>
-				</staticText>
-				<staticText>
-					<reportElement x="60" y="40" width="34" height="18" uuid="e5f8441f-c758-49e4-99c4-47636ca5b851"/>
-					<textElement textAlignment="Right" verticalAlignment="Bottom">
-						<font fontName="DejaVu Sans Condensed" size="10" isItalic="true"/>
-					</textElement>
+				</element>
+				<element kind="staticText" uuid="e5f8441f-c758-49e4-99c4-47636ca5b851" x="60" y="40" width="34" height="18" fontName="DejaVu Sans Condensed" fontSize="10.0" italic="true" hTextAlign="Right" vTextAlign="Bottom">
 					<text><![CDATA[Art-Nr.]]></text>
-				</staticText>
-				<staticText>
-					<reportElement x="100" y="40" width="33" height="18" uuid="1f7713d1-ddba-46e2-b05f-b6846da71e8f"/>
-					<textElement textAlignment="Left" verticalAlignment="Bottom">
-						<font fontName="DejaVu Sans Condensed" size="10" isItalic="true"/>
-					</textElement>
+				</element>
+				<element kind="staticText" uuid="1f7713d1-ddba-46e2-b05f-b6846da71e8f" x="100" y="40" width="33" height="18" fontName="DejaVu Sans Condensed" fontSize="10.0" italic="true" hTextAlign="Left" vTextAlign="Bottom">
 					<text><![CDATA[Artikel]]></text>
-				</staticText>
-				<staticText>
-					<reportElement x="364" y="40" width="41" height="18" uuid="dbf11b59-e62d-4f92-ad84-8b05027fdde4"/>
-					<textElement textAlignment="Right" verticalAlignment="Bottom">
-						<font fontName="DejaVu Sans Condensed" size="10" isItalic="true"/>
-					</textElement>
+				</element>
+				<element kind="staticText" uuid="dbf11b59-e62d-4f92-ad84-8b05027fdde4" x="364" y="40" width="41" height="18" fontName="DejaVu Sans Condensed" fontSize="10.0" italic="true" hTextAlign="Right" vTextAlign="Bottom">
 					<text><![CDATA[NettoEz]]></text>
-				</staticText>
-				<staticText>
-					<reportElement x="315" y="40" width="47" height="18" uuid="f0428fe8-e982-494c-b59b-4e0a32655790"/>
-					<textElement verticalAlignment="Bottom">
-						<font fontName="DejaVu Sans Condensed" size="10" isItalic="true"/>
-					</textElement>
+				</element>
+				<element kind="staticText" uuid="f0428fe8-e982-494c-b59b-4e0a32655790" x="315" y="40" width="47" height="18" fontName="DejaVu Sans Condensed" fontSize="10.0" italic="true" vTextAlign="Bottom">
 					<text><![CDATA[Packung]]></text>
-				</staticText>
-				<textField>
-					<reportElement x="130" y="0" width="280" height="15" uuid="a8c26c51-05e4-47c7-8491-4822adcf8bf6"/>
-					<textElement textAlignment="Left" markup="html">
-						<font fontName="DejaVu Sans Condensed" size="12" isBold="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA["Erfasste Zählung Liste " + $F{shelf.shelfNo}]]></textFieldExpression>
-				</textField>
-				<textField pattern="dd.MM.yyyy">
-					<reportElement x="0" y="0" width="130" height="15" uuid="46cc99e3-97c4-45ec-a30c-18bfbc609722"/>
-					<textElement textAlignment="Left">
-						<font fontName="DejaVu Sans Condensed" size="12" isBold="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA["Inventur " + $P{inventoryDate}.format(java.time.format.DateTimeFormatter.ofPattern("dd.MM.yyyy"))]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Shelf">
-					<reportElement x="465" y="-1" width="46" height="15" uuid="bff3d117-bfb3-4391-bd24-a4d90b3f96a5"/>
-					<textElement textAlignment="Right">
-						<font fontName="DejaVu Sans Condensed" size="11" isItalic="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA["von " +$V{PAGE_NUMBER}]]></textFieldExpression>
-				</textField>
-				<textField>
-					<reportElement x="420" y="-1" width="59" height="15" uuid="9f8d79bf-416c-4245-ae9d-c4d018dceca5"/>
-					<textElement textAlignment="Right">
-						<font fontName="DejaVu Sans Condensed" size="11" isItalic="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA["Seite " + $V{PAGE_NUMBER}]]></textFieldExpression>
-				</textField>
-				<line>
-					<reportElement x="0" y="14" width="511" height="1" uuid="0936518e-3ceb-4b78-9080-f9cc9d25f3b1">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<graphicElement>
-						<pen lineWidth="1.0" lineStyle="Dotted"/>
-					</graphicElement>
-				</line>
-				<textField>
-					<reportElement x="0" y="17" width="420" height="15" uuid="2228d17f-db80-4885-83a0-0e3038110b66"/>
-					<textElement>
-						<font size="10"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{shelf.location}]]></textFieldExpression>
-				</textField>
-				<staticText>
-					<reportElement x="405" y="40" width="50" height="18" uuid="dedf052e-063a-46c1-967b-76ca3b8c8293"/>
-					<textElement textAlignment="Right" verticalAlignment="Bottom">
-						<font fontName="DejaVu Sans Condensed" size="10" isItalic="true"/>
-					</textElement>
+				</element>
+				<element kind="textField" uuid="a8c26c51-05e4-47c7-8491-4822adcf8bf6" x="130" y="0" width="280" height="15" markup="html" fontName="DejaVu Sans Condensed" fontSize="12.0" bold="true" hTextAlign="Left">
+					<expression><![CDATA["Erfasste Zählung Liste " + $F{shelf.shelfNo}]]></expression>
+				</element>
+				<element kind="textField" uuid="46cc99e3-97c4-45ec-a30c-18bfbc609722" x="0" y="0" width="130" height="15" fontName="DejaVu Sans Condensed" fontSize="12.0" pattern="dd.MM.yyyy" bold="true" hTextAlign="Left">
+					<expression><![CDATA["Inventur " + $P{inventoryDate}.format(java.time.format.DateTimeFormatter.ofPattern("dd.MM.yyyy"))]]></expression>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</element>
+				<element kind="textField" uuid="bff3d117-bfb3-4391-bd24-a4d90b3f96a5" x="465" y="-1" width="46" height="15" fontName="DejaVu Sans Condensed" fontSize="11.0" evaluationTime="Group" evaluationGroup="Shelf" italic="true" hTextAlign="Right">
+					<expression><![CDATA["von " +$V{PAGE_NUMBER}]]></expression>
+				</element>
+				<element kind="textField" uuid="9f8d79bf-416c-4245-ae9d-c4d018dceca5" x="420" y="-1" width="59" height="15" fontName="DejaVu Sans Condensed" fontSize="11.0" italic="true" hTextAlign="Right">
+					<expression><![CDATA["Seite " + $V{PAGE_NUMBER}]]></expression>
+				</element>
+				<element kind="line" uuid="0936518e-3ceb-4b78-9080-f9cc9d25f3b1" x="0" y="14" width="511" height="1">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<pen lineWidth="1.0" lineStyle="Dotted"/>
+				</element>
+				<element kind="textField" uuid="2228d17f-db80-4885-83a0-0e3038110b66" x="0" y="17" width="420" height="15" fontSize="10.0">
+					<expression><![CDATA[$F{shelf.location}]]></expression>
+				</element>
+				<element kind="staticText" uuid="dedf052e-063a-46c1-967b-76ca3b8c8293" x="405" y="40" width="50" height="18" fontName="DejaVu Sans Condensed" fontSize="10.0" italic="true" hTextAlign="Right" vTextAlign="Bottom">
 					<text><![CDATA[NettoSm]]></text>
-				</staticText>
-				<staticText>
-					<reportElement x="460" y="40" width="50" height="18" uuid="a19568ad-2c70-4654-a7b5-fa0976a85341"/>
-					<textElement textAlignment="Right" verticalAlignment="Bottom">
-						<font fontName="DejaVu Sans Condensed" size="10" isItalic="true"/>
-					</textElement>
+				</element>
+				<element kind="staticText" uuid="a19568ad-2c70-4654-a7b5-fa0976a85341" x="460" y="40" width="50" height="18" fontName="DejaVu Sans Condensed" fontSize="10.0" italic="true" hTextAlign="Right" vTextAlign="Bottom">
 					<text><![CDATA[PfandSm]]></text>
-				</staticText>
+				</element>
 			</band>
 		</groupHeader>
 		<groupFooter>
 			<band height="16">
-				<textField pattern="#,##0.00">
-					<reportElement x="370" y="3" width="84" height="13" uuid="0cc7f9b3-ea08-4516-89e4-e53e26db1168">
-						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8cad0d8e-c105-47ec-8efa-91231a187f54"/>
-					</reportElement>
-					<textElement textAlignment="Right">
-						<font fontName="DejaVu Sans Condensed" size="10" isBold="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$V{netSum}]]></textFieldExpression>
-				</textField>
-				<textField pattern="#,##0.00">
-					<reportElement x="460" y="3" width="49" height="13" uuid="be3de652-013d-4276-9037-6c1505fbccfc">
-						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8cad0d8e-c105-47ec-8efa-91231a187f54"/>
-					</reportElement>
-					<textElement textAlignment="Right">
-						<font fontName="DejaVu Sans Condensed" size="10" isBold="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$V{depositSum}]]></textFieldExpression>
-				</textField>
-				<textField>
-					<reportElement x="100" y="3" width="100" height="13" uuid="e2e2b72f-f104-4216-b5ca-0ef67a0268ab"/>
-					<textElement>
-						<font isBold="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA["Summe Liste " + $F{shelf.shelfNo} + ":"]]></textFieldExpression>
-				</textField>
+				<element kind="textField" uuid="0cc7f9b3-ea08-4516-89e4-e53e26db1168" x="370" y="3" width="84" height="13" fontName="DejaVu Sans Condensed" fontSize="10.0" pattern="#,##0.00" bold="true" hTextAlign="Right">
+					<expression><![CDATA[$V{netSum}]]></expression>
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8cad0d8e-c105-47ec-8efa-91231a187f54"/>
+				</element>
+				<element kind="textField" uuid="be3de652-013d-4276-9037-6c1505fbccfc" x="460" y="3" width="49" height="13" fontName="DejaVu Sans Condensed" fontSize="10.0" pattern="#,##0.00" bold="true" hTextAlign="Right">
+					<expression><![CDATA[$V{depositSum}]]></expression>
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8cad0d8e-c105-47ec-8efa-91231a187f54"/>
+				</element>
+				<element kind="textField" uuid="e2e2b72f-f104-4216-b5ca-0ef67a0268ab" x="100" y="3" width="100" height="13" bold="true">
+					<expression><![CDATA["Summe Liste " + $F{shelf.shelfNo} + ":"]]></expression>
+				</element>
 			</band>
 		</groupFooter>
 	</group>
-	<background>
-		<band splitType="Stretch"/>
-	</background>
-	<title>
-		<band splitType="Stretch"/>
-	</title>
-	<pageHeader>
-		<band splitType="Stretch"/>
-	</pageHeader>
-	<columnHeader>
-		<band height="1" splitType="Stretch"/>
-	</columnHeader>
+	<background splitType="Stretch"/>
+	<title splitType="Stretch"/>
+	<pageHeader splitType="Stretch"/>
+	<columnHeader height="1" splitType="Stretch"/>
 	<detail>
 		<band height="21" splitType="Stretch">
-			<textField textAdjust="ScaleFont">
-				<reportElement x="100" y="3" width="210" height="12" uuid="1689e4db-d9da-4d5e-9364-fd3457f425f0">
-					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1117e53b-5fa5-43eb-a9b2-2b0992c17add"/>
-				</reportElement>
-				<textElement verticalAlignment="Middle">
-					<font fontName="DejaVu Sans Condensed" size="10"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{article.name}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="60" y="3" width="34" height="12" uuid="4dcd1ec1-97cf-40de-9a92-c882e6c79f9e">
-					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="62b0466d-1bf7-4803-ad9d-3759f81b2368"/>
-				</reportElement>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans Condensed" size="10"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{article.kbNumber}]]></textFieldExpression>
-			</textField>
-			<textField pattern="#,##0.00">
-				<reportElement x="364" y="3" width="40" height="13" uuid="d58682a6-f011-4619-a656-91f13a2160c3">
-					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8cad0d8e-c105-47ec-8efa-91231a187f54"/>
-				</reportElement>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans Condensed" size="10"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{article.netPrice}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="315" y="3" width="47" height="13" uuid="85ec6b08-8c75-4a85-ba91-d57605850fb1">
-					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3cd5f008-6b0e-41a7-8cc3-4689f7357317"/>
-				</reportElement>
-				<textElement verticalAlignment="Middle">
-					<font fontName="DejaVu Sans Condensed" size="10"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
-			</textField>
-			<textField pattern="#,##0.###;(#,##0.###-)">
-				<reportElement x="0" y="3" width="40" height="12" uuid="3f2edc89-2e08-41c5-b244-a93a4db585bb"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans Condensed" size="10"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{count}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="42" y="3" width="18" height="12" uuid="ed7c30e3-eb35-4e62-a3a0-c69dae3dcbe3"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans Condensed" size="10"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{unit}]]></textFieldExpression>
-			</textField>
-			<textField pattern="#,##0.00">
-				<reportElement x="414" y="3" width="40" height="13" uuid="837ac25a-d17e-4eea-9fae-d115834f7f65">
-					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8cad0d8e-c105-47ec-8efa-91231a187f54"/>
-				</reportElement>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans Condensed" size="10"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{netSum}]]></textFieldExpression>
-			</textField>
-			<textField pattern="#,##0.00">
-				<reportElement x="469" y="3" width="40" height="13" uuid="2e6b36e4-d887-4e1e-8d63-728daea1f93f">
-					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8cad0d8e-c105-47ec-8efa-91231a187f54"/>
-				</reportElement>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans Condensed" size="10"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{depositSum}]]></textFieldExpression>
-			</textField>
+			<element kind="textField" uuid="1689e4db-d9da-4d5e-9364-fd3457f425f0" x="100" y="3" width="210" height="12" fontName="DejaVu Sans Condensed" fontSize="10.0" textAdjust="ScaleFont" vTextAlign="Middle">
+				<expression><![CDATA[$F{article.name}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1117e53b-5fa5-43eb-a9b2-2b0992c17add"/>
+			</element>
+			<element kind="textField" uuid="4dcd1ec1-97cf-40de-9a92-c882e6c79f9e" x="60" y="3" width="34" height="12" fontName="DejaVu Sans Condensed" fontSize="10.0" hTextAlign="Right" vTextAlign="Middle">
+				<expression><![CDATA[$F{article.kbNumber}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="62b0466d-1bf7-4803-ad9d-3759f81b2368"/>
+			</element>
+			<element kind="textField" uuid="d58682a6-f011-4619-a656-91f13a2160c3" x="364" y="3" width="40" height="13" fontName="DejaVu Sans Condensed" fontSize="10.0" pattern="#,##0.00" hTextAlign="Right" vTextAlign="Middle">
+				<expression><![CDATA[$F{article.netPrice}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8cad0d8e-c105-47ec-8efa-91231a187f54"/>
+			</element>
+			<element kind="textField" uuid="85ec6b08-8c75-4a85-ba91-d57605850fb1" x="315" y="3" width="47" height="13" fontName="DejaVu Sans Condensed" fontSize="10.0" vTextAlign="Middle">
+				<expression><![CDATA[$F{amount}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3cd5f008-6b0e-41a7-8cc3-4689f7357317"/>
+			</element>
+			<element kind="textField" uuid="3f2edc89-2e08-41c5-b244-a93a4db585bb" x="0" y="3" width="40" height="12" fontName="DejaVu Sans Condensed" fontSize="10.0" pattern="#,##0.###;(#,##0.###-)" hTextAlign="Right" vTextAlign="Middle">
+				<expression><![CDATA[$F{count}]]></expression>
+			</element>
+			<element kind="textField" uuid="ed7c30e3-eb35-4e62-a3a0-c69dae3dcbe3" x="42" y="3" width="18" height="12" fontName="DejaVu Sans Condensed" fontSize="10.0" hTextAlign="Left" vTextAlign="Middle">
+				<expression><![CDATA[$F{unit}]]></expression>
+			</element>
+			<element kind="textField" uuid="837ac25a-d17e-4eea-9fae-d115834f7f65" x="414" y="3" width="40" height="13" fontName="DejaVu Sans Condensed" fontSize="10.0" pattern="#,##0.00" hTextAlign="Right" vTextAlign="Middle">
+				<expression><![CDATA[$F{netSum}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8cad0d8e-c105-47ec-8efa-91231a187f54"/>
+			</element>
+			<element kind="textField" uuid="2e6b36e4-d887-4e1e-8d63-728daea1f93f" x="469" y="3" width="40" height="13" fontName="DejaVu Sans Condensed" fontSize="10.0" pattern="#,##0.00" hTextAlign="Right" vTextAlign="Middle">
+				<expression><![CDATA[$F{depositSum}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8cad0d8e-c105-47ec-8efa-91231a187f54"/>
+			</element>
 		</band>
 		<band height="11">
 			<printWhenExpression><![CDATA[$V{REPORT_COUNT} % 5 == 0]]></printWhenExpression>
 		</band>
 	</detail>
-	<columnFooter>
-		<band splitType="Stretch"/>
-	</columnFooter>
-	<pageFooter>
-		<band height="63" splitType="Stretch">
-			<textField>
-				<reportElement x="0" y="10" width="509" height="10" uuid="9cbfe7aa-5260-44f0-bc80-0c22eba39d22"/>
-				<textElement>
-					<font fontName="DejaVu Sans Condensed" size="7"/>
-					<paragraph lineSpacingSize="1.0"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{reportFooter}]]></textFieldExpression>
-			</textField>
-		</band>
+	<columnFooter splitType="Stretch"/>
+	<pageFooter height="63" splitType="Stretch">
+		<element kind="textField" uuid="9cbfe7aa-5260-44f0-bc80-0c22eba39d22" x="0" y="10" width="509" height="10" fontName="DejaVu Sans Condensed" fontSize="7.0">
+			<paragraph lineSpacingSize="1.0"/>
+			<expression><![CDATA[$P{reportFooter}]]></expression>
+		</element>
 	</pageFooter>
-	<summary>
-		<band splitType="Stretch"/>
-	</summary>
+	<summary splitType="Stretch"/>
 </jasperReport>
