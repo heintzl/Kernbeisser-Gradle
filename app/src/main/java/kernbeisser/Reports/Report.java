@@ -92,7 +92,7 @@ public abstract class Report {
   private static PrintRequestAttributeSet getPageFormatFromReport(JasperPrint jspPrint) {
     PrintRequestAttributeSet result = new HashPrintRequestAttributeSet();
     result.add(
-        jspPrint.getOrientationValue() == OrientationEnum.PORTRAIT
+        jspPrint.getOrientation() == OrientationEnum.PORTRAIT
             ? OrientationRequested.PORTRAIT
             : OrientationRequested.LANDSCAPE);
     result.add(

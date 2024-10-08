@@ -279,14 +279,25 @@ public class ShoppingItem implements Serializable {
     return deposit;
   }
 
-  @Key(PermissionKey.SHOPPING_ITEM_ITEM_RETAIL_PRICE_READ)
-  public double getRetailPrice() {
+  private double calculatePrice(double itemPrice) {
     return Math.round(
             100.0
-                * itemRetailPrice
+                * itemPrice
                 * itemMultiplier
                 * (!weighAble ? 1.0 : getSalesUnits().getBaseFactor()))
         / 100.0;
+  }
+
+  public double getRetailPrice() {
+    return calculatePrice(getItemRetailPrice());
+  }
+
+  public double getNetPrice() {
+    return calculatePrice(getItemNetPrice());
+  }
+
+  public double getUnreducedRetailPrice() {
+    return getNetPrice() * (1 + getVatValue()) * (1 + getSurcharge());
   }
 
   public MetricUnits getSalesUnits() {

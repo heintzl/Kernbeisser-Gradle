@@ -7,6 +7,7 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import java.awt.*;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.function.Predicate;
@@ -27,7 +28,6 @@ import kernbeisser.Security.Utils.Getter;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
-import org.bouncycastle.util.Arrays;
 import org.jetbrains.annotations.NotNull;
 
 public class ShoppingCartView implements IView<ShoppingCartController> {
@@ -108,13 +108,11 @@ public class ShoppingCartView implements IView<ShoppingCartController> {
     if (editable) {
       Predicate<ShoppingItem> predicate =
           item ->
-              !(Arrays.contains(
-                      new int[] {
-                        depositKbNumber,
-                        ArticleConstants.PRODUCE.getUniqueIdentifier(),
-                        ArticleConstants.BAKERY.getUniqueIdentifier()
-                      },
-                      item.getKbNumber())
+              !(Arrays.asList(
+                          depositKbNumber,
+                          ArticleConstants.PRODUCE.getUniqueIdentifier(),
+                          ArticleConstants.BAKERY.getUniqueIdentifier())
+                      .contains(item.getKbNumber())
                   || item.getItemMultiplier() < 0);
       shoppingItems.addColumn(
           Columns.createIconColumn(

@@ -19,6 +19,7 @@ public class ReportFileNames {
   public static final String TILLROLL_REPORT_FILENAME = "Bonrolle.jrxml";
   public static final String LOGININFO_REPORT_FILENAME = "LoginInformation.jrxml";
   public static final String PERMISSION_HOLDERS_REPORT_FILENAME = "RollenInhaber.jrxml";
+  public static final String LOSSANALYSIS_REPORT_FILENAME = "Schwundanalyse.jrxml";
   public static String INVENTORY_SHELF_DETAILS_REPORT_FILENAME = "Inventur_Regaldetails.jrxml";
   public static String INVENTORY_SHELF_OVERVIEW_REPORT_FILENAME = "Inventur_Regaluebersicht.jrxml";
   public static String INVENTORY_SHELF_STOCKS = "Inventur_Regal_Bestaende.jrxml";

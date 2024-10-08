@@ -3,13 +3,13 @@ package kernbeisser.Reports.ReportDTO;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.time.Instant;
+import java.util.InputMismatchException;
 import java.util.Map;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.Useful.Date;
 import kernbeisser.Windows.Supply.SupplySelector.LineContent;
 import lombok.Data;
-import org.eclipse.jdt.core.compiler.InvalidInputException;
 
 @Data
 public class PriceListReportArticle {
@@ -51,7 +51,7 @@ public class PriceListReportArticle {
   }
 
   public static PriceListReportArticle ofProduceLineContent(LineContent lineContent)
-      throws InvalidInputException {
+      throws InputMismatchException {
     DecimalFormat containerFormat = new DecimalFormat("#0.# x ");
     containerFormat.setRoundingMode(RoundingMode.HALF_UP);
     double multiplier = lineContent.getContainerMultiplier() * lineContent.getContainerSize();

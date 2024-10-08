@@ -121,6 +121,16 @@ public class AccountingReportsController
         new PermissionHolders(permissionHoldersWithKeys), "Rolleninhaber-Bericht wird erstellt");
   }
 
+  public void exportLossAnalysis(Instant startDate, Instant endDate) {
+    if (!startDate.isBefore(endDate)) {
+      getView().messageDateValues();
+      return;
+    }
+    exportReport(
+        new LossAnalysisReport(startDate, endDate.plus(1, ChronoUnit.DAYS)),
+        "Schwundanalyse wird erstellt");
+  }
+
   @Override
   public void fillView(AccountingReportsView accountingReportsView) {
     accountingReportsView.setUser(User.getAllUserFullNames(true, true));

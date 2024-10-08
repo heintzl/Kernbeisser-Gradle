@@ -49,6 +49,12 @@ public interface PredicateFactory<P> extends ExpressionFactory<P, Boolean> {
             cb.literal(inBetween), a.createExpression(source, cb), b.createExpression(source, cb)));
   }
 
+  static <P, V extends Comparable<? super V>> PredicateFactory<P> between(
+      ExpressionFactory<P, V> inBetween, V a, V b) {
+    return ((source, cb) ->
+        cb.between(inBetween.createExpression(source, cb), cb.literal(a), cb.literal(b)));
+  }
+
   static <P> PredicateFactory<P> like(
       ExpressionFactory<P, String> expressionFactory, String pattern) {
     return ((source, cb) -> cb.like(expressionFactory.createExpression(source, cb), pattern));
