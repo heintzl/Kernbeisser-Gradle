@@ -4,14 +4,11 @@ import static kernbeisser.DBConnection.PredicateFactory.or;
 
 import jakarta.persistence.Tuple;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import kernbeisser.DBConnection.QueryBuilder;
-import kernbeisser.DBEntities.Purchase;
-import kernbeisser.DBEntities.Transaction;
-import kernbeisser.DBEntities.Transaction_;
-import kernbeisser.DBEntities.User;
-import kernbeisser.DBEntities.UserGroup;
+import kernbeisser.DBEntities.*;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Getter;
 
@@ -23,7 +20,10 @@ public class UserInfoModel implements IModel<UserInfoController> {
   private final Collection<Transaction> userTransactions = user.getAllValueChanges();
 
   @Getter(lazy = true)
-  private final Collection<Purchase> userPurchases = user.getAllPurchases();
+  private final Collection<Purchase> userPurchases =
+      user.getAllPurchases().stream()
+          .sorted(Comparator.comparing(Purchase::getCreateDate).reversed())
+          .toList();
 
   @Getter private final Map<Long, Double> transactionSums;
 
