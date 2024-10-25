@@ -1,100 +1,57 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.12.0.final using JasperReports Library version 6.12.1-ac0eebdb29e4c0985457bab279a6db744d661530  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="RollenInhaber" columnCount="3" printOrder="Horizontal" pageWidth="595" pageHeight="842" columnWidth="178" columnSpacing="10" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="348b17df-f89e-49c3-a919-6d49e97f00a2">
+<!-- Created with Jaspersoft Studio version 7.0.0.final using JasperReports Library version 7.0.0-b478feaa9aab4375eba71de77b4ca138ad2f62aa  -->
+<jasperReport name="RollenInhaber" language="java" columnCount="3" printOrder="Horizontal" pageWidth="595" pageHeight="842" columnWidth="178" columnSpacing="10" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="348b17df-f89e-49c3-a919-6d49e97f00a2">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="com.jaspersoft.studio.report.description" value=""/>
-	<style name="Bold" markup="none" isBold="true"/>
+	<style name="Bold" markup="none" bold="true"/>
 	<parameter name="reportFooter" class="java.lang.String"/>
-	<queryString>
-		<![CDATA[]]>
-	</queryString>
+	<query language="sql"><![CDATA[]]></query>
 	<field name="permission" class="java.lang.String"/>
 	<field name="user.fullName" class="java.lang.String"/>
-	<group name="permission" isReprintHeaderOnEachPage="true">
-		<groupExpression><![CDATA[$F{permission}]]></groupExpression>
+	<group name="permission" reprintHeaderOnEachPage="true">
+		<expression><![CDATA[$F{permission}]]></expression>
 		<groupHeader>
 			<band height="22">
-				<textField>
-					<reportElement x="0" y="0" width="250" height="20" uuid="cb301b54-2814-4cd3-90a2-27a96f404cc7"/>
-					<textElement>
-						<font fontName="DejaVu Sans Condensed" size="12" isBold="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{permission}]]></textFieldExpression>
-				</textField>
+				<element kind="textField" uuid="cb301b54-2814-4cd3-90a2-27a96f404cc7" x="0" y="0" width="250" height="20" fontName="DejaVu Sans Condensed" fontSize="12.0" bold="true">
+					<expression><![CDATA[$F{permission}]]></expression>
+				</element>
 			</band>
 		</groupHeader>
 		<groupFooter>
 			<band height="10"/>
 		</groupFooter>
 	</group>
-	<background>
-		<band height="400" splitType="Stretch">
-			<property name="com.jaspersoft.studio.unit.height" value="px"/>
-		</band>
+	<background height="400" splitType="Stretch">
+		<property name="com.jaspersoft.studio.unit.height" value="px"/>
 	</background>
-	<title>
-		<band height="22" splitType="Stretch">
-			<staticText>
-				<reportElement x="0" y="0" width="280" height="20" uuid="a8e30bf7-7991-468f-8542-a3a9d1eff6dc"/>
-				<textElement markup="html">
-					<font fontName="DejaVu Sans Condensed" size="14" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Wer darf was im Ladenprogramm?]]></text>
-			</staticText>
-			<textField pattern="dd.MM.yyyy">
-				<reportElement style="Bold" x="425" y="0" width="130" height="20" uuid="df7d49d4-36cb-4ae4-b1c3-c4e43f1ddb65"/>
-				<textElement textAlignment="Right">
-					<font fontName="DejaVu Sans Condensed" size="13" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
-			</textField>
-		</band>
+	<title height="22" splitType="Stretch">
+		<element kind="staticText" uuid="a8e30bf7-7991-468f-8542-a3a9d1eff6dc" x="0" y="0" width="280" height="20" markup="html" fontName="DejaVu Sans Condensed" fontSize="14.0" bold="true">
+			<text><![CDATA[Wer darf was im Ladenprogramm?]]></text>
+		</element>
+		<element kind="textField" uuid="df7d49d4-36cb-4ae4-b1c3-c4e43f1ddb65" x="425" y="0" width="130" height="20" fontName="DejaVu Sans Condensed" fontSize="13.0" pattern="dd.MM.yyyy" bold="true" hTextAlign="Right" style="Bold">
+			<expression><![CDATA[new java.util.Date()]]></expression>
+		</element>
 	</title>
-	<pageHeader>
-		<band height="20" splitType="Stretch">
-			<textField>
-				<reportElement x="465" y="0" width="45" height="15" uuid="10a6ff35-3dc0-4365-91b8-beb4f8813fc0"/>
-				<textElement textAlignment="Right">
-					<font fontName="DejaVu Sans Condensed" size="10"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Seite " + $V{PAGE_NUMBER}]]></textFieldExpression>
-			</textField>
-			<textField evaluationTime="Report">
-				<reportElement x="510" y="0" width="44" height="15" uuid="24631cf1-5277-48a1-a10f-f758907adcdf"/>
-				<textElement textAlignment="Right">
-					<font fontName="DejaVu Sans Condensed" size="10"/>
-				</textElement>
-				<textFieldExpression><![CDATA["von " + $V{PAGE_NUMBER}]]></textFieldExpression>
-			</textField>
-		</band>
+	<pageHeader height="20" splitType="Stretch">
+		<element kind="textField" uuid="10a6ff35-3dc0-4365-91b8-beb4f8813fc0" x="465" y="0" width="45" height="15" fontName="DejaVu Sans Condensed" fontSize="10.0" hTextAlign="Right">
+			<expression><![CDATA["Seite " + $V{PAGE_NUMBER}]]></expression>
+		</element>
+		<element kind="textField" uuid="24631cf1-5277-48a1-a10f-f758907adcdf" x="510" y="0" width="44" height="15" fontName="DejaVu Sans Condensed" fontSize="10.0" evaluationTime="Report" hTextAlign="Right">
+			<expression><![CDATA["von " + $V{PAGE_NUMBER}]]></expression>
+		</element>
 	</pageHeader>
-	<columnHeader>
-		<band splitType="Stretch"/>
-	</columnHeader>
+	<columnHeader splitType="Stretch"/>
 	<detail>
 		<band height="14" splitType="Stretch">
-			<textField>
-				<reportElement x="0" y="0" width="180" height="14" uuid="bc16656a-b0d5-4f43-9dfc-57e60bc30f4a"/>
-				<textElement>
-					<font fontName="DejaVu Sans Condensed"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{user.fullName}]]></textFieldExpression>
-			</textField>
+			<element kind="textField" uuid="bc16656a-b0d5-4f43-9dfc-57e60bc30f4a" x="0" y="0" width="180" height="14" fontName="DejaVu Sans Condensed">
+				<expression><![CDATA[$F{user.fullName}]]></expression>
+			</element>
 		</band>
 	</detail>
-	<pageFooter>
-		<band height="15" splitType="Stretch">
-			<textField>
-				<reportElement x="0" y="5" width="554" height="10" uuid="969e6d93-672d-4efd-b3a2-b7a8c0530a36"/>
-				<textElement>
-					<font fontName="DejaVu Sans Condensed" size="7"/>
-					<paragraph lineSpacingSize="1.0"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{reportFooter}]]></textFieldExpression>
-			</textField>
-		</band>
+	<pageFooter height="15" splitType="Stretch">
+		<element kind="textField" uuid="969e6d93-672d-4efd-b3a2-b7a8c0530a36" x="0" y="5" width="554" height="10" fontName="DejaVu Sans Condensed" fontSize="7.0">
+			<paragraph lineSpacingSize="1.0"/>
+			<expression><![CDATA[$P{reportFooter}]]></expression>
+		</element>
 	</pageFooter>
-	<summary>
-		<band height="76" splitType="Stretch"/>
-	</summary>
+	<summary height="76" splitType="Stretch"/>
 </jasperReport>

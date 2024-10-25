@@ -1,12 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.12.0.final using JasperReports Library version 6.12.1-ac0eebdb29e4c0985457bab279a6db744d661530  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Etiketten" columnCount="4" printOrder="Horizontal" pageWidth="595" pageHeight="841" columnWidth="134" leftMargin="39" rightMargin="19" topMargin="36" bottomMargin="34" uuid="348b17df-f89e-49c3-a919-6d49e97f00a2">
+<!-- Created with Jaspersoft Studio version 7.0.0.final using JasperReports Library version 7.0.0-b478feaa9aab4375eba71de77b4ca138ad2f62aa  -->
+<jasperReport name="Etiketten" language="java" columnCount="4" printOrder="Horizontal" pageWidth="595" pageHeight="841" columnWidth="134" leftMargin="39" rightMargin="19" topMargin="36" bottomMargin="34" uuid="348b17df-f89e-49c3-a919-6d49e97f00a2">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="com.jaspersoft.studio.unit." value="mm"/>
-	<style name="Bold" markup="none" isBold="true"/>
-	<queryString>
-		<![CDATA[]]>
-	</queryString>
+	<style name="Bold" markup="none" bold="true"/>
+	<query language="sql"><![CDATA[]]></query>
 	<field name="itemRetailPrice" class="java.lang.Double"/>
 	<field name="name" class="java.lang.String"/>
 	<field name="kbNumber" class="java.lang.Integer"/>
@@ -17,67 +14,36 @@
 	<field name="containerSize" class="java.lang.Double"/>
 	<field name="suppliersShortName" class="java.lang.String"/>
 	<group name="Purchase">
-		<groupExpression><![CDATA[$F{containerSize}]]></groupExpression>
+		<expression><![CDATA[$F{containerSize}]]></expression>
 	</group>
-	<background>
-		<band height="400" splitType="Stretch">
-			<property name="com.jaspersoft.studio.unit.height" value="px"/>
-		</band>
+	<background height="400" splitType="Stretch">
+		<property name="com.jaspersoft.studio.unit.height" value="px"/>
 	</background>
 	<detail>
 		<band height="77" splitType="Stretch">
+			<element kind="textField" uuid="301f7d9b-f8f5-4749-8218-0b6444df8d6f" x="3" y="4" width="126" height="16" fontName="DejaVu Sans Condensed" fontSize="10.0" bold="true">
+				<expression><![CDATA[$F{name}]]></expression>
+				<property name="net.sf.jasperreports.text.truncate.at.char" value="true"/>
+			</element>
+			<element kind="textField" uuid="36929269-bf34-4793-a99a-8b4ab00796dc" x="3" y="19" width="52" height="16" fontName="DejaVu Sans Condensed" fontSize="10.0" pattern="#,##0.00 €" bold="true">
+				<expression><![CDATA[$F{itemRetailPrice}]]></expression>
+			</element>
+			<element kind="textField" uuid="68aaf506-bc52-4233-b155-77d5434508b1" x="59" y="19" width="70" height="16" fontName="DejaVu Sans Condensed" fontSize="10.0" pattern="#0,00 €" bold="true">
+				<expression><![CDATA[$F{unitAmount}]]></expression>
+			</element>
+			<element kind="textField" uuid="c984a9ad-1eb9-47d7-bfb8-4304cc26ae84" x="59" y="34" width="70" height="16" fontName="DejaVu Sans Condensed" fontSize="10.0" pattern="#0,00 €">
+				<expression><![CDATA["KB " + $F{kbNumber}]]></expression>
+			</element>
+			<element kind="textField" uuid="1e861e48-2b1d-4a6d-8e3c-57186ec9650e" x="59" y="49" width="70" height="16" fontName="DejaVu Sans Condensed" fontSize="10.0" pattern="#0,00 €">
+				<expression><![CDATA[$F{suppliersShortName} + " " + Integer.toString( $F{suppliersItemNumber})]]></expression>
+			</element>
+			<element kind="textField" uuid="7f4c01ce-ec22-4834-8ab3-969230634ea7" x="3" y="49" width="52" height="16" fontName="DejaVu Sans Condensed" fontSize="10.0" pattern="#0,00 €">
+				<expression><![CDATA[$F{lastDeliveryMonth} + "-G" + Long.toString(Math.round($F{containerSize}))]]></expression>
+			</element>
+			<element kind="textField" uuid="36e5894d-9447-4df1-8e25-ab32a3cb1e58" x="3" y="34" width="52" height="16" fontName="DejaVu Sans Condensed" fontSize="10.0" pattern="#0,00 €">
+				<expression><![CDATA["BC-" + $F{shortBarcode}]]></expression>
+			</element>
 			<property name="com.jaspersoft.studio.unit.height" value="mm"/>
-			<textField>
-				<reportElement x="3" y="4" width="126" height="16" uuid="301f7d9b-f8f5-4749-8218-0b6444df8d6f">
-					<property name="net.sf.jasperreports.text.truncate.at.char" value="true"/>
-				</reportElement>
-				<textElement>
-					<font fontName="DejaVu Sans Condensed" size="10" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
-			</textField>
-			<textField pattern="#,##0.00 €">
-				<reportElement x="3" y="19" width="52" height="16" uuid="36929269-bf34-4793-a99a-8b4ab00796dc"/>
-				<textElement>
-					<font fontName="DejaVu Sans Condensed" size="10" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{itemRetailPrice}]]></textFieldExpression>
-			</textField>
-			<textField pattern="#0,00 €">
-				<reportElement x="59" y="19" width="70" height="16" uuid="68aaf506-bc52-4233-b155-77d5434508b1"/>
-				<textElement>
-					<font fontName="DejaVu Sans Condensed" size="10" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{unitAmount}]]></textFieldExpression>
-			</textField>
-			<textField pattern="#0,00 €">
-				<reportElement x="59" y="34" width="70" height="16" uuid="c984a9ad-1eb9-47d7-bfb8-4304cc26ae84"/>
-				<textElement>
-					<font fontName="DejaVu Sans Condensed" size="10"/>
-				</textElement>
-				<textFieldExpression><![CDATA["KB " + $F{kbNumber}]]></textFieldExpression>
-			</textField>
-			<textField pattern="#0,00 €">
-				<reportElement x="59" y="49" width="70" height="16" uuid="1e861e48-2b1d-4a6d-8e3c-57186ec9650e"/>
-				<textElement>
-					<font fontName="DejaVu Sans Condensed" size="10"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{suppliersShortName} + " " + Integer.toString( $F{suppliersItemNumber})]]></textFieldExpression>
-			</textField>
-			<textField pattern="#0,00 €">
-				<reportElement x="3" y="49" width="52" height="16" uuid="7f4c01ce-ec22-4834-8ab3-969230634ea7"/>
-				<textElement>
-					<font fontName="DejaVu Sans Condensed" size="10"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{lastDeliveryMonth} + "-G" + Long.toString(Math.round($F{containerSize}))]]></textFieldExpression>
-			</textField>
-			<textField pattern="#0,00 €">
-				<reportElement x="3" y="34" width="52" height="16" uuid="36e5894d-9447-4df1-8e25-ab32a3cb1e58"/>
-				<textElement>
-					<font fontName="DejaVu Sans Condensed" size="10"/>
-				</textElement>
-				<textFieldExpression><![CDATA["BC-" + $F{shortBarcode}]]></textFieldExpression>
-			</textField>
 		</band>
 	</detail>
 </jasperReport>

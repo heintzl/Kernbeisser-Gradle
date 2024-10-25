@@ -29,7 +29,6 @@ import lombok.Cleanup;
 import lombok.Data;
 import lombok.Setter;
 import org.apache.commons.lang3.Range;
-import org.eclipse.jdt.core.compiler.InvalidInputException;
 import org.jetbrains.annotations.NotNull;
 
 @Data
@@ -325,9 +324,9 @@ public class LineContent {
     this.setEstimatedSurchargeGroup(article.getSurchargeGroup());
   }
 
-  public double getProduceRetailPrice() throws InvalidInputException {
+  public double getProduceRetailPrice() throws InputMismatchException {
     if (this.getStatus() != ResolveStatus.PRODUCE) {
-      throw new InvalidInputException("expected PRODUCE, got " + getStatus().name());
+      throw new InputMismatchException("expected PRODUCE, got " + getStatus().name());
     }
     double retailPrice =
         ArticleRepository.calculateRetailPrice(
