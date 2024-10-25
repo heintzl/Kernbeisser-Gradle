@@ -41,6 +41,7 @@ public class LossAnalysisReport extends Report {
     Map<Integer, ArticleLossGroup> lossGroups = new HashMap<>();
     lossGroups.put(1, new ArticleLossGroup(1, "100% Reduktion"));
     lossGroups.put(0, new ArticleLossGroup(0, "andere Waren"));
+    // iterate the first 4 ArticleConstants
     for (int i = -1; i > -5; i--) {
       Article abstractArticle =
           ArticleRepository.getByKbNumber(i, false)

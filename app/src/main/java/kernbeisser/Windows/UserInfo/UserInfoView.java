@@ -164,7 +164,7 @@ public class UserInfoView implements IView<UserInfoController> {
                 Columns.create("Bon", Purchase::getBonNo).withSorter(Column.NUMBER_SORTER),
                 Columns.<Purchase>create(
                         "Datum", e -> Date.INSTANT_DATE_TIME.format(e.getCreateDate()))
-                    .withSorter(Column.DATE_SORTER(Date.INSTANT_DATE_TIME)),
+                    .withSorter(Column.DATE_TIME_SORTER(Date.INSTANT_DATE_TIME)),
                 Columns.create("Verkäufer", e -> e.getSession().getSeller()),
                 Columns.create("Käufer", e -> e.getSession().getCustomer()),
                 Columns.<Purchase>create("Summe", e -> format("%.2f€", e.getSum()))
