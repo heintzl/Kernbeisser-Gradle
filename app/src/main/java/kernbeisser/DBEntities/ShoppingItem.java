@@ -337,10 +337,13 @@ public class ShoppingItem implements Serializable {
       return Math.round(getItemMultiplier() / getContainerSize())
           + " "
           + MetricUnits.CONTAINER.getShortName();
+    } else if (getPriceUnits() == MetricUnits.NONE) {
+      return "";
+    } else {
+      return (isContainerDiscount() && isWeighAble() ? getAmount() : 1) * getItemMultiplier()
+          + " "
+          + getContainerUnits().getShortName();
     }
-    return getPriceUnits() == MetricUnits.NONE
-        ? ""
-        : getItemMultiplier() + " " + getSalesUnits().getShortName();
   }
 
   public Double getContainerCount() {

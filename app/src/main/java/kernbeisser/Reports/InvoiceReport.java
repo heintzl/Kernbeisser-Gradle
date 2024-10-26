@@ -36,7 +36,19 @@ public class InvoiceReport extends Report {
 
   @Override
   Collection<?> getDetailCollection() {
-    return purchase.getAllItems();
+    Collection<ShoppingItem> items = purchase.getAllItems();
+    for (ShoppingItem item : items) {
+      if (item.getItemMultiplier() > 1) {
+        double retailPrice = item.getItemRetailPrice();
+        if (item.isWeighAble() && item.isContainerDiscount()) {
+          retailPrice /= item.getAmount() * item.getMetricUnits().getBaseFactor();
+        }
+        String suffix =
+            item.isWeighAble() ? "/" + item.getMetricUnits().getDisplayUnit().getShortName() : "";
+        item.setName("%s à %.2f€%s".formatted(item.getName(), retailPrice, suffix));
+      }
+    }
+    return items;
   }
 
   @Override
