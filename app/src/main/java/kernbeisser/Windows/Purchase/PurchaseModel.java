@@ -20,8 +20,4 @@ public class PurchaseModel implements IModel<PurchaseController> {
   double getSum() {
     return loaded.getSum();
   }
-
-  public Purchase getLoaded() {
-    return loaded;
-  }
 }

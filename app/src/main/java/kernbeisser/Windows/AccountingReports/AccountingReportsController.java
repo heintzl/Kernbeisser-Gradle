@@ -56,7 +56,7 @@ public class AccountingReportsController
 
   private void exportReport(Report report, String message) {
     AccountingReportsView view = getView();
-    ExportTypes exportType = view.getExportType();
+    ExportTypes exportType = view.getSelectedExportType();
     try {
       AccountingReportsModel.exportReport(
           exportType,

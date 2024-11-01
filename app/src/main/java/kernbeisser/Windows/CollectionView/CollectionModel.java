@@ -11,7 +11,7 @@ import rs.groump.Access;
 
 public class CollectionModel<T> implements IModel<CollectionController<T>> {
 
-  @Getter @Setter private Collection<T> loaded;
+  @Getter private Collection<T> loaded;
   @Setter private Source<T> source;
   @Getter private final Column<T>[] columns;
   private Collection<T> originalContent;

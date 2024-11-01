@@ -67,7 +67,7 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
     return Instant.from(comp.getDate().atStartOfDay(ZoneId.systemDefault()));
   }
 
-  ExportTypes getExportType() {
+  ExportTypes getSelectedExportType() {
     return (ExportTypes) exportType.getSelectedItem();
   }
 
@@ -142,7 +142,8 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
     for (UserNameObfuscation t : controller.getUserNameObfuscations()) {
       accountingReportWithNames.addItem(t);
     }
-    exportType.addActionListener(e -> duplexPrint.setEnabled(getExportType() == ExportTypes.PRINT));
+    exportType.addActionListener(
+        e -> duplexPrint.setEnabled(getSelectedExportType() == ExportTypes.PRINT));
     for (String s : controller.getUserKeySortOrders()) {
       userKeySortOrder.addItem(s);
     }
