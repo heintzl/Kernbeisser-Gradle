@@ -62,6 +62,10 @@ public interface ExpressionFactory<P, V> extends SelectionFactory<P> {
         cb.diff(a.createExpression(source, cb), b.createExpression(source, cb)));
   }
 
+  static <P, V extends Number> ExpressionFactory<P, V> abs(ExpressionFactory<P, V> a) {
+    return ((source, cb) -> cb.abs(a.createExpression(source, cb)));
+  }
+
   static <P> ExpressionFactory<P, Integer> mod(
       ExpressionFactory<P, Integer> a, ExpressionFactory<P, Integer> b) {
     return ((source, cb) -> cb.mod(a.createExpression(source, cb), b.createExpression(source, cb)));
