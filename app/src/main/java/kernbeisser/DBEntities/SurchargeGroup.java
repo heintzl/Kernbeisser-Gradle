@@ -23,7 +23,6 @@ import rs.groump.PermissionKey;
 
 @Table
 @Entity
-@EqualsAndHashCode(doNotUseGetters = true)
 @Audited
 public class SurchargeGroup implements Serializable, ActuallyCloneable {
 

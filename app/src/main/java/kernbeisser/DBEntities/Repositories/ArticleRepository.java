@@ -234,7 +234,7 @@ public class ArticleRepository {
       EntityManager em, int suppliersItemNumber, Supplier supplier) {
     return QueryBuilder.selectAll(Article.class)
         .where(Article_.supplier.eq(supplier))
-        .orderBy(diff(Article_.suppliersItemNumber, asExpression(suppliersItemNumber)).asc())
+        .orderBy(abs(diff(Article_.suppliersItemNumber, asExpression(suppliersItemNumber))).asc())
         .buildQuery(em)
         .setMaxResults(1)
         .getResultStream()
@@ -246,7 +246,7 @@ public class ArticleRepository {
       EntityManager em, int suppliersItemNumber, Supplier supplier, PriceList excludedPriceList) {
     return QueryBuilder.selectAll(Article.class)
         .where(Article_.supplier.eq(supplier), Article_.priceList.eq(excludedPriceList).not())
-        .orderBy(diff(Article_.suppliersItemNumber, asExpression(suppliersItemNumber)).asc())
+        .orderBy(abs(diff(Article_.suppliersItemNumber, asExpression(suppliersItemNumber))).asc())
         .getResultStream(em)
         .findFirst()
         .orElse(null);

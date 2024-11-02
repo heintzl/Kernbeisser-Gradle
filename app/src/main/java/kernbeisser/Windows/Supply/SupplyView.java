@@ -180,11 +180,14 @@ public class SupplyView implements IView<SupplyController> {
             Columns.create("Name", ShoppingItem::getName)
                 .withColumnAdjustor(e -> e.setPreferredWidth(400)),
             Columns.<ShoppingItem>create(
-                    "Netto-Einzelpreis", e -> String.format("%.2f€", e.getItemNetPrice()))
+                    "Barcode", s -> s.getArticleNow().map(Article::getBarcode).orElse(null))
                 .withSorter(Column.NUMBER_SORTER),
             Columns.create("Gebindegröße", ShoppingItem::getContainerSize)
                 .withSorter(Column.NUMBER_SORTER),
             Columns.<ShoppingItem>create("Auswiegware", e -> (e.isWeighAble() ? "ja" : "nein")),
+            Columns.<ShoppingItem>create(
+                    "Netto-Einzelpreis", e -> String.format("%.2f€", e.getItemNetPrice()))
+                .withSorter(Column.NUMBER_SORTER),
             Columns.<ShoppingItem>create(
                     "Gebinde-Preis",
                     e -> String.format("%.2f", e.getItemNetPrice() * e.getContainerSize()))

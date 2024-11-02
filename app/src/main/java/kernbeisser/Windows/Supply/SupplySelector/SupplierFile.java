@@ -155,6 +155,11 @@ public class SupplierFile {
     return message;
   }
 
+  @Override
+  public boolean equals(Object obj) {
+    return super.equals(obj);
+  }
+
   public int hashCode() {
     return header.getId().hashCode();
   }

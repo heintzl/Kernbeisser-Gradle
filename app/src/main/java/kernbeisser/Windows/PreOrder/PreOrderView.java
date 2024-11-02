@@ -35,7 +35,6 @@ import kernbeisser.Useful.Icons;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
-import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
 public class PreOrderView implements IView<PreOrderController> {
@@ -63,7 +62,7 @@ public class PreOrderView implements IView<PreOrderController> {
   private JButton findByShopNumber;
   private JPopupMenu popupSelectionColumn;
 
-  @Setter private Mode mode;
+  private Mode mode;
 
   private User addModeUser;
 
