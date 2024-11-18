@@ -65,8 +65,9 @@ public class PreOrderModel implements IModel<PreOrderController> {
   }
 
   private void removeLazy(PreOrder selected) {
-    em.remove(selected);
-    em.flush();
+    et.begin();
+    em.remove(em.find(PreOrder.class, selected.getId()));
+    et.commit();
   }
 
   public boolean remove(PreOrder selected, boolean force) {
