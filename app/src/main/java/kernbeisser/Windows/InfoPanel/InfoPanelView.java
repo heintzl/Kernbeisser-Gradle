@@ -50,10 +50,10 @@ public class InfoPanelView implements IView<InfoPanelController> {
             + "<td>Dieses Programm wurde für den Ladenbetrieb der "
             + Setting.STORE_NAME.getStringValue()
             + " Verbraucher-Erzeuger-Genossenschaft"
-            + " in Braunschweig (https://www.kernbeisser-bs.de) entwickelt. "
+            + " in Braunschweig (https://www.kernbeisser.de) entwickelt. "
             + "Es wurde in Java als quelloffene Software implementiert.</td></tr>"
-            + "<tr><td><i>Sourcecode:</i></td><td><a href=\"https://github.com/julikiller98/Kernbeisser-Gradle\">"
-            + "https://github.com/julikiller98/Kernbeisser-Gradle</a></td></tr>"
+            + "<tr><td><i>Sourcecode:</i></td><td><a href=\"https://github.com/heintzl/Kernbeisser-Gradle\">"
+            + "https://github.com/heintzl/Kernbeisser-Gradle</a></td></tr>"
             + "<tr><td><div><i>Erstellt am:</i></td><td>"
             + getBuildDate()
             + "</td></tr>"
