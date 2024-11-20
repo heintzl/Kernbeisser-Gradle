@@ -296,13 +296,15 @@ public class MenuView implements IView<MenuController> {
    */
   private void $$$setupUI$$$() {
     createUIComponents();
+    final JScrollPane scrollPane1 = new JScrollPane();
     main = new JPanel();
     main.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 0, 0), -1, -1));
-    final JScrollPane scrollPane1 = new JScrollPane();
-    main.add(scrollPane1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+    scrollPane1.setViewportView(main);
+    final JScrollPane scrollPane2 = new JScrollPane();
+    main.add(scrollPane2, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
     menuPanel = new JPanel();
     menuPanel.setLayout(new GridLayoutManager(3, 3, new Insets(5, 5, 5, 5), -1, -1));
-    scrollPane1.setViewportView(menuPanel);
+    scrollPane2.setViewportView(menuPanel);
     menugroupMyAccount = new JPanel();
     menugroupMyAccount.setLayout(new GridLayoutManager(8, 1, new Insets(5, 5, 5, 5), -1, -1));
     menuPanel.add(menugroupMyAccount, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
@@ -521,13 +523,6 @@ public class MenuView implements IView<MenuController> {
     boolean isMac = System.getProperty("os.name", "").toLowerCase(Locale.ENGLISH).startsWith("mac");
     Font fontWithFallback = isMac ? new Font(font.getFamily(), font.getStyle(), font.getSize()) : new StyleContext().getFont(font.getFamily(), font.getStyle(), font.getSize());
     return fontWithFallback instanceof FontUIResource ? fontWithFallback : new FontUIResource(fontWithFallback);
-  }
-
-  /**
-   * @noinspection ALL
-   */
-  public JComponent $$$getRootComponent$$$() {
-    return main;
   }
 
   // @spotless:on
