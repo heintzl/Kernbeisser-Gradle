@@ -29,12 +29,8 @@ import lombok.Getter;
 public class PreOrderModel implements IModel<PreOrderController> {
 
   private final EntityManager em = DBConnection.getEntityManager();
-  private EntityTransaction et = em.getTransaction();
+  private final EntityTransaction et = em.getTransaction();
   @Getter private final Set<PreOrder> delivery = new HashSet<>();
-
-  {
-    et.begin();
-  }
 
   Optional<CatalogEntry> getEntryByKkNumber(Integer kkNumber) {
     List<CatalogEntry> entries = CatalogEntry.getByArticleNo(kkNumber.toString(), true, false);
@@ -43,16 +39,18 @@ public class PreOrderModel implements IModel<PreOrderController> {
 
   public void add(PreOrder preOrder) {
     Objects.requireNonNull(preOrder.getUser());
+    et.begin();
     if (preOrder.getUser().equals(User.getKernbeisserUser())) {
       CatalogEntry e = em.find(CatalogEntry.class, preOrder.getCatalogEntry().getId());
       em.persist(e);
     }
     em.persist(preOrder);
-    em.flush();
+    et.commit();
   }
 
   public void edit(PreOrder preOrder, PreOrder newPreOrder) {
     Objects.requireNonNull(newPreOrder.getUser());
+    et.begin();
     PreOrder p = em.find(PreOrder.class, preOrder.getId());
     p.setAmount(newPreOrder.getAmount());
     p.setCatalogEntry(newPreOrder.getCatalogEntry());
@@ -63,12 +61,13 @@ public class PreOrderModel implements IModel<PreOrderController> {
       em.persist(e);
     }
     em.merge(preOrder);
-    em.flush();
+    et.commit();
   }
 
   private void removeLazy(PreOrder selected) {
-    em.remove(selected);
-    em.flush();
+    et.begin();
+    em.remove(em.find(PreOrder.class, selected.getId()));
+    et.commit();
   }
 
   public boolean remove(PreOrder selected, boolean force) {
@@ -123,6 +122,7 @@ public class PreOrderModel implements IModel<PreOrderController> {
   }
 
   public void close() {
+    et.begin();
     delivery.forEach(
         p -> {
           if (p.getUser().equals(User.getKernbeisserUser())) {
@@ -138,8 +138,6 @@ public class PreOrderModel implements IModel<PreOrderController> {
 
   private void saveData() {
     et.commit();
-    et = em.getTransaction();
-    et.begin();
   }
 
   public void printCheckList(LocalDate deliveryDate, boolean duplexPrint) {
@@ -192,9 +190,11 @@ public class PreOrderModel implements IModel<PreOrderController> {
 
   private void setAllExported() {
     Instant orderInstant = Instant.now();
+    et.begin();
     for (PreOrder o : getUnorderedPreOrders()) {
       o.setOrderedOn(orderInstant);
       em.merge(o);
     }
+    et.commit();
   }
 }

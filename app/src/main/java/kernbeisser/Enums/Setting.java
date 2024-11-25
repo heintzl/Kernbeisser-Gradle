@@ -94,7 +94,9 @@ public enum Setting {
   @Deprecated
   SUPPLY_DAY_DIFFERENCE_THRESHOLD("1"),
 
-  OUTDATED_SETTING("Veraltete Einstellung");
+  OUTDATED_SETTING("Veraltete Einstellung"),
+  INVENTORY_MIN_THRESHOLD_WEIGHABLE("20."),
+  INVENTORY_MAX_THRESHOLD_PIECE("100.");
 
   // defines the type like in java style
   // Value: Type:

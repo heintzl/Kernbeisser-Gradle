@@ -62,7 +62,7 @@ public class UserInfoModel implements IModel<UserInfoController> {
   }
 
   public boolean incoming(Transaction transaction) {
-    return (transaction.getToUser() != null
-        && getUser().getUserGroup().containsUser(transaction.getToUser()));
+    return (transaction.getToUserGroup() != null
+        && getUser().getUserGroup().equals(transaction.getToUserGroup()));
   }
 }

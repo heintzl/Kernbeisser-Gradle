@@ -24,10 +24,10 @@ import lombok.Cleanup;
 
 public class InventoryModel implements IModel<InventoryController> {
 
-  Map<Shelf, InventoryShelf> shelfValueMap = new HashMap<>();
+  Map<Integer, InventoryShelf> shelfValueMap = new HashMap<>();
 
   public double getShelfNetValue(Shelf shelf) {
-    InventoryShelf inventoryShelf = shelfValueMap.get(shelf);
+    InventoryShelf inventoryShelf = shelfValueMap.get(shelf.getId());
     if (inventoryShelf == null) {
       return 0.0;
     }
@@ -35,7 +35,7 @@ public class InventoryModel implements IModel<InventoryController> {
   }
 
   public double getShelfDepositValue(Shelf shelf) {
-    InventoryShelf inventoryShelf = shelfValueMap.get(shelf);
+    InventoryShelf inventoryShelf = shelfValueMap.get(shelf.getId());
     if (inventoryShelf == null) {
       return 0.0;
     }
@@ -45,7 +45,7 @@ public class InventoryModel implements IModel<InventoryController> {
   public void updateShelfValueMap() {
     shelfValueMap.clear();
     for (Shelf shelf : DBConnection.getAll(Shelf.class)) {
-      shelfValueMap.put(shelf, new InventoryShelf(shelf));
+      shelfValueMap.put(shelf.getId(), new InventoryShelf(shelf));
     }
   }
 
