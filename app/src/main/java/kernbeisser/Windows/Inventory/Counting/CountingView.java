@@ -45,8 +45,8 @@ public class CountingView implements IView<CountingController> {
   @Override
   public void initialize(CountingController controller) {
     shelf.addSelectionListener(controller::loadShelf);
-    apply.addActionListener(e -> applyAmount());
-    amount.addActionListener(e -> applyAmount());
+    apply.addActionListener(e -> tryApplyAmount());
+    amount.addActionListener(e -> tryApplyAmount());
     addArticle.addActionListener(e -> controller.addArticleStock());
     articleStocks.addSelectionListener(this::stockSelectionChanged);
     articleStocks.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -82,17 +82,21 @@ public class CountingView implements IView<CountingController> {
     shelf = new AdvancedComboBox<>(e -> e.getShelfNo() + " - " + e.getLocation());
   }
 
-  void applyAmount() {
+  void tryApplyAmount() {
+    articleStocks.getSelectedObject().ifPresent(e -> applyAmount(e, amount.getSafeValue()));
+  }
+
+  void applyAmount(ArticleStock stock, double value) {
+    if (!controller.setStock(stock, value)) {return;}
     int selectedIndex = articleStocks.getSelectionModel().getMinSelectionIndex();
-    articleStocks.getSelectedObject().ifPresent(e -> controller.setStock(e, amount.getSafeValue()));
     if (selectedIndex == articleStocks.getObjects().size()) {
       Tools.beep();
       return;
     }
     articleStocks.getSelectionModel().setSelectionInterval(selectedIndex + 1, selectedIndex + 1);
     articleStocks.getSelectedObject().ifPresent(this::loadArticleStock);
-  }
 
+  }
   private void saveStockBefore() {
     double count = amount.getSafeValue();
     if (stockBefore != null && stockBefore.getCounted() != count) {
@@ -237,6 +241,28 @@ public class CountingView implements IView<CountingController> {
     articleName = new JLabel();
     articleName.setText("");
     main.add(articleName, new GridConstraints(4, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+  }
+
+  public boolean confirmLowWeighableAmountWarning(double value) {
+    return JOptionPane.showConfirmDialog(
+            getContent(),
+            "Für Auswiegeware ist %.1f ein sehr niedriger Wert.\n".formatted(value) +
+            "Soll er wirklich übernommen werden?",
+            "Ungewöhnlich niedriger Wert",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.WARNING_MESSAGE
+            ) == JOptionPane.YES_OPTION;
+  }
+
+  public boolean confirmHighPieceAmountWarning(double value) {
+    return JOptionPane.showConfirmDialog(
+            getContent(),
+            "Für Stückware ist %.1f eine sehr große Anzahl.\n".formatted(value) +
+                    "Soll sie wirklich übernommen werden?",
+            "Ungewöhnlich großer Wert",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.WARNING_MESSAGE
+    ) == JOptionPane.YES_OPTION;
   }
 
   /**

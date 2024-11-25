@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.concurrent.ExecutionException;
 import javax.swing.*;
 import kernbeisser.CustomComponents.BarcodeCapture;
+import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.ArticleStock;
 import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.DBEntities.Shelf;
@@ -89,10 +90,20 @@ public class CountingController extends Controller<CountingView, CountingModel> 
     getView().selectFirst();
   }
 
-  public void setStock(ArticleStock articleStock, double safeValue) {
+  public boolean setStock(ArticleStock articleStock, double safeValue) {
+    CountingView view = getView();
+    Article article = articleStock.getArticle();
+    if (article.isWeighable()) {
+      if (safeValue < Setting.INVENTORY_MIN_THRESHOLD_WEIGHABLE.getFloatValue()) {
+        if (!view.confirmLowWeighableAmountWarning(safeValue)) {return false;}
+      }
+    } else if (safeValue > Setting.INVENTORY_MAX_THRESHOLD_PIECE.getFloatValue()) {
+      if (!view.confirmHighPieceAmountWarning(safeValue)) {return false;}
+    }
     model.setStock(articleStock, safeValue);
     articleStock.setCounted(safeValue);
     getView().refreshArticleStock(articleStock);
+    return true;
   }
 
   public void addArticleStock() {
