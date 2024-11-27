@@ -15,7 +15,7 @@ import lombok.Cleanup;
 public class CountingModel implements IModel<CountingController> {
 
   public List<Shelf> getAllShelves() {
-    return QueryBuilder.selectAll(Shelf.class).orderBy(Shelf_.shelfNo.desc()).getResultList();
+    return QueryBuilder.selectAll(Shelf.class).orderBy(Shelf_.shelfNo.asc()).getResultList();
   }
 
   public void addArticleToShelf(Shelf shelf, Article article) {

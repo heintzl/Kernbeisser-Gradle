@@ -39,6 +39,7 @@ public class CountingView implements IView<CountingController> {
   private JButton addArticle;
   private ArticleStock stockBefore;
   JLabel inventoryDate;
+  private JLabel unit;
 
   @Linked private CountingController controller;
 
@@ -75,10 +76,12 @@ public class CountingView implements IView<CountingController> {
         new ObjectTable<>(
             Columns.<ArticleStock>create("Artikelnummer", e -> e.getArticle().getKbNumber())
                 .withSorter(Column.NUMBER_SORTER),
-            Columns.create("Artikelname", e -> e.getArticle().getName()),
+            Columns.<ArticleStock>create("Artikelname", e -> e.getArticle().getName())
+                .withPreferredWidth(700),
             Columns.<ArticleStock>create(
                     "Gezählte Menge", (e -> String.format("%.1f", e.getCounted())))
-                .withSorter(Column.NUMBER_SORTER));
+                .withSorter(Column.NUMBER_SORTER),
+            Columns.create("Einh.", controller::getCountingUnit).withPreferredWidth(30));
     shelf = new AdvancedComboBox<>(e -> e.getShelfNo() + " - " + e.getLocation());
   }
 
@@ -87,7 +90,9 @@ public class CountingView implements IView<CountingController> {
   }
 
   void applyAmount(ArticleStock stock, double value) {
-    if (!controller.setStock(stock, value)) {return;}
+    if (!controller.setStock(stock, value)) {
+      return;
+    }
     int selectedIndex = articleStocks.getSelectionModel().getMinSelectionIndex();
     if (selectedIndex == articleStocks.getObjects().size()) {
       Tools.beep();
@@ -95,8 +100,8 @@ public class CountingView implements IView<CountingController> {
     }
     articleStocks.getSelectionModel().setSelectionInterval(selectedIndex + 1, selectedIndex + 1);
     articleStocks.getSelectedObject().ifPresent(this::loadArticleStock);
-
   }
+
   private void saveStockBefore() {
     double count = amount.getSafeValue();
     if (stockBefore != null && stockBefore.getCounted() != count) {
@@ -114,6 +119,8 @@ public class CountingView implements IView<CountingController> {
     amount.setText(String.valueOf(stock.getCounted()));
     articleName.setText(stock.getArticle().getName());
     articleNumber.setText(String.valueOf(stock.getArticle().getKbNumber()));
+    Article article = stock.getArticle();
+    unit.setText(controller.getCountingUnit(stock));
     amount.requestFocus();
     amount.setSelectionStart(0);
     amount.setSelectionEnd(amount.getText().length());
@@ -206,63 +213,44 @@ public class CountingView implements IView<CountingController> {
   private void $$$setupUI$$$() {
     createUIComponents();
     main = new JPanel();
-    main.setLayout(new GridLayoutManager(6, 5, new Insets(5, 5, 5, 5), -1, -1));
+    main.setLayout(new GridLayoutManager(6, 6, new Insets(5, 5, 5, 5), -1, -1));
     commit = new JButton();
     commit.setText("Eingabe abschließen");
-    main.add(commit, new GridConstraints(5, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    main.add(commit, new GridConstraints(5, 5, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     final Spacer spacer1 = new Spacer();
-    main.add(spacer1, new GridConstraints(5, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+    main.add(spacer1, new GridConstraints(5, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
     amount = new DoubleParseField();
     main.add(amount, new GridConstraints(5, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
     apply = new JButton();
     apply.setText("Übernehmen");
-    main.add(apply, new GridConstraints(5, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    main.add(apply, new GridConstraints(5, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     final JLabel label1 = new JLabel();
     label1.setText("Bestand von ");
-    main.add(label1, new GridConstraints(3, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    main.add(label1, new GridConstraints(3, 0, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     articleNumber = new JLabel();
     articleNumber.setText("");
     main.add(articleNumber, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
     final JScrollPane scrollPane1 = new JScrollPane();
-    main.add(scrollPane1, new GridConstraints(2, 0, 1, 5, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(10, 109), null, 0, false));
+    main.add(scrollPane1, new GridConstraints(2, 0, 1, 6, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(10, 109), null, 0, false));
     scrollPane1.setViewportView(articleStocks);
     final JLabel label2 = new JLabel();
     label2.setText("Regal:");
-    main.add(label2, new GridConstraints(0, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    main.add(label2, new GridConstraints(0, 0, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     main.add(shelf, new GridConstraints(1, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
     inventoryDate = new JLabel();
     Font inventoryDateFont = this.$$$getFont$$$(null, Font.BOLD, -1, inventoryDate.getFont());
     if (inventoryDateFont != null) inventoryDate.setFont(inventoryDateFont);
     inventoryDate.setText("");
-    main.add(inventoryDate, new GridConstraints(1, 2, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+    main.add(inventoryDate, new GridConstraints(1, 2, 1, 4, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
     addArticle = new JButton();
     addArticle.setText("Artikel der Liste hinzufügen");
-    main.add(addArticle, new GridConstraints(3, 3, 1, 2, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    main.add(addArticle, new GridConstraints(3, 4, 1, 2, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     articleName = new JLabel();
     articleName.setText("");
     main.add(articleName, new GridConstraints(4, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-  }
-
-  public boolean confirmLowWeighableAmountWarning(double value) {
-    return JOptionPane.showConfirmDialog(
-            getContent(),
-            "Für Auswiegeware ist %.1f ein sehr niedriger Wert.\n".formatted(value) +
-            "Soll er wirklich übernommen werden?",
-            "Ungewöhnlich niedriger Wert",
-            JOptionPane.YES_NO_OPTION,
-            JOptionPane.WARNING_MESSAGE
-            ) == JOptionPane.YES_OPTION;
-  }
-
-  public boolean confirmHighPieceAmountWarning(double value) {
-    return JOptionPane.showConfirmDialog(
-            getContent(),
-            "Für Stückware ist %.1f eine sehr große Anzahl.\n".formatted(value) +
-                    "Soll sie wirklich übernommen werden?",
-            "Ungewöhnlich großer Wert",
-            JOptionPane.YES_NO_OPTION,
-            JOptionPane.WARNING_MESSAGE
-    ) == JOptionPane.YES_OPTION;
+    unit = new JLabel();
+    unit.setText("Stk.");
+    main.add(unit, new GridConstraints(5, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, new Dimension(25, -1), new Dimension(25, -1), new Dimension(25, -1), 0, false));
   }
 
   /**
@@ -292,6 +280,28 @@ public class CountingView implements IView<CountingController> {
    */
   public JComponent $$$getRootComponent$$$() {
     return main;
+  }
+
+  public boolean confirmLowWeighableAmountWarning(double value) {
+    return JOptionPane.showConfirmDialog(
+            getContent(),
+            "Für Auswiegeware ist %.1f ein sehr niedriger Wert.\n".formatted(value) +
+                    "Soll er wirklich übernommen werden?",
+            "Ungewöhnlich niedriger Wert",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.WARNING_MESSAGE
+    ) == JOptionPane.YES_OPTION;
+  }
+
+  public boolean confirmHighPieceAmountWarning(double value) {
+    return JOptionPane.showConfirmDialog(
+            getContent(),
+            "Für Stückware ist %.1f eine sehr große Anzahl.\n".formatted(value) +
+                    "Soll sie wirklich übernommen werden?",
+            "Ungewöhnlich großer Wert",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.WARNING_MESSAGE
+    ) == JOptionPane.YES_OPTION;
   }
 
   // @spotless:on

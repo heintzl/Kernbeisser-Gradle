@@ -68,6 +68,11 @@ public class CountingController extends Controller<CountingView, CountingModel> 
     return String.format("Inventur-Datum: %s", dateString);
   }
 
+  String getCountingUnit(ArticleStock stock) {
+    Article article = stock.getArticle();
+    return article.isWeighable() ? article.getMetricUnits().getShortName() : "Stk.";
+  }
+
   public void loadShelf(Shelf shelf) {
     SwingWorker stockLoaderWorker =
         new SwingWorker<Collection<ArticleStock>, Void>() {
@@ -95,10 +100,14 @@ public class CountingController extends Controller<CountingView, CountingModel> 
     Article article = articleStock.getArticle();
     if (article.isWeighable()) {
       if (safeValue < Setting.INVENTORY_MIN_THRESHOLD_WEIGHABLE.getFloatValue()) {
-        if (!view.confirmLowWeighableAmountWarning(safeValue)) {return false;}
+        if (!view.confirmLowWeighableAmountWarning(safeValue)) {
+          return false;
+        }
       }
     } else if (safeValue > Setting.INVENTORY_MAX_THRESHOLD_PIECE.getFloatValue()) {
-      if (!view.confirmHighPieceAmountWarning(safeValue)) {return false;}
+      if (!view.confirmHighPieceAmountWarning(safeValue)) {
+        return false;
+      }
     }
     model.setStock(articleStock, safeValue);
     articleStock.setCounted(safeValue);
