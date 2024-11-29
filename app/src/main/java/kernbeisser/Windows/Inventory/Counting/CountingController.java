@@ -129,6 +129,18 @@ public class CountingController extends Controller<CountingView, CountingModel> 
         .openIn(new SubWindow(view.traceViewContainer()));
   }
 
+  public String getWeighableThreshold() {
+    return model.getInventoryMinThresholdWeighable();
+  }
+
+  public String getPieceThreshold() {
+    return model.getInventoryMaxThresholdPiece();
+  }
+
+  public void applyThresholds(Double weighableThreshold, Double pieceThreshold) {
+    model.setInventoryThresholds(weighableThreshold, pieceThreshold);
+  }
+
   private final BarcodeCapture capture =
       new BarcodeCapture(
           b ->

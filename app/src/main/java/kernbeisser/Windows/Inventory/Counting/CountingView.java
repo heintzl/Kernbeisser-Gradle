@@ -22,7 +22,9 @@ import kernbeisser.CustomComponents.TextFields.DoubleParseField;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.ArticleStock;
 import kernbeisser.DBEntities.Shelf;
+import kernbeisser.Enums.UserSetting;
 import kernbeisser.Useful.Tools;
+import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
@@ -40,6 +42,7 @@ public class CountingView implements IView<CountingController> {
   private ArticleStock stockBefore;
   JLabel inventoryDate;
   private JLabel unit;
+  private JButton editThresholds;
 
   @Linked private CountingController controller;
 
@@ -52,6 +55,7 @@ public class CountingView implements IView<CountingController> {
     articleStocks.addSelectionListener(this::stockSelectionChanged);
     articleStocks.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     commit.addActionListener(e -> close());
+    editThresholds.addActionListener(e -> editThresholds());
   }
 
   Optional<Shelf> getSelectedShelf() {
@@ -194,6 +198,70 @@ public class CountingView implements IView<CountingController> {
     this.inventoryDate.setFont(font);
   }
 
+  public boolean confirmLowWeighableAmountWarning(double value) {
+    return JOptionPane.showConfirmDialog(
+            getContent(),
+            "Für Auswiegeware ist %.1f ein sehr niedriger Wert.\n".formatted(value) +
+                    "Soll er wirklich übernommen werden?",
+            "Ungewöhnlich niedriger Wert",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.WARNING_MESSAGE
+    ) == JOptionPane.YES_OPTION;
+  }
+
+  public boolean confirmHighPieceAmountWarning(double value) {
+    return JOptionPane.showConfirmDialog(
+            getContent(),
+            "Für Stückware ist %.1f eine sehr große Anzahl.\n".formatted(value) +
+                    "Soll sie wirklich übernommen werden?",
+            "Ungewöhnlich großer Wert",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.WARNING_MESSAGE
+    ) == JOptionPane.YES_OPTION;
+  }
+
+  private void editThresholds() {
+
+    float scaleFactor = UserSetting.FONT_SCALE_FACTOR.getFloatValue(LogInModel.getLoggedIn());
+    int preferredHeight = (int) (24.0 * scaleFactor);
+    Dimension labelSize = new Dimension((int) (250.0 * scaleFactor), preferredHeight);
+    Dimension textFieldSize = new Dimension((int) (70.0 * scaleFactor), preferredHeight);
+    JPanel panel = new JPanel();
+    panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+    JPanel weighablePanel = new JPanel();
+    weighablePanel.setLayout(new BoxLayout(weighablePanel, BoxLayout.X_AXIS));
+    JPanel piecePanel = new JPanel();
+    piecePanel.setLayout(new BoxLayout(piecePanel, BoxLayout.X_AXIS));
+
+    DoubleParseField weighableThreshold = new DoubleParseField();
+    weighableThreshold.setText(controller.getWeighableThreshold());
+    weighableThreshold.setPreferredSize(textFieldSize);
+    weighableThreshold.setHorizontalAlignment(SwingConstants.RIGHT);
+    JLabel weighableLabel = new JLabel("Minimum für Auswiegeware: ");
+    weighableLabel.setPreferredSize(new Dimension(labelSize));
+
+    DoubleParseField pieceThreshold = new DoubleParseField();
+    pieceThreshold.setText(controller.getPieceThreshold());
+    pieceThreshold.setPreferredSize(new Dimension(textFieldSize));
+    pieceThreshold.setHorizontalAlignment(SwingConstants.RIGHT);
+    JLabel pieceLabel = new JLabel("Maximum für Stück: ");
+    pieceLabel.setPreferredSize(new Dimension(labelSize));
+
+    weighablePanel.add(weighableLabel);
+    weighablePanel.add(weighableThreshold);
+    piecePanel.add(pieceLabel);
+    piecePanel.add(pieceThreshold);
+    panel.add(weighablePanel);
+    panel.add(piecePanel);
+    int response =
+        JOptionPane.showConfirmDialog(
+            getContent(), panel, "Grenzwerte für Warnungen", JOptionPane.OK_CANCEL_OPTION);
+    if (response == JOptionPane.OK_OPTION) {
+      controller.applyThresholds(weighableThreshold.getSafeValue(), pieceThreshold.getSafeValue());
+    }
+  }
+
   // @spotless:off
 
   {
@@ -213,12 +281,12 @@ public class CountingView implements IView<CountingController> {
   private void $$$setupUI$$$() {
     createUIComponents();
     main = new JPanel();
-    main.setLayout(new GridLayoutManager(6, 6, new Insets(5, 5, 5, 5), -1, -1));
+    main.setLayout(new GridLayoutManager(6, 7, new Insets(5, 5, 5, 5), -1, -1));
     commit = new JButton();
     commit.setText("Eingabe abschließen");
-    main.add(commit, new GridConstraints(5, 5, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    main.add(commit, new GridConstraints(5, 6, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     final Spacer spacer1 = new Spacer();
-    main.add(spacer1, new GridConstraints(5, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+    main.add(spacer1, new GridConstraints(5, 5, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
     amount = new DoubleParseField();
     main.add(amount, new GridConstraints(5, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
     apply = new JButton();
@@ -231,7 +299,7 @@ public class CountingView implements IView<CountingController> {
     articleNumber.setText("");
     main.add(articleNumber, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
     final JScrollPane scrollPane1 = new JScrollPane();
-    main.add(scrollPane1, new GridConstraints(2, 0, 1, 6, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(10, 109), null, 0, false));
+    main.add(scrollPane1, new GridConstraints(2, 0, 1, 7, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(10, 109), null, 0, false));
     scrollPane1.setViewportView(articleStocks);
     final JLabel label2 = new JLabel();
     label2.setText("Regal:");
@@ -241,16 +309,20 @@ public class CountingView implements IView<CountingController> {
     Font inventoryDateFont = this.$$$getFont$$$(null, Font.BOLD, -1, inventoryDate.getFont());
     if (inventoryDateFont != null) inventoryDate.setFont(inventoryDateFont);
     inventoryDate.setText("");
-    main.add(inventoryDate, new GridConstraints(1, 2, 1, 4, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+    main.add(inventoryDate, new GridConstraints(1, 2, 1, 5, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
     addArticle = new JButton();
     addArticle.setText("Artikel der Liste hinzufügen");
-    main.add(addArticle, new GridConstraints(3, 4, 1, 2, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    main.add(addArticle, new GridConstraints(3, 5, 1, 2, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     articleName = new JLabel();
     articleName.setText("");
-    main.add(articleName, new GridConstraints(4, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    main.add(articleName, new GridConstraints(4, 1, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     unit = new JLabel();
     unit.setText("Stk.");
     main.add(unit, new GridConstraints(5, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, new Dimension(25, -1), new Dimension(25, -1), new Dimension(25, -1), 0, false));
+    editThresholds = new JButton();
+    editThresholds.setText("Warnungen...");
+    editThresholds.setToolTipText("Grenzwerte für Warnungen einstellen");
+    main.add(editThresholds, new GridConstraints(5, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
   }
 
   /**
@@ -280,28 +352,6 @@ public class CountingView implements IView<CountingController> {
    */
   public JComponent $$$getRootComponent$$$() {
     return main;
-  }
-
-  public boolean confirmLowWeighableAmountWarning(double value) {
-    return JOptionPane.showConfirmDialog(
-            getContent(),
-            "Für Auswiegeware ist %.1f ein sehr niedriger Wert.\n".formatted(value) +
-                    "Soll er wirklich übernommen werden?",
-            "Ungewöhnlich niedriger Wert",
-            JOptionPane.YES_NO_OPTION,
-            JOptionPane.WARNING_MESSAGE
-    ) == JOptionPane.YES_OPTION;
-  }
-
-  public boolean confirmHighPieceAmountWarning(double value) {
-    return JOptionPane.showConfirmDialog(
-            getContent(),
-            "Für Stückware ist %.1f eine sehr große Anzahl.\n".formatted(value) +
-                    "Soll sie wirklich übernommen werden?",
-            "Ungewöhnlich großer Wert",
-            JOptionPane.YES_NO_OPTION,
-            JOptionPane.WARNING_MESSAGE
-    ) == JOptionPane.YES_OPTION;
   }
 
   // @spotless:on

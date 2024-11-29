@@ -9,6 +9,7 @@ import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.ArticleStock;
 import kernbeisser.DBEntities.Shelf;
 import kernbeisser.DBEntities.Shelf_;
+import kernbeisser.Enums.Setting;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
 
@@ -37,5 +38,18 @@ public class CountingModel implements IModel<CountingController> {
     if (stock.getId() != 0) stock = em.find(ArticleStock.class, stock.getId());
     stock.setCounted(value);
     em.persist(stock);
+  }
+
+  public String getInventoryMinThresholdWeighable() {
+    return Setting.INVENTORY_MIN_THRESHOLD_WEIGHABLE.getStringValue();
+  }
+
+  public String getInventoryMaxThresholdPiece() {
+    return Setting.INVENTORY_MAX_THRESHOLD_PIECE.getStringValue();
+  }
+
+  public void setInventoryThresholds(Double minWeighable, Double maxPiece) {
+    Setting.INVENTORY_MIN_THRESHOLD_WEIGHABLE.changeValue(minWeighable);
+    Setting.INVENTORY_MAX_THRESHOLD_PIECE.changeValue(maxPiece);
   }
 }
