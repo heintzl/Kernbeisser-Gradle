@@ -87,6 +87,7 @@ public class CountingView implements IView<CountingController> {
                 .withSorter(Column.NUMBER_SORTER),
             Columns.create("Einh.", controller::getCountingUnit).withPreferredWidth(30));
     shelf = new AdvancedComboBox<>(e -> e.getShelfNo() + " - " + e.getLocation());
+    amount = new DoubleParseField(0.0, 999999.9);
   }
 
   void tryApplyAmount() {
@@ -199,25 +200,27 @@ public class CountingView implements IView<CountingController> {
   }
 
   public boolean confirmLowWeighableAmountWarning(double value) {
+    Tools.beep();
     return JOptionPane.showConfirmDialog(
             getContent(),
-            "Für Auswiegeware ist %.1f ein sehr niedriger Wert.\n".formatted(value) +
-                    "Soll er wirklich übernommen werden?",
+            "Für Auswiegeware ist %.1f ein sehr niedriger Wert.\n".formatted(value)
+                + "Willst Du den Wert anpassen?",
             "Ungewöhnlich niedriger Wert",
             JOptionPane.YES_NO_OPTION,
-            JOptionPane.WARNING_MESSAGE
-    ) == JOptionPane.YES_OPTION;
+            JOptionPane.WARNING_MESSAGE)
+        == JOptionPane.NO_OPTION;
   }
 
   public boolean confirmHighPieceAmountWarning(double value) {
+    Tools.beep();
     return JOptionPane.showConfirmDialog(
             getContent(),
-            "Für Stückware ist %.1f eine sehr große Anzahl.\n".formatted(value) +
-                    "Soll sie wirklich übernommen werden?",
+            "Für Stückware ist %.1f eine sehr große Anzahl.\n".formatted(value)
+                + "Willst Du den Wert anpassen?",
             "Ungewöhnlich großer Wert",
             JOptionPane.YES_NO_OPTION,
-            JOptionPane.WARNING_MESSAGE
-    ) == JOptionPane.YES_OPTION;
+            JOptionPane.WARNING_MESSAGE)
+        == JOptionPane.NO_OPTION;
   }
 
   private void editThresholds() {
@@ -287,7 +290,6 @@ public class CountingView implements IView<CountingController> {
     main.add(commit, new GridConstraints(5, 6, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     final Spacer spacer1 = new Spacer();
     main.add(spacer1, new GridConstraints(5, 5, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
-    amount = new DoubleParseField();
     main.add(amount, new GridConstraints(5, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
     apply = new JButton();
     apply.setText("Übernehmen");
@@ -315,10 +317,10 @@ public class CountingView implements IView<CountingController> {
     main.add(addArticle, new GridConstraints(3, 5, 1, 2, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     articleName = new JLabel();
     articleName.setText("");
-    main.add(articleName, new GridConstraints(4, 1, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    main.add(articleName, new GridConstraints(4, 1, 1, 4, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     unit = new JLabel();
     unit.setText("Stk.");
-    main.add(unit, new GridConstraints(5, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, new Dimension(25, -1), new Dimension(25, -1), new Dimension(25, -1), 0, false));
+    main.add(unit, new GridConstraints(5, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, new Dimension(60, -1), new Dimension(60, -1), new Dimension(100, -1), 0, false));
     editThresholds = new JButton();
     editThresholds.setText("Warnungen...");
     editThresholds.setToolTipText("Grenzwerte für Warnungen einstellen");
