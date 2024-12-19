@@ -202,18 +202,22 @@ public class ShoppingMaskController extends Controller<ShoppingMaskView, Shoppin
   public Double recalculateRetailPrice(
       Article article, double discount, boolean preordered, boolean overwriteNetPrice)
       throws NullPointerException {
+    Article changedArticle = article.clone();
     if (overwriteNetPrice) {
+      double newPrice = view.getNetPrice();
+      if (article.isWeighable()) {
+        newPrice *= article.getMetricUnits().getBaseFactor();
+        if (!preordered) {
+          newPrice /= ArticleRepository.getSafeAmount(article);
+        }
+      }
+      final double finalNewPrice = newPrice;
       Access.runWithAccessManager(
-          AccessManager.ACCESS_GRANTED,
-          () ->
-              article.setNetPrice(
-                  view.getNetPrice()
-                      / (ArticleRepository.getSafeAmount(article)
-                          * article.getMetricUnits().getBaseFactor())));
+          AccessManager.ACCESS_GRANTED, () -> changedArticle.setNetPrice(finalNewPrice));
     }
-    return ArticleRepository.calculateArticleRetailPrice(article, discount, preordered)
-        * (preordered && !article.isWeighable() && !overwriteNetPrice
-            ? article.getContainerSize()
+    return ArticleRepository.calculateArticleRetailPrice(changedArticle, discount, preordered)
+        * (preordered && !changedArticle.isWeighable() && !overwriteNetPrice
+            ? changedArticle.getContainerSize()
             : 1.0);
   }
 
