@@ -3,7 +3,7 @@ package kernbeisser.CustomComponents.TextFields;
 import kernbeisser.Exeptions.IncorrectInput;
 
 public class DoubleParseField extends FilterField<Double> {
-  DoubleParseField(double min, double max) {
+  public DoubleParseField(double min, double max) {
     super(
         e -> {
           try {
