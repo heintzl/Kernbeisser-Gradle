@@ -388,7 +388,12 @@ public class ShoppingItem implements Serializable {
 
   @Key(PermissionKey.SHOPPING_ITEM_ITEM_RETAIL_PRICE_READ)
   public void setItemRetailPriceFromNetPrice() {
-    setItemRetailPrice(Tools.roundCurrency(calculatePreciseRetailPrice(itemNetPrice)));
+    double retailPrice = calculatePreciseRetailPrice(itemNetPrice);
+    if (containerDiscount & !weighAble) {
+      setItemRetailPrice(Tools.roundCurrency(retailPrice * containerSize) / containerSize);
+    } else {
+      setItemRetailPrice(Tools.roundCurrency(retailPrice));
+    }
   }
 
   public ShoppingItem createItemDeposit(int number, boolean isContainer) {
