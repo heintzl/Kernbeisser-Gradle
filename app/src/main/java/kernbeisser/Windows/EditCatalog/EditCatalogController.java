@@ -3,11 +3,17 @@ package kernbeisser.Windows.EditCatalog;
 import static kernbeisser.DBEntities.CatalogEntry.CATALOG_ENTRY_STATES;
 
 import java.awt.event.KeyEvent;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+
 import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.SearchBox.Filters.CatalogFilter;
+import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.CatalogEntry;
+import kernbeisser.DBEntities.Repositories.ArticleRepository;
+import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
 import kernbeisser.Forms.FormImplemetations.CatalogEntry.CatalogEntryController;
 import kernbeisser.Forms.ObjectView.ObjectViewController;
 import kernbeisser.Forms.ObjectView.ObjectViewView;
@@ -83,7 +89,7 @@ public class EditCatalogController extends Controller<EditCatalogView, EditCatal
                 .withPreferredWidth(80)
                 .withSorter(Column.DATE_SORTER(Date.INSTANT_DATE)),
             Columns.create("Barcode", CatalogEntry::getEanLadenEinheit).withPreferredWidth(80),
-            Columns.create("Bestelleinheit", CatalogEntry::getBestelleinheit)
+            Columns.create("Einheit", CatalogEntry::getLadeneinheit)
                 .withPreferredWidth(120),
             Columns.<CatalogEntry>createIconColumn(
                     "AuswW", e -> Icons.booleanIcon(e.getGewichtsartikel()))
@@ -94,7 +100,10 @@ public class EditCatalogController extends Controller<EditCatalogView, EditCatal
                     "Gültig bis",
                     e -> Date.safeDateFormat(e.getKatalogGueltigBis(), Date.INSTANT_DATE))
                 .withPreferredWidth(80)
-                .withSorter(Column.DATE_SORTER(Date.INSTANT_DATE)));
+                .withSorter(Column.DATE_SORTER(Date.INSTANT_DATE)),
+                Columns.<CatalogEntry>createIconColumn(
+                        "KB-Stamm", e -> Icons.booleanIcon(getModel().isArticle(e)))
+                        .withLeftClickConsumer(this::makeArticle));
 
     this.capture =
         new BarcodeCapture(
@@ -107,6 +116,25 @@ public class EditCatalogController extends Controller<EditCatalogView, EditCatal
     // objectViewController.setForceExtraButtonState(false);
   }
 
+  private void makeArticle(CatalogEntry entry) {
+    try {
+      Article article;
+      if (getModel().isArticle(entry)) {
+        article = ArticleRepository.getArticleFromCatalogEntry(entry).orElseThrow();
+      } else {
+        if (getView().confirmNewArticle(entry)) {
+          article = model.makeArticle(entry);
+        } else {
+          return;
+        }
+      }
+      if (entry.isAction() && !entry.isOutdatedAction() && !article.isOffer() && getView().confirmOffer(article)) {
+        model.activateAction(article);
+      }
+    } catch (NoSuchElementException e) {
+      throw UnexpectedExceptionHandler.showUnexpectedErrorWarning(e);
+    }
+  }
   void refreshList() {
     objectViewController.search();
   }

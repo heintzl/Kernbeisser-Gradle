@@ -5,6 +5,9 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import java.awt.*;
 import javax.swing.*;
+
+import kernbeisser.DBEntities.Article;
+import kernbeisser.DBEntities.Article_;
 import kernbeisser.DBEntities.CatalogEntry;
 import kernbeisser.Forms.ObjectView.ObjectViewView;
 import kernbeisser.Useful.Tools;
@@ -26,6 +29,26 @@ public class EditCatalogView implements IView<EditCatalogController> {
         "Konnte keinen Katalog-Artikel mit Barcode \"" + s + "\" finden",
         "Eintrag nicht gefunden",
         JOptionPane.INFORMATION_MESSAGE);
+  }
+
+  public boolean confirmNewArticle(CatalogEntry entry) {
+    Tools.beep();
+    return JOptionPane.showConfirmDialog(getContent(),
+            "Soll der Katalogeintrag \"%s\" in den Artikelstamm übernommen werden?\n".formatted(entry.getBezeichnung()),
+            "Neuen Stammartikel erstellen",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.QUESTION_MESSAGE
+    ) == JOptionPane.YES_OPTION;
+  }
+
+  public boolean confirmOffer(Article article) {
+    Tools.beep();
+    return JOptionPane.showConfirmDialog(getContent(),
+            "Soll der Artikel %d \"%s\" als Aktion markiert werden?".formatted(article.getKbNumber(), article.getName()),
+            "Aktion bestätigen",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.QUESTION_MESSAGE
+    ) == JOptionPane.YES_OPTION;
   }
 
   public void pasteInSearchBox(String s) {}
