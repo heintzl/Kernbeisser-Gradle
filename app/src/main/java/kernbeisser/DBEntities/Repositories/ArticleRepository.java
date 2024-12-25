@@ -14,6 +14,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
 import kernbeisser.DBConnection.*;
 import kernbeisser.DBEntities.*;
 import kernbeisser.EntityWrapper.ObjectState;
@@ -21,6 +22,7 @@ import kernbeisser.Enums.*;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
 import kernbeisser.Tasks.ArticleComparedToCatalogEntry;
 import kernbeisser.Useful.Tools;
+import kernbeisser.Windows.Supply.SupplySelector.LineContent;
 import lombok.Cleanup;
 import lombok.extern.log4j.Log4j2;
 import org.hibernate.envers.AuditReader;
@@ -28,6 +30,7 @@ import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.DefaultRevisionEntity;
 import org.hibernate.envers.query.AuditEntity;
 import org.hibernate.envers.query.AuditQuery;
+import org.jetbrains.annotations.NotNull;
 import rs.groump.Access;
 import rs.groump.AccessManager;
 
@@ -758,4 +761,104 @@ public class ArticleRepository {
       }
     }
   }
-}
+
+  public static @NotNull Article createArticleFromLineContent(
+          LineContent content, boolean ignoreBarcode, ShopRange shopRange) {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup("commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    Supplier kkSupplier = Supplier.getKKSupplier();
+    Article pattern = ArticleRepository.nextArticleTo(em, content.getKkNumber(), kkSupplier);
+    Article article = new Article();
+    article.setSupplier(kkSupplier);
+    article.setName(content.getName());
+    article.setNetPrice(content.getPriceKb());
+    article.setMetricUnits(content.getUnit());
+    article.setAmount(content.getAmount());
+    article.setProducer(content.getProducer());
+    if (!ignoreBarcode) article.setBarcode(content.getBarcode());
+    article.setWeighable(content.isWeighableKb());
+    article.setContainerSize(content.getContainerSize());
+    article.setShopRange(shopRange);
+    article.setSurchargeGroup(pattern.getSurchargeGroup());
+    VAT vat = content.getVat();
+    if (vat == null) {
+      vat = pattern.getVat();
+    }
+    article.setVat(vat);
+    article.setPriceList(ArticleRepository.getValidPriceList(em, pattern));
+    article.setVerified(false);
+    article.setKbNumber(ArticleRepository.nextFreeKBNumber(em));
+    article.setSuppliersItemNumber(content.getKkNumber());
+    article.setSingleDeposit(content.getSingleDeposit());
+    article.setContainerDeposit(content.getContainerDeposit());
+    em.persist(article);
+    em.flush();
+    return article;
+  }
+
+  public static @NotNull Article createArticleFromCatalogEntry(CatalogEntry entry) {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup("commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    Supplier kkSupplier = Supplier.getKKSupplier();
+    Article pattern = ArticleRepository.nextArticleTo(em, entry.getArtikelNrInt(), kkSupplier);
+    Article article = new Article();
+    article.setSupplier(kkSupplier);
+    article.setName(entry.getBezeichnung());
+    article.setNetPrice(entry.getPreis());
+    article.setMetricUnits(entry.getMetricUnits());
+    article.setAmount(entry.getAmountAsInt());
+    article.setProducer(entry.getMarke());
+    article.setBarcode(entry.getEanLadenEinheit());
+    article.setWeighable(entry.getGewichtsartikel());
+    article.setContainerSize(entry.getBestelleinheitsMenge());
+    article.setSurchargeGroup(pattern.getSurchargeGroup());
+    article.setVat(entry.getMwstKennung());
+    article.setPriceList(ArticleRepository.getValidPriceList(em, pattern));
+    article.setVerified(false);
+    article.setKbNumber(ArticleRepository.nextFreeKBNumber(em));
+    article.setSuppliersItemNumber(entry.getArtikelNrInt());
+    article.setSingleDeposit(entry.getEinzelPfand());
+    article.setContainerDeposit(entry.getGebindePfand());
+    article.setShopRange(ShopRange.IN_RANGE);
+    return article;
+  }
+
+
+  public static Optional<Article> getArticleFromCatalogEntry(CatalogEntry entry) {
+    return QueryBuilder.selectAll(Article.class).where(
+            Article_.suppliersItemNumber.eq(entry.getArtikelNr()),
+            Article_.supplier.eq(Supplier.getKKSupplier()))
+            .getSingleResultOptional();
+  }
+
+  private static Integer parseOrNull(String s) {
+    try {
+      return Integer.parseInt(s);
+    } catch (NumberFormatException e) {
+      return null;
+    }
+  }
+
+  public static List<Integer> suppliersItemNumbersFromCatalog() {
+    List<String> artikelNrStrings = QueryBuilder.select(CatalogEntry_.artikelNr)
+            .where(CatalogEntry_.aenderungskennung.in("X", "V").not())
+            .getResultList();
+    List<Integer> result = new ArrayList<>(artikelNrStrings.size());
+    for (String s : artikelNrStrings) {
+      Integer i = parseOrNull(s);
+      if (i != null)
+        result.add(i);
+    }
+    return result;
+    }
+
+    public static List<Integer> kkItemNumbersFromArticles() {
+      return QueryBuilder.select(Article_.suppliersItemNumber)
+              .where(Article_.supplier.eq(Supplier.getKKSupplier()))
+              .getResultList();
+    }
+  }

@@ -11,6 +11,7 @@ import java.util.Optional;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.PredicateFactory;
 import kernbeisser.DBConnection.QueryBuilder;
+import kernbeisser.DBEntities.Converters.CatalogUnitParser;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
@@ -264,6 +265,20 @@ public class CatalogEntry implements ActuallyCloneable {
 
   public String getInfo() {
     return String.join("\n", bezeichnung2, bezeichnung3);
+  }
+
+  public MetricUnits getMetricUnits() {
+    return new CatalogUnitParser(ladeneinheit).getMetricUnits();
+  }
+
+  public Double getAmount() {
+    return new CatalogUnitParser(gewichtsartikel != null && gewichtsartikel ? bestelleinheit : ladeneinheit).getAmount();
+  }
+
+  public Integer getAmountAsInt() {
+    Double amount = getAmount();
+    if (amount == null) {return null;}
+    return (int) Math.round((getAmount()));
   }
 
   @Override
