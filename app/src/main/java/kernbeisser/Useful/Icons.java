@@ -3,6 +3,7 @@ package kernbeisser.Useful;
 import java.awt.*;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Optional;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import jiconfont.IconCode;
@@ -41,15 +42,29 @@ public class Icons {
       IconFontSwing.buildIcon(
           FontAwesome.SQUARE_O, Tools.scaleWithLabelScalingFactor(16), Color.BLACK);
 
-  public static Icon actionActiveIcon =
+  public static final Icon offerActiveIcon =
       IconFontSwing.buildIcon(
           FontAwesome.PERCENT, Tools.scaleWithLabelScalingFactor(20), Color.GREEN);
 
-  public static Icon actionInactiveIcon =
+  public static final Icon offerInactiveIcon =
       IconFontSwing.buildIcon(
           FontAwesome.PERCENT, Tools.scaleWithLabelScalingFactor(20), Color.GRAY);
 
   public static Icon booleanIcon(Boolean b) {
     return ((b != null && b) ? trueIcon : falseIcon);
+  }
+
+  private static final Icon offerIcon =
+      IconFontSwing.buildIcon(
+          FontAwesome.PERCENT, Tools.scaleWithLabelScalingFactor(14), Color.BLUE);
+  private static final Icon articleIcon =
+      IconFontSwing.buildIcon(
+          FontAwesome.CHECK, Tools.scaleWithLabelScalingFactor(16), new Color(0x199C00));
+  private static final Icon noArticleIcon =
+      IconFontSwing.buildIcon(
+          FontAwesome.MINUS, Tools.scaleWithLabelScalingFactor(16), new Color(0xBD0000));
+
+  public static Icon catalogArticleIcon(Optional<Boolean> optionalOffer) {
+    return optionalOffer.map(offer -> offer ? offerIcon : articleIcon).orElse(noArticleIcon);
   }
 }

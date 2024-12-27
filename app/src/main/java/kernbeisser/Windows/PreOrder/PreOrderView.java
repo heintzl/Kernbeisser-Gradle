@@ -160,7 +160,7 @@ public class PreOrderView implements IView<PreOrderController> {
             Columns.<PreOrder>create(
                     "Aktion bis",
                     e ->
-                        e.getCatalogEntry().isAction()
+                        e.getCatalogEntry().isOffer()
                             ? Date.INSTANT_DATE.format(
                                 e.getCatalogEntry().getAktionspreisGueltigBis())
                             : "-")

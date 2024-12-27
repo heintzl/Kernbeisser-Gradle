@@ -14,7 +14,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
 import kernbeisser.DBConnection.*;
 import kernbeisser.DBEntities.*;
 import kernbeisser.EntityWrapper.ObjectState;
@@ -272,13 +271,13 @@ public class ArticleRepository {
     return Setting.CONTAINER_SURCHARGE_REDUCTION.getDoubleValue();
   }
 
-  public static double getActionSurchargeReduction() {
-    return Setting.ACTION_SURCHARGE_REDUCTION.getDoubleValue();
+  public static double getOfferSurchargeReduction() {
+    return Setting.OFFER_SURCHARGE_REDUCTION.getDoubleValue();
   }
 
   public static double calculateSurcharge(Article article, boolean preordered) {
     double articleSurcharge = article.getSurchargeGroup().getSurcharge();
-    double offerReduction = article.isOffer() ? getActionSurchargeReduction() : 1.0;
+    double offerReduction = article.isOffer() ? getOfferSurchargeReduction() : 1.0;
     double preorderReduction = preordered ? getContainerSurchargeReduction() : 1.0;
     return articleSurcharge * Math.min(offerReduction, preorderReduction);
   }
@@ -763,7 +762,7 @@ public class ArticleRepository {
   }
 
   public static @NotNull Article createArticleFromLineContent(
-          LineContent content, boolean ignoreBarcode, ShopRange shopRange) {
+      LineContent content, boolean ignoreBarcode, ShopRange shopRange) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup("commit")
     EntityTransaction et = em.getTransaction();
@@ -827,12 +826,12 @@ public class ArticleRepository {
     return article;
   }
 
-
   public static Optional<Article> getArticleFromCatalogEntry(CatalogEntry entry) {
-    return QueryBuilder.selectAll(Article.class).where(
+    return QueryBuilder.selectAll(Article.class)
+        .where(
             Article_.suppliersItemNumber.eq(entry.getArtikelNr()),
             Article_.supplier.eq(Supplier.getKKSupplier()))
-            .getSingleResultOptional();
+        .getSingleResultOptional();
   }
 
   private static Integer parseOrNull(String s) {
@@ -844,21 +843,24 @@ public class ArticleRepository {
   }
 
   public static List<Integer> suppliersItemNumbersFromCatalog() {
-    List<String> artikelNrStrings = QueryBuilder.select(CatalogEntry_.artikelNr)
+    List<String> artikelNrStrings =
+        QueryBuilder.select(CatalogEntry_.artikelNr)
             .where(CatalogEntry_.aenderungskennung.in("X", "V").not())
             .getResultList();
     List<Integer> result = new ArrayList<>(artikelNrStrings.size());
     for (String s : artikelNrStrings) {
       Integer i = parseOrNull(s);
-      if (i != null)
-        result.add(i);
+      if (i != null) result.add(i);
     }
     return result;
-    }
-
-    public static List<Integer> kkItemNumbersFromArticles() {
-      return QueryBuilder.select(Article_.suppliersItemNumber)
-              .where(Article_.supplier.eq(Supplier.getKKSupplier()))
-              .getResultList();
-    }
   }
+
+  public static Map<Integer, Boolean> kkItemNumberOffersFromArticles() {
+    Map<Integer, Boolean> result = new HashMap<>();
+    QueryBuilder.selectAll(Article.class)
+        .where(Article_.supplier.eq(Supplier.getKKSupplier()))
+        .getResultList()
+        .forEach(a -> result.put(a.getSuppliersItemNumber(), a.isOffer()));
+    return result;
+  }
+}

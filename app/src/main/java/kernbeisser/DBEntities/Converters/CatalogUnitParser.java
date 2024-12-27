@@ -1,13 +1,12 @@
 package kernbeisser.DBEntities.Converters;
 
-import kernbeisser.Enums.MetricUnits;
-import kernbeisser.Useful.Tools;
-import lombok.Getter;
+import static java.util.regex.Pattern.*;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static java.util.regex.Pattern.*;
+import kernbeisser.Enums.MetricUnits;
+import kernbeisser.Useful.Tools;
+import lombok.Getter;
 
 public class CatalogUnitParser {
 
@@ -33,7 +32,8 @@ public class CatalogUnitParser {
       metricUnits = MetricUnits.NONE;
       return;
     }
-    Pattern pattern = Pattern.compile(
+    Pattern pattern =
+        Pattern.compile(
             "^(?<decAmount1>\\d*[,.]?\\d*)\\s*(?<multiplier>x?)\\s*(?<decAmount2>\\d*[,.]?\\d*)\\s*(?<unit>\\w*)$",
             CASE_INSENSITIVE + UNICODE_CHARACTER_CLASS + UNICODE_CASE);
     Matcher matcher = pattern.matcher(source);
@@ -67,14 +67,15 @@ public class CatalogUnitParser {
       }
       if (!decAmount1.isBlank()) {
         amount = parseDouble(decAmount1);
-        if (multiplier.equalsIgnoreCase("x")
-                && decAmount2.isBlank()) {
+        if (multiplier.equalsIgnoreCase("x") && decAmount2.isBlank()) {
           amount *= Tools.ifNull(parseDouble(decAmount2), 1.0);
         }
       } else if (decAmount2.isBlank()) {
         amount = parseDouble(decAmount2);
       }
-      if (amount != null) {amount *= amountFactor;}
+      if (amount != null) {
+        amount *= amountFactor;
+      }
     }
   }
 }

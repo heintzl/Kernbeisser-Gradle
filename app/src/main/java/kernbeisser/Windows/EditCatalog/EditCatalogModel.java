@@ -1,13 +1,10 @@
 package kernbeisser.Windows.EditCatalog;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
-import kernbeisser.DBEntities.Article_;
 import kernbeisser.DBEntities.CatalogEntry;
 import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.Useful.Tools;
@@ -17,7 +14,10 @@ import lombok.Getter;
 public class EditCatalogModel implements IModel<EditCatalogController> {
 
   @Getter private final Collection<CatalogEntry> catalog;
-  @Getter private final List<Integer> articleKKNumbers = ArticleRepository.kkItemNumbersFromArticles();
+
+  @Getter
+  private final Map<Integer, Boolean> articleKKNumberOffers =
+      ArticleRepository.kkItemNumberOffersFromArticles();
 
   public EditCatalogModel() {
     catalog = DBConnection.getAll(CatalogEntry.class);
@@ -32,24 +32,26 @@ public class EditCatalogModel implements IModel<EditCatalogController> {
         .collect(Collectors.toList());
   }
 
-  public boolean isArticle(CatalogEntry entry) {
+  public Optional<Boolean> isArticleOffer(CatalogEntry entry) {
     try {
-      return articleKKNumbers.contains(entry.getArtikelNrInt());
+      Boolean offer = articleKKNumberOffers.get(entry.getArtikelNrInt());
+      return Optional.ofNullable(offer);
     } catch (NumberFormatException e) {
-      return false;
+      return Optional.empty();
     }
   }
 
-  public void activateAction(Article article) {
-    article.setOffer(true);
+  public void setOffer(Article article, boolean offer) {
+    article.setOffer(offer);
     Tools.merge(article);
-    articleKKNumbers.add(article.getSuppliersItemNumber());
+    articleKKNumberOffers.replace(article.getSuppliersItemNumber(), offer);
   }
 
-  public Article makeArticle(CatalogEntry entry) {
+  public Article makeArticle(CatalogEntry entry, boolean offer) {
     Article newArticle = ArticleRepository.createArticleFromCatalogEntry(entry);
+    newArticle.setOffer(offer);
     Tools.persist(newArticle);
-    articleKKNumbers.add(entry.getArtikelNrInt());
+    articleKKNumberOffers.put(entry.getArtikelNrInt(), offer);
     return newArticle;
   }
 }

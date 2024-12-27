@@ -4,10 +4,9 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import java.awt.*;
+import java.util.Optional;
 import javax.swing.*;
-
 import kernbeisser.DBEntities.Article;
-import kernbeisser.DBEntities.Article_;
 import kernbeisser.DBEntities.CatalogEntry;
 import kernbeisser.Forms.ObjectView.ObjectViewView;
 import kernbeisser.Useful.Tools;
@@ -31,24 +30,50 @@ public class EditCatalogView implements IView<EditCatalogController> {
         JOptionPane.INFORMATION_MESSAGE);
   }
 
-  public boolean confirmNewArticle(CatalogEntry entry) {
+  public Optional<ArticleOptions> confirmNewArticle(CatalogEntry entry, boolean preSelectOffer) {
+    JPanel optionsPanel = new JPanel(new GridLayout(0, 1));
+    JLabel question =
+        new JLabel(
+            "Soll der Katalogeintrag \"%s\" in den Artikelstamm übernommen werden?\n\n"
+                .formatted(entry.getBezeichnung()));
+    JCheckBox offerOption = new JCheckBox("Artikel als Aktion markieren");
+    offerOption.setSelected(preSelectOffer);
+    JCheckBox openArticleOption = new JCheckBox("Artikel zum Bearbeiten öffnen");
+    optionsPanel.add(question);
+    optionsPanel.add(offerOption);
+    optionsPanel.add(openArticleOption);
+
     Tools.beep();
-    return JOptionPane.showConfirmDialog(getContent(),
-            "Soll der Katalogeintrag \"%s\" in den Artikelstamm übernommen werden?\n".formatted(entry.getBezeichnung()),
+    if (JOptionPane.showConfirmDialog(
+            getContent(),
+            optionsPanel,
             "Neuen Stammartikel erstellen",
             JOptionPane.YES_NO_OPTION,
-            JOptionPane.QUESTION_MESSAGE
-    ) == JOptionPane.YES_OPTION;
+            JOptionPane.QUESTION_MESSAGE)
+        == JOptionPane.YES_OPTION) {
+      return Optional.of(
+          new ArticleOptions(offerOption.isSelected(), openArticleOption.isSelected()));
+    } else {
+      return Optional.empty();
+    }
   }
 
-  public boolean confirmOffer(Article article) {
+  public boolean confirmOfferChange(Article article, boolean offer) {
     Tools.beep();
-    return JOptionPane.showConfirmDialog(getContent(),
-            "Soll der Artikel %d \"%s\" als Aktion markiert werden?".formatted(article.getKbNumber(), article.getName()),
-            "Aktion bestätigen",
+    String message;
+    if (offer) {
+      message = "Soll die Aktion bei  Artikel %d \"%s\" entfernt werden?";
+    } else {
+      message = "Soll der Artikel %d \"%s\" als Aktion markiert werden?";
+    }
+
+    return JOptionPane.showConfirmDialog(
+            getContent(),
+            message.formatted(article.getKbNumber(), article.getName()),
+            "Aktionsänderung bestätigen",
             JOptionPane.YES_NO_OPTION,
-            JOptionPane.QUESTION_MESSAGE
-    ) == JOptionPane.YES_OPTION;
+            JOptionPane.QUESTION_MESSAGE)
+        == JOptionPane.YES_OPTION;
   }
 
   public void pasteInSearchBox(String s) {}

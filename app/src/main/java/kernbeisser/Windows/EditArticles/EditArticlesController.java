@@ -199,10 +199,10 @@ public class EditArticlesController extends Controller<EditArticlesView, EditArt
   private void toggleEditActionsButton() {
     if (editActions.isSelected()) {
       editActions.setForeground(Color.GREEN);
-      editActions.setIcon(Icons.actionActiveIcon);
+      editActions.setIcon(Icons.offerActiveIcon);
     } else {
       editActions.setForeground(Color.BLACK);
-      editActions.setIcon(Icons.actionInactiveIcon);
+      editActions.setIcon(Icons.offerInactiveIcon);
     }
     ;
   }
@@ -210,7 +210,7 @@ public class EditArticlesController extends Controller<EditArticlesView, EditArt
   @Key({PermissionKey.ARTICLE_OFFER_WRITE, PermissionKey.ACTION_OPEN_SPECIAL_PRICE_EDITOR})
   private void addEditActionsButton() {
     editActions = new JToggleButton("Aktionen bearbeiten");
-    editActions.setIcon(Icons.actionInactiveIcon);
+    editActions.setIcon(Icons.offerInactiveIcon);
     editActions.setToolTipText("Macht die Aktions-Spalte bearbeitbar");
     editActions.addActionListener(e -> toggleEditActionsButton());
     objectViewController.addButton(editActions);

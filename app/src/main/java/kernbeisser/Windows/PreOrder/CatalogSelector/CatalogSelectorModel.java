@@ -18,7 +18,7 @@ public class CatalogSelectorModel implements IModel<CatalogSelectorController> {
     this.consumer = consumer;
     this.catalog =
         DBConnection.getAll(CatalogEntry.class).stream()
-            .filter(e -> !e.isOutdatedAction())
+            .filter(e -> !e.isOutdatedOffer())
             .collect(Collectors.toList());
   }
 

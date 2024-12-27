@@ -5,7 +5,6 @@ import static kernbeisser.DBEntities.CatalogEntry.CATALOG_ENTRY_STATES;
 import java.awt.event.KeyEvent;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-
 import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
@@ -13,13 +12,17 @@ import kernbeisser.CustomComponents.SearchBox.Filters.CatalogFilter;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.CatalogEntry;
 import kernbeisser.DBEntities.Repositories.ArticleRepository;
+import kernbeisser.Enums.Mode;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
+import kernbeisser.Forms.FormEditor.FormEditorController;
+import kernbeisser.Forms.FormImplemetations.Article.ArticleController;
 import kernbeisser.Forms.FormImplemetations.CatalogEntry.CatalogEntryController;
 import kernbeisser.Forms.ObjectView.ObjectViewController;
 import kernbeisser.Forms.ObjectView.ObjectViewView;
 import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Icons;
 import kernbeisser.Windows.MVC.Controller;
+import kernbeisser.Windows.ViewContainers.SubWindow;
 import org.jetbrains.annotations.NotNull;
 import rs.groump.Key;
 import rs.groump.PermissionKey;
@@ -89,8 +92,7 @@ public class EditCatalogController extends Controller<EditCatalogView, EditCatal
                 .withPreferredWidth(80)
                 .withSorter(Column.DATE_SORTER(Date.INSTANT_DATE)),
             Columns.create("Barcode", CatalogEntry::getEanLadenEinheit).withPreferredWidth(80),
-            Columns.create("Einheit", CatalogEntry::getLadeneinheit)
-                .withPreferredWidth(120),
+            Columns.create("Einheit", CatalogEntry::getLadeneinheit).withPreferredWidth(120),
             Columns.<CatalogEntry>createIconColumn(
                     "AuswW", e -> Icons.booleanIcon(e.getGewichtsartikel()))
                 .withPreferredWidth(50),
@@ -101,9 +103,9 @@ public class EditCatalogController extends Controller<EditCatalogView, EditCatal
                     e -> Date.safeDateFormat(e.getKatalogGueltigBis(), Date.INSTANT_DATE))
                 .withPreferredWidth(80)
                 .withSorter(Column.DATE_SORTER(Date.INSTANT_DATE)),
-                Columns.<CatalogEntry>createIconColumn(
-                        "KB-Stamm", e -> Icons.booleanIcon(getModel().isArticle(e)))
-                        .withLeftClickConsumer(this::makeArticle));
+            Columns.<CatalogEntry>createIconColumn(
+                    "KB-Stamm", e -> Icons.catalogArticleIcon(getModel().isArticleOffer(e)))
+                .withLeftClickConsumer(this::makeArticle));
 
     this.capture =
         new BarcodeCapture(
@@ -116,25 +118,35 @@ public class EditCatalogController extends Controller<EditCatalogView, EditCatal
     // objectViewController.setForceExtraButtonState(false);
   }
 
+  @Key(PermissionKey.ACTION_OPEN_SPECIAL_PRICE_EDITOR)
   private void makeArticle(CatalogEntry entry) {
     try {
-      Article article;
-      if (getModel().isArticle(entry)) {
-        article = ArticleRepository.getArticleFromCatalogEntry(entry).orElseThrow();
-      } else {
-        if (getView().confirmNewArticle(entry)) {
-          article = model.makeArticle(entry);
-        } else {
-          return;
-        }
-      }
-      if (entry.isAction() && !entry.isOutdatedAction() && !article.isOffer() && getView().confirmOffer(article)) {
-        model.activateAction(article);
-      }
+      getModel()
+          .isArticleOffer(entry)
+          .ifPresentOrElse(
+              offer -> {
+                Article article = ArticleRepository.getArticleFromCatalogEntry(entry).orElseThrow();
+                if (getView().confirmOfferChange(article, offer)) {
+                  model.setOffer(article, !offer);
+                }
+              },
+              () -> {
+                Optional<ArticleOptions> confirmation =
+                    getView().confirmNewArticle(entry, entry.isOffer());
+                confirmation.ifPresent(
+                    options -> {
+                      Article article = model.makeArticle(entry, options.offer());
+                      if (options.openArticle()) {
+                        FormEditorController.create(article, new ArticleController(), Mode.EDIT)
+                            .openIn(new SubWindow(getView().traceViewContainer()));
+                      }
+                    });
+              });
     } catch (NoSuchElementException e) {
       throw UnexpectedExceptionHandler.showUnexpectedErrorWarning(e);
     }
   }
+
   void refreshList() {
     objectViewController.search();
   }
