@@ -3,6 +3,7 @@ package kernbeisser.Windows.EditCatalog;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import kernbeisser.CustomComponents.SearchBox.Filters.OptionalFilter;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.CatalogEntry;
@@ -11,11 +12,11 @@ import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Getter;
 
-public class EditCatalogModel implements IModel<EditCatalogController> {
+public class EditCatalogModel
+    implements IModel<EditCatalogController>, OptionalFilter<CatalogEntry> {
 
   @Getter private final Collection<CatalogEntry> catalog;
 
-  @Getter
   private final Map<Integer, Boolean> articleKKNumberOffers =
       ArticleRepository.kkItemNumberOffersFromArticles();
 
@@ -53,5 +54,10 @@ public class EditCatalogModel implements IModel<EditCatalogController> {
     Tools.persist(newArticle);
     articleKKNumberOffers.put(entry.getArtikelNrInt(), offer);
     return newArticle;
+  }
+
+  @Override
+  public Optional<Boolean> optionalTrue(CatalogEntry entry) {
+    return isArticleOffer(entry);
   }
 }

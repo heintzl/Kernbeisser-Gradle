@@ -19,7 +19,7 @@ public class CatalogSelectorController
     extends Controller<CatalogSelectorView, CatalogSelectorModel> {
 
   @Linked private final SearchBoxController<CatalogEntry> searchBoxController;
-  private final CatalogFilter catalogFilter = new CatalogFilter(this::refreshSearch);
+  private final CatalogFilter catalogFilter = new CatalogFilter(this::refreshSearch, getModel());
 
   public CatalogSelectorController(Consumer<CatalogEntry> consumer) {
     super(new CatalogSelectorModel(consumer));

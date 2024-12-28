@@ -2,6 +2,7 @@ package kernbeisser.CustomComponents.SearchBox.Filters;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import javax.swing.*;
 import kernbeisser.DBEntities.CatalogEntry;
 import lombok.Setter;
@@ -11,17 +12,24 @@ public class CatalogFilter {
   @Setter private boolean filterInactive = false;
   @Setter private boolean filterOutdatedOffers = false;
   @Setter private boolean filterOnlyOffers = false;
+  @Setter private boolean filterOnlyShopOffers = false;
+  @Setter private Map<Integer, Boolean> articleKKNumberOffers;
+  private final JCheckBox showOnlyShopOffers = new JCheckBox("nur KB-Aktionen");
+  private OptionalFilter<CatalogEntry> articleOfferOptionalFilter;
 
   Runnable callback;
 
-  public CatalogFilter(Runnable refreshMethod) {
+  public CatalogFilter(
+      Runnable refreshMethod, OptionalFilter<CatalogEntry> articleOfferOptionalFilter) {
     callback = refreshMethod;
+    this.articleOfferOptionalFilter = articleOfferOptionalFilter;
   }
 
   public boolean matches(CatalogEntry e) {
     return (filterInactive || e.isActive())
         && (filterOutdatedOffers || !e.isOffer() || !e.isOutdatedOffer())
-        && (!filterOnlyOffers || e.isOffer());
+        && (!filterOnlyOffers || e.isOffer())
+        && (!filterOnlyShopOffers || articleOfferOptionalFilter.defaultsToFalse(e));
   }
 
   public List<JComponent> createFilterUIComponents() {
@@ -51,6 +59,12 @@ public class CatalogFilter {
         });
     showOutdatedOffers.setSelected(filterOutdatedOffers);
     checkBoxes.add(showOutdatedOffers);
+    showOnlyShopOffers.addActionListener(
+        e -> {
+          filterOnlyShopOffers = showOnlyShopOffers.isSelected();
+          callback.run();
+        });
+    checkBoxes.add(showOnlyShopOffers);
     return checkBoxes;
   }
 }

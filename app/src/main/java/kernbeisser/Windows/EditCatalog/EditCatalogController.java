@@ -33,7 +33,7 @@ public class EditCatalogController extends Controller<EditCatalogView, EditCatal
 
   private final BarcodeCapture capture;
 
-  private final CatalogFilter catalogFilter = new CatalogFilter(this::refreshList);
+  private final CatalogFilter catalogFilter = new CatalogFilter(this::refreshList, getModel());
 
   @Key(PermissionKey.ACTION_LOGIN) // TODO add more restrictions, if required
   public EditCatalogController() {
@@ -115,7 +115,7 @@ public class EditCatalogController extends Controller<EditCatalogView, EditCatal
             });
 
     objectViewController.addComponents(catalogFilter.createFilterUIComponents());
-    // objectViewController.setForceExtraButtonState(false);
+    objectViewController.setForceExtraButtonState(true);
   }
 
   @Key(PermissionKey.ACTION_OPEN_SPECIAL_PRICE_EDITOR)
