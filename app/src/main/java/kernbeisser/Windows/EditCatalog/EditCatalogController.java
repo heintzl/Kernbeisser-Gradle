@@ -6,6 +6,7 @@ import java.awt.event.KeyEvent;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import kernbeisser.CustomComponents.BarcodeCapture;
+import kernbeisser.CustomComponents.ObjectTable.Adjustors.IconCustomizer;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.SearchBox.Filters.CatalogFilter;
@@ -103,8 +104,18 @@ public class EditCatalogController extends Controller<EditCatalogView, EditCatal
                     e -> Date.safeDateFormat(e.getKatalogGueltigBis(), Date.INSTANT_DATE))
                 .withPreferredWidth(80)
                 .withSorter(Column.DATE_SORTER(Date.INSTANT_DATE)),
-            Columns.<CatalogEntry>createIconColumn(
-                    "KB-Stamm", e -> Icons.catalogArticleIcon(getModel().isArticleOffer(e)))
+            Columns.<CatalogEntry>create(
+                    "KB-Stamm",
+                    e ->
+                        getModel()
+                            .isArticleOffer(e)
+                            .map(offer -> offer ? "Ak." : "ja")
+                            .orElse("nein"))
+                .withPreferredWidth(50)
+                .withDefaultFilter()
+                .withCellAdjustor(
+                    new IconCustomizer<>(
+                        e -> Icons.catalogArticleIcon(getModel().isArticleOffer(e))))
                 .withLeftClickConsumer(this::makeArticle));
 
     this.capture =

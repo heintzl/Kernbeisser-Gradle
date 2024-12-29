@@ -272,9 +272,14 @@ public class CatalogEntry implements ActuallyCloneable {
   }
 
   public Double getAmount() {
-    return new CatalogUnitParser(
-            gewichtsartikel != null && gewichtsartikel ? bestelleinheit : ladeneinheit)
-        .getAmount();
+    Double result =
+        new CatalogUnitParser(
+                gewichtsartikel != null && gewichtsartikel ? bestelleinheit : ladeneinheit)
+            .getAmount();
+    if (result == null) {
+      result = new CatalogUnitParser(bestelleinheit).getAmount();
+    }
+    return result;
   }
 
   public Integer getAmountAsInt() {
