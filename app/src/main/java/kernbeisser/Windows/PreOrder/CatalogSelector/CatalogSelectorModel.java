@@ -7,15 +7,15 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import kernbeisser.CustomComponents.SearchBox.Filters.OptionalFilter;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.CatalogEntry;
 import kernbeisser.DBEntities.Repositories.ArticleRepository;
+import kernbeisser.Useful.OptionalPredicate;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Getter;
 
 public class CatalogSelectorModel
-    implements IModel<CatalogSelectorController>, OptionalFilter<CatalogEntry> {
+    implements IModel<CatalogSelectorController>, OptionalPredicate<CatalogEntry> {
   @Getter private final Consumer<CatalogEntry> consumer;
   private final List<CatalogEntry> catalog;
   private final Map<Integer, Boolean> articleKKNumberOffers =

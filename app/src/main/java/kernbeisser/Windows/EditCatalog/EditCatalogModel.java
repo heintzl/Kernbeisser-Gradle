@@ -3,17 +3,17 @@ package kernbeisser.Windows.EditCatalog;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import kernbeisser.CustomComponents.SearchBox.Filters.OptionalFilter;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.CatalogEntry;
 import kernbeisser.DBEntities.Repositories.ArticleRepository;
+import kernbeisser.Useful.OptionalPredicate;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Getter;
 
 public class EditCatalogModel
-    implements IModel<EditCatalogController>, OptionalFilter<CatalogEntry> {
+    implements IModel<EditCatalogController>, OptionalPredicate<CatalogEntry> {
 
   @Getter private final Collection<CatalogEntry> catalog;
 

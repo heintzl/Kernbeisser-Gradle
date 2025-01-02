@@ -1,8 +1,8 @@
-package kernbeisser.CustomComponents.SearchBox.Filters;
+package kernbeisser.Useful;
 
 import java.util.Optional;
 
-public interface OptionalFilter<T> {
+public interface OptionalPredicate<T> {
   Optional<Boolean> optionalTrue(T filterObject);
 
   default boolean defaultsToFalse(T filterObject) {

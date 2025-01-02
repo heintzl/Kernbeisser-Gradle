@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.*;
 import kernbeisser.DBEntities.CatalogEntry;
+import kernbeisser.Useful.OptionalPredicate;
 import lombok.Setter;
 
 public class CatalogFilter {
@@ -15,21 +16,21 @@ public class CatalogFilter {
   @Setter private boolean filterOnlyShopOffers = false;
   @Setter private Map<Integer, Boolean> articleKKNumberOffers;
   private final JCheckBox showOnlyShopOffers = new JCheckBox("nur KB-Aktionen");
-  private OptionalFilter<CatalogEntry> articleOfferOptionalFilter;
+  private final OptionalPredicate<CatalogEntry> articleOfferOptionalPredicate;
 
   Runnable callback;
 
   public CatalogFilter(
-      Runnable refreshMethod, OptionalFilter<CatalogEntry> articleOfferOptionalFilter) {
+      Runnable refreshMethod, OptionalPredicate<CatalogEntry> articleOfferOptionalPredicate) {
     callback = refreshMethod;
-    this.articleOfferOptionalFilter = articleOfferOptionalFilter;
+    this.articleOfferOptionalPredicate = articleOfferOptionalPredicate;
   }
 
   public boolean matches(CatalogEntry e) {
     return (filterInactive || e.isActive())
         && (filterOutdatedOffers || !e.isOffer() || !e.isOutdatedOffer())
         && (!filterOnlyOffers || e.isOffer())
-        && (!filterOnlyShopOffers || articleOfferOptionalFilter.defaultsToFalse(e));
+        && (!filterOnlyShopOffers || articleOfferOptionalPredicate.defaultsToFalse(e));
   }
 
   public List<JComponent> createFilterUIComponents() {
