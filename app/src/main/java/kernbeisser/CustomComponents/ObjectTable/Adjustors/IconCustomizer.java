@@ -6,9 +6,12 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 public class IconCustomizer<V> implements TableCellAdjustor<V> {
   private final Function<V, Icon> iconFactory;
+  private static final int TEXT_INVISIBLE = 1000;
+  private static final int TEXT_VISIBLE = 5;
+  private int textGap = TEXT_INVISIBLE;
 
   public IconCustomizer(Function<V, Icon> iconFactory) {
-    this.iconFactory = iconFactory;
+    this(iconFactory, false);
   }
 
   @Override
@@ -20,5 +23,14 @@ public class IconCustomizer<V> implements TableCellAdjustor<V> {
       int row,
       int column) {
     component.setIcon(iconFactory.apply(v));
+    component.setIconTextGap(textGap);
+  }
+
+  public IconCustomizer(Function<V, Icon> iconFactory, boolean textVisible) {
+    this.iconFactory = iconFactory;
+    if (textVisible) {
+      this.textGap = TEXT_VISIBLE;
+    }
+    ;
   }
 }

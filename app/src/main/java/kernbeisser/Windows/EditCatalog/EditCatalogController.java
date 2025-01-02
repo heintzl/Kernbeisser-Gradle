@@ -67,8 +67,7 @@ public class EditCatalogController extends Controller<EditCatalogView, EditCatal
             Columns.<CatalogEntry>create("Netto-Pr.", e -> String.format("%.2f€", e.getPreis()))
                 .withPreferredWidth(60)
                 .withSorter(Column.NUMBER_SORTER),
-            Columns.<CatalogEntry>createIconColumn(
-                    "Aktion", e -> Icons.booleanIcon(e.getAktionspreis()))
+            Columns.createSortableBooleanIcon("Aktion", CatalogEntry::getAktionspreis)
                 .withPreferredWidth(50),
             Columns.<CatalogEntry>create(
                     "Aktions-Start",
@@ -94,8 +93,7 @@ public class EditCatalogController extends Controller<EditCatalogView, EditCatal
                 .withSorter(Column.DATE_SORTER(Date.INSTANT_DATE)),
             Columns.create("Barcode", CatalogEntry::getEanLadenEinheit).withPreferredWidth(80),
             Columns.create("Einheit", CatalogEntry::getLadeneinheit).withPreferredWidth(120),
-            Columns.<CatalogEntry>createIconColumn(
-                    "AuswW", e -> Icons.booleanIcon(e.getGewichtsartikel()))
+            Columns.createSortableBooleanIcon("AuswW", CatalogEntry::getGewichtsartikel)
                 .withPreferredWidth(50),
             Columns.<CatalogEntry>create("MWSt.", e -> e.getMwstKennung().getName())
                 .withPreferredWidth(80),
@@ -106,11 +104,7 @@ public class EditCatalogController extends Controller<EditCatalogView, EditCatal
                 .withSorter(Column.DATE_SORTER(Date.INSTANT_DATE)),
             Columns.<CatalogEntry>create(
                     "KB-Stamm",
-                    e ->
-                        getModel()
-                            .isArticleOffer(e)
-                            .map(offer -> offer ? "Ak." : "ja")
-                            .orElse("nein"))
+                    e -> getModel().isArticleOffer(e).map(offer -> offer ? "%" : "j").orElse("n"))
                 .withPreferredWidth(50)
                 .withDefaultFilter()
                 .withCellAdjustor(
