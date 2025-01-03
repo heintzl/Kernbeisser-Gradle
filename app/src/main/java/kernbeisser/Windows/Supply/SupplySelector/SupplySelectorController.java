@@ -62,7 +62,7 @@ public class SupplySelectorController extends Controller<SupplySelectorView, Sup
   }
 
   public void editArticle(LineContent lineContent) {
-    Supplier kkSupplier = Supplier.getKKSupplier();
+    Supplier kkSupplier = Supplier.KK_SUPPLIER;
     switch (lineContent.getStatus()) {
       case OK:
         if (!getView().messageConfirmLineMerge()) {

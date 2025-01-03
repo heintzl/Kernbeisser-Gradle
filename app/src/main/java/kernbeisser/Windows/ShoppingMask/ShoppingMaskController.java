@@ -308,7 +308,7 @@ public class ShoppingMaskController extends Controller<ShoppingMaskView, Shoppin
                               view.getSupplier().getOrPersistDefaultSurchargeGroup());
                         } else {
                           before.setSurchargeGroup(
-                              Supplier.getKKSupplier().getOrPersistDefaultSurchargeGroup());
+                              Supplier.KK_SUPPLIER.getOrPersistDefaultSurchargeGroup());
                         }
 
                         before.setNetPrice(

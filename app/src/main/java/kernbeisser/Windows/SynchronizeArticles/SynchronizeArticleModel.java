@@ -30,7 +30,7 @@ public class SynchronizeArticleModel implements IModel<SynchronizeArticleControl
       HashMap<KornkraftGroup, SurchargeGroup> surchargeGroupHashMap, EntityManager em) {
     Map<String, SurchargeGroup> nameRef =
         QueryBuilder.selectAll(SurchargeGroup.class)
-            .where(SurchargeGroup_.supplier.eq(Supplier.getKKSupplier()))
+            .where(SurchargeGroup_.supplier.eq(Supplier.KK_SUPPLIER))
             .getResultMap(em, SurchargeGroup::pathString, sg -> sg);
     surchargeGroupHashMap.replaceAll((a, b) -> nameRef.get(b.pathString()));
   }
@@ -57,11 +57,11 @@ public class SynchronizeArticleModel implements IModel<SynchronizeArticleControl
         CatalogDataInterpreter.createNumberRefMap(catalog, surchargeGroupHashMap);
     List<Article> articleBases =
         QueryBuilder.selectAll(Article.class)
-            .where(Article_.supplier.eq(Supplier.getKKSupplier()))
+            .where(Article_.supplier.eq(Supplier.KK_SUPPLIER))
             .getResultList(em);
     CatalogDataInterpreter.linkArticles(articleBases, kornkraftGroupHashMap);
     CatalogDataInterpreter.autoLinkArticle(
-        articleBases, Supplier.getKKSupplier().getOrPersistDefaultSurchargeGroup(em));
+        articleBases, Supplier.KK_SUPPLIER.getOrPersistDefaultSurchargeGroup(em));
     articleBases.forEach(em::persist);
     em.flush();
   }

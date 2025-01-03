@@ -27,7 +27,6 @@ public class ArticleFilter implements SearchBoxFilter<Article> {
   }
 
   public Collection<Article> searchable(String query, int max) {
-    Supplier kkSupplier = Supplier.getKKSupplier();
     Predicate<Article> predicate;
     if (discontinued) {
       predicate = e -> e.getShopRange().equals(ShopRange.DISCONTINUED);
@@ -38,7 +37,7 @@ public class ArticleFilter implements SearchBoxFilter<Article> {
                   && (!filterNoBarcode || e.getBarcode() == null)
                   && (!filterShowInShop || e.isShowInShop())
                   && (!filterShopRange || e.getShopRange().isVisible())
-                  && (!filterKK || e.getSupplier().equals(kkSupplier))
+                  && (!filterKK || e.getSupplier().equals(Supplier.KK_SUPPLIER))
                   && (!filterActions || e.isOffer());
     }
     return ArticleRepository.getDefaultAll(query, predicate, 15000);

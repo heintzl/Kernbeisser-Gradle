@@ -16,8 +16,7 @@ public class EditArticlesModel implements IModel<EditArticlesController> {
   @Getter private List<ArticleComparedToCatalogEntry> differences;
 
   public void previewCatalog(Collection<Article> articles) {
-    differences =
-        ArticleRepository.compareArticlesToCatalog(articles, ArticleRepository.KK_SUPPLIER);
+    differences = ArticleRepository.compareArticlesToCatalog(articles, Supplier.KK_SUPPLIER);
   }
 
   public List<String> mergeCatalog(Collection<Article> articles) {

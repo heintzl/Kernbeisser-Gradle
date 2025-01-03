@@ -83,7 +83,7 @@ public class PreOrderModel implements IModel<PreOrderController> {
     Optional<Article> article =
         ArticleRepository.getByKbNumber(shopNumber, false).map(ObjectState::getValue);
     if (article.isPresent()) {
-      if (article.get().getSupplier().equals(Supplier.getKKSupplier())) {
+      if (article.get().getSupplier().equals(Supplier.KK_SUPPLIER)) {
         return getEntryByKkNumber(article.get().getSuppliersItemNumber());
       }
     }

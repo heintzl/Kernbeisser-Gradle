@@ -153,8 +153,7 @@ public class SupplyModel implements IModel<SupplyController> {
       double containerMultiplier,
       int preOrders) {
     if (article == null) return 0;
-    if (article.getSupplier().equals(Supplier.getKKSupplier()) && suppliersItemNumber < 1000)
-      return 0;
+    if (article.getSupplier().equals(Supplier.KK_SUPPLIER) && suppliersItemNumber < 1000) return 0;
     if (priceKk == 0.0) return 0;
     int containersForShop;
     if (article.isWeighable()) {
@@ -181,7 +180,7 @@ public class SupplyModel implements IModel<SupplyController> {
   public int calculatePrintNumberFromItem(ShoppingItem item) {
     Article article = item.getArticleAtBuyState();
     int preorders = 0;
-    if (article.getSupplier().equals(Supplier.getKKSupplier())) {
+    if (article.getSupplier().equals(Supplier.KK_SUPPLIER)) {
       preorders = getPreorderCount(article.getSuppliersItemNumber());
     }
     return getLabelCount(

@@ -35,7 +35,6 @@ import rs.groump.AccessManager;
 
 @Log4j2
 public class ArticleRepository {
-  public static final Supplier KK_SUPPLIER = Supplier.getKKSupplier();
   public static final SurchargeGroup UNLISTED_GROUP = SurchargeGroup.getUnlistedGroup();
 
   private ArticleRepository() {}
@@ -63,7 +62,7 @@ public class ArticleRepository {
 
   public static boolean isKkArticle(Article article) {
     Supplier supplier = article.getSupplier();
-    return (supplier != null && supplier.equals(KK_SUPPLIER));
+    return (supplier != null && supplier.equals(Supplier.KK_SUPPLIER));
   }
 
   public static Optional<ObjectState<Article>> getByKbNumber(
@@ -113,7 +112,7 @@ public class ArticleRepository {
   }
 
   public static Optional<Article> getByKkItemNumber(int suppliersNumber) {
-    return getBySuppliersItemNumber(KK_SUPPLIER, suppliersNumber);
+    return getBySuppliersItemNumber(Supplier.KK_SUPPLIER, suppliersNumber);
   }
 
   public static Optional<Article> getBySuppliersItemNumber(
@@ -625,7 +624,7 @@ public class ArticleRepository {
                         .child(CatalogEntry_.artikelNr)
                         .in(
                             articles.stream()
-                                .filter(a -> a.getSupplier().equals(Supplier.getKKSupplier()))
+                                .filter(a -> a.getSupplier().equals(Supplier.KK_SUPPLIER))
                                 .map(a -> Integer.toString(a.getSuppliersItemNumber()))
                                 .toList())))
             .getResultList();
@@ -767,7 +766,7 @@ public class ArticleRepository {
     @Cleanup("commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    Supplier kkSupplier = Supplier.getKKSupplier();
+    Supplier kkSupplier = Supplier.KK_SUPPLIER;
     Article pattern = ArticleRepository.nextArticleTo(em, content.getKkNumber(), kkSupplier);
     Article article = new Article();
     article.setSupplier(kkSupplier);
@@ -802,7 +801,7 @@ public class ArticleRepository {
     @Cleanup("commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    Supplier kkSupplier = Supplier.getKKSupplier();
+    Supplier kkSupplier = Supplier.KK_SUPPLIER;
     Article pattern = ArticleRepository.nextArticleTo(em, entry.getArtikelNrInt(), kkSupplier);
     Article article = new Article();
     article.setSupplier(kkSupplier);
@@ -830,7 +829,7 @@ public class ArticleRepository {
     return QueryBuilder.selectAll(Article.class)
         .where(
             Article_.suppliersItemNumber.eq(entry.getArtikelNr()),
-            Article_.supplier.eq(Supplier.getKKSupplier()))
+            Article_.supplier.eq(Supplier.KK_SUPPLIER))
         .getSingleResultOptional();
   }
 
@@ -858,7 +857,7 @@ public class ArticleRepository {
   public static Map<Integer, Boolean> kkItemNumberOffersFromArticles() {
     Map<Integer, Boolean> result = new HashMap<>();
     QueryBuilder.selectAll(Article.class)
-        .where(Article_.supplier.eq(Supplier.getKKSupplier()))
+        .where(Article_.supplier.eq(Supplier.KK_SUPPLIER))
         .getResultList()
         .forEach(a -> result.put(a.getSuppliersItemNumber(), a.isOffer()));
     return result;

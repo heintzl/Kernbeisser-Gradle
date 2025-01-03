@@ -184,7 +184,7 @@ public class CatalogImporter {
     try {
       return tryParse(dateString, s -> Date.parseInstantDate(s, Date.INSTANT_CATALOG_DATE));
     } catch (DateTimeParseException e) {
-      readErrors.add(new CatalogImportError(0, e));
+      readErrors.add(new CatalogImportError("0", e));
     }
     return null;
   }

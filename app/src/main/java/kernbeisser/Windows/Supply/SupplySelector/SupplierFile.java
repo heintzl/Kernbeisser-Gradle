@@ -60,7 +60,7 @@ public class SupplierFile {
     @Cleanup("commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    Supplier kkSupplier = Supplier.getKKSupplier();
+    Supplier kkSupplier = Supplier.KK_SUPPLIER;
     return contents.stream()
         .filter(
             e ->
@@ -76,7 +76,7 @@ public class SupplierFile {
         Arrays.asList(
             ArticleCatalogState.BARCODE_CONFLICT_SAME_SUPPLIER,
             ArticleCatalogState.BARCODE_CONFLICT_OTHER_SUPPLIER);
-    Supplier kkSupplier = Supplier.getKKSupplier();
+    Supplier kkSupplier = Supplier.KK_SUPPLIER;
     Collection<ShoppingItem> shoppingItems = new ArrayList<>();
     Collection<ArticleComparedToCatalogEntry> collectErrors = new ArrayList<>();
     for (LineContent content : contents) {

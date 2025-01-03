@@ -44,7 +44,7 @@ public class CatalogDataInterpreter {
 
   public static HashMap<KornkraftGroup, SurchargeGroup> extractSurchargeGroups(
       Tree<KornkraftGroup> kornkraftGroupTree) {
-    Supplier kk = Supplier.getKKSupplier();
+    Supplier kk = Supplier.KK_SUPPLIER;
     HashMap<KornkraftGroup, SurchargeGroup> out = new HashMap<>();
     kornkraftGroupTree.overAll(
         new KornkraftGroup(),
@@ -60,7 +60,7 @@ public class CatalogDataInterpreter {
 
   public static HashMap<KornkraftGroup, SurchargeGroup> extractSurchargeGroups(
       Tree<KornkraftGroup> kornkraftGroupTree, EntityManager entityManager) {
-    Supplier kk = Supplier.getKKSupplier();
+    Supplier kk = Supplier.KK_SUPPLIER;
     HashMap<KornkraftGroup, SurchargeGroup> out = new HashMap<>();
     kornkraftGroupTree.overAll(
         new KornkraftGroup(),

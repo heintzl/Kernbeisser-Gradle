@@ -63,7 +63,7 @@ public class CatalogMergeSession {
 
   private Map<Integer, Article> loadCurrentState() {
     return QueryBuilder.selectAll(Article.class)
-        .where(Article_.supplier.eq(Supplier.getKKSupplier()))
+        .where(Article_.supplier.eq(Supplier.KK_SUPPLIER))
         .getResultMap(Article::getSuppliersItemNumber, article -> article);
   }
 
@@ -91,7 +91,7 @@ public class CatalogMergeSession {
   }
 
   private Collection<ArticleMerge> loadSource(Collection<String> source) {
-    Supplier kkSupplier = Supplier.getKKSupplier();
+    Supplier kkSupplier = Supplier.KK_SUPPLIER;
 
     UniqueValidator<CatalogEntry> uniqueValidator =
         new UniqueValidator<>(
