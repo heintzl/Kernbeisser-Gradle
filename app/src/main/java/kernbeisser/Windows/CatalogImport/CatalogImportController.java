@@ -45,7 +45,7 @@ public class CatalogImportController extends Controller<CatalogImportView, Catal
                 List<CatalogImportError> readErrors = model.readCatalog(filePath);
                 if (readErrors.size() == 0) {
                   readErrors.add(
-                      new CatalogImportError(0, new Exception("Es gibt keine Fehlermeldungen")));
+                      new CatalogImportError("", new Exception("Es gibt keine Fehlermeldungen")));
                 }
                 view.setReadErrors(readErrors);
                 CatalogImporter catalogImporter = model.getCatalogImporter();
@@ -98,7 +98,7 @@ public class CatalogImportController extends Controller<CatalogImportView, Catal
               if (importErrors.isEmpty()) {
                 importErrors.add(
                     new CatalogImportError(
-                        0, new Exception("Es gibt keine Fehler oder Warnungen")));
+                        "", new Exception("Es gibt keine Fehler oder Warnungen")));
               }
               view.setReadErrors(importErrors);
               model.refreshLastCatalogInfo();

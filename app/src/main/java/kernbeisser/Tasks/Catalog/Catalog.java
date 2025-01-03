@@ -1,14 +1,23 @@
 package kernbeisser.Tasks.Catalog;
 
+import static kernbeisser.DBConnection.PredicateFactory.between;
+
+import jakarta.persistence.EntityManager;
 import java.nio.charset.Charset;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import kernbeisser.DBConnection.DBConnection;
+import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.CatalogEntry;
+import kernbeisser.DBEntities.CatalogEntry_;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Useful.Tools;
+import lombok.Cleanup;
 
 public class Catalog {
 
@@ -147,5 +156,20 @@ public class Catalog {
         base.setAmount((int) Math.round(parsedAmount));
         break;
     }
+  }
+
+  public static Map<Integer, Instant> supplierOfferNumbersValidFromMap() {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    return QueryBuilder.selectAll(CatalogEntry.class)
+        .where(
+            CatalogEntry_.aktionspreis.eq(true),
+            between(
+                Instant.now(),
+                CatalogEntry_.aktionspreisGueltigAb,
+                CatalogEntry_.aktionspreisGueltigBis))
+        .getResultStream(em)
+        .collect(
+            Collectors.toMap(
+                CatalogEntry::getArtikelNrInt, CatalogEntry::getAktionspreisGueltigAb));
   }
 }

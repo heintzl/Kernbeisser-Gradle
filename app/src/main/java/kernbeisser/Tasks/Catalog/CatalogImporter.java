@@ -250,7 +250,7 @@ public class CatalogImporter {
           depositEntries.put(containerDepositNo, 0.0);
         }
         for (Exception e : rowLog) {
-          readErrors.add(new CatalogImportError(i, e));
+          readErrors.add(new CatalogImportError(Integer.toString(i), e));
         }
       }
       for (String depositKKNumber : depositEntries.keySet()) {
@@ -271,7 +271,7 @@ public class CatalogImporter {
         } else {
           readErrors.add(
               new CatalogImportError(
-                  -1,
+                  "-1",
                   new CatalogImportErrorException(
                       "Der Pfandartikel "
                           + depositKKNumber
