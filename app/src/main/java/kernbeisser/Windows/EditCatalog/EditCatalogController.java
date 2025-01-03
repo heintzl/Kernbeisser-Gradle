@@ -143,6 +143,7 @@ public class EditCatalogController extends Controller<EditCatalogView, EditCatal
                       Article article = model.makeArticle(entry, options.offer());
                       if (options.openArticle()) {
                         FormEditorController.create(article, new ArticleController(), Mode.EDIT)
+                            .withCloseEvent(() -> getModel().updateKKNumberCache(entry))
                             .openIn(new SubWindow(getView().traceViewContainer()));
                       }
                     });
@@ -152,7 +153,7 @@ public class EditCatalogController extends Controller<EditCatalogView, EditCatal
     }
   }
 
-  void refreshList() {
+  private void refreshList() {
     objectViewController.search();
   }
 

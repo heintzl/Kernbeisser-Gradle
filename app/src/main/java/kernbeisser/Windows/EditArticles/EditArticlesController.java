@@ -84,14 +84,13 @@ public class EditArticlesController extends Controller<EditArticlesView, EditArt
                 .withSorter(Column.NUMBER_SORTER)
                 .withDefaultFilter(),
             Columns.createSortableBooleanIcon("Aktion", Article::isOffer)
-                .withHorizontalAlignment(CENTER)
                 .withLeftClickConsumer(this::toggleAction),
-            Columns.create("Lieferant", Article::getSupplier, LEFT)
+            Columns.<Article>create("Lieferant", e -> e.getSupplier().getShortName(), LEFT)
                 .withDefaultFilter()
-                .withColumnAdjustor(e -> e.setPreferredWidth(150)),
+                .withColumnAdjustor(e -> e.setPreferredWidth(80)),
             Columns.create("Hersteller", Article::getProducer, LEFT)
                 .withDefaultFilter()
-                .withColumnAdjustor(e -> e.setPreferredWidth(100)),
+                .withColumnAdjustor(e -> e.setPreferredWidth(80)),
             Columns.create("Lieferantennummer", Article::getSuppliersItemNumber, RIGHT)
                 .withSorter(Column.NUMBER_SORTER),
             Columns.createSortableBooleanIcon("Auswiegware", Article::isWeighable)
@@ -116,10 +115,11 @@ public class EditArticlesController extends Controller<EditArticlesView, EditArt
                 .withHorizontalAlignment(RIGHT)
                 .withSorter(Column.NUMBER_SORTER),
             Columns.create("Preisliste", Article::getPriceList, LEFT)
-                .withColumnAdjustor(e -> e.setPreferredWidth(200))
+                .withPreferredWidth(80)
                 .withDefaultFilter(),
             Columns.<Article>create(
                     "Zuschlaggruppe", e -> e.getSurchargeGroup().getNameWithSurcharge(), LEFT)
+                .withPreferredWidth(120)
                 .withDefaultFilter(),
             Columns.create("Barcode", Article::getBarcode, RIGHT),
             Columns.<Article>create(
@@ -130,7 +130,8 @@ public class EditArticlesController extends Controller<EditArticlesView, EditArt
             Columns.<Article>create(
                     "KK-Aktion ab",
                     e -> Date.safeDateFormat(getModel().supplierOfferFrom(e), Date.INSTANT_DATE))
-                .withSorter(Column.DATE_SORTER(Date.INSTANT_DATE)));
+                .withSorter(Column.DATE_SORTER(Date.INSTANT_DATE))
+                .withDefaultFilter());
 
     this.capture =
         new BarcodeCapture(

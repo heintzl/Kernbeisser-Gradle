@@ -7,6 +7,7 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.CatalogEntry;
 import kernbeisser.DBEntities.Repositories.ArticleRepository;
+import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Useful.OptionalPredicate;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
@@ -40,6 +41,12 @@ public class EditCatalogModel
     } catch (NumberFormatException e) {
       return Optional.empty();
     }
+  }
+
+  public void updateKKNumberCache(CatalogEntry entry) {
+    ArticleRepository.getBySuppliersItemNumber(Supplier.KK_SUPPLIER, entry.getArtikelNrInt())
+        .ifPresent(
+            article -> articleKKNumberOffers.replace(entry.getArtikelNrInt(), article.isOffer()));
   }
 
   public void setOffer(Article article, boolean offer) {
