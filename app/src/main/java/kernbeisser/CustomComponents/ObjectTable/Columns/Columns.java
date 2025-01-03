@@ -7,6 +7,9 @@ import java.util.function.Predicate;
 import javax.swing.Icon;
 import kernbeisser.CustomComponents.ObjectTable.Adjustors.IconCustomizer;
 import kernbeisser.Security.Utils.Getter;
+import kernbeisser.Useful.Icons;
+import kernbeisser.Useful.OptionalPredicate;
+import kernbeisser.Useful.Tools;
 import org.jetbrains.annotations.NotNull;
 
 public class Columns {
@@ -74,5 +77,15 @@ public class Columns {
             e -> {
               if (onlyIf.test(e)) consumer.accept(e);
             });
+  }
+
+  public static <T> @NotNull CustomizableColumn<T> createSortableBooleanIcon(
+      String name, Predicate<T> predicate) {
+    OptionalPredicate<T> optionalPredicate = Tools.optionalFilterOfNullable(predicate);
+    return (CustomizableColumn<T>)
+        create(name, e -> optionalPredicate.defaultsToFalse((T) e) ? "j" : "n")
+            .withCellAdjustor(
+                new IconCustomizer<>(
+                    e -> Icons.booleanIcon(optionalPredicate.defaultsToFalse((T) e))));
   }
 }

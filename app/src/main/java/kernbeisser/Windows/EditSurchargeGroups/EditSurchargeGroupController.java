@@ -39,7 +39,7 @@ public class EditSurchargeGroupController
         model.getAllSuppliers().stream()
             .sorted(Comparator.comparing(Supplier::getName))
             .collect(Collectors.toList()));
-    editSurchargeGroupView.setSupplier(Supplier.getKKSupplier());
+    editSurchargeGroupView.setSupplier(Supplier.KK_SUPPLIER);
     loadForCurrentSupplier();
     getView().setEditAvailable(false);
   }

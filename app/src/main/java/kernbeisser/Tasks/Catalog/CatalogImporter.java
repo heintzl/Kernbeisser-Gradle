@@ -184,7 +184,7 @@ public class CatalogImporter {
     try {
       return tryParse(dateString, s -> Date.parseInstantDate(s, Date.INSTANT_CATALOG_DATE));
     } catch (DateTimeParseException e) {
-      readErrors.add(new CatalogImportError(0, e));
+      readErrors.add(new CatalogImportError("0", e));
     }
     return null;
   }
@@ -250,7 +250,7 @@ public class CatalogImporter {
           depositEntries.put(containerDepositNo, 0.0);
         }
         for (Exception e : rowLog) {
-          readErrors.add(new CatalogImportError(i, e));
+          readErrors.add(new CatalogImportError(Integer.toString(i), e));
         }
       }
       for (String depositKKNumber : depositEntries.keySet()) {
@@ -271,7 +271,7 @@ public class CatalogImporter {
         } else {
           readErrors.add(
               new CatalogImportError(
-                  -1,
+                  "-1",
                   new CatalogImportErrorException(
                       "Der Pfandartikel "
                           + depositKKNumber

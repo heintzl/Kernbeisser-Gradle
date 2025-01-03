@@ -11,6 +11,7 @@ import java.util.Optional;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.PredicateFactory;
 import kernbeisser.DBConnection.QueryBuilder;
+import kernbeisser.DBEntities.Converters.CatalogUnitParser;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.VAT;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
@@ -196,14 +197,14 @@ public class CatalogEntry implements ActuallyCloneable {
     return result;
   }
 
-  public boolean isOutdatedAction() {
+  public boolean isOutdatedOffer() {
     if (aktionspreisGueltigBis == null) {
       return false;
     }
     return aktionspreisGueltigBis.isBefore(Instant.now());
   }
 
-  public boolean isAction() {
+  public boolean isOffer() {
     if (aktionspreis == null) {
       return false;
     }
@@ -211,13 +212,13 @@ public class CatalogEntry implements ActuallyCloneable {
   }
 
   public static List<CatalogEntry> getByArticleNo(
-      String articleNo, boolean withActions, boolean withInactive) {
+      String articleNo, boolean withOffers, boolean withInactive) {
     var queryBuilder =
         QueryBuilder.selectAll(CatalogEntry.class).where(CatalogEntry_.artikelNr.eq(articleNo));
     if (!withInactive) {
       queryBuilder.where(CatalogEntry_.aenderungskennung.in("V", "X").not());
     }
-    if (withActions) {
+    if (withOffers) {
       queryBuilder
           .where(
               PredicateFactory.or(
@@ -264,6 +265,29 @@ public class CatalogEntry implements ActuallyCloneable {
 
   public String getInfo() {
     return String.join("\n", bezeichnung2, bezeichnung3);
+  }
+
+  public MetricUnits getMetricUnits() {
+    return new CatalogUnitParser(ladeneinheit).getMetricUnits();
+  }
+
+  public Double getAmount() {
+    Double result =
+        new CatalogUnitParser(
+                gewichtsartikel != null && gewichtsartikel ? bestelleinheit : ladeneinheit)
+            .getAmount();
+    if (result == null) {
+      result = new CatalogUnitParser(bestelleinheit).getAmount();
+    }
+    return result;
+  }
+
+  public Integer getAmountAsInt() {
+    Double amount = getAmount();
+    if (amount == null) {
+      return null;
+    }
+    return (int) Math.round((getAmount()));
   }
 
   @Override

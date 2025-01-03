@@ -136,7 +136,7 @@ public class LineContent {
           Article articleToCompare = content.article;
           if (articleToCompare == null) {
             articleToCompare = new Article();
-            articleToCompare.setSupplier(ArticleRepository.KK_SUPPLIER);
+            articleToCompare.setSupplier(Supplier.KK_SUPPLIER);
           }
           content.comparedToCatalog =
               new ArticleComparedToCatalogEntry(articleToCompare, matchingEntry);
@@ -255,7 +255,7 @@ public class LineContent {
       content.weighableKb = content.article.isWeighable();
       content.priceKb = content.calculatePriceKb();
     } else {
-      pattern = ArticleRepository.nextArticleTo(em, content.kkNumber, Supplier.getKKSupplier());
+      pattern = ArticleRepository.nextArticleTo(em, content.kkNumber, Supplier.KK_SUPPLIER);
       content.weighableKb = false;
       content.priceKb = content.priceKk;
     }
@@ -306,7 +306,7 @@ public class LineContent {
       return ResolveStatus.PRODUCE;
     }
     resolveStatus =
-        ArticleRepository.getBySuppliersItemNumber(Supplier.getKKSupplier(), kkNumber, em)
+        ArticleRepository.getBySuppliersItemNumber(Supplier.KK_SUPPLIER, kkNumber, em)
             .map(e -> ResolveStatus.OK)
             .orElse(ResolveStatus.ADDED);
     return resolveStatus;

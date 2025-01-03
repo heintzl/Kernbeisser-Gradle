@@ -214,7 +214,7 @@
                   <gridbag weightx="0.0" weighty="0.0"/>
                 </constraints>
                 <properties>
-                  <text value="letzer"/>
+                  <text value="letzter"/>
                 </properties>
               </component>
               <component id="7707" class="javax.swing.JRadioButton" binding="optCurrent">

@@ -419,7 +419,7 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
     gbc.insets = new Insets(15, 10, 6, 10);
     panel3.add(label7, gbc);
     optLast = new JRadioButton();
-    optLast.setText("letzer");
+    optLast.setText("letzter");
     gbc = new GridBagConstraints();
     gbc.gridx = 2;
     gbc.gridy = 3;

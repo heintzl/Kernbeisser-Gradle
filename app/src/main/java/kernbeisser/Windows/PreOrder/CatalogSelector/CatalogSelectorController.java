@@ -19,7 +19,7 @@ public class CatalogSelectorController
     extends Controller<CatalogSelectorView, CatalogSelectorModel> {
 
   @Linked private final SearchBoxController<CatalogEntry> searchBoxController;
-  private final CatalogFilter catalogFilter = new CatalogFilter(this::refreshSearch);
+  private final CatalogFilter catalogFilter = new CatalogFilter(this::refreshSearch, getModel());
 
   public CatalogSelectorController(Consumer<CatalogEntry> consumer) {
     super(new CatalogSelectorModel(consumer));
@@ -43,9 +43,7 @@ public class CatalogSelectorController
             Columns.<CatalogEntry>create(
                     "Aktion bis",
                     e ->
-                        e.isAction()
-                            ? Date.INSTANT_DATE.format(e.getAktionspreisGueltigBis())
-                            : "-")
+                        e.isOffer() ? Date.INSTANT_DATE.format(e.getAktionspreisGueltigBis()) : "-")
                 .withDefaultFilter()
                 .withSorter(Column.DATE_SORTER(Date.INSTANT_DATE)));
     searchBoxController.addDoubleClickListener(e -> this.choose());

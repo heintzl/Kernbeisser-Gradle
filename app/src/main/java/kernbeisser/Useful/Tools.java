@@ -698,4 +698,14 @@ public class Tools {
   public static String capitalize1st(String s) {
     return (s.substring(0, 1).toUpperCase()) + s.substring(1);
   }
+
+  public static <T> OptionalPredicate<T> optionalFilterOfNullable(Predicate<T> predicate) {
+    return filterObject -> {
+      try {
+        return Optional.of(predicate.test(filterObject));
+      } catch (NullPointerException e) {
+        return Optional.empty();
+      }
+    };
+  }
 }

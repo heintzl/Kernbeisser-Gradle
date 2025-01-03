@@ -140,7 +140,7 @@ public class CatalogImportModel implements IModel<CatalogImportController> {
           em.merge(source);
         }
       } catch (CatalogImportWarningException | CatalogImportErrorException e) {
-        importErrors.add(new CatalogImportError(source.getArtikelNrInt(), e));
+        importErrors.add(new CatalogImportError(source.getArtikelNr(), e));
         if (e.getClass().equals(CatalogImportWarningException.class)) {
           em.merge(source);
         }

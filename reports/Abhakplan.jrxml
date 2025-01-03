@@ -39,7 +39,7 @@
 	<title splitType="Stretch"/>
 	<pageHeader height="55" splitType="Stretch">
 		<element kind="staticText" uuid="dd820fd1-75ce-4c86-9b1b-d4fd89a8da6a" x="0" y="0" width="280" height="20" markup="html" fontName="DejaVu Sans Condensed" fontSize="14.0" bold="true">
-			<text><![CDATA[Abhakplan Vorbestellungen Kronkraft]]></text>
+			<text><![CDATA[Abhakplan Vorbestellungen Kornkraft]]></text>
 		</element>
 		<element kind="textField" uuid="46cc99e3-97c4-45ec-a30c-18bfbc609722" x="280" y="0" width="218" height="20" fontName="DejaVu Sans Condensed" fontSize="13.0" pattern="dd.MM.yyyy" bold="true" hTextAlign="Right">
 			<expression><![CDATA["Lieferdatum: " + $P{deliveryDate}.format(java.time.format.DateTimeFormatter.ofPattern("dd.MM.yyyy"))]]></expression>

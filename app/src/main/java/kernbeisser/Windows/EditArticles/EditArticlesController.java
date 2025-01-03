@@ -83,18 +83,17 @@ public class EditArticlesController extends Controller<EditArticlesView, EditArt
             Columns.create("Ladennummer", Article::getKbNumber, RIGHT)
                 .withSorter(Column.NUMBER_SORTER)
                 .withDefaultFilter(),
-            Columns.<Article>createIconColumn("Aktion", a -> Icons.booleanIcon(a.isOffer()))
-                .withHorizontalAlignment(CENTER)
+            Columns.createSortableBooleanIcon("Aktion", Article::isOffer)
                 .withLeftClickConsumer(this::toggleAction),
-            Columns.create("Lieferant", Article::getSupplier, LEFT)
+            Columns.<Article>create("Lieferant", e -> e.getSupplier().getShortName(), LEFT)
                 .withDefaultFilter()
-                .withColumnAdjustor(e -> e.setPreferredWidth(150)),
+                .withColumnAdjustor(e -> e.setPreferredWidth(80)),
             Columns.create("Hersteller", Article::getProducer, LEFT)
                 .withDefaultFilter()
-                .withColumnAdjustor(e -> e.setPreferredWidth(100)),
+                .withColumnAdjustor(e -> e.setPreferredWidth(80)),
             Columns.create("Lieferantennummer", Article::getSuppliersItemNumber, RIGHT)
                 .withSorter(Column.NUMBER_SORTER),
-            new CustomizableColumn<Article>("Auswiegware", e -> e.isWeighable() ? "Ja" : "Nein")
+            Columns.createSortableBooleanIcon("Auswiegware", Article::isWeighable)
                 .withDefaultFilter(),
             new CustomizableColumn<Article>(
                     "Nettopreis", e -> String.format("%.2f€", e.getNetPrice()))
@@ -116,17 +115,23 @@ public class EditArticlesController extends Controller<EditArticlesView, EditArt
                 .withHorizontalAlignment(RIGHT)
                 .withSorter(Column.NUMBER_SORTER),
             Columns.create("Preisliste", Article::getPriceList, LEFT)
-                .withColumnAdjustor(e -> e.setPreferredWidth(200))
+                .withPreferredWidth(80)
                 .withDefaultFilter(),
             Columns.<Article>create(
                     "Zuschlaggruppe", e -> e.getSurchargeGroup().getNameWithSurcharge(), LEFT)
+                .withPreferredWidth(120)
                 .withDefaultFilter(),
             Columns.create("Barcode", Article::getBarcode, RIGHT),
             Columns.<Article>create(
                     "Letzte Lief.",
                     a ->
                         Date.safeDateFormat(lastDeliveries.get(a.getKbNumber()), Date.INSTANT_DATE))
-                .withSorter(Column.DATE_SORTER(Date.INSTANT_DATE)));
+                .withSorter(Column.DATE_SORTER(Date.INSTANT_DATE)),
+            Columns.<Article>create(
+                    "KK-Aktion ab",
+                    e -> Date.safeDateFormat(getModel().supplierOfferFrom(e), Date.INSTANT_DATE))
+                .withSorter(Column.DATE_SORTER(Date.INSTANT_DATE))
+                .withDefaultFilter());
 
     this.capture =
         new BarcodeCapture(
@@ -199,10 +204,10 @@ public class EditArticlesController extends Controller<EditArticlesView, EditArt
   private void toggleEditActionsButton() {
     if (editActions.isSelected()) {
       editActions.setForeground(Color.GREEN);
-      editActions.setIcon(Icons.actionActiveIcon);
+      editActions.setIcon(Icons.offerActiveIcon);
     } else {
       editActions.setForeground(Color.BLACK);
-      editActions.setIcon(Icons.actionInactiveIcon);
+      editActions.setIcon(Icons.offerInactiveIcon);
     }
     ;
   }
@@ -210,7 +215,7 @@ public class EditArticlesController extends Controller<EditArticlesView, EditArt
   @Key({PermissionKey.ARTICLE_OFFER_WRITE, PermissionKey.ACTION_OPEN_SPECIAL_PRICE_EDITOR})
   private void addEditActionsButton() {
     editActions = new JToggleButton("Aktionen bearbeiten");
-    editActions.setIcon(Icons.actionInactiveIcon);
+    editActions.setIcon(Icons.offerInactiveIcon);
     editActions.setToolTipText("Macht die Aktions-Spalte bearbeitbar");
     editActions.addActionListener(e -> toggleEditActionsButton());
     objectViewController.addButton(editActions);

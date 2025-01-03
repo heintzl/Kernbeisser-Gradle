@@ -23,7 +23,6 @@ import kernbeisser.Windows.Supply.SupplySelector.SupplySelectorController;
 import kernbeisser.Windows.ViewContainers.SubWindow;
 import lombok.Cleanup;
 import lombok.extern.log4j.Log4j2;
-import org.jetbrains.annotations.NotNull;
 import rs.groump.Key;
 import rs.groump.PermissionKey;
 
@@ -250,7 +249,7 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
       }
       return article;
     }
-    return createArticle(content, noBarcode, shopRange);
+    return ArticleRepository.createArticleFromLineContent(content, noBarcode, shopRange);
   }
 
   public static ShoppingItem createShoppingItem(
@@ -274,42 +273,6 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
         .inUnit(
             MetricUnits.GRAM,
             content.getContainerMultiplier() * content.getContainerSize() * content.getAmount());
-  }
-
-  private static @NotNull Article createArticle(
-      LineContent content, boolean ignoreBarcode, ShopRange shopRange) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup("commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    Supplier kkSupplier = Supplier.getKKSupplier();
-    Article pattern = ArticleRepository.nextArticleTo(em, content.getKkNumber(), kkSupplier);
-    Article article = new Article();
-    article.setSupplier(kkSupplier);
-    article.setName(content.getName());
-    article.setNetPrice(content.getPriceKb());
-    article.setMetricUnits(content.getUnit());
-    article.setAmount(content.getAmount());
-    article.setProducer(content.getProducer());
-    if (!ignoreBarcode) article.setBarcode(content.getBarcode());
-    article.setWeighable(content.isWeighableKb());
-    article.setContainerSize(content.getContainerSize());
-    article.setShopRange(shopRange);
-    article.setSurchargeGroup(pattern.getSurchargeGroup());
-    VAT vat = content.getVat();
-    if (vat == null) {
-      vat = pattern.getVat();
-    }
-    article.setVat(vat);
-    article.setPriceList(ArticleRepository.getValidPriceList(em, pattern));
-    article.setVerified(false);
-    article.setKbNumber(ArticleRepository.nextFreeKBNumber(em));
-    article.setSuppliersItemNumber(content.getKkNumber());
-    article.setSingleDeposit(content.getSingleDeposit());
-    article.setContainerDeposit(content.getContainerDeposit());
-    em.persist(article);
-    em.flush();
-    return article;
   }
 
   @Override

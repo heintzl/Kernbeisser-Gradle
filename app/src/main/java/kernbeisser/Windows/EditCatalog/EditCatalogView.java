@@ -4,7 +4,9 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import java.awt.*;
+import java.util.Optional;
 import javax.swing.*;
+import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.CatalogEntry;
 import kernbeisser.Forms.ObjectView.ObjectViewView;
 import kernbeisser.Useful.Tools;
@@ -26,6 +28,52 @@ public class EditCatalogView implements IView<EditCatalogController> {
         "Konnte keinen Katalog-Artikel mit Barcode \"" + s + "\" finden",
         "Eintrag nicht gefunden",
         JOptionPane.INFORMATION_MESSAGE);
+  }
+
+  public Optional<ArticleOptions> confirmNewArticle(CatalogEntry entry, boolean preSelectOffer) {
+    JPanel optionsPanel = new JPanel(new GridLayout(0, 1));
+    JLabel question =
+        new JLabel(
+            "Soll der Katalogeintrag \"%s\" in den Artikelstamm übernommen werden?\n\n"
+                .formatted(entry.getBezeichnung()));
+    JCheckBox offerOption = new JCheckBox("Artikel als Aktion markieren");
+    offerOption.setSelected(preSelectOffer);
+    JCheckBox openArticleOption = new JCheckBox("Artikel zum Bearbeiten öffnen");
+    optionsPanel.add(question);
+    optionsPanel.add(offerOption);
+    optionsPanel.add(openArticleOption);
+
+    Tools.beep();
+    if (JOptionPane.showConfirmDialog(
+            getContent(),
+            optionsPanel,
+            "Neuen Stammartikel erstellen",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.QUESTION_MESSAGE)
+        == JOptionPane.YES_OPTION) {
+      return Optional.of(
+          new ArticleOptions(offerOption.isSelected(), openArticleOption.isSelected()));
+    } else {
+      return Optional.empty();
+    }
+  }
+
+  public boolean confirmOfferChange(Article article, boolean offer) {
+    Tools.beep();
+    String message;
+    if (offer) {
+      message = "Soll die Aktion bei  Artikel %d \"%s\" entfernt werden?";
+    } else {
+      message = "Soll der Artikel %d \"%s\" als Aktion markiert werden?";
+    }
+
+    return JOptionPane.showConfirmDialog(
+            getContent(),
+            message.formatted(article.getKbNumber(), article.getName()),
+            "Aktionsänderung bestätigen",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.QUESTION_MESSAGE)
+        == JOptionPane.YES_OPTION;
   }
 
   public void pasteInSearchBox(String s) {}
@@ -74,7 +122,7 @@ public class EditCatalogView implements IView<EditCatalogController> {
     panel2.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
     panel1.add(panel2, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, new Dimension(-1, 50), 0, false));
     final JLabel label1 = new JLabel();
-    label1.setText("Suche nach Lieferantenartikelnummer, Barcode (die letzten vier Stellen) oder Preisliste");
+    label1.setText("Suche nach Lieferantenartikelnummer, Barcode (die letzten vier Stellen) oder Teil vom Namen");
     panel2.add(label1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 1, false));
     final Spacer spacer1 = new Spacer();
     panel1.add(spacer1, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));

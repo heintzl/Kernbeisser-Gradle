@@ -898,7 +898,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
           e -> {
             variablePercentage.setEnabled(false);
             enablePreordered();
-            setSupplier(Supplier.getKKSupplier());
+            setSupplier(Supplier.KK_SUPPLIER);
             rememberReductionSetting.setSelected(true);
           });
     }
