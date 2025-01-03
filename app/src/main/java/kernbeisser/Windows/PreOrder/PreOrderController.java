@@ -135,11 +135,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     remaining.removeAll(delivery);
     long numOverdue =
         remaining.stream()
-            .filter(
-                p ->
-                    Optional.ofNullable(p.getDueDate())
-                        .orElse(LocalDate.MAX)
-                        .isBefore(LocalDate.now()))
+            .filter(p -> Tools.ifNull(p.getDueDate(), LocalDate.MAX).isBefore(LocalDate.now()))
             .count();
     if (!getView().confirmDelivery(numDelivered, numOverdue)) {
       return false;

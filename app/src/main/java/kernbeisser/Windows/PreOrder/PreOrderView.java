@@ -119,8 +119,12 @@ public class PreOrderView implements IView<PreOrderController> {
   }
 
   private void createUIComponents() {
-    Icon selected = IconFontSwing.buildIcon(FontAwesome.CHECK_SQUARE, 20, new Color(0x38FF00));
-    Icon unselected = IconFontSwing.buildIcon(FontAwesome.SQUARE, 20, new Color(0xC7C7C7));
+    Icon selected =
+        IconFontSwing.buildIcon(
+            FontAwesome.CHECK_SQUARE, Tools.scaleWithLabelScalingFactor(20), new Color(0x38FF00));
+    Icon unselected =
+        IconFontSwing.buildIcon(
+            FontAwesome.SQUARE, Tools.scaleWithLabelScalingFactor(20), new Color(0xC7C7C7));
     if (!controller.isRestrictToLoggedIn()) {
       JMenuItem popupSelectAll = new JMenuItem("alle auswählen");
       popupSelectAll.addActionListener(e -> setAllDelivered(true));

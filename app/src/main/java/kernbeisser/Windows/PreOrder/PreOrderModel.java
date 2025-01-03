@@ -65,15 +65,15 @@ public class PreOrderModel implements IModel<PreOrderController> {
   }
 
   private void removeLazy(PreOrder selected) {
-    et.begin();
     em.remove(em.find(PreOrder.class, selected.getId()));
-    et.commit();
   }
 
   public boolean remove(PreOrder selected, boolean force) {
     if (force || selected.getOrderedOn() == null) {
       delivery.remove(selected);
+      et.begin();
       removeLazy(selected);
+      et.commit();
       return true;
     }
     return false;
@@ -136,12 +136,8 @@ public class PreOrderModel implements IModel<PreOrderController> {
     em.close();
   }
 
-  private void saveData() {
-    et.commit();
-  }
-
   public void printCheckList(LocalDate deliveryDate, boolean duplexPrint) {
-    saveData();
+    // saveData();
     Report report =
         new PreOrderChecklist(
             deliveryDate,
