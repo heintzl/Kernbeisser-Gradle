@@ -83,7 +83,7 @@ public class EditArticlesController extends Controller<EditArticlesView, EditArt
             Columns.create("Ladennummer", Article::getKbNumber, RIGHT)
                 .withSorter(Column.NUMBER_SORTER)
                 .withDefaultFilter(),
-            Columns.<Article>createIconColumn("Aktion", a -> Icons.booleanIcon(a.isOffer()))
+            Columns.createSortableBooleanIcon("Aktion", Article::isOffer)
                 .withHorizontalAlignment(CENTER)
                 .withLeftClickConsumer(this::toggleAction),
             Columns.create("Lieferant", Article::getSupplier, LEFT)
@@ -94,7 +94,7 @@ public class EditArticlesController extends Controller<EditArticlesView, EditArt
                 .withColumnAdjustor(e -> e.setPreferredWidth(100)),
             Columns.create("Lieferantennummer", Article::getSuppliersItemNumber, RIGHT)
                 .withSorter(Column.NUMBER_SORTER),
-            new CustomizableColumn<Article>("Auswiegware", e -> e.isWeighable() ? "Ja" : "Nein")
+            Columns.createSortableBooleanIcon("Auswiegware", Article::isWeighable)
                 .withDefaultFilter(),
             new CustomizableColumn<Article>(
                     "Nettopreis", e -> String.format("%.2f€", e.getNetPrice()))
@@ -126,6 +126,10 @@ public class EditArticlesController extends Controller<EditArticlesView, EditArt
                     "Letzte Lief.",
                     a ->
                         Date.safeDateFormat(lastDeliveries.get(a.getKbNumber()), Date.INSTANT_DATE))
+                .withSorter(Column.DATE_SORTER(Date.INSTANT_DATE)),
+            Columns.<Article>create(
+                    "KK-Aktion ab",
+                    e -> Date.safeDateFormat(getModel().supplierOfferFrom(e), Date.INSTANT_DATE))
                 .withSorter(Column.DATE_SORTER(Date.INSTANT_DATE)));
 
     this.capture =
