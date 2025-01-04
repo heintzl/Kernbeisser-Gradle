@@ -171,20 +171,27 @@ public class SupplyView implements IView<SupplyController> {
             Columns.create("Lieferant", ShoppingItem::getSupplier)
                 .withColumnAdjustor(e -> e.setPreferredWidth(200)),
             Columns.create("Lief.Art.Nr.", ShoppingItem::getSuppliersItemNumber)
+                .withDefaultFilter()
                 .withSorter(Column.NUMBER_SORTER),
             Columns.create("Anzahl", ShoppingItem::getDisplayContainerCount)
+                .withDefaultFilter()
                 .withLeftClickConsumer(controller::editItemMultiplier)
                 .withSorter(Column.NUMBER_SORTER),
-            Columns.create("Davon Vorbestellt", controller::getPreorderCount)
+            Columns.create("Davon VB", controller::getPreorderCount)
+                .withDefaultFilter()
                 .withSorter(Column.NUMBER_SORTER),
             Columns.create("Name", ShoppingItem::getName)
+                .withDefaultFilter()
                 .withColumnAdjustor(e -> e.setPreferredWidth(400)),
             Columns.<ShoppingItem>create(
                     "Barcode", s -> s.getArticleNow().map(Article::getBarcode).orElse(null))
+                .withDefaultFilter()
                 .withSorter(Column.NUMBER_SORTER),
             Columns.create("Gebindegröße", ShoppingItem::getContainerSize)
                 .withSorter(Column.NUMBER_SORTER),
-            Columns.<ShoppingItem>create("Auswiegware", e -> (e.isWeighAble() ? "ja" : "nein")),
+            Columns.<ShoppingItem>createSortableBooleanIcon(
+                    "Auswiegware", ShoppingItem::isWeighAble)
+                .withDefaultFilter(),
             Columns.<ShoppingItem>create(
                     "Netto-Einzelpreis", e -> String.format("%.2f€", e.getItemNetPrice()))
                 .withSorter(Column.NUMBER_SORTER),
@@ -203,7 +210,11 @@ public class SupplyView implements IView<SupplyController> {
                                         ? (e.getItemMultiplier() / 1000.)
                                         : e.getItemMultiplier()))))
                 .withSorter(Column.NUMBER_SORTER),
+            Columns.createSortableBooleanIcon("Aktion", controller::isOffer)
+                .withPreferredWidth(40)
+                .withDefaultFilter(),
             Columns.create("Ausdrucken", controller::getPrintNumber)
+                .withDefaultFilter()
                 .withLeftClickConsumer(controller::editPrintPool)
                 .withRightClickConsumer(controller::increaseItemPrintNumber)
                 .withSorter(Column.NUMBER_SORTER));

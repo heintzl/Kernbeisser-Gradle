@@ -352,18 +352,22 @@ public class ShoppingItem implements Serializable {
         : itemMultiplier / containerSize;
   }
 
-  public String getDisplayContainerCount() {
+  public String formatContainerCount(int number) {
     double amount =
         isWeighAble()
-            ? (getMetricUnits().inUnit(MetricUnits.KILOGRAM, itemMultiplier))
-            : itemMultiplier / containerSize;
+            ? (getMetricUnits().inUnit(MetricUnits.KILOGRAM, number))
+            : number / containerSize;
     String unit =
         isWeighAble()
             ? getMetricUnits() == MetricUnits.MILLILITER
                 ? MetricUnits.LITER.getShortName()
                 : MetricUnits.KILOGRAM.getShortName()
             : " Geb.";
-    return String.format("%s%s", roundIfNecessary(-amount), unit);
+    return String.format("%s %s", roundIfNecessary(-amount), unit);
+  }
+
+  public String getDisplayContainerCount() {
+    return formatContainerCount(itemMultiplier);
   }
 
   public String roundIfNecessary(double d) {

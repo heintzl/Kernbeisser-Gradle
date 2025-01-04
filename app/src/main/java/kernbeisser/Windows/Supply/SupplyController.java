@@ -176,6 +176,10 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
     return model.getPrintNumber(item);
   }
 
+  public boolean isOffer(ShoppingItem item) {
+    return item.getArticleNow().map(Article::isOffer).orElse(false);
+  }
+
   public void openImportSupplyFile() {
     Dimension viewSize = getView().getSize();
     Dimension size =
@@ -282,9 +286,6 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
 
   public String getPreorderCount(ShoppingItem t) {
     int preOrderCount = model.getPreorderCount(t.getSuppliersItemNumber());
-    if (t.isWeighAble()) {
-      return preOrderCount * Math.round(t.getContainerSize() * 1000) / 1000 + "KG";
-    }
-    return preOrderCount + " Gebinde";
+    return t.formatContainerCount(preOrderCount);
   }
 }
