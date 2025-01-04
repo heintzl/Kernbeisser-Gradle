@@ -38,13 +38,13 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
 
   private RowFilter<Object, Integer> swingRowFilter = DEFAULT_SWING_ROW_FILTER;
 
+  private final Map<Column<T>, JTextField> standardColumnFilters = new HashMap<>();
+
+  private Map<Column<T>, JPopupMenu> standardFilterPopups;
+
   public ObjectTable(Collection<Column<T>> columns) {
     this(Collections.emptyList(), columns);
   }
-
-  private final Map<Column<T>, JTextField> standardColumnFilters = new HashMap<>();
-
-  private final Map<Column<T>, JPopupMenu> standardFilterPopups = new HashMap<>();
 
   @SafeVarargs
   public ObjectTable(Collection<T> fill, Column<T>... columns) {
@@ -86,9 +86,17 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
       Column<T> column = getModel().getColumns().get(modelColumn);
       column.adjust(aColumn);
       aColumn.setCellRenderer(column.getRenderer());
-      if (column.usesStandardFilter()) standardFilterPopups.put(column, createPopupMenu(column));
+      if (column.usesStandardFilter())
+        getStandardFilterPopups().put(column, createPopupMenu(column));
     }
     getColumnModel().addColumn(aColumn);
+  }
+
+  private Map<Column<T>, JPopupMenu> getStandardFilterPopups() {
+    if (standardFilterPopups == null) {
+      standardFilterPopups = new HashMap<>();
+    }
+    return standardFilterPopups;
   }
 
   ObjectTable(Collection<T> fill, Collection<Column<T>> columns) {
@@ -142,7 +150,7 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
   private void addStandardFilterListener(MouseEvent e, Column<T> column) {
     if (column.usesStandardFilter()) {
       if (SwingUtilities.isRightMouseButton(e)) {
-        JPopupMenu popup = standardFilterPopups.get(column);
+        JPopupMenu popup = getStandardFilterPopups().get(column);
         if (standardColumnFilters.containsKey(column)) {
           String initialText = standardColumnFilters.get(column).getText();
           ((JTextField) ((JPanel) popup.getComponent(0)).getComponent(1)).setText(initialText);
@@ -218,7 +226,7 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
 
   private void removeStandardFilter(JPopupMenu p) {
     standardColumnFilters.clear();
-    standardFilterPopups
+    getStandardFilterPopups()
         .values()
         .forEach(e -> ((JTextField) ((JPanel) e.getComponent(0)).getComponent(1)).setText(""));
     sort();
@@ -236,7 +244,7 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
   private void applyStandardFilter(JPopupMenu menu, Column<T> c, JTextField text) {
     if (text == null) {
       standardColumnFilters.remove(c);
-      ((JTextField) ((JPanel) standardFilterPopups.get(c).getComponent(0)).getComponent(1))
+      ((JTextField) ((JPanel) getStandardFilterPopups().get(c).getComponent(0)).getComponent(1))
           .setText("");
       menu.setVisible(false);
     } else {
