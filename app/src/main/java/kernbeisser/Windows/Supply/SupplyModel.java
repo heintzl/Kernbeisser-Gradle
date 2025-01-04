@@ -155,6 +155,7 @@ public class SupplyModel implements IModel<SupplyController> {
     if (article == null) return 0;
     if (article.getSupplier().equals(Supplier.KK_SUPPLIER) && suppliersItemNumber < 1000) return 0;
     if (priceKk == 0.0) return 0;
+    if (article.isOffer()) return 0;
     int containersForShop;
     if (article.isWeighable()) {
       containersForShop =
