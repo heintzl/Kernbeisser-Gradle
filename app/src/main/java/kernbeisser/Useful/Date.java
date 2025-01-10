@@ -12,6 +12,10 @@ public class Date {
       DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
           .withLocale(Locale.getDefault())
           .withZone(currentZone);
+  public static DateTimeFormatter INSTANT_DATE_TIME_SEC =
+      DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT, FormatStyle.MEDIUM)
+          .withLocale(Locale.getDefault())
+          .withZone(currentZone);
   public static DateTimeFormatter INSTANT_TIME =
       DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)
           .withLocale(Locale.getDefault())
