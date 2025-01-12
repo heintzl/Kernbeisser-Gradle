@@ -157,12 +157,7 @@ public class SupplyModel implements IModel<SupplyController> {
     if (priceKk == 0.0) return 0;
     if (article.isOffer()) return 0;
     int containersForShop;
-    if (article.isWeighable()) {
-      containersForShop =
-          Math.round((float) containerMultiplier / (float) article.getContainerSize()) - preOrders;
-    } else {
-      containersForShop = (int) Math.ceil(containerMultiplier) - preOrders;
-    }
+    containersForShop = (int) Math.ceil(containerMultiplier) - preOrders;
     if (containersForShop <= 0) return 0;
     return article.isLabelPerUnit()
         ? article.getLabelCount() + containersForShop

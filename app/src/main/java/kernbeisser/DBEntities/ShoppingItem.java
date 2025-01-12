@@ -346,16 +346,12 @@ public class ShoppingItem implements Serializable {
     }
   }
 
-  public Double getContainerCount() {
-    return isWeighAble()
-        ? (getMetricUnits().inUnit(getMetricUnits().getDisplayUnit(), itemMultiplier))
-        : itemMultiplier / containerSize;
-  }
-
-  public double getDisplayContainerCount() {
-    double containers = -itemMultiplier;
+  public double getContainerCount() {
+    double containers = itemMultiplier;
     if (isWeighAble()) {
-      containers = containers / amount;
+      containers /= amount;
+    } else {
+      containers /= containerSize;
     }
     return containers;
   }
