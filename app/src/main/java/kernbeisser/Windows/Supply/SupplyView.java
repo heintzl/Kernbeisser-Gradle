@@ -156,6 +156,10 @@ public class SupplyView implements IView<SupplyController> {
     produce.setText(String.format("%.2f€", d));
   }
 
+  public static String roundIfNecessary(double d) {
+    return d == Math.round(d) ? "%d".formatted(Math.round(d)) : "%.2f".formatted(d);
+  }
+
   private void createUIComponents() {
     name = new AccessCheckingField<>(Article::getName, Article::setName, AccessCheckingField.NONE);
     netPrice =
@@ -173,11 +177,13 @@ public class SupplyView implements IView<SupplyController> {
             Columns.create("Lief.Art.Nr.", ShoppingItem::getSuppliersItemNumber)
                 .withDefaultFilter()
                 .withSorter(Column.NUMBER_SORTER),
-            Columns.create("Anzahl", ShoppingItem::getDisplayContainerCount)
+            Columns.<ShoppingItem>create(
+                    "Anzahl", e -> roundIfNecessary(e.getDisplayContainerCount()))
                 .withDefaultFilter()
                 .withLeftClickConsumer(controller::editItemMultiplier)
                 .withSorter(Column.NUMBER_SORTER),
-            Columns.create("Davon VB", controller::getPreorderCount)
+            Columns.<ShoppingItem>create(
+                    "Davon VB", e -> roundIfNecessary(controller.getPreorderCount(e)))
                 .withDefaultFilter()
                 .withSorter(Column.NUMBER_SORTER),
             Columns.create("Name", ShoppingItem::getName)

@@ -126,7 +126,7 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
 
   void commit() {
     model.commit(getView()::messageSupplyExistsInDB);
-    if (model.getShoppingItems().size() > 0) {
+    if (!model.getShoppingItems().isEmpty()) {
       model.print();
       new PrintLabelsController().openIn(new SubWindow(getView().traceViewContainer()));
     }
@@ -138,7 +138,7 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
   @Override
   protected boolean commitClose() {
     if (model.isPrintSelected() && getView().shouldPrintLabels()) model.print();
-    return model.getShoppingItems().size() == 0 || getView().commitClose();
+    return model.getShoppingItems().isEmpty() || getView().commitClose();
   }
 
   public void remove(ShoppingItem selectedObject) {
@@ -284,8 +284,7 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
     return keyCapture.processKeyEvent(e) || barcodeCapture.processKeyEvent(e);
   }
 
-  public String getPreorderCount(ShoppingItem t) {
-    int preOrderCount = model.getPreorderCount(t.getSuppliersItemNumber());
-    return t.formatContainerCount(preOrderCount);
+  public int getPreorderCount(ShoppingItem t) {
+    return model.getPreorderCount(t.getSuppliersItemNumber());
   }
 }
