@@ -7,6 +7,7 @@ import java.util.InputMismatchException;
 import java.util.Map;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Repositories.ArticleRepository;
+import kernbeisser.Enums.Setting;
 import kernbeisser.Useful.Date;
 import kernbeisser.Windows.Supply.SupplySelector.LineContent;
 import lombok.Data;
@@ -29,6 +30,7 @@ public class PriceListReportArticle {
   private String producer;
   private String countryOfOrigin;
   private String identification;
+  private String namePrefix = "";
 
   public static PriceListReportArticle ofArticle(
       Article article, Map<Integer, Instant> lastDeliveries) {
@@ -47,6 +49,9 @@ public class PriceListReportArticle {
     priceListArticle.lastDeliveryMonth =
         Date.INSTANT_MONTH_YEAR.format(
             lastDeliveries.getOrDefault(article.getKbNumber(), Instant.now()));
+    if (article.isOffer()) {
+      priceListArticle.namePrefix = Setting.OFFER_PREFIX.getStringValue();
+    }
     return priceListArticle;
   }
 

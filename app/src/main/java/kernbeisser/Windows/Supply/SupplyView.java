@@ -177,8 +177,7 @@ public class SupplyView implements IView<SupplyController> {
             Columns.create("Lief.Art.Nr.", ShoppingItem::getSuppliersItemNumber)
                 .withDefaultFilter()
                 .withSorter(Column.NUMBER_SORTER),
-            Columns.<ShoppingItem>create(
-                    "Anzahl", e -> roundIfNecessary(-e.getContainerCount()))
+            Columns.<ShoppingItem>create("Anzahl", e -> roundIfNecessary(-e.getContainerCount()))
                 .withDefaultFilter()
                 .withLeftClickConsumer(controller::editItemMultiplier)
                 .withSorter(Column.NUMBER_SORTER),
