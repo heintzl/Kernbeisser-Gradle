@@ -155,9 +155,10 @@ public class SupplyModel implements IModel<SupplyController> {
     if (article == null) return 0;
     if (article.getSupplier().equals(Supplier.KK_SUPPLIER) && suppliersItemNumber < 1000) return 0;
     if (priceKk == 0.0) return 0;
-    if (article.isOffer()) return 0;
+    // TODO deactivate offer Print depending on result of process definition
+    // if (article.isOffer()) return 0;
     int containersForShop;
-    containersForShop = (int) Math.ceil(containerMultiplier) - preOrders;
+    containersForShop = (int) Math.round(containerMultiplier) - preOrders;
     if (containersForShop <= 0) return 0;
     return article.isLabelPerUnit()
         ? article.getLabelCount() + containersForShop
