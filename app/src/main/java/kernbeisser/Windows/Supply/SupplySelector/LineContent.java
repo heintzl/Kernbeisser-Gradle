@@ -122,12 +122,12 @@ public class LineContent {
         content.resolveStatus = ResolveStatus.IGNORE;
       }
       CatalogEntry matchingEntry = catalogEntries.get(Objects.toString(content.kkNumber));
+      content.userPreorderCount = 0;
       if (content.getStatus() != ResolveStatus.PRODUCE) {
         if (matchingEntry == null) {
           if (!content.weighableKk) {
             content.comparedToCatalog = ArticleComparedToCatalogEntry.NO_CATALOG_ENTRY;
           }
-          content.userPreorderCount = 0;
         } else {
           content.barcode = matchingEntry.getEanLadenEinheit();
           content.singleDeposit = matchingEntry.getEinzelPfand();

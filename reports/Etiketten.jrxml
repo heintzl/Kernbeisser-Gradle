@@ -13,6 +13,7 @@
 	<field name="lastDeliveryMonth" class="java.lang.String"/>
 	<field name="containerSize" class="java.lang.Double"/>
 	<field name="suppliersShortName" class="java.lang.String"/>
+	<field name="namePrefix" class="java.lang.String"/>
 	<group name="Purchase">
 		<expression><![CDATA[$F{containerSize}]]></expression>
 	</group>
@@ -22,7 +23,7 @@
 	<detail>
 		<band height="77" splitType="Stretch">
 			<element kind="textField" uuid="301f7d9b-f8f5-4749-8218-0b6444df8d6f" x="3" y="4" width="126" height="16" fontName="DejaVu Sans Condensed" fontSize="10.0" bold="true">
-				<expression><![CDATA[$F{name}]]></expression>
+				<expression><![CDATA[$F{namePrefix} + $F{name}]]></expression>
 				<property name="net.sf.jasperreports.text.truncate.at.char" value="true"/>
 			</element>
 			<element kind="textField" uuid="36929269-bf34-4793-a99a-8b4ab00796dc" x="3" y="19" width="52" height="16" fontName="DejaVu Sans Condensed" fontSize="10.0" pattern="#,##0.00 €" bold="true">

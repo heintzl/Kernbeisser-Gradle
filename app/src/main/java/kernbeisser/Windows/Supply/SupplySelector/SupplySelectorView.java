@@ -1,5 +1,7 @@
 package kernbeisser.Windows.Supply.SupplySelector;
 
+import static kernbeisser.Windows.Supply.SupplyView.roundIfNecessary;
+
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
@@ -100,10 +102,10 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
             Columns.<LineContent>createIconColumn("S", e -> getIcon(e.getStatus()))
                 .withColumnAdjustor(
                     column -> column.setMaxWidth(Tools.scaleWithLabelScalingFactor(20))),
-            Columns.create("Anz.", LineContent::getContainerMultiplier)
+            Columns.<LineContent>create("Anz.", e -> roundIfNecessary(e.getContainerMultiplier()))
                 .withSorter(Column.NUMBER_SORTER)
                 .withPreferredWidth(50),
-            Columns.create("VB", LineContent::getUserPreorderCount)
+            Columns.<LineContent>create("VB", e -> roundIfNecessary(e.getUserPreorderCount()))
                 .withSorter(Column.NUMBER_SORTER)
                 .withPreferredWidth(40),
             Columns.create("Artikelnr.", LineContent::getKkNumber)

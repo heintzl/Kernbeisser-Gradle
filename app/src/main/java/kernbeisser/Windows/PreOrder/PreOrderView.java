@@ -135,8 +135,8 @@ public class PreOrderView implements IView<PreOrderController> {
       popupSelectionColumn.add(popupDeselectAll);
     }
     CustomizableColumn<PreOrder> hiddenSortColumn =
-        Columns.<PreOrder>create("", p -> Date.INSTANT_DATE_TIME.format(p.getCreateDate()))
-            .withSorter(Column.DATE_TIME_SORTER(Date.INSTANT_DATE_TIME))
+        Columns.<PreOrder>create("", p -> Date.INSTANT_DATE_TIME_SEC.format(p.getCreateDate()))
+            .withSorter(Column.DATE_TIME_SORTER(Date.INSTANT_DATE_TIME_SEC))
             .withColumnAdjustor(
                 e -> {
                   e.setMinWidth(0);
@@ -215,7 +215,7 @@ public class PreOrderView implements IView<PreOrderController> {
   }
 
   void setDefaultSortOrder() {
-    preOrders.setSortKeys(new RowSorter.SortKey(0, SortOrder.ASCENDING));
+    preOrders.setSortKeys(new RowSorter.SortKey(0, SortOrder.DESCENDING));
     preOrders.sort();
   }
 
