@@ -48,7 +48,6 @@ import kernbeisser.Windows.PreOrder.PreOrderController;
 import kernbeisser.Windows.Setting.SettingController;
 import kernbeisser.Windows.SoloShoppingMask.SoloShoppingMaskController;
 import kernbeisser.Windows.Supply.SupplyController;
-import kernbeisser.Windows.SynchronizeArticles.SynchronizeArticleController;
 import kernbeisser.Windows.TabbedPane.TabbedPaneModel;
 import kernbeisser.Windows.Transaction.TransactionController;
 import kernbeisser.Windows.UserInfo.UserInfoController;
@@ -235,13 +234,9 @@ public class MenuView implements IView<MenuController> {
     importCatalog =
         new ControllerButton<>(CatalogImportController::new, CatalogImportController.class);
     editCatalog = new ControllerButton<>(EditCatalogController::new, EditCatalogController.class);
-    synchoniseCatalog =
-        new ControllerButton<>(
-            SynchronizeArticleController::new, SynchronizeArticleController.class);
-    offerManagement = ControllerButton.empty();
     supply =
         new ControllerButton<>(
-            SupplyController::new, SupplyController.class, PermissionKey.ACTION_OPEN_ADMIN_TOOLS);
+            SupplyController::new, SupplyController.class, PermissionKey.ACTION_OPEN_SUPPLY);
     doUserDefiniedTransaction =
         new ControllerButton<>(
             () ->
@@ -458,19 +453,12 @@ public class MenuView implements IView<MenuController> {
     permissionAssignment.setText("Berechtigungen erteilen");
     panel4.add(permissionAssignment, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
     final JPanel panel5 = new JPanel();
-    panel5.setLayout(new GridLayoutManager(7, 1, new Insets(10, 10, 10, 10), -1, -1));
+    panel5.setLayout(new GridLayoutManager(5, 1, new Insets(10, 10, 10, 10), -1, -1));
     panel5.setEnabled(true);
     menuPanel.add(panel5, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
     panel5.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Artikelstamm", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, this.$$$getFont$$$(null, -1, 18, panel5.getFont()), null));
     final Spacer spacer6 = new Spacer();
-    panel5.add(spacer6, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
-    offerManagement.setActionCommand("Artikel bearbeiten");
-    offerManagement.setEnabled(false);
-    Font offerManagementFont = this.$$$getFont$$$(null, -1, -1, offerManagement.getFont());
-    if (offerManagementFont != null) offerManagement.setFont(offerManagementFont);
-    offerManagement.setRequestFocusEnabled(false);
-    offerManagement.setText("Aktionsartikel bearbeiten");
-    panel5.add(offerManagement, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    panel5.add(spacer6, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
     Font importCatalogFont = this.$$$getFont$$$(null, -1, -1, importCatalog.getFont());
     if (importCatalogFont != null) importCatalog.setFont(importCatalogFont);
     importCatalog.setText("Kornkraft-Katalog einlesen");
@@ -478,11 +466,7 @@ public class MenuView implements IView<MenuController> {
     Font editSuppliersFont = this.$$$getFont$$$(null, -1, -1, editSuppliers.getFont());
     if (editSuppliersFont != null) editSuppliers.setFont(editSuppliersFont);
     editSuppliers.setText("Lieferanten beabeiten");
-    panel5.add(editSuppliers, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-    Font synchoniseCatalogFont = this.$$$getFont$$$(null, -1, -1, synchoniseCatalog.getFont());
-    if (synchoniseCatalogFont != null) synchoniseCatalog.setFont(synchoniseCatalogFont);
-    synchoniseCatalog.setText("Kornkraft-Katalog synchronisieren");
-    panel5.add(synchoniseCatalog, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+    panel5.add(editSuppliers, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
     Font editCatalogFont = this.$$$getFont$$$(null, -1, -1, editCatalog.getFont());
     if (editCatalogFont != null) editCatalog.setFont(editCatalogFont);
     editCatalog.setText("Kornkraft-Katalog ansehen");
