@@ -36,7 +36,8 @@ public class ArticleLabel extends Report {
     return articles.stream()
         .map(a -> PriceListReportArticle.ofArticle(a, lastDeliveries))
         .sorted(
-            Comparator.comparing(PriceListReportArticle::getSuppliersShortName)
+            Comparator.comparing(PriceListReportArticle::getNamePrefix)
+                .thenComparing(PriceListReportArticle::getSuppliersShortName)
                 .thenComparingInt(PriceListReportArticle::getSuppliersItemNumber))
         .collect(Collectors.toList());
   }
