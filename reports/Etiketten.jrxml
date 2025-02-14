@@ -38,8 +38,9 @@
 			<element kind="textField" uuid="1e861e48-2b1d-4a6d-8e3c-57186ec9650e" x="59" y="49" width="70" height="16" fontName="DejaVu Sans Condensed" fontSize="10.0" pattern="#0,00 €">
 				<expression><![CDATA[$F{suppliersShortName} + " " + Integer.toString( $F{suppliersItemNumber})]]></expression>
 			</element>
-			<element kind="textField" uuid="7f4c01ce-ec22-4834-8ab3-969230634ea7" x="3" y="49" width="52" height="16" fontName="DejaVu Sans Condensed" fontSize="10.0" pattern="#0,00 €">
+			<element kind="textField" uuid="7f4c01ce-ec22-4834-8ab3-969230634ea7" x="3" y="49" width="53" height="16" fontName="DejaVu Sans Condensed" fontSize="10.0" textAdjust="ScaleFont" pattern="#0,00 €">
 				<expression><![CDATA[$F{lastDeliveryMonth} + "-G" + Long.toString(Math.round($F{containerSize}))]]></expression>
+				<property name="com.jaspersoft.studio.unit.width" value="px"/>
 			</element>
 			<element kind="textField" uuid="36e5894d-9447-4df1-8e25-ab32a3cb1e58" x="3" y="34" width="52" height="16" fontName="DejaVu Sans Condensed" fontSize="10.0" pattern="#0,00 €">
 				<expression><![CDATA["BC-" + $F{shortBarcode}]]></expression>
