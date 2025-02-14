@@ -205,3 +205,4 @@ gradle-app.setting
 # Artifact manifest
 /**/META-INF/MANIFEST.MF
 /app/src/main/generated
+/.metadata/
