@@ -227,25 +227,36 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
       Article article = em.find(Article.class, articleInDb.map(Article::getId).get());
       double newPrice = content.getPriceKb();
       boolean newWeighable = content.isWeighableKb();
-
+      double newSingleDeposit = content.getSingleDeposit();
+      double newContainerDeposit = content.getContainerDeposit();
       String logInfo = "Article [" + article.getSuppliersItemNumber() + "]:";
       ShopRange articleShopRange = article.getShopRange();
       if (!articleShopRange.equals(ShopRange.PERMANENT_RANGE)) {
         if (!articleShopRange.equals(shopRange)) {
           article.setShopRange(shopRange);
           dirty = true;
-          logInfo += " updated shop range [" + article.getShopRange() + "] -";
+          logInfo += " updated shop range [%s] -".formatted(article.getShopRange().toString());
         }
       }
       if (Math.abs(article.getNetPrice() - newPrice) >= 0.01) {
         dirty = true;
-        logInfo += " price change [" + article.getNetPrice() + " -> " + newPrice + "] -";
+        logInfo += " price change [%.2f -> %.2f]".formatted(article.getNetPrice(), newPrice);
         article.setNetPrice(newPrice);
       }
       if (article.isWeighable() != newWeighable) {
         dirty = true;
-        logInfo += " weighable change [" + article.isWeighable() + " -> " + newWeighable + "] -";
+        logInfo += " weighable change [%b -> %b] -".formatted(article.isWeighable(),newWeighable);
         article.setWeighable(newWeighable);
+      }
+      if (article.getSingleDeposit() != newSingleDeposit) {
+        dirty = true;
+        logInfo += " single deposit change [%.2f -> %.2f] -".formatted(article.getSingleDeposit(), newSingleDeposit);
+        article.setSingleDeposit(newSingleDeposit);
+      }
+      if (article.getContainerDeposit() != newContainerDeposit) {
+        dirty = true;
+        logInfo += " container deposit change [%.2f -> %.2f] -".formatted(article.getContainerDeposit(), newContainerDeposit);
+        article.setSingleDeposit(newSingleDeposit);
       }
       if (dirty) {
         em.merge(article);
