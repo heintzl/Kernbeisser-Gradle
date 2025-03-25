@@ -71,6 +71,7 @@ public class TransactionStatement extends Report {
                 or(
                     Transaction_.fromUserGroup.eq(userGroup),
                     Transaction_.toUserGroup.eq(userGroup)))
+            .orderBy(Transaction_.date.asc(), Transaction_.id.asc())
             .getResultList();
   }
 
