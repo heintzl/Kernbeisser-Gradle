@@ -108,27 +108,34 @@ shadowJar {
     archiveFileName = "kernbeisser.jar"
 }
 
+layout.buildDirectory.set(layout.projectDirectory.dir("../build"))
 task copyAgent(type: Copy){
     from '../security/build/libs/security.jar'
-    into getLayout().getBuildDirectory().dir("libs")
+    into getLayout().getBuildDirectory().dir("deploy")
  //   fileMode 750
+}
+
+task copyLicense(type: Copy){
+    from '..'
+    into getLayout().getBuildDirectory().dir("deploy")
+    include 'LICENSE'
 }
 
 task copyProductionFolderContent(type: Copy){
     from '../production'
-    into getLayout().getBuildDirectory().dir("libs")
+    into getLayout().getBuildDirectory().dir("deploy")
 //    fileMode 750
 }
 
 task copyReportsFolder(type: Copy){
     from '../reports'
     include '*.jrxml'
-    into getLayout().getBuildDirectory().dir("libs/reports")
+    into getLayout().getBuildDirectory().dir("deploy/reports")
 //    fileMode 750
 }
 copyAgent.dependsOn project(":security").getTasksByName("jar",false)
 copyProductionFolderContent.dependsOn copyAgent
-processResources.dependsOn copyProductionFolderContent, copyReportsFolder//, chmodRecursively
+processResources.dependsOn copyLicense, copyProductionFolderContent, copyReportsFolder//, chmodRecursively
 
 spotless {
     java {
