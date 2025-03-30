@@ -1,5 +1,6 @@
 package kernbeisser.Windows.Supply.SupplySelector;
 
+import static kernbeisser.Windows.Supply.SupplySelector.ArticleChange.*;
 import static kernbeisser.Windows.Supply.SupplyView.roundIfNecessary;
 
 import com.intellij.uiDesigner.core.GridConstraints;
@@ -7,6 +8,8 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import java.awt.*;
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CancellationException;
 import java.util.function.Predicate;
@@ -17,9 +20,12 @@ import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
+import kernbeisser.DBEntities.Article;
 import kernbeisser.Tasks.ArticleComparedToCatalogEntry;
 import kernbeisser.Useful.Date;
+import kernbeisser.Useful.Icons;
 import kernbeisser.Useful.Tools;
+import kernbeisser.Useful.UiTools;
 import kernbeisser.Windows.MVC.ComponentController.ComponentController;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
@@ -329,6 +335,86 @@ public class SupplySelectorView implements IView<SupplySelectorController> {
         "Ungültiger Barcode",
         JOptionPane.ERROR_MESSAGE);
   }
+
+    private static final Icon PRICE_ICON =
+            Icons.defaultIcon(FontAwesome.VIACOIN, new Color(0, 126, 107));
+    private static final Icon DEPOSIT_ICON =
+            Icons.defaultIcon(FontAwesome.BEER, new Color(0, 43, 151));
+    private static final Icon CONTAINER_ICON =
+            Icons.defaultIcon(FontAwesome.SHOPPING_CART, new Color(153, 72, 228));
+    private static final Icon SIZE_ICON =
+            Icons.defaultIcon(FontAwesome.LINE_CHART, new Color(193, 101, 62));
+
+    private static Icon getChangeIcon(ArticleChange result) {
+        switch (result.getType()) {
+            case PRICE -> {
+                return PRICE_ICON;
+            }
+            case SINGLE_DEPOSIT -> {
+                return DEPOSIT_ICON;
+            }
+            case CONTAINER_DEPOSIT -> {
+                return CONTAINER_ICON;
+            }
+            case CONTAINER_SIZE -> {
+                return SIZE_ICON;
+            }
+            default -> {
+                return Icons.SHOP_ICON;
+            }
+        }
+    }
+
+    private static String getChangeDesignation(ArticleChange result) {
+        switch (result.getType()) {
+            case PRICE -> {
+                return "Preis";
+            }
+            case SINGLE_DEPOSIT -> {
+                return "Einzelpfand";
+            }
+            case CONTAINER_DEPOSIT -> {
+                return "Gebindepfand";
+            }
+            case CONTAINER_SIZE -> {
+                return "Gebindegröße";
+            }
+            default -> {
+                return "Unbekannt (??)";
+            }
+        }
+    }
+        public void showArticleChanges(Map<ArticleChange, List<Article>> articleChanges) {
+        if(articleChanges.isEmpty()) {return;}
+        ObjectTable<ArticleChange> table =
+                new ObjectTable<ArticleChange>(
+                        articleChanges.keySet().stream().sorted().toList(),
+                        Columns.createIconColumn("", SupplySelectorView::getChangeIcon),
+                        Columns.create("Änderung", SupplySelectorView::getChangeDesignation).withPreferredWidth(200),
+                        Columns.create("von", ArticleChange::getOldValue)
+                                .withPreferredWidth(50)
+                                .withSorter(Column.NUMBER_SORTER),
+                        Columns.create("zu", ArticleChange::getNewValue)
+                                .withPreferredWidth(50)
+                                .withSorter(Column.NUMBER_SORTER),
+                        Columns.<ArticleChange>create("Anzahl", e -> articleChanges.get(e).size()).withSorter(Column.NUMBER_SORTER),
+                        Columns.<ArticleChange>createIconColumn(
+                                Icons.defaultIcon(FontAwesome.TABLE, Color.BLUE),
+                                e -> UiTools.showArticleList(getContent(), articleChanges.get(e)),
+                                e -> !articleChanges.get(e).isEmpty()));
+
+        JLabel label =
+                new JLabel("Folgende Artikel-Änderungen wurden vorgenommen:");
+        label.setFont(label.getFont().deriveFont(Font.ITALIC));
+        JPanel tablePanel = new JPanel(new BorderLayout());;
+            tablePanel.add(label, BorderLayout.NORTH);
+        tablePanel.add(new JScrollPane(table), BorderLayout.CENTER);
+        JOptionPane.showMessageDialog(
+                getContent(),
+                tablePanel,
+                "Artikeländerungen",
+                JOptionPane.INFORMATION_MESSAGE);
+    }
 
   // @spotless:off
 

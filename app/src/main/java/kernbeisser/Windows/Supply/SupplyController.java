@@ -1,14 +1,13 @@
 package kernbeisser.Windows.Supply;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.NoResultException;
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.util.Optional;
+import java.util.*;
+import java.util.List;
+
 import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.CustomComponents.KeyCapture;
-import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.*;
 import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.Enums.*;
@@ -17,19 +16,21 @@ import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.PrintLabels.PrintLabelsController;
 import kernbeisser.Windows.PrintLabels.PrintLabelsModel;
+import kernbeisser.Windows.Supply.SupplySelector.ArticleChange;
 import kernbeisser.Windows.Supply.SupplySelector.LineContent;
 import kernbeisser.Windows.Supply.SupplySelector.ResolveStatus;
 import kernbeisser.Windows.Supply.SupplySelector.SupplySelectorController;
 import kernbeisser.Windows.ViewContainers.SubWindow;
-import lombok.Cleanup;
-import lombok.extern.log4j.Log4j2;
 import rs.groump.Key;
 import rs.groump.PermissionKey;
 
-@Log4j2
+import static kernbeisser.Windows.Supply.SupplySelector.ArticleChange.PRICE;
+import static kernbeisser.Windows.Supply.SupplySelector.ArticleChange.SINGLE_DEPOSIT;
+
 public class SupplyController extends Controller<SupplyView, SupplyModel> {
   public final KeyCapture keyCapture;
   public final BarcodeCapture barcodeCapture;
+  private final Map<Article, List<ArticleChange>> articleChanges = new HashMap<>();
 
   @Key(PermissionKey.ACTION_OPEN_SUPPLY)
   public SupplyController() {
@@ -210,67 +211,10 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
         || content.getStatus() == ResolveStatus.PRODUCE);
   }
 
-  public static Article findOrCreateArticle(
-      Supplier kkSupplier, LineContent content, boolean noBarcode) {
-    Optional<Article> articleInDb =
-        ArticleRepository.getBySuppliersItemNumber(kkSupplier, content.getKkNumber());
-    ShopRange shopRange =
-        (content.getContainerMultiplier() - Tools.ifNull(content.getUserPreorderCount(), 0) > 0
-            ? ShopRange.PERMANENT_RANGE
-            : ShopRange.IN_RANGE);
-    if (articleInDb.isPresent()) {
-      boolean dirty = false;
-      @Cleanup EntityManager em = DBConnection.getEntityManager();
-      @Cleanup("commit")
-      EntityTransaction et = em.getTransaction();
-      et.begin();
-      Article article = em.find(Article.class, articleInDb.map(Article::getId).get());
-      double newPrice = content.getPriceKb();
-      boolean newWeighable = content.isWeighableKb();
-      double newSingleDeposit = content.getSingleDeposit();
-      double newContainerDeposit = content.getContainerDeposit();
-      String logInfo = "Article [" + article.getSuppliersItemNumber() + "]:";
-      ShopRange articleShopRange = article.getShopRange();
-      if (!articleShopRange.equals(ShopRange.PERMANENT_RANGE)) {
-        if (!articleShopRange.equals(shopRange)) {
-          article.setShopRange(shopRange);
-          dirty = true;
-          logInfo += " updated shop range [%s] -".formatted(article.getShopRange().toString());
-        }
-      }
-      if (Math.abs(article.getNetPrice() - newPrice) >= 0.01) {
-        dirty = true;
-        logInfo += " price change [%.2f -> %.2f]".formatted(article.getNetPrice(), newPrice);
-        article.setNetPrice(newPrice);
-      }
-      if (article.isWeighable() != newWeighable) {
-        dirty = true;
-        logInfo += " weighable change [%b -> %b] -".formatted(article.isWeighable(),newWeighable);
-        article.setWeighable(newWeighable);
-      }
-      if (article.getSingleDeposit() != newSingleDeposit) {
-        dirty = true;
-        logInfo += " single deposit change [%.2f -> %.2f] -".formatted(article.getSingleDeposit(), newSingleDeposit);
-        article.setSingleDeposit(newSingleDeposit);
-      }
-      if (article.getContainerDeposit() != newContainerDeposit) {
-        dirty = true;
-        logInfo += " container deposit change [%.2f -> %.2f] -".formatted(article.getContainerDeposit(), newContainerDeposit);
-        article.setSingleDeposit(newSingleDeposit);
-      }
-      if (dirty) {
-        em.merge(article);
-        log.info(logInfo.substring(0, logInfo.length() - 2));
-      }
-      return article;
-    }
-    return ArticleRepository.createArticleFromLineContent(content, noBarcode, shopRange);
-  }
-
   public static ShoppingItem createShoppingItem(
-      Supplier kkSupplier, LineContent content, int orderNo, boolean ignoreBarcode) {
+      Supplier kkSupplier, LineContent content, int orderNo, boolean ignoreBarcode, Map<ArticleChange, List<Article>> articleChangeCollector) {
     ShoppingItem shoppingItem =
-        new ShoppingItem(findOrCreateArticle(kkSupplier, content, ignoreBarcode), 0, false);
+        new ShoppingItem(ArticleRepository.findOrCreateArticle(kkSupplier, content, ignoreBarcode, articleChangeCollector), 0, false);
     double rawItemMultiplier =
         (shoppingItem.isWeighAble()
                 ? getAsItemMultiplierAmount(content)

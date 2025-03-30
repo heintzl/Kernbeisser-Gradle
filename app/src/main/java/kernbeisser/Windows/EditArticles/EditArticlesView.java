@@ -16,6 +16,7 @@ import kernbeisser.Enums.ArticleDeletionResult;
 import kernbeisser.Forms.ObjectView.ObjectViewView;
 import kernbeisser.Useful.Icons;
 import kernbeisser.Useful.Tools;
+import kernbeisser.Useful.UiTools;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
@@ -78,18 +79,6 @@ public class EditArticlesView implements IView<EditArticlesController> {
         getContent(), logPanel, "Katalog-Übernahme-Ergebnis", JOptionPane.INFORMATION_MESSAGE);
   }
 
-  private static void showArticleList(Component parentComponent, List<Article> articles) {
-    ObjectTable<Article> table =
-        new ObjectTable<>(
-            articles,
-            Columns.create("kbNumber", Article::getKbNumber)
-                .withSorter(Column.NUMBER_SORTER)
-                .withPreferredWidth(100),
-            Columns.create("Artikel", Article::getName).withPreferredWidth(500));
-    JOptionPane.showMessageDialog(
-        parentComponent, new JScrollPane(table), "Artikel", JOptionPane.INFORMATION_MESSAGE);
-  }
-
   private static final Icon DELETE_ICON =
       Icons.defaultIcon(FontAwesome.TRASH, new Color(126, 16, 0));
   private static final Icon DISCONTINUE_ICON =
@@ -123,7 +112,7 @@ public class EditArticlesView implements IView<EditArticlesController> {
                 .withSorter(Column.NUMBER_SORTER),
             Columns.createIconColumn(
                 Icons.defaultIcon(FontAwesome.TABLE, Color.BLUE),
-                e -> showArticleList(parentComponent, results.get(e)),
+                e -> UiTools.showArticleList(parentComponent, results.get(e)),
                 e -> !results.get(e).isEmpty()));
 
     JPanel labelPanel = new JPanel();
