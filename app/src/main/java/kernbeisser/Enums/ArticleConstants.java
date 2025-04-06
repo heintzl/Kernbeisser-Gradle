@@ -1,11 +1,9 @@
 package kernbeisser.Enums;
 
-import kernbeisser.DBEntities.Article;
-import lombok.Getter;
-
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.stream.Collectors;
+import kernbeisser.DBEntities.Article;
+import lombok.Getter;
 
 public enum ArticleConstants {
   PRODUCE(-1),
@@ -14,7 +12,8 @@ public enum ArticleConstants {
   SOLIDARITY(-4),
   CUSTOM_PRODUCT(-5);
 
-  private final static Collection<Integer> constantArticleIdentifiers = Arrays.stream(ArticleConstants.values()).map(ArticleConstants::getUniqueIdentifier).toList();
+  private static final Collection<Integer> constantArticleIdentifiers =
+      Arrays.stream(ArticleConstants.values()).map(ArticleConstants::getUniqueIdentifier).toList();
   @Getter private final int uniqueIdentifier;
 
   ArticleConstants(int uniqueIdentifier) {

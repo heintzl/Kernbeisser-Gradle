@@ -69,7 +69,8 @@ public class SupplierFile {
         .collect(Collectors.toCollection(ArrayList::new));
   }
 
-  public Collection<ShoppingItem> collectShoppingItems(JComponent errorDisplayComponent, Map<ArticleChange, List<Article>> articleChangeCollector) {
+  public Collection<ShoppingItem> collectShoppingItems(
+      JComponent errorDisplayComponent, Map<ArticleChange, List<Article>> articleChangeCollector) {
 
     List<ArticleCatalogState> irrelevantCatalogStates =
         Collections.singletonList(ArticleCatalogState.BARCODE_CHANGED);
@@ -98,7 +99,8 @@ public class SupplierFile {
         }
       }
       shoppingItems.add(
-          SupplyController.createShoppingItem(kkSupplier, content, header.getOrderNr(), noBarcode, articleChangeCollector));
+          SupplyController.createShoppingItem(
+              kkSupplier, content, header.getOrderNr(), noBarcode, articleChangeCollector));
     }
     if (!collectErrors.isEmpty()) {
       ObjectTable<ArticleComparedToCatalogEntry> errors =
