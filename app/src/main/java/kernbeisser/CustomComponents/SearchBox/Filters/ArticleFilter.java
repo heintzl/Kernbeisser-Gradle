@@ -8,6 +8,7 @@ import javax.swing.*;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.DBEntities.Supplier;
+import kernbeisser.Enums.ArticleConstants;
 import kernbeisser.Enums.ShopRange;
 import lombok.Setter;
 
@@ -29,11 +30,11 @@ public class ArticleFilter implements SearchBoxFilter<Article> {
   public Collection<Article> searchable(String query, int max) {
     Predicate<Article> predicate;
     if (discontinued) {
-      predicate = e -> e.getShopRange().equals(ShopRange.DISCONTINUED);
+      predicate = e -> !ArticleConstants.isConstantArticle(e) && e.getShopRange().equals(ShopRange.DISCONTINUED);
     } else {
       predicate =
           e ->
-              (!e.getShopRange().equals(ShopRange.DISCONTINUED))
+              (!e.getShopRange().equals(ShopRange.DISCONTINUED)) && !ArticleConstants.isConstantArticle(e)
                   && (!filterNoBarcode || e.getBarcode() == null)
                   && (!filterShowInShop || e.isShowInShop())
                   && (!filterShopRange || e.getShopRange().isVisible())

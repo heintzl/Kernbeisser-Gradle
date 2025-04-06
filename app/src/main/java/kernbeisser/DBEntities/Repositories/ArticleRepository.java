@@ -4,6 +4,7 @@ import static kernbeisser.DBConnection.ExpressionFactory.*;
 import static kernbeisser.DBConnection.PredicateFactory.*;
 import static kernbeisser.Enums.ArticleDeletionResult.*;
 
+import com.google.common.collect.Lists;
 import jakarta.persistence.*;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -21,6 +22,7 @@ import kernbeisser.Enums.*;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
 import kernbeisser.Tasks.ArticleComparedToCatalogEntry;
 import kernbeisser.Useful.Tools;
+import kernbeisser.Windows.Supply.SupplySelector.ArticleChange;
 import kernbeisser.Windows.Supply.SupplySelector.LineContent;
 import lombok.Cleanup;
 import lombok.extern.log4j.Log4j2;
@@ -861,5 +863,84 @@ public class ArticleRepository {
         .getResultList()
         .forEach(a -> result.put(a.getSuppliersItemNumber(), a.isOffer()));
     return result;
+  }
+
+  private static void collectChange(Map<ArticleChange, List<Article>> articleChangeCollector, ArticleChange change, Article article) {
+    List<Article> articles = articleChangeCollector.putIfAbsent(change, Lists.newArrayList(article));
+    if(articles != null) {
+      articles.add(article);
+    }
+  }
+
+  public static Article findOrCreateArticle(
+      Supplier kkSupplier, LineContent content, boolean noBarcode, Map<ArticleChange, List<Article>> articleChangeCollector) {
+    Optional<Article> articleInDb =
+        getBySuppliersItemNumber(kkSupplier, content.getKkNumber());
+    ShopRange shopRange =
+        (content.getContainerMultiplier() - Tools.ifNull(content.getUserPreorderCount(), 0) > 0
+            ? ShopRange.PERMANENT_RANGE
+            : ShopRange.IN_RANGE);
+    if (articleInDb.isPresent()) {
+      boolean dirty = false;
+      @Cleanup EntityManager em = DBConnection.getEntityManager();
+      @Cleanup("commit")
+      EntityTransaction et = em.getTransaction();
+      et.begin();
+      Article article = em.find(Article.class, articleInDb.map(Article::getId).get());
+      final List<ArticleChange> changes = new ArrayList<>();
+      ArticleChange change;
+      double newPrice = content.getPriceKb();
+      boolean newWeighable = content.isWeighableKb();
+      double newSingleDeposit = content.getSingleDeposit();
+      double newContainerDeposit = content.getContainerDeposit();
+      double newContainerSize = content.getContainerSize();
+      String logInfo = "Article [" + article.getSuppliersItemNumber() + "]:";
+      ShopRange articleShopRange = article.getShopRange();
+      if (!articleShopRange.equals(ShopRange.PERMANENT_RANGE)) {
+        if (!articleShopRange.equals(shopRange)) {
+          article.setShopRange(shopRange);
+          dirty = true;
+          logInfo += " updated shop range [%s] -".formatted(article.getShopRange().toString());
+        }
+      }
+      if (Math.abs(article.getNetPrice() - newPrice) >= 0.01) {
+        dirty = true;
+        change = ArticleChange.PRICE(article.getNetPrice(), newPrice);
+        logInfo += change.log();
+        article.setNetPrice(newPrice);
+      }
+      if (article.isWeighable() != newWeighable) {
+        dirty = true;
+        logInfo += " weighable change [%b -> %b] -".formatted(article.isWeighable(),newWeighable);
+        article.setWeighable(newWeighable);
+      }
+      if (article.getSingleDeposit() != newSingleDeposit) {
+        dirty = true;
+        change = ArticleChange.SINGLE_DEPOSIT(article.getSingleDeposit(),newSingleDeposit);
+        logInfo += change.log();
+        collectChange(articleChangeCollector, change, article);
+        article.setSingleDeposit(newSingleDeposit);
+      }
+      if (article.getContainerDeposit() != newContainerDeposit) {
+        dirty = true;
+        change = ArticleChange.CONTAINER_DEPOSIT(article.getContainerDeposit(), newContainerDeposit);
+        logInfo += change.log();
+        collectChange(articleChangeCollector, change, article);
+        article.setContainerDeposit(newContainerDeposit);
+      }
+      if (article.getContainerSize() != newContainerSize) {
+        dirty = true;
+        change = ArticleChange.CONTAINER_SIZE(article.getContainerSize(), newContainerSize);
+        logInfo += change.log();
+        collectChange(articleChangeCollector, change, article);
+        article.setContainerSize(newContainerSize);
+      }
+      if (dirty) {
+        em.merge(article);
+        log.info(logInfo.substring(0, logInfo.length() - 2));
+      }
+      return article;
+    }
+    return createArticleFromLineContent(content, noBarcode, shopRange);
   }
 }

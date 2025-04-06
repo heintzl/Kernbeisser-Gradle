@@ -17,6 +17,7 @@ import kernbeisser.DBEntities.ShoppingItem;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.Setting;
+import kernbeisser.Enums.ShopRange;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
 import kernbeisser.Forms.FormEditor.FormEditorController;
 import kernbeisser.Forms.FormImplemetations.Article.ArticleController;
@@ -70,7 +71,7 @@ public class SupplySelectorController extends Controller<SupplySelectorView, Sup
         }
       case ADDED:
         try {
-          Article article = SupplyController.findOrCreateArticle(kkSupplier, lineContent, false);
+          Article article = ArticleRepository.createArticleFromLineContent(lineContent, false, ShopRange.IN_RANGE);
           openArticleWindow(lineContent, article, false);
         } catch (NoSuchElementException e) {
           UnexpectedExceptionHandler.showUnexpectedErrorWarning(e);
@@ -206,9 +207,10 @@ public class SupplySelectorController extends Controller<SupplySelectorView, Sup
         .accept(
             supply,
             supply.getSupplierFiles().stream()
-                .map(f -> f.collectShoppingItems(getView().getContent()))
+                .map(f -> f.collectShoppingItems(getView().getContent(), model.getArticleChangeCollector()))
                 .flatMap(Collection::stream)
                 .collect(Collectors.toCollection(ArrayList::new)));
+    getView().showArticleChanges(model.getArticleChangeCollector());
     getView().back();
   }
 
