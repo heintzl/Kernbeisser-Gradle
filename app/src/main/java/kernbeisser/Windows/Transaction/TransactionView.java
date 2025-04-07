@@ -142,6 +142,10 @@ public class TransactionView implements IView<TransactionController> {
     from.setEnabled(b);
   }
 
+  void setToEnabled(boolean b) {
+    to.setEnabled(b);
+  }
+
   void setTransferTransactionsEnabled(boolean b) {
     transferTransactions.setEnabled(b);
   }

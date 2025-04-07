@@ -3,10 +3,7 @@ package kernbeisser.Windows.Transaction;
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 import jakarta.persistence.NoResultException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Predicate;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.DBEntities.Transaction;
@@ -31,14 +28,29 @@ public class TransactionController extends Controller<TransactionView, Transacti
     super(new TransactionModel(user, transactionType));
   }
 
+  public static TransactionController sharedContainerTransaction(
+      User user, double value, String infoMessage) {
+
+    TransactionController transactionController =
+        new TransactionController(null, TransactionType.SHARED_CONTAINER);
+    TransactionView view = transactionController.getView();
+    view.setTo(user);
+    view.setToKBEnable(false);
+    view.setFromKBEnable(false);
+    view.setInfo(infoMessage);
+    view.setValue("%.2f".formatted(value));
+    view.setToEnabled(false);
+
+    return transactionController;
+  }
+
   private void loadPreSettings(TransactionType transactionType) {
-    switch (transactionType) {
-      case PAYIN:
-        getView().setFromKBEnable(false);
-        getView().setToKBEnable(false);
-        getView().setFromEnabled(false);
-        getView().setFrom(User.getKernbeisserUser());
-        break;
+    if (transactionType == TransactionType.PAYIN) {
+      TransactionView view = getView();
+      view.setFromKBEnable(false);
+      view.setToKBEnable(false);
+      view.setFromEnabled(false);
+      view.setFrom(User.getKernbeisserUser());
     }
   }
 
@@ -167,7 +179,7 @@ public class TransactionController extends Controller<TransactionView, Transacti
   }
 
   private void refreshTooltip(AdvancedComboBox<User> box) {
-    if (box.getToolTipText() != null && !box.getToolTipText().equals("")) {
+    if (box.getToolTipText() != null && !box.getToolTipText().isEmpty()) {
       setToolTip(box, u -> true);
     }
   }
@@ -219,7 +231,7 @@ public class TransactionController extends Controller<TransactionView, Transacti
   @Override
   public boolean commitClose() {
     TransactionView view = getView();
-    if (model.getTransactions().size() > 0) {
+    if (!model.getTransactions().isEmpty()) {
       switch (view.commitUnsavedTransactions(model.getCount())) {
         case 0:
           unsafeTransfer();
