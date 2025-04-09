@@ -10,8 +10,10 @@ import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Predicate;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -577,6 +579,20 @@ public class TransactionView implements IView<TransactionController> {
   @Override
   public @NotNull JComponent getContent() {
     return main;
+  }
+
+  public static void populateUserComboBox(
+      AdvancedComboBox<User> box, List<User> users, Predicate<User> filter) {
+    Optional<User> selected = box.getSelected();
+    box.setItems(users);
+    if (box.isEnabled()) {
+      if (selected.isPresent() && filter.test(selected.get())) {
+        box.setSelectedItem(selected.get());
+      } else {
+        box.setSelectedItem(null);
+      }
+    }
+    box.repaint();
   }
 
   public void transactionRejected() {

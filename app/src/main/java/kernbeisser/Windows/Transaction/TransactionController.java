@@ -223,14 +223,20 @@ public class TransactionController extends Controller<TransactionView, Transacti
     }
   }
 
-  void fillUsers(boolean hidden) {
+  void fillUsers(boolean hideInactive) {
     TransactionView view = getView();
-    Predicate<User> filter = hidden ? u -> !u.isTestOnly() && u.isActive() : u -> !u.isTestOnly();
-    User.populateUserComboBox(view.getToControl(), true, true, filter);
+    Predicate<User> filter =
+        hideInactive ? u -> !u.isTestOnly() && u.isActive() : u -> !u.isTestOnly();
+    List<User> boxItems = model.getUsers(filter);
+    if (model.getTransactionType() == TransactionType.SHARED_CONTAINER) {
+      view.getToControl().setItems(Collections.singleton(User.getKernbeisserUser()));
+    } else {
+      TransactionView.populateUserComboBox(view.getToControl(), boxItems, filter);
+    }
     if (model.getTransactionType() == TransactionType.PAYIN) {
       view.getFromControl().setItems(Collections.singleton(User.getKernbeisserUser()));
     } else {
-      User.populateUserComboBox(view.getFromControl(), true, true, filter);
+      TransactionView.populateUserComboBox(view.getFromControl(), boxItems, filter);
     }
   }
 
