@@ -109,8 +109,18 @@ public class TransactionView implements IView<TransactionController> {
     to.setSelectedItem(u);
   }
 
-  void resetTo() {
-    if (to.isEnabled()) setTo(null);
+  public void resetTo() {
+    if (to.isEnabled()) {
+      setTo(null);
+      to.repaint();
+    }
+  }
+
+  public void resetFrom() {
+    if (from.isEnabled()) {
+      setFrom(null);
+      from.repaint();
+    }
   }
 
   User getFrom() {
@@ -581,8 +591,7 @@ public class TransactionView implements IView<TransactionController> {
 
   public void transactionAdded() {
     if (!toKBValue.isSelected()) {
-      setTo(null);
-      to.repaint();
+      resetTo();
     }
   }
 

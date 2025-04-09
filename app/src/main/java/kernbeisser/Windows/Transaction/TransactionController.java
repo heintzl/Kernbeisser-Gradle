@@ -35,6 +35,7 @@ public class TransactionController extends Controller<TransactionView, Transacti
         new TransactionController(null, TransactionType.SHARED_CONTAINER);
     TransactionView view = transactionController.getView();
     view.setTo(user);
+    view.resetFrom();
     view.setToKBEnable(false);
     view.setFromKBEnable(false);
     view.setInfo(infoMessage);
@@ -108,6 +109,7 @@ public class TransactionController extends Controller<TransactionView, Transacti
   void addTransaction() {
     Transaction transaction = new Transaction();
     TransactionView view = getView();
+    TransactionType transactionType = model.getTransactionType();
     if (view.getValue() > Setting.WARN_OVER_TRANSACTION_VALUE.getDoubleValue()
         && !view.confirmExtraHeightTransaction()) {
       return;
@@ -132,7 +134,7 @@ public class TransactionController extends Controller<TransactionView, Transacti
       view.invalidTo();
       return;
     }
-    if (model.getTransactionType() != TransactionType.PAYIN
+    if (transactionType != TransactionType.PAYIN
         && view.getFrom().equals(User.getKernbeisserUser())
         && isNullOrEmpty(view.getInfo())) {
       view.invalidPayin();
@@ -142,6 +144,10 @@ public class TransactionController extends Controller<TransactionView, Transacti
     transaction.setInfo(view.getInfo());
     model.addTransaction(transaction);
     refreshTable();
+    if (transactionType == TransactionType.SHARED_CONTAINER) {
+      view.resetFrom();
+      return;
+    }
     view.setValue("");
     view.resetTo();
     view.setInfo("");
