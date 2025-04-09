@@ -25,7 +25,6 @@ import kernbeisser.Reports.ProducePriceList;
 import kernbeisser.Useful.Date;
 import kernbeisser.Windows.MVC.ComponentController.ComponentController;
 import kernbeisser.Windows.MVC.Controller;
-import kernbeisser.Windows.Supply.SupplyController;
 import kernbeisser.Windows.ViewContainers.SubWindow;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
@@ -71,7 +70,9 @@ public class SupplySelectorController extends Controller<SupplySelectorView, Sup
         }
       case ADDED:
         try {
-          Article article = ArticleRepository.createArticleFromLineContent(lineContent, false, ShopRange.IN_RANGE);
+          Article article =
+              ArticleRepository.createArticleFromLineContent(
+                  lineContent, false, ShopRange.IN_RANGE);
           openArticleWindow(lineContent, article, false);
         } catch (NoSuchElementException e) {
           UnexpectedExceptionHandler.showUnexpectedErrorWarning(e);
@@ -207,7 +208,10 @@ public class SupplySelectorController extends Controller<SupplySelectorView, Sup
         .accept(
             supply,
             supply.getSupplierFiles().stream()
-                .map(f -> f.collectShoppingItems(getView().getContent(), model.getArticleChangeCollector()))
+                .map(
+                    f ->
+                        f.collectShoppingItems(
+                            getView().getContent(), model.getArticleChangeCollector()))
                 .flatMap(Collection::stream)
                 .collect(Collectors.toCollection(ArrayList::new)));
     getView().showArticleChanges(model.getArticleChangeCollector());

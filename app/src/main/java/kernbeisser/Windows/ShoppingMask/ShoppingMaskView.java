@@ -10,10 +10,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
-import java.util.Comparator;
-import java.util.EnumSet;
-import java.util.Locale;
-import java.util.Vector;
+import java.util.*;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.plaf.FontUIResource;
@@ -21,19 +18,18 @@ import javax.swing.text.StyleContext;
 import jiconfont.IconCode;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
+import kernbeisser.CustomComponents.Dialogs.NumberInputDialog;
 import kernbeisser.CustomComponents.FocusTraversal.FocusTraversal;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartView;
 import kernbeisser.CustomComponents.TextFields.DoubleParseField;
 import kernbeisser.CustomComponents.TextFields.IntegerParseField;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBEntities.Article;
+import kernbeisser.DBEntities.*;
 import kernbeisser.DBEntities.Repositories.ArticleRepository;
-import kernbeisser.DBEntities.SaleSession;
-import kernbeisser.DBEntities.Supplier;
-import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Enums.*;
 import kernbeisser.Forms.ObjectForm.Components.AccessCheckingField;
+import kernbeisser.Useful.Icons;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.IView;
@@ -104,10 +100,11 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
   private JLabel solidarity;
   private JTextField producer;
   private JButton editPost;
+  private JButton shareContainer;
   private ButtonGroup optGrpArticleType;
   private ButtonGroup optGrpReduction;
 
-  @Linked private ShoppingMaskController controller;
+  @Getter @Linked private ShoppingMaskController controller;
   @Linked private ShoppingCartController cartController;
 
   private ArticleType currentArticleType;
@@ -771,10 +768,6 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     }
   }
 
-  public ShoppingMaskController getController() {
-    return controller;
-  }
-
   @Override
   public void initialize(ShoppingMaskController controller) {
     float fontSize =
@@ -784,8 +777,11 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
         EnumSet.of(ArticleType.CUSTOM_PRODUCT, ArticleType.BAKED_GOODS, ArticleType.PRODUCE);
     depositArticleTypes = EnumSet.of(ArticleType.DEPOSIT, ArticleType.RETURN_DEPOSIT);
     checkout.addActionListener(e -> doCheckout());
+    checkout.setIcon(Icons.defaultIcon(FontAwesome.MONEY, new Color(49, 114, 128)));
     emptyShoppingCart.addActionListener(e -> controller.emptyShoppingCart());
+    emptyShoppingCart.setIcon(Icons.defaultIcon(FontAwesome.TRASH, Color.RED));
     cancelSalesSession.addActionListener(e -> doCancel());
+    cancelSalesSession.setIcon(Icons.defaultIcon(FontAwesome.POWER_OFF, new Color(0x680C00)));
     float iconSize = fontSize * 1.25f;
     searchArticle.setIcon(
         IconFontSwing.buildIcon(FontAwesome.SEARCH, iconSize, new Color(49, 114, 128)));
@@ -893,7 +889,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
           }
         });
 
-    if (controller.hasPreorderPermission()) {
+    if (ShoppingMaskController.hasPreorderPermission()) {
       pricePreordered.addItemListener(
           e -> {
             variablePercentage.setEnabled(false);
@@ -944,6 +940,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     try {
       activatePostEditor();
       editPost.addActionListener(e -> controller.openPost(false));
+      editPost.setIcon(Icons.defaultIcon(FontAwesome.FILE_TEXT, Color.DARK_GRAY));
     } catch (AccessDeniedException ignored) {
     }
 
@@ -956,6 +953,30 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
           }
           kbNumber.requestFocusInWindow();
         });
+
+    shareContainer.addActionListener(e -> sharedContainerTransaction());
+    shareContainer.setEnabled(false);
+    shareContainer.setVisible(ShoppingMaskController.hasPreorderPermission());
+    shareContainer.setIcon(Icons.defaultIcon(FontAwesome.SHARE, new Color(0x00A113)));
+    shoppingCartView
+        .getShoppingItemsTable()
+        .addSelectionListener(i -> shareContainer.setEnabled(i.isContainerDiscount()));
+  }
+
+  private void sharedContainerTransaction() {
+    Optional<ShoppingItem> selectedItem =
+        shoppingCartView.getShoppingItemsTable().getSelectedObject();
+    if (selectedItem.isEmpty() || !selectedItem.get().isContainerDiscount()) {
+      return;
+    }
+    controller.sharedContainerTransaction(selectedItem.get());
+  }
+
+  public int inputContainerShare(MetricUnits unit, int number) {
+    return NumberInputDialog.getInt(
+        getContent(),
+        "Wieviel %s (von %d) sollen geteilt werden?".formatted(unit.toString(), number),
+        "Gebinde teilen");
   }
 
   private void enablePreordered() {
@@ -1886,6 +1907,10 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     editPost.setText("Popup bearbeiten");
     editPost.setVisible(false);
     shoppingActionPanel.add(editPost);
+    shareContainer = new JButton();
+    shareContainer.setLabel("Gebinde teilen");
+    shareContainer.setText("Gebinde teilen");
+    shoppingActionPanel.add(shareContainer);
     cancelSalesSession = new JButton();
     cancelSalesSession.setText("Einkauf abbrechen");
     shoppingActionPanel.add(cancelSalesSession);

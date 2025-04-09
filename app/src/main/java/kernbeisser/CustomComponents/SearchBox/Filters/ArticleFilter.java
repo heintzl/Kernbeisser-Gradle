@@ -30,11 +30,15 @@ public class ArticleFilter implements SearchBoxFilter<Article> {
   public Collection<Article> searchable(String query, int max) {
     Predicate<Article> predicate;
     if (discontinued) {
-      predicate = e -> !ArticleConstants.isConstantArticle(e) && e.getShopRange().equals(ShopRange.DISCONTINUED);
+      predicate =
+          e ->
+              !ArticleConstants.isConstantArticle(e)
+                  && e.getShopRange().equals(ShopRange.DISCONTINUED);
     } else {
       predicate =
           e ->
-              (!e.getShopRange().equals(ShopRange.DISCONTINUED)) && !ArticleConstants.isConstantArticle(e)
+              (!e.getShopRange().equals(ShopRange.DISCONTINUED))
+                  && !ArticleConstants.isConstantArticle(e)
                   && (!filterNoBarcode || e.getBarcode() == null)
                   && (!filterShowInShop || e.isShowInShop())
                   && (!filterShopRange || e.getShopRange().isVisible())

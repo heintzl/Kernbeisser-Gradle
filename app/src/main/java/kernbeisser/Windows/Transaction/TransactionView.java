@@ -10,8 +10,10 @@ import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Predicate;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -109,8 +111,18 @@ public class TransactionView implements IView<TransactionController> {
     to.setSelectedItem(u);
   }
 
-  void resetTo() {
-    if (to.isEnabled()) setTo(null);
+  public void resetTo() {
+    if (to.isEnabled()) {
+      setTo(null);
+      to.repaint();
+    }
+  }
+
+  public void resetFrom() {
+    if (from.isEnabled()) {
+      setFrom(null);
+      from.repaint();
+    }
   }
 
   User getFrom() {
@@ -140,6 +152,10 @@ public class TransactionView implements IView<TransactionController> {
 
   void setFromEnabled(boolean b) {
     from.setEnabled(b);
+  }
+
+  void setToEnabled(boolean b) {
+    to.setEnabled(b);
   }
 
   void setTransferTransactionsEnabled(boolean b) {
@@ -565,6 +581,20 @@ public class TransactionView implements IView<TransactionController> {
     return main;
   }
 
+  public static void populateUserComboBox(
+      AdvancedComboBox<User> box, List<User> users, Predicate<User> filter) {
+    Optional<User> selected = box.getSelected();
+    box.setItems(users);
+    if (box.isEnabled()) {
+      if (selected.isPresent() && filter.test(selected.get())) {
+        box.setSelectedItem(selected.get());
+      } else {
+        box.setSelectedItem(null);
+      }
+    }
+    box.repaint();
+  }
+
   public void transactionRejected() {
     message(
         "Die eingegeben Überweisungen können nicht getätigt werden,\n"
@@ -577,8 +607,7 @@ public class TransactionView implements IView<TransactionController> {
 
   public void transactionAdded() {
     if (!toKBValue.isSelected()) {
-      setTo(null);
-      to.repaint();
+      resetTo();
     }
   }
 

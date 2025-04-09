@@ -10,8 +10,6 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.function.Predicate;
-import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.ExpressionFactory;
 import kernbeisser.DBConnection.PredicateFactory;
@@ -328,7 +326,7 @@ public class User implements Serializable, UserRelated, ActuallyCloneable {
     }
   }
 
-  public static Collection<User> getAllUserFullNames(boolean withKbUser, boolean orderSurname) {
+  public static List<User> getAllUserFullNames(boolean withKbUser, boolean orderSurname) {
     var qb =
         QueryBuilder.selectAll(User.class)
             .where(User_.unreadable.eq(false), GENERIC_USERS_PREDICATE.not());
@@ -344,27 +342,6 @@ public class User implements Serializable, UserRelated, ActuallyCloneable {
 
   public static Collection<User> getGenericUsers() {
     return QueryBuilder.selectAll(User.class).where(GENERIC_USERS_PREDICATE).getResultList();
-  }
-
-  public static void populateUserComboBox(
-      AdvancedComboBox<User> box,
-      boolean withKbUser,
-      boolean surnameFirst,
-      Predicate<User> filter) {
-    Optional<User> selected = box.getSelected();
-    List<User> boxItems = new ArrayList<>();
-    if (withKbUser) {
-      boxItems.add(getKernbeisserUser());
-    }
-    getAllUserFullNames(false, surnameFirst).stream().filter(filter).forEach(boxItems::add);
-    box.setItems(boxItems);
-    if (box.isEnabled()) {
-      if (selected.isPresent() && filter.test(selected.get())) {
-        box.setSelectedItem(selected.get());
-      } else {
-        box.setSelectedItem(null);
-      }
-    }
   }
 
   @PrePersist

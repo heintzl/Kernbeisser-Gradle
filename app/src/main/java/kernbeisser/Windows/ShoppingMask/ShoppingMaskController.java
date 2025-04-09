@@ -3,6 +3,7 @@ package kernbeisser.Windows.ShoppingMask;
 import jakarta.persistence.NoResultException;
 import java.awt.event.KeyEvent;
 import java.util.Objects;
+import java.util.Optional;
 import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.CustomComponents.KeyCapture;
 import kernbeisser.CustomComponents.ShoppingTable.ShoppingCartController;
@@ -20,6 +21,7 @@ import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.Pay.PayController;
 import kernbeisser.Windows.PostPanel.PostPanelController;
 import kernbeisser.Windows.ShoppingMask.ArticleSelector.ArticleSelectorController;
+import kernbeisser.Windows.Transaction.TransactionController;
 import kernbeisser.Windows.UserInfo.UserInfoController;
 import kernbeisser.Windows.ViewContainers.SubWindow;
 import org.jetbrains.annotations.NotNull;
@@ -476,5 +478,40 @@ public class ShoppingMaskController extends Controller<ShoppingMaskView, Shoppin
   public void openUserInfo() {
     new UserInfoController(model.getSaleSession().getCustomer())
         .openIn(new SubWindow(view.traceViewContainer()));
+  }
+
+  public void sharedContainerTransaction(@NotNull ShoppingItem containerItem) {
+
+    MetricUnits unit;
+    int numItems;
+    if (containerItem.isWeighAble()) {
+      unit = containerItem.getMetricUnits();
+      numItems = containerItem.getAmount() * containerItem.getItemMultiplier();
+    } else {
+      unit = MetricUnits.PIECE;
+      numItems = containerItem.getItemMultiplier();
+    }
+
+    int share = view.inputContainerShare(unit, numItems);
+    double value = containerItem.getRetailPrice() * share / numItems;
+    Optional<ShoppingItem> depositItem =
+        shoppingCartController.getItems().stream()
+            .filter(
+                i ->
+                    i.getParentItem() != null
+                        && i.getParentItem().equals(containerItem)
+                        && i.isDepositItem()
+                        && i.getItemMultiplier() == containerItem.getItemMultiplier())
+            .findAny();
+
+    if (depositItem.isPresent()) {
+      value += share * depositItem.get().getItemRetailPrice();
+    }
+
+    String infoMessage =
+        "Teilgebinde %s (%d/%d)".formatted(containerItem.getName(), share, numItems);
+    TransactionController.sharedContainerTransaction(
+            getModel().getSaleSession().getCustomer(), value, infoMessage)
+        .openIn(new SubWindow((view.traceViewContainer())));
   }
 }

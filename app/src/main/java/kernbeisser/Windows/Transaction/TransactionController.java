@@ -3,10 +3,7 @@ package kernbeisser.Windows.Transaction;
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 import jakarta.persistence.NoResultException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Predicate;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.DBEntities.Transaction;
@@ -31,14 +28,30 @@ public class TransactionController extends Controller<TransactionView, Transacti
     super(new TransactionModel(user, transactionType));
   }
 
+  public static TransactionController sharedContainerTransaction(
+      User user, double value, String infoMessage) {
+
+    TransactionController transactionController =
+        new TransactionController(null, TransactionType.SHARED_CONTAINER);
+    TransactionView view = transactionController.getView();
+    view.setTo(user);
+    view.resetFrom();
+    view.setToKBEnable(false);
+    view.setFromKBEnable(false);
+    view.setInfo(infoMessage);
+    view.setValue("%.2f".formatted(value));
+    view.setToEnabled(false);
+
+    return transactionController;
+  }
+
   private void loadPreSettings(TransactionType transactionType) {
-    switch (transactionType) {
-      case PAYIN:
-        getView().setFromKBEnable(false);
-        getView().setToKBEnable(false);
-        getView().setFromEnabled(false);
-        getView().setFrom(User.getKernbeisserUser());
-        break;
+    if (transactionType == TransactionType.PAYIN) {
+      TransactionView view = getView();
+      view.setFromKBEnable(false);
+      view.setToKBEnable(false);
+      view.setFromEnabled(false);
+      view.setFrom(User.getKernbeisserUser());
     }
   }
 
@@ -96,6 +109,7 @@ public class TransactionController extends Controller<TransactionView, Transacti
   void addTransaction() {
     Transaction transaction = new Transaction();
     TransactionView view = getView();
+    TransactionType transactionType = model.getTransactionType();
     if (view.getValue() > Setting.WARN_OVER_TRANSACTION_VALUE.getDoubleValue()
         && !view.confirmExtraHeightTransaction()) {
       return;
@@ -120,7 +134,7 @@ public class TransactionController extends Controller<TransactionView, Transacti
       view.invalidTo();
       return;
     }
-    if (model.getTransactionType() != TransactionType.PAYIN
+    if (transactionType != TransactionType.PAYIN
         && view.getFrom().equals(User.getKernbeisserUser())
         && isNullOrEmpty(view.getInfo())) {
       view.invalidPayin();
@@ -130,6 +144,10 @@ public class TransactionController extends Controller<TransactionView, Transacti
     transaction.setInfo(view.getInfo());
     model.addTransaction(transaction);
     refreshTable();
+    if (transactionType == TransactionType.SHARED_CONTAINER) {
+      view.resetFrom();
+      return;
+    }
     view.setValue("");
     view.resetTo();
     view.setInfo("");
@@ -167,7 +185,7 @@ public class TransactionController extends Controller<TransactionView, Transacti
   }
 
   private void refreshTooltip(AdvancedComboBox<User> box) {
-    if (box.getToolTipText() != null && !box.getToolTipText().equals("")) {
+    if (box.getToolTipText() != null && !box.getToolTipText().isEmpty()) {
       setToolTip(box, u -> true);
     }
   }
@@ -205,21 +223,27 @@ public class TransactionController extends Controller<TransactionView, Transacti
     }
   }
 
-  void fillUsers(boolean hidden) {
+  void fillUsers(boolean hideInactive) {
     TransactionView view = getView();
-    Predicate<User> filter = hidden ? u -> !u.isTestOnly() && u.isActive() : u -> !u.isTestOnly();
-    User.populateUserComboBox(view.getToControl(), true, true, filter);
+    Predicate<User> filter =
+        hideInactive ? u -> !u.isTestOnly() && u.isActive() : u -> !u.isTestOnly();
+    List<User> boxItems = model.getUsers(filter);
+    if (model.getTransactionType() == TransactionType.SHARED_CONTAINER) {
+      view.getToControl().setItems(Collections.singleton(User.getKernbeisserUser()));
+    } else {
+      TransactionView.populateUserComboBox(view.getToControl(), boxItems, filter);
+    }
     if (model.getTransactionType() == TransactionType.PAYIN) {
       view.getFromControl().setItems(Collections.singleton(User.getKernbeisserUser()));
     } else {
-      User.populateUserComboBox(view.getFromControl(), true, true, filter);
+      TransactionView.populateUserComboBox(view.getFromControl(), boxItems, filter);
     }
   }
 
   @Override
   public boolean commitClose() {
     TransactionView view = getView();
-    if (model.getTransactions().size() > 0) {
+    if (!model.getTransactions().isEmpty()) {
       switch (view.commitUnsavedTransactions(model.getCount())) {
         case 0:
           unsafeTransfer();

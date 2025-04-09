@@ -5,7 +5,6 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.*;
 import java.util.List;
-
 import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.CustomComponents.KeyCapture;
 import kernbeisser.DBEntities.*;
@@ -23,9 +22,6 @@ import kernbeisser.Windows.Supply.SupplySelector.SupplySelectorController;
 import kernbeisser.Windows.ViewContainers.SubWindow;
 import rs.groump.Key;
 import rs.groump.PermissionKey;
-
-import static kernbeisser.Windows.Supply.SupplySelector.ArticleChange.PRICE;
-import static kernbeisser.Windows.Supply.SupplySelector.ArticleChange.SINGLE_DEPOSIT;
 
 public class SupplyController extends Controller<SupplyView, SupplyModel> {
   public final KeyCapture keyCapture;
@@ -212,9 +208,17 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
   }
 
   public static ShoppingItem createShoppingItem(
-      Supplier kkSupplier, LineContent content, int orderNo, boolean ignoreBarcode, Map<ArticleChange, List<Article>> articleChangeCollector) {
+      Supplier kkSupplier,
+      LineContent content,
+      int orderNo,
+      boolean ignoreBarcode,
+      Map<ArticleChange, List<Article>> articleChangeCollector) {
     ShoppingItem shoppingItem =
-        new ShoppingItem(ArticleRepository.findOrCreateArticle(kkSupplier, content, ignoreBarcode, articleChangeCollector), 0, false);
+        new ShoppingItem(
+            ArticleRepository.findOrCreateArticle(
+                kkSupplier, content, ignoreBarcode, articleChangeCollector),
+            0,
+            false);
     double rawItemMultiplier =
         (shoppingItem.isWeighAble()
                 ? getAsItemMultiplierAmount(content)

@@ -6,7 +6,9 @@ public enum TransactionType {
   INITIALIZE("Übertrag aus Vorversion"),
   PAYIN("Einzahlung"),
   GROUP_MERGE("Kontoübertrag bei Gruppenwechsel"),
-  INFO("Information");
+  INFO("Information"),
+  SHARED_CONTAINER("Teilgebinde");
+
   private final String name;
 
   TransactionType(String name) {
