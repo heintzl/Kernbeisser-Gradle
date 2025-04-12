@@ -20,7 +20,8 @@ public enum Version {
   PREORDER_FROM_CATALOG(MigrateOpenPreOrders::new),
   CONFIRMATION_PANEL(AddOnShoppingMaskCheckoutPermission::new),
   HIBERNATE_6_ID_SEQUENCE(PopulateSeqNo::new),
-  REMOVE_TABLE_OFFER(RemoveOfferFromDB::new);
+  REMOVE_TABLE_OFFER(RemoveOfferFromDB::new),
+  ADD_SHARED_CONTAINER_TRANSACTION(ExtendTransactionTypeEnum::new);
 
   private final Supplier<VersionUpdatingTool> versionUpdatingToolSupplier;
 

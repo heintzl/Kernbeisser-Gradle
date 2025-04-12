@@ -865,17 +865,23 @@ public class ArticleRepository {
     return result;
   }
 
-  private static void collectChange(Map<ArticleChange, List<Article>> articleChangeCollector, ArticleChange change, Article article) {
-    List<Article> articles = articleChangeCollector.putIfAbsent(change, Lists.newArrayList(article));
-    if(articles != null) {
+  private static void collectChange(
+      Map<ArticleChange, List<Article>> articleChangeCollector,
+      ArticleChange change,
+      Article article) {
+    List<Article> articles =
+        articleChangeCollector.putIfAbsent(change, Lists.newArrayList(article));
+    if (articles != null) {
       articles.add(article);
     }
   }
 
   public static Article findOrCreateArticle(
-      Supplier kkSupplier, LineContent content, boolean noBarcode, Map<ArticleChange, List<Article>> articleChangeCollector) {
-    Optional<Article> articleInDb =
-        getBySuppliersItemNumber(kkSupplier, content.getKkNumber());
+      Supplier kkSupplier,
+      LineContent content,
+      boolean noBarcode,
+      Map<ArticleChange, List<Article>> articleChangeCollector) {
+    Optional<Article> articleInDb = getBySuppliersItemNumber(kkSupplier, content.getKkNumber());
     ShopRange shopRange =
         (content.getContainerMultiplier() - Tools.ifNull(content.getUserPreorderCount(), 0) > 0
             ? ShopRange.PERMANENT_RANGE
@@ -911,19 +917,20 @@ public class ArticleRepository {
       }
       if (article.isWeighable() != newWeighable) {
         dirty = true;
-        logInfo += " weighable change [%b -> %b] -".formatted(article.isWeighable(),newWeighable);
+        logInfo += " weighable change [%b -> %b] -".formatted(article.isWeighable(), newWeighable);
         article.setWeighable(newWeighable);
       }
       if (article.getSingleDeposit() != newSingleDeposit) {
         dirty = true;
-        change = ArticleChange.SINGLE_DEPOSIT(article.getSingleDeposit(),newSingleDeposit);
+        change = ArticleChange.SINGLE_DEPOSIT(article.getSingleDeposit(), newSingleDeposit);
         logInfo += change.log();
         collectChange(articleChangeCollector, change, article);
         article.setSingleDeposit(newSingleDeposit);
       }
       if (article.getContainerDeposit() != newContainerDeposit) {
         dirty = true;
-        change = ArticleChange.CONTAINER_DEPOSIT(article.getContainerDeposit(), newContainerDeposit);
+        change =
+            ArticleChange.CONTAINER_DEPOSIT(article.getContainerDeposit(), newContainerDeposit);
         logInfo += change.log();
         collectChange(articleChangeCollector, change, article);
         article.setContainerDeposit(newContainerDeposit);

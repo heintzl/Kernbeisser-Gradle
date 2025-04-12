@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.NoResultException;
 import java.util.*;
+import java.util.function.Predicate;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
@@ -14,7 +15,7 @@ import lombok.Getter;
 
 public class TransactionModel implements IModel<TransactionController> {
 
-  private final User owner;
+  @Getter private final User owner;
 
   @Getter private final TransactionType transactionType;
 
@@ -82,7 +83,7 @@ public class TransactionModel implements IModel<TransactionController> {
     transactions.remove(selectedTransaction);
   }
 
-  public User getOwner() {
-    return owner;
+  public List<User> getUsers(Predicate<User> filter) {
+    return User.getAllUserFullNames(true, true).stream().filter(filter).toList();
   }
 }

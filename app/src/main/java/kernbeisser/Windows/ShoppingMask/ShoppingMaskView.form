@@ -854,6 +854,13 @@
                           <visible value="false"/>
                         </properties>
                       </component>
+                      <component id="90e9e" class="javax.swing.JButton" binding="shareContainer">
+                        <constraints/>
+                        <properties>
+                          <label value="Gebinde teilen"/>
+                          <text value="Gebinde teilen"/>
+                        </properties>
+                      </component>
                       <component id="f8a0e" class="javax.swing.JButton" binding="cancelSalesSession">
                         <constraints/>
                         <properties>

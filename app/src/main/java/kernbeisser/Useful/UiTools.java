@@ -1,15 +1,14 @@
 package kernbeisser.Useful;
 
-import kernbeisser.CustomComponents.ObjectTable.Column;
-import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
-import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
-import kernbeisser.DBEntities.Article;
-
 import java.awt.*;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import javax.swing.*;
+import kernbeisser.CustomComponents.ObjectTable.Column;
+import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
+import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
+import kernbeisser.DBEntities.Article;
 
 public class UiTools {
 
@@ -47,13 +46,13 @@ public class UiTools {
 
   public static void showArticleList(Component parentComponent, List<Article> articles) {
     ObjectTable<Article> table =
-            new ObjectTable<>(
-                    articles,
-                    Columns.create("kbNumber", Article::getKbNumber)
-                            .withSorter(Column.NUMBER_SORTER)
-                            .withPreferredWidth(100),
-                    Columns.create("Artikel", Article::getName).withPreferredWidth(500));
+        new ObjectTable<>(
+            articles,
+            Columns.create("kbNumber", Article::getKbNumber)
+                .withSorter(Column.NUMBER_SORTER)
+                .withPreferredWidth(100),
+            Columns.create("Artikel", Article::getName).withPreferredWidth(500));
     JOptionPane.showMessageDialog(
-            parentComponent, new JScrollPane(table), "Artikel", JOptionPane.INFORMATION_MESSAGE);
+        parentComponent, new JScrollPane(table), "Artikel", JOptionPane.INFORMATION_MESSAGE);
   }
 }
