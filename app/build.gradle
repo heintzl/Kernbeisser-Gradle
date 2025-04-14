@@ -104,6 +104,7 @@ jar {
 }
 
 shadowJar {
+    destinationDirectory.set(layout.projectDirectory.dir("../build/deploy"))
     append 'jasperreports_extension.properties'
     archiveFileName = "kernbeisser.jar"
 }
