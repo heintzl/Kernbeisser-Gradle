@@ -3,6 +3,7 @@ package kernbeisser.DBEntities.Repositories;
 import static kernbeisser.DBConnection.ExpressionFactory.*;
 import static kernbeisser.DBConnection.PredicateFactory.*;
 import static kernbeisser.Enums.ArticleDeletionResult.*;
+import static kernbeisser.Enums.ShopRange.DISCONTINUED;
 
 import com.google.common.collect.Lists;
 import jakarta.persistence.*;
@@ -721,10 +722,8 @@ public class ArticleRepository {
       }
       dbArticle.setPriceList(null);
       dbArticle.setBarcode(null);
-      Supplier supplier = a.getSupplier();
-      dbArticle.setSupplier(null);
       dbArticle.setSurchargeGroup(UNLISTED_GROUP);
-      dbArticle.setShopRange(ShopRange.DISCONTINUED);
+      dbArticle.setShopRange(DISCONTINUED);
       em.merge(dbArticle);
     }
     et.commit();
