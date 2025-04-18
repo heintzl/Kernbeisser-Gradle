@@ -215,7 +215,7 @@ public class SupplyController extends Controller<SupplyView, SupplyModel> {
       Map<ArticleChange, List<Article>> articleChangeCollector) {
     ShoppingItem shoppingItem =
         new ShoppingItem(
-            ArticleRepository.findOrCreateArticle(
+            ArticleRepository.updateOrCreateArticleFromLineContent(
                 kkSupplier, content, ignoreBarcode, articleChangeCollector),
             0,
             false);
