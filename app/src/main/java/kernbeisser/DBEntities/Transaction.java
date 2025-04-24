@@ -152,6 +152,10 @@ public class Transaction implements UserRelated {
     return relationToUserGroup(User.getKernbeisserUser().getUserGroup());
   }
 
+  public String getDescription() {
+    return info.isEmpty() ? transactionType.toString() : info;
+  }
+
   public static Transaction doTransaction(
       EntityManager em,
       User from,

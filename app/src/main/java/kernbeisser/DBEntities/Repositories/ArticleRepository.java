@@ -514,7 +514,7 @@ public class ArticleRepository {
         double singleDeposit = catalogEntry.getEinzelPfand();
         double containerDeposit = catalogEntry.getGebindePfand();
         boolean changed = false;
-
+        Article conflictingArticle;
         switch (resultType) {
           case EQUAL:
             break;
@@ -544,7 +544,7 @@ public class ArticleRepository {
                 " Neuer Barcode. Möglicherweise ist die Lieferanten-Artikelnummer neu vergeben worden?";
             break;
           case BARCODE_CONFLICT_SAME_SUPPLIER:
-            Article conflictingArticle = difference.getConflictingArticle();
+            conflictingArticle = difference.getConflictingArticle();
             logBuilder +=
                 String.format(
                     " Derselbe Barcode,ist bereits bei dem %s-Artikel mit der KB-Artikelnummer %d vergeben. Ist einer der Artikel veraltet?",
@@ -590,9 +590,7 @@ public class ArticleRepository {
     AuditReader reader = AuditReaderFactory.get(em);
     Number revision = reader.getRevisionNumberForDate(date);
     AuditQuery query = reader.createQuery().forEntitiesAtRevision(Article.class, revision);
-    if (articleIds != null) {
-      query = query.add(AuditEntity.property("id").in(articleIds));
-    }
+    query = query.add(AuditEntity.property("id").in(articleIds));
 
     return query.getResultList();
   }
@@ -875,7 +873,7 @@ public class ArticleRepository {
     }
   }
 
-  public static Article findOrCreateArticle(
+  public static Article updateOrCreateArticleFromLineContent(
       Supplier kkSupplier,
       LineContent content,
       boolean noBarcode,
@@ -919,14 +917,15 @@ public class ArticleRepository {
         logInfo += " weighable change [%b -> %b] -".formatted(article.isWeighable(), newWeighable);
         article.setWeighable(newWeighable);
       }
-      if (article.getSingleDeposit() != newSingleDeposit) {
+      // TODO roll back work around for weird catalog deposits
+      if (newSingleDeposit > 0 && article.getSingleDeposit() != newSingleDeposit) {
         dirty = true;
         change = ArticleChange.SINGLE_DEPOSIT(article.getSingleDeposit(), newSingleDeposit);
         logInfo += change.log();
         collectChange(articleChangeCollector, change, article);
         article.setSingleDeposit(newSingleDeposit);
       }
-      if (article.getContainerDeposit() != newContainerDeposit) {
+      /* if (article.getContainerDeposit() != newContainerDeposit) {
         dirty = true;
         change =
             ArticleChange.CONTAINER_DEPOSIT(article.getContainerDeposit(), newContainerDeposit);
@@ -934,7 +933,9 @@ public class ArticleRepository {
         collectChange(articleChangeCollector, change, article);
         article.setContainerDeposit(newContainerDeposit);
       }
-      if (article.getContainerSize() != newContainerSize) {
+      TODO up to here
+       */
+      if (!article.isWeighable() && article.getContainerSize() != newContainerSize) {
         dirty = true;
         change = ArticleChange.CONTAINER_SIZE(article.getContainerSize(), newContainerSize);
         logInfo += change.log();

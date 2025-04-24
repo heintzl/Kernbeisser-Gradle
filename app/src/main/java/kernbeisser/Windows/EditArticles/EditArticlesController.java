@@ -107,6 +107,8 @@ public class EditArticlesController extends Controller<EditArticlesView, EditArt
                 .withHorizontalAlignment(RIGHT)
                 .withSorter(Column.NUMBER_SORTER),
             Columns.create("Einzelpfand", e -> String.format("%.2f€", e.getSingleDeposit()), RIGHT),
+            Columns.create(
+                "Gebindepfand", e -> String.format("%.2f€", e.getContainerDeposit()), RIGHT),
             new CustomizableColumn<Article>("MwSt.", e -> e.getVat().getName())
                 .withHorizontalAlignment(RIGHT)
                 .withDefaultFilter(),

@@ -16,7 +16,7 @@
         </constraints>
         <properties>
           <font size="14" style="1"/>
-          <text value="Konrkraft Katalog importieren"/>
+          <text value="Kornkraft Katalog importieren"/>
         </properties>
       </component>
       <grid id="da1f4" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
@@ -103,7 +103,7 @@
               <alignmentX value="0.5"/>
               <autoscrolls value="false"/>
               <editable value="false"/>
-              <margin top="2" left="6" bottom="2" right="6"/>
+              <margin top="2" left="9" bottom="2" right="6"/>
             </properties>
           </component>
           <component id="35455" class="javax.swing.JLabel">
@@ -129,7 +129,7 @@
               <alignmentY value="0.5"/>
               <autoscrolls value="false"/>
               <editable value="false"/>
-              <margin top="2" left="6" bottom="2" right="6"/>
+              <margin top="2" left="9" bottom="2" right="6"/>
             </properties>
           </component>
           <component id="95d77" class="javax.swing.JLabel">
@@ -153,7 +153,7 @@
               <alignmentY value="0.5"/>
               <autoscrolls value="false"/>
               <editable value="false"/>
-              <margin top="2" left="6" bottom="2" right="6"/>
+              <margin top="2" left="9" bottom="2" right="6"/>
             </properties>
           </component>
           <component id="60931" class="javax.swing.JLabel">
@@ -177,7 +177,7 @@
               <alignmentY value="0.5"/>
               <autoscrolls value="false"/>
               <editable value="false"/>
-              <margin top="2" left="6" bottom="2" right="6"/>
+              <margin top="2" left="9" bottom="2" right="6"/>
             </properties>
           </component>
           <component id="3e5a8" class="javax.swing.JLabel">
@@ -201,7 +201,7 @@
               <alignmentY value="0.5"/>
               <autoscrolls value="false"/>
               <editable value="false"/>
-              <margin top="2" left="6" bottom="2" right="6"/>
+              <margin top="2" left="9" bottom="2" right="6"/>
             </properties>
           </component>
           <component id="7d429" class="javax.swing.JLabel">
@@ -226,7 +226,7 @@
               <autoscrolls value="false"/>
               <editable value="false"/>
               <inheritsPopupMenu value="false"/>
-              <margin top="2" left="6" bottom="2" right="6"/>
+              <margin top="2" left="9" bottom="2" right="6"/>
             </properties>
           </component>
           <component id="2b4fb" class="javax.swing.JTextField" binding="lastCatalogCreationDate">
