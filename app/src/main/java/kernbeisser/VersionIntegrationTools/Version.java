@@ -21,7 +21,8 @@ public enum Version {
   CONFIRMATION_PANEL(AddOnShoppingMaskCheckoutPermission::new),
   HIBERNATE_6_ID_SEQUENCE(PopulateSeqNo::new),
   REMOVE_TABLE_OFFER(RemoveOfferFromDB::new),
-  ADD_SHARED_CONTAINER_TRANSACTION(ExtendTransactionTypeEnum::new);
+  ADD_SHARED_CONTAINER_TRANSACTION(ExtendTransactionTypeEnum::new),
+  CATALOG_ACTIONPRICE_DEFAULT(SetCatalogEntryAktionspreisDefault::new);
 
   private final Supplier<VersionUpdatingTool> versionUpdatingToolSupplier;
 

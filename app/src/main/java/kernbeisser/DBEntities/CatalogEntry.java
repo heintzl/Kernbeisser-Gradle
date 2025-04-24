@@ -147,7 +147,7 @@ public class CatalogEntry implements ActuallyCloneable {
   private String artikelart;
 
   @BoolValues(trueValue = "A")
-  private Boolean aktionspreis;
+  private Boolean aktionspreis = false;
 
   private Instant aktionspreisGueltigAb;
   private Instant aktionspreisGueltigBis;
@@ -193,7 +193,7 @@ public class CatalogEntry implements ActuallyCloneable {
 
   public String getUXString() {
     String result = artikelNr;
-    if (aktionspreis != null && aktionspreis) result += "A";
+    if (aktionspreis) result += "A";
     return result;
   }
 
@@ -205,9 +205,6 @@ public class CatalogEntry implements ActuallyCloneable {
   }
 
   public boolean isOffer() {
-    if (aktionspreis == null) {
-      return false;
-    }
     return aktionspreis;
   }
 
