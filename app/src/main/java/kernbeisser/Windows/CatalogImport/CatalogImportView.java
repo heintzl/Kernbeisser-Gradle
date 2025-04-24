@@ -26,168 +26,168 @@ import kernbeisser.Windows.MVC.IView;
 import org.jetbrains.annotations.NotNull;
 
 public class CatalogImportView implements IView<CatalogImportController> {
-  private JTextField filePath;
-  private JButton fileChooser;
-  private ObjectTable<CatalogImportError> protocol;
-  private JButton close;
-  private JButton applyChanges;
+    private JTextField filePath;
+    private JButton fileChooser;
+    private ObjectTable<CatalogImportError> protocol;
+    private JButton close;
+    private JButton applyChanges;
 
-  private JPanel main;
-  private JTextField scope;
-  private JTextField description;
-  private JTextField validFrom;
-  private JTextField validTo;
-  private JTextField createdDate;
-  private JTextField createdTime;
-  private JPanel infoPanel;
-  private JScrollPane protocolPane;
-  private JLabel protocolCaption;
-  private JTextField lastCatalogCreationDate;
-  private JTextField lastCatalogValidDate;
-  private JProgressBar loadingIndicator;
-  private CatalogImportController controller;
+    private JPanel main;
+    private JTextField scope;
+    private JTextField description;
+    private JTextField validFrom;
+    private JTextField validTo;
+    private JTextField createdDate;
+    private JTextField createdTime;
+    private JPanel infoPanel;
+    private JScrollPane protocolPane;
+    private JLabel protocolCaption;
+    private JTextField lastCatalogCreationDate;
+    private JTextField lastCatalogValidDate;
+    private JProgressBar loadingIndicator;
+    private CatalogImportController controller;
 
-  @Override
-  public void initialize(CatalogImportController controller) {
-    this.controller = controller;
-    close.addActionListener(e -> back());
-    // readFile.addActionListener(e -> controller.readFile(filePath.getText()));
-    filePath.addActionListener(e -> controller.readFile(filePath.getText()));
-    applyChanges.addActionListener(e -> controller.applyChanges());
-    applyChanges.setEnabled(false);
-    fileChooser.addActionListener(e -> openFileExplorer());
-    fileChooser.setIcon(IconFontSwing.buildIcon(FontAwesome.FOLDER, 20, new Color(255, 192, 3)));
-    applyChanges.setIcon(IconFontSwing.buildIcon(FontAwesome.DOWNLOAD, 20, new Color(26, 49, 134)));
-    close.setIcon(IconFontSwing.buildIcon(FontAwesome.WINDOW_CLOSE, 20, new Color(133, 0, 16)));
-  }
+    @Override
+    public void initialize(CatalogImportController controller) {
+        this.controller = controller;
+        close.addActionListener(e -> back());
+        // readFile.addActionListener(e -> controller.readFile(filePath.getText()));
+        filePath.addActionListener(e -> controller.readFile(filePath.getText()));
+        applyChanges.addActionListener(e -> controller.applyChanges());
+        applyChanges.setEnabled(false);
+        fileChooser.addActionListener(e -> openFileExplorer());
+        fileChooser.setIcon(IconFontSwing.buildIcon(FontAwesome.FOLDER, 20, new Color(255, 192, 3)));
+        applyChanges.setIcon(IconFontSwing.buildIcon(FontAwesome.DOWNLOAD, 20, new Color(26, 49, 134)));
+        close.setIcon(IconFontSwing.buildIcon(FontAwesome.WINDOW_CLOSE, 20, new Color(133, 0, 16)));
+    }
 
-  public void setScope(String t) {
-    scope.setText(t);
-  }
+    public void setScope(String t) {
+        scope.setText(t);
+    }
 
-  public void setDescription(String t) {
-    description.setText(t);
-  }
+    public void setDescription(String t) {
+        description.setText(t);
+    }
 
-  public void setCreatedDate(Instant date) {
-    createdDate.setText(Date.safeDateFormat(date, Date.INSTANT_DATE));
-  }
+    public void setCreatedDate(Instant date) {
+        createdDate.setText(Date.safeDateFormat(date, Date.INSTANT_DATE));
+    }
 
-  public void setCreatedTime(Instant time) {
-    createdTime.setText(Date.safeDateFormat(time, Date.INSTANT_TIME));
-  }
+    public void setCreatedTime(Instant time) {
+        createdTime.setText(Date.safeDateFormat(time, Date.INSTANT_TIME));
+    }
 
-  public void setValidFrom(Instant date) {
-    validFrom.setText(Date.safeDateFormat(date, Date.INSTANT_DATE));
-  }
+    public void setValidFrom(Instant date) {
+        validFrom.setText(Date.safeDateFormat(date, Date.INSTANT_DATE));
+    }
 
-  public void setValidTo(Instant date) {
-    validTo.setText(Date.safeDateFormat(date, Date.INSTANT_DATE));
-  }
+    public void setValidTo(Instant date) {
+        validTo.setText(Date.safeDateFormat(date, Date.INSTANT_DATE));
+    }
 
-  public void setLastCatalogInfo(Instant lastCreationDate, Instant lastValidDate) {
-    lastCatalogCreationDate.setText(Date.safeDateFormat(lastCreationDate, Date.INSTANT_DATE));
-    lastCatalogValidDate.setText(Date.safeDateFormat(lastValidDate, Date.INSTANT_DATE));
-  }
+    public void setLastCatalogInfo(Instant lastCreationDate, Instant lastValidDate) {
+        lastCatalogCreationDate.setText(Date.safeDateFormat(lastCreationDate, Date.INSTANT_DATE));
+        lastCatalogValidDate.setText(Date.safeDateFormat(lastValidDate, Date.INSTANT_DATE));
+    }
 
-  public void setApplyChangesEnabled(boolean b) {
-    applyChanges.setEnabled(b);
-  }
+    public void setApplyChangesEnabled(boolean b) {
+        applyChanges.setEnabled(b);
+    }
 
-  public void indicateLoading(boolean b) {
-    applyChanges.setEnabled(!b);
-    loadingIndicator.setVisible(b);
-  }
+    public void indicateLoading(boolean b) {
+        applyChanges.setEnabled(!b);
+        loadingIndicator.setVisible(b);
+    }
 
-  private void createUIComponents() {
-    protocol =
-        new ObjectTable<CatalogImportError>(
-            Columns.create("Zeile / Artikelnummer", CatalogImportError::getLineNumber)
-                .withSorter(Column.NUMBER_SORTER)
-                .withPreferredWidth(100),
-            Columns.<CatalogImportError>create(
-                    "Fehlerbeschreibung", e -> e.getE().getLocalizedMessage())
-                .withPreferredWidth(1200),
-            Columns.createIconColumn(
-                "Details",
-                e -> IconFontSwing.buildIcon(FontAwesome.INFO_CIRCLE, 18, Color.DARK_GRAY),
-                e -> UnexpectedExceptionHandler.showErrorWarning(e.getE(), "Import-Meldung:"),
+    private void createUIComponents() {
+        protocol =
+                new ObjectTable<CatalogImportError>(
+                        Columns.create("Zeile / Artikelnummer", CatalogImportError::getLineNumber)
+                                .withSorter(Column.NUMBER_SORTER)
+                                .withPreferredWidth(100),
+                        Columns.<CatalogImportError>create(
+                                        "Fehlerbeschreibung", e -> e.getE().getLocalizedMessage())
+                                .withPreferredWidth(1200),
+                        Columns.createIconColumn(
+                                "Details",
+                                e -> IconFontSwing.buildIcon(FontAwesome.INFO_CIRCLE, 18, Color.DARK_GRAY),
+                                e -> UnexpectedExceptionHandler.showErrorWarning(e.getE(), "Import-Meldung:"),
+                                e -> {
+                                    return;
+                                },
+                                70));
+    }
+
+    public void setReadErrors(List<CatalogImportError> errors) {
+        protocol.setObjects(errors);
+        protocol.repaint();
+    }
+
+    @Override
+    public @NotNull JComponent getContent() {
+        return main;
+    }
+
+    @Override
+    public String getTitle() {
+        return "Katalog einlesen";
+    }
+
+    public void messageFormatError(String message) {
+        JOptionPane.showMessageDialog(
+                getContent(), message, "Fehler in der Katalogdatei", JOptionPane.ERROR_MESSAGE);
+    }
+
+    public void messagePathNotFound(String path) {
+        JOptionPane.showMessageDialog(
+                getContent(),
+                "Die Datei \"" + path + "\" konnte nicht gefunden werden.",
+                "Datei nicht gefunden",
+                JOptionPane.ERROR_MESSAGE);
+    }
+
+    void openFileExplorer() {
+        Path importPath = Config.getConfig().getDefaultBnnInboxDir().toPath();
+        String chooserRoot = Files.exists(importPath) ? importPath.toString() : ".";
+        JFileChooser jFileChooser = new JFileChooser(chooserRoot);
+        jFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        jFileChooser.setFileFilter(
+                new FileNameExtensionFilter("Katalog", "BNN", "bnn", "CSV", "csv", "TXT", "txt"));
+        jFileChooser.addActionListener(
                 e -> {
-                  return;
-                },
-                70));
-  }
+                    if (jFileChooser.getSelectedFile() == null) {
+                        return;
+                    }
+                    String choosenFile = jFileChooser.getSelectedFile().getAbsolutePath();
+                    filePath.setText(choosenFile);
+                    controller.readFile(choosenFile);
+                });
+        jFileChooser.showOpenDialog(getContent());
+    }
 
-  public void setReadErrors(List<CatalogImportError> errors) {
-    protocol.setObjects(errors);
-    protocol.repaint();
-  }
+    public boolean confirmImportInValidCatalog(String s) {
+        return JOptionPane.showConfirmDialog(
+                getContent(),
+                s + "\nSoll der Katalog wirklich eingelesen werden?",
+                "Katalog nicht aktuell",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE)
+                == JOptionPane.YES_OPTION;
+    }
 
-  @Override
-  public @NotNull JComponent getContent() {
-    return main;
-  }
+    public boolean confirmMergeCatalog() {
+        return JOptionPane.showConfirmDialog(
+                getContent(),
+                "Der Katalog ist als \"Vollständig\" gekennzeichnet."
+                        + "\nSollen alte Einträge beibehalten werden, die in diesem Katalog nicht enthalten sind?"
+                        + "\nMit \"Nein\" wird der Katalog vollständig ersetzt.",
+                "Katalog zusammenführen",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE)
+                == JOptionPane.YES_OPTION;
+    }
 
-  @Override
-  public String getTitle() {
-    return "Katalog einlesen";
-  }
-
-  public void messageFormatError(String message) {
-    JOptionPane.showMessageDialog(
-        getContent(), message, "Fehler in der Katalogdatei", JOptionPane.ERROR_MESSAGE);
-  }
-
-  public void messagePathNotFound(String path) {
-    JOptionPane.showMessageDialog(
-        getContent(),
-        "Die Datei \"" + path + "\" konnte nicht gefunden werden.",
-        "Datei nicht gefunden",
-        JOptionPane.ERROR_MESSAGE);
-  }
-
-  void openFileExplorer() {
-    Path importPath = Config.getConfig().getDefaultBnnInboxDir().toPath();
-    String chooserRoot = Files.exists(importPath) ? importPath.toString() : ".";
-    JFileChooser jFileChooser = new JFileChooser(chooserRoot);
-    jFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-    jFileChooser.setFileFilter(
-        new FileNameExtensionFilter("Katalog", "BNN", "bnn", "CSV", "csv", "TXT", "txt"));
-    jFileChooser.addActionListener(
-        e -> {
-          if (jFileChooser.getSelectedFile() == null) {
-            return;
-          }
-          String choosenFile = jFileChooser.getSelectedFile().getAbsolutePath();
-          filePath.setText(choosenFile);
-          controller.readFile(choosenFile);
-        });
-    jFileChooser.showOpenDialog(getContent());
-  }
-
-  public boolean confirmImportInValidCatalog(String s) {
-    return JOptionPane.showConfirmDialog(
-            getContent(),
-            s + "\nSoll der Katalog wirklich eingelesen werden?",
-            "Katalog nicht aktuell",
-            JOptionPane.YES_NO_OPTION,
-            JOptionPane.WARNING_MESSAGE)
-        == JOptionPane.YES_OPTION;
-  }
-
-  public boolean confirmMergeCatalog() {
-    return JOptionPane.showConfirmDialog(
-            getContent(),
-            "Der Katalog ist als \"Vollständig\" gekennzeichnet."
-                + "\nSollen alte Einträge beibehalten werden, die in diesem Katalog nicht enthalten sind?"
-                + "\nMit \"Nein\" wird der Katalog vollständig ersetzt.",
-            "Katalog zusammenführen",
-            JOptionPane.YES_NO_OPTION,
-            JOptionPane.WARNING_MESSAGE)
-        == JOptionPane.YES_OPTION;
-  }
-
-  // @spotless:off
+    // @spotless:off
 
     {
 // GUI initializer generated by IntelliJ IDEA GUI Designer
@@ -196,9 +196,11 @@ public class CatalogImportView implements IView<CatalogImportController> {
         $$$setupUI$$$();
     }
 
-    /** Method generated by IntelliJ IDEA GUI Designer
+    /**
+     * Method generated by IntelliJ IDEA GUI Designer
      * >>> IMPORTANT!! <<<
      * DO NOT edit this method OR call it in your code!
+     *
      * @noinspection ALL
      */
     private void $$$setupUI$$$() {
@@ -209,7 +211,7 @@ public class CatalogImportView implements IView<CatalogImportController> {
         final JLabel label1 = new JLabel();
         Font label1Font = this.$$$getFont$$$(null, Font.BOLD, 14, label1.getFont());
         if (label1Font != null) label1.setFont(label1Font);
-        label1.setText("Konrkraft Katalog importieren");
+        label1.setText("Kornkraft Katalog importieren");
         main.add(label1, new GridConstraints(0, 0, 1, 4, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JPanel panel1 = new JPanel();
         panel1.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
@@ -242,7 +244,7 @@ public class CatalogImportView implements IView<CatalogImportController> {
         description.setAlignmentX(0.5f);
         description.setAutoscrolls(false);
         description.setEditable(false);
-        description.setMargin(new Insets(2, 6, 2, 6));
+        description.setMargin(new Insets(2, 9, 2, 6));
         infoPanel.add(description, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(208, 30), null, 0, false));
         final JLabel label4 = new JLabel();
         label4.setText("Beschreibung:");
@@ -254,7 +256,7 @@ public class CatalogImportView implements IView<CatalogImportController> {
         validFrom.setAlignmentY(0.5f);
         validFrom.setAutoscrolls(false);
         validFrom.setEditable(false);
-        validFrom.setMargin(new Insets(2, 6, 2, 6));
+        validFrom.setMargin(new Insets(2, 9, 2, 6));
         infoPanel.add(validFrom, new GridConstraints(1, 4, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         final JLabel label5 = new JLabel();
         label5.setText("gütlig ab:");
@@ -266,7 +268,7 @@ public class CatalogImportView implements IView<CatalogImportController> {
         validTo.setAlignmentY(0.5f);
         validTo.setAutoscrolls(false);
         validTo.setEditable(false);
-        validTo.setMargin(new Insets(2, 6, 2, 6));
+        validTo.setMargin(new Insets(2, 9, 2, 6));
         infoPanel.add(validTo, new GridConstraints(1, 5, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         final JLabel label6 = new JLabel();
         label6.setText("gültig bis:");
@@ -278,7 +280,7 @@ public class CatalogImportView implements IView<CatalogImportController> {
         createdDate.setAlignmentY(0.5f);
         createdDate.setAutoscrolls(false);
         createdDate.setEditable(false);
-        createdDate.setMargin(new Insets(2, 6, 2, 6));
+        createdDate.setMargin(new Insets(2, 9, 2, 6));
         infoPanel.add(createdDate, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         final JLabel label7 = new JLabel();
         label7.setText("erstellt am:");
@@ -290,7 +292,7 @@ public class CatalogImportView implements IView<CatalogImportController> {
         createdTime.setAlignmentY(0.5f);
         createdTime.setAutoscrolls(false);
         createdTime.setEditable(false);
-        createdTime.setMargin(new Insets(2, 6, 2, 6));
+        createdTime.setMargin(new Insets(2, 9, 2, 6));
         infoPanel.add(createdTime, new GridConstraints(1, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         final JLabel label8 = new JLabel();
         label8.setText("erstellt um:");
@@ -303,7 +305,7 @@ public class CatalogImportView implements IView<CatalogImportController> {
         scope.setAutoscrolls(false);
         scope.setEditable(false);
         scope.setInheritsPopupMenu(false);
-        scope.setMargin(new Insets(2, 6, 2, 6));
+        scope.setMargin(new Insets(2, 9, 2, 6));
         infoPanel.add(scope, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(154, 30), null, 0, false));
         lastCatalogCreationDate = new JTextField();
         lastCatalogCreationDate.setEditable(false);
@@ -331,7 +333,9 @@ public class CatalogImportView implements IView<CatalogImportController> {
         protocolCaption.setLabelFor(protocolPane);
     }
 
-    /** @noinspection ALL */
+    /**
+     * @noinspection ALL
+     */
     private Font $$$getFont$$$(String fontName, int style, int size, Font currentFont) {
         if (currentFont == null) return null;
         String resultName;
@@ -351,7 +355,9 @@ public class CatalogImportView implements IView<CatalogImportController> {
         return fontWithFallback instanceof FontUIResource ? fontWithFallback : new FontUIResource(fontWithFallback);
     }
 
-    /** @noinspection ALL */
+    /**
+     * @noinspection ALL
+     */
     public JComponent $$$getRootComponent$$$() {
         return main;
     }
