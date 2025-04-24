@@ -53,8 +53,10 @@ public class Supply {
       DayOfWeek d = dateTime.getDayOfWeek();
       if (h >= hFrom && h <= hTo) {
         SupplierFile supplierFile = SupplierFile.parse(file);
-        if (supplierFile.getHeader().getOrderType() == 8)
+        FileHeader header = supplierFile.getHeader();
+        if (header != null && header.getOrderType() == 8) {
           findOrCreate(supplies, date, maxSecDiff).supplierFiles.add(supplierFile);
+        }
       }
     }
     return supplies;

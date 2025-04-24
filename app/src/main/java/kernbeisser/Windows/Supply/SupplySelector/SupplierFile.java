@@ -45,6 +45,9 @@ public class SupplierFile {
   @SneakyThrows
   public static SupplierFile parse(File file) {
     List<String> lines = Files.readAllLines(file.toPath(), Catalog.DEFAULT_ENCODING);
+    if (lines.isEmpty()) {
+      return emptySupplierFile(file);
+    }
     FileHeader header = FileHeader.parseLine(lines.get(0));
     return new SupplierFile(
         header,
@@ -54,6 +57,16 @@ public class SupplierFile {
         QueryBuilder.selectAll(ShoppingItem.class)
             .where(ShoppingItem_.orderNo.eq(header.getOrderNr()))
             .hasResult());
+  }
+
+  @SneakyThrows
+  public static SupplierFile emptySupplierFile(File file) {
+    return new SupplierFile(
+        null,
+        null,
+        Files.readAttributes(file.toPath(), BasicFileAttributes.class).creationTime().toInstant(),
+        file,
+        false);
   }
 
   public Collection<LineContent> getNotInCatalog() {
