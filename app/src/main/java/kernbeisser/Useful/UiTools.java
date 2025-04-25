@@ -9,6 +9,7 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.DBEntities.Article;
+import kernbeisser.DBEntities.CatalogEntry;
 
 public class UiTools {
 
@@ -54,5 +55,26 @@ public class UiTools {
             Columns.create("Artikel", Article::getName).withPreferredWidth(500));
     JOptionPane.showMessageDialog(
         parentComponent, new JScrollPane(table), "Artikel", JOptionPane.INFORMATION_MESSAGE);
+  }
+
+  public static void showCatalogEntryList(
+      Component parentComponent, List<CatalogEntry> catalog, JComponent moreUI) {
+    ObjectTable<CatalogEntry> table =
+        new ObjectTable<>(
+            catalog,
+            Columns.create("Artikelnummer", CatalogEntry::getArtikelNr)
+                .withSorter(Column.NUMBER_SORTER)
+                .withPreferredWidth(100),
+            Columns.create("Artikel", CatalogEntry::getBezeichnung).withPreferredWidth(500),
+            Columns.create("Einzelpfand", CatalogEntry::getPfandNrLadeneinheit),
+            Columns.create("Gebindepfand", CatalogEntry::getPfandNrBestelleinheit));
+    table.setPreferredScrollableViewportSize(new Dimension(800, 650));
+    JPanel messagePanel = new JPanel(new BorderLayout());
+    messagePanel.add(new JScrollPane(table), BorderLayout.CENTER);
+    if (moreUI != null) {
+      messagePanel.add(moreUI, BorderLayout.SOUTH);
+    }
+    JOptionPane.showMessageDialog(
+        parentComponent, messagePanel, "Katalog-Artikel", JOptionPane.INFORMATION_MESSAGE);
   }
 }
