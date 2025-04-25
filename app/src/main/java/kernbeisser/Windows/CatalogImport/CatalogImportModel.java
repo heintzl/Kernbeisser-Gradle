@@ -148,4 +148,13 @@ public class CatalogImportModel implements IModel<CatalogImportController> {
     refreshLastCatalogInfo();
     return importErrors;
   }
+
+  List<CatalogEntry> getCatalogEntriesByDeposit(String artikelNr) {
+    return catalogImporter.getCatalog().stream()
+        .filter(
+            e ->
+                e.getPfandNrBestelleinheit().equals(artikelNr)
+                    || e.getPfandNrLadeneinheit().equals(artikelNr))
+        .toList();
+  }
 }

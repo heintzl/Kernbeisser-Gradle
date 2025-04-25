@@ -20,7 +20,6 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.Exeptions.CatalogImportCriticalErrorException;
-import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
 import kernbeisser.Tasks.Catalog.CatalogImportError;
 import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Icons;
@@ -116,12 +115,11 @@ public class CatalogImportView implements IView<CatalogImportController> {
             Columns.<CatalogImportError>createIconColumn(
                     "Details",
                     e ->
-                        e.getE().getClass().equals(CatalogImportCriticalErrorException.class)
+                        e.getE() instanceof CatalogImportCriticalErrorException
                             ? criticalIcon
                             : infoIcon)
                 .withPreferredWidth(70)
-                .withLeftClickConsumer(
-                    e -> UnexpectedExceptionHandler.showErrorWarning(e.getE(), "Import-Meldung:")));
+                .withLeftClickConsumer(e -> controller.showImportErrorDetails(e)));
     protocol.setSortKeys(new RowSorter.SortKey(0, SortOrder.ASCENDING));
   }
 

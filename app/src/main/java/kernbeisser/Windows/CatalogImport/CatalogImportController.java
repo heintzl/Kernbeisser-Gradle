@@ -5,10 +5,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.List;
+import javax.swing.*;
+import kernbeisser.Exeptions.CatalogImportMissingDepositException;
 import kernbeisser.Exeptions.UnknownFileFormatException;
+import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
 import kernbeisser.Tasks.Catalog.CatalogImportError;
 import kernbeisser.Tasks.Catalog.CatalogImporter;
 import kernbeisser.Useful.Tools;
+import kernbeisser.Useful.UiTools;
 import kernbeisser.Windows.MVC.Controller;
 import rs.groump.AccessDeniedException;
 import rs.groump.Key;
@@ -106,5 +110,19 @@ public class CatalogImportController extends Controller<CatalogImportView, Catal
               view.indicateLoading(false);
             })
         .start();
+  }
+
+  public void showImportErrorDetails(CatalogImportError e) {
+    Exception error = e.getE();
+    if (error instanceof CatalogImportMissingDepositException) {
+      JButton showErrorDetails = new JButton("Fehlerdetails");
+      String articleNo = ((CatalogImportMissingDepositException) error).getDepositArtNo();
+      showErrorDetails.addActionListener(
+          er -> UnexpectedExceptionHandler.showErrorWarning(error, "Import-Meldung:"));
+      UiTools.showCatalogEntryList(
+          getView().getContent(), model.getCatalogEntriesByDeposit(articleNo), showErrorDetails);
+    } else {
+      UnexpectedExceptionHandler.showErrorWarning(e.getE(), "Import-Meldung:");
+    }
   }
 }
