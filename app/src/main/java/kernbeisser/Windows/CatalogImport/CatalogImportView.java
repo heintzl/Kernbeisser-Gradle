@@ -19,9 +19,11 @@ import kernbeisser.Config.Config;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
+import kernbeisser.Exeptions.CatalogImportCriticalErrorException;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
 import kernbeisser.Tasks.Catalog.CatalogImportError;
 import kernbeisser.Useful.Date;
+import kernbeisser.Useful.Icons;
 import kernbeisser.Windows.MVC.IView;
 import org.jetbrains.annotations.NotNull;
 
@@ -99,6 +101,9 @@ public class CatalogImportView implements IView<CatalogImportController> {
     loadingIndicator.setVisible(b);
   }
 
+  static final Icon infoIcon = Icons.defaultIcon(FontAwesome.INFO_CIRCLE, Color.DARK_GRAY);
+  static final Icon criticalIcon = Icons.defaultIcon(FontAwesome.EXCLAMATION_CIRCLE, Color.ORANGE);
+
   private void createUIComponents() {
     protocol =
         new ObjectTable<CatalogImportError>(
@@ -108,14 +113,16 @@ public class CatalogImportView implements IView<CatalogImportController> {
             Columns.<CatalogImportError>create(
                     "Fehlerbeschreibung", e -> e.getE().getLocalizedMessage())
                 .withPreferredWidth(1200),
-            Columns.createIconColumn(
-                "Details",
-                e -> IconFontSwing.buildIcon(FontAwesome.INFO_CIRCLE, 18, Color.DARK_GRAY),
-                e -> UnexpectedExceptionHandler.showErrorWarning(e.getE(), "Import-Meldung:"),
-                e -> {
-                  return;
-                },
-                70));
+            Columns.<CatalogImportError>createIconColumn(
+                    "Details",
+                    e ->
+                        e.getE().getClass().equals(CatalogImportCriticalErrorException.class)
+                            ? criticalIcon
+                            : infoIcon)
+                .withPreferredWidth(70)
+                .withLeftClickConsumer(
+                    e -> UnexpectedExceptionHandler.showErrorWarning(e.getE(), "Import-Meldung:")));
+    protocol.setSortKeys(new RowSorter.SortKey(0, SortOrder.ASCENDING));
   }
 
   public void setReadErrors(List<CatalogImportError> errors) {
