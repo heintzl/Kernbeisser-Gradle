@@ -57,16 +57,14 @@ public class CatalogImportModel implements IModel<CatalogImportController> {
     }
   }
 
-  private boolean checkImport(
-      CatalogEntry source, CatalogEntry target, List<CatalogImportError> importErrors)
+  private boolean checkImport(CatalogEntry source, CatalogEntry target)
       throws CatalogImportErrorException, CatalogImportWarningException {
-    boolean exists = true;
     String sourceUpdateType = source.getAenderungskennung();
     String targetUpdateType = "ZZ";
     Instant sourceUpdateDate = source.getAenderungsDatum();
     Instant targetUpdateDate = Instant.MIN;
     String sourceDesignation = source.getBezeichnung();
-    exists = target != null;
+    boolean exists = target != null;
     if (exists) {
       if (source.equals(target)) {
         return false;
@@ -124,7 +122,7 @@ public class CatalogImportModel implements IModel<CatalogImportController> {
     for (CatalogEntry e : CatalogEntry.getCatalog()) {
       existingCatalog.put(e.getUXString(), e);
     }
-    ;
+
     List<CatalogImportError> importErrors = new ArrayList<>();
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
@@ -136,7 +134,7 @@ public class CatalogImportModel implements IModel<CatalogImportController> {
         source.setId(existing.getId());
       }
       try {
-        if (checkImport(source, existing, importErrors)) {
+        if (checkImport(source, existing)) {
           em.merge(source);
         }
       } catch (CatalogImportWarningException | CatalogImportErrorException e) {
@@ -149,5 +147,14 @@ public class CatalogImportModel implements IModel<CatalogImportController> {
     Setting.INFO_LINE_LAST_CATALOG.changeValue(catalogImporter.getInfoLine());
     refreshLastCatalogInfo();
     return importErrors;
+  }
+
+  List<CatalogEntry> getCatalogEntriesByDeposit(String artikelNr) {
+    return catalogImporter.getCatalog().stream()
+        .filter(
+            e ->
+                e.getPfandNrBestelleinheit().equals(artikelNr)
+                    || e.getPfandNrLadeneinheit().equals(artikelNr))
+        .toList();
   }
 }

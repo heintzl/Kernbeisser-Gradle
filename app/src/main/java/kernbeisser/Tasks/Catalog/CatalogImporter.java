@@ -13,7 +13,7 @@ import java.util.function.Function;
 import kernbeisser.DBEntities.CatalogEntry;
 import kernbeisser.Enums.MetricUnits;
 import kernbeisser.Enums.VAT;
-import kernbeisser.Exeptions.CatalogImportErrorException;
+import kernbeisser.Exeptions.CatalogImportMissingDepositException;
 import kernbeisser.Exeptions.InvalidValue;
 import kernbeisser.Exeptions.UnknownFileFormatException;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
@@ -272,10 +272,11 @@ public class CatalogImporter {
           readErrors.add(
               new CatalogImportError(
                   "-1",
-                  new CatalogImportErrorException(
+                  new CatalogImportMissingDepositException(
                       "Der Pfandartikel "
                           + depositKKNumber
-                          + " ist nicht im Katalog enthalten. Es kann kein Pfand berechnet werden für Artikel, die diesen Pfandartikel referenzieren!")));
+                          + " ist nicht im Katalog enthalten. Es kann kein Pfand berechnet werden für Artikel, die diesen Pfandartikel referenzieren!",
+                      depositKKNumber)));
         }
       }
       for (CatalogEntry catalogRow : catalog) {
