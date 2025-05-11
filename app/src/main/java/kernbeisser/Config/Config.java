@@ -127,6 +127,7 @@ public final class Config {
   public static class Reports {
     private File reportDirectory = new File(".");
     private File outputDirectory = new File("../output");
+    private File cloudOutputDirectory = new File("../outputToCloud");
     private HashMap<String, String> reports = new HashMap<>();
   }
 

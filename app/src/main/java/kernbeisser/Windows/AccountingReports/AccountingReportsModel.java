@@ -26,17 +26,15 @@ public class AccountingReportsModel implements IModel<AccountingReportsControlle
       String message,
       boolean duplexPrint,
       Consumer<Throwable> consumeJRException) {
-    switch (exportType) {
-      case PRINT:
-        report.setDuplexPrint(duplexPrint);
-        report.sendToPrinter(message, consumeJRException);
-        break;
-      case PDF:
-        report.exportPdf(message, consumeJRException);
-        break;
-      default:
-        throw new UnsupportedOperationException();
-    }
+      switch (exportType) {
+          case PRINT -> {
+              report.setDuplexPrint(duplexPrint);
+              report.sendToPrinter(message, consumeJRException);
+          }
+          case PDF -> report.exportPdf(message, consumeJRException);
+          case CLOUD -> report.exportPdfToCloud(message, consumeJRException);
+          default -> throw new UnsupportedOperationException();
+      }
   }
 
   public static boolean exportAccountingReports(

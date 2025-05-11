@@ -91,6 +91,10 @@ public abstract class Report {
     return Config.getConfig().getReports().getOutputDirectory().toPath();
   }
 
+  private static Path getCloudOutputFolder() {
+    return Config.getConfig().getReports().getCloudOutputDirectory().toPath();
+  }
+
   private static PrintRequestAttributeSet getPageFormatFromReport(JasperPrint jspPrint) {
     PrintRequestAttributeSet result = new HashPrintRequestAttributeSet();
     result.add(
@@ -206,8 +210,17 @@ public abstract class Report {
       }
     }.execute();
   }
-
   public void exportPdf(String message, Consumer<Throwable> exConsumer) {
+    Path filePath = getOutputFolder().resolve(getSafeOutFileName() + ".pdf").toAbsolutePath();
+    exportPdf(message, exConsumer, filePath, true);
+  }
+
+  public void exportPdfToCloud(String message, Consumer<Throwable> exConsumer) {
+    Path filePath = getCloudOutputFolder().resolve(getSafeOutFileName() + ".pdf").toAbsolutePath();
+    exportPdf(message, exConsumer, filePath, false);
+  }
+
+  private void exportPdf(String message, Consumer<Throwable> exConsumer, Path filePath, boolean openFile) {
 
     Path outputFolder = getOutputFolder();
     final AtomicInteger progressStep = new AtomicInteger(1);
@@ -218,7 +231,6 @@ public abstract class Report {
         UnexpectedExceptionHandler.showUnexpectedErrorWarning(e);
       }
     }
-    Path filePath = getOutputFolder().resolve(getSafeOutFileName() + ".pdf").toAbsolutePath();
     ProgressMonitor pm =
             new ProgressMonitor(null, message, "Initialisiere Druckerservice...", 0, 3);
     pm.setMillisToPopup(0);
@@ -230,7 +242,9 @@ public abstract class Report {
         publish("Exportiere PDF...");
         JasperExportManager.exportReportToPdfFile(getJspPrint(), filePath.toString());
         publish("Fertig");
-        Tools.openFile(filePath.toFile());
+        if (openFile) {
+          Tools.openFile(filePath.toFile());
+        }
         return null;
       }
 
