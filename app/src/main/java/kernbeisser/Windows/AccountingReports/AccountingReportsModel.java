@@ -10,6 +10,8 @@ import kernbeisser.Reports.*;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Getter;
 
+import javax.swing.*;
+
 public class AccountingReportsModel implements IModel<AccountingReportsController> {
 
   @Getter private final ExportTypes[] exportTypes = ExportTypes.values();
@@ -46,7 +48,7 @@ public class AccountingReportsModel implements IModel<AccountingReportsControlle
       report = new AccountingReport(no, transactions, withNames == UserNameObfuscation.NONE);
       report.setDuplexPrint(duplexPrint);
       report.sendToPrinter(
-          "Ladendienst wird gedruckt",
+          "Erstelle Ladendienst-Bericht",
           (e) -> {
             success.set(false);
           });
@@ -60,7 +62,7 @@ public class AccountingReportsModel implements IModel<AccountingReportsControlle
       report = new AccountingTransactionsReport(no, otherTransactions, withNames, printValueSums);
       report.setDuplexPrint(duplexPrint);
       report.sendToPrinter(
-          "Ladendienst wird gedruckt",
+          "Erstelle Ladendienst-Bericht",
           (e) -> {
             success.set(false);
           });

@@ -75,7 +75,7 @@ public class AccountingReportsController
       return;
     }
     exportReport(
-        new TillrollReport(startDate, endDate.plus(1, ChronoUnit.DAYS)), "Bonrolle wird erstellt");
+        new TillrollReport(startDate, endDate.plus(1, ChronoUnit.DAYS)), "Erstelle Bonrolle");
   }
 
   public void exportAccountingReport(long reportNo, UserNameObfuscation withNames) {
@@ -104,21 +104,21 @@ public class AccountingReportsController
 
   public void exportUserBalance(long reportNo, boolean userBalanceWithNames) {
     exportReport(
-        new UserBalanceReport(reportNo, userBalanceWithNames), "Guthabenstände werden erstellt");
+        new UserBalanceReport(reportNo, userBalanceWithNames), "Erstelle Guthabenstände");
   }
 
   public void exportKeyUserList(String sortOrder) {
-    exportReport(new KeyUserList(sortOrder), "Benutzer-Schlüssel-Liste wird erstellt");
+    exportReport(new KeyUserList(sortOrder), "Erstelle Benutzer-Schlüssel");
   }
 
   public void exportTransactionStatement(User user, StatementType statementType, boolean current) {
     exportReport(
-        new TransactionStatement(user, statementType, current), "Kontoauszug wird erstellt");
+        new TransactionStatement(user, statementType, current), "Erstelle Kontoauszug");
   }
 
   public void exportPermissionHolders(boolean permissionHoldersWithKeys) {
     exportReport(
-        new PermissionHolders(permissionHoldersWithKeys), "Rolleninhaber-Bericht wird erstellt");
+        new PermissionHolders(permissionHoldersWithKeys), "Erstelle Rolleninhaber-Bericht");
   }
 
   public void exportLossAnalysis(Instant startDate, Instant endDate) {
@@ -128,7 +128,7 @@ public class AccountingReportsController
     }
     exportReport(
         new LossAnalysisReport(startDate, endDate.plus(1, ChronoUnit.DAYS)),
-        "Schwundanalyse wird erstellt");
+        "Erstelle Schwundanalyse");
   }
 
   @Override
