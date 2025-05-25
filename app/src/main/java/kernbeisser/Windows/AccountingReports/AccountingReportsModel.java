@@ -3,14 +3,14 @@ package kernbeisser.Windows.AccountingReports;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
+import javax.swing.*;
+
+import kernbeisser.DBEntities.Repositories.TransactionRepository;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.Enums.ExportTypes;
 import kernbeisser.Reports.*;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Getter;
-
-import javax.swing.*;
 
 public class AccountingReportsModel implements IModel<AccountingReportsController> {
 
@@ -26,23 +26,27 @@ public class AccountingReportsModel implements IModel<AccountingReportsControlle
       String message,
       boolean duplexPrint,
       Consumer<Throwable> consumeJRException) {
-      switch (exportType) {
-          case PRINT -> {
-              report.setDuplexPrint(duplexPrint);
-              report.sendToPrinter(message, consumeJRException);
-          }
-          case PDF -> report.exportPdf(message, consumeJRException);
-          case CLOUD -> report.exportPdfToCloud(message, consumeJRException);
-          default -> throw new UnsupportedOperationException();
+    switch (exportType) {
+      case PRINT -> {
+        report.setDuplexPrint(duplexPrint);
+        report.sendToPrinter(message, consumeJRException);
       }
+      case PDF -> report.exportPdf(message, consumeJRException);
+      case CLOUD -> report.exportPdfToCloud(message, consumeJRException);
+      default -> throw new UnsupportedOperationException();
+    }
   }
 
   public static boolean exportAccountingReports(
-      List<Transaction> transactions, long no, UserNameObfuscation withNames, boolean duplexPrint) {
+      List<Transaction> transactions,
+      long no,
+      UserNameObfuscation withNames,
+      boolean duplexPrint,
+      ExportTypes exportType) {
     AtomicBoolean success = new AtomicBoolean(true);
     boolean printValueSums = true;
     Report report;
-    if (transactions.stream().anyMatch(Transaction::isPurchase)) {
+    if (transactions.stream().anyMatch(TransactionRepository::isPurchase)) {
       report = new AccountingReport(no, transactions, withNames == UserNameObfuscation.NONE);
       report.setDuplexPrint(duplexPrint);
       report.sendToPrinter(
@@ -51,19 +55,6 @@ public class AccountingReportsModel implements IModel<AccountingReportsControlle
             success.set(false);
           });
       printValueSums = false;
-    }
-    List<Transaction> otherTransactions =
-        transactions.stream()
-            .filter(Transaction::isAccountingReportTransaction)
-            .collect(Collectors.toList());
-    if (!otherTransactions.isEmpty()) {
-      report = new AccountingTransactionsReport(no, otherTransactions, withNames, printValueSums);
-      report.setDuplexPrint(duplexPrint);
-      report.sendToPrinter(
-          "Erstelle Ladendienst-Bericht",
-          (e) -> {
-            success.set(false);
-          });
     }
     return success.get();
   }

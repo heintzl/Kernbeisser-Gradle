@@ -6,6 +6,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
+
+import kernbeisser.DBEntities.Repositories.TransactionRepository;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Setting;
@@ -25,7 +27,7 @@ public class CashierShoppingMaskModel implements IModel<CashierShoppingMaskContr
 
   public static void printAccountingReports(
       List<Transaction> reportTransactions, Consumer<Boolean> resultConsumer) {
-    long no = Transaction.getLastReportNo() + 1;
+    long no = TransactionRepository.getLastReportNo() + 1;
     if (AccountingReportsModel.exportAccountingReports(
         reportTransactions, no, UserNameObfuscation.WITHOUTPAYIN, true)) {
       Transaction.writeAccountingReportNo(reportTransactions, no);

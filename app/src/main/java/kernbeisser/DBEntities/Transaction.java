@@ -1,30 +1,20 @@
 package kernbeisser.DBEntities;
 
-import static kernbeisser.DBConnection.ExpressionFactory.max;
-import static kernbeisser.DBConnection.PredicateFactory.or;
-
 import jakarta.persistence.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.util.Collection;
-import java.util.List;
-import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBConnection.ExpressionFactory;
-import kernbeisser.DBConnection.PredicateFactory;
 import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.InvalidTransactionException;
-import kernbeisser.Exeptions.NoTransactionsFoundException;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
 import kernbeisser.Reports.UserNameObfuscation;
 import kernbeisser.Security.Access.UserRelated;
 import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
-import lombok.Cleanup;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -112,10 +102,12 @@ public class Transaction implements UserRelated {
   private User createdBy;
 
   /* the following member variables are used to pass non static values to reports */
+  // TODO Remove
   @Column @Transient @Getter private String fromIdentification;
 
   @Column @Transient @Getter private String toIdentification;
 
+  // TODO Remove
   public Transaction withUserIdentifications(UserNameObfuscation withNames) {
 
     Transaction out = this;
@@ -254,7 +246,7 @@ public class Transaction implements UserRelated {
     return transaction;
   }
 
-  private static void changeValue(UserGroup transaction, double value) {
+  private static void changeValue(UserGroup userGroup, double value) {
     try {
       Method method = UserGroup.class.getDeclaredMethod("setValue", double.class);
       method.setAccessible(true);
@@ -262,7 +254,7 @@ public class Transaction implements UserRelated {
           AccessManager.ACCESS_GRANTED,
           () -> {
             try {
-              method.invoke(transaction, Tools.roundCurrency(transaction.getValue() + value));
+              method.invoke(userGroup, Tools.roundCurrency(userGroup.getValue() + value));
             } catch (IllegalAccessException | InvocationTargetException e) {
               throw UnexpectedExceptionHandler.showUnexpectedErrorWarning(e);
             }
@@ -281,78 +273,6 @@ public class Transaction implements UserRelated {
         value,
         TransactionType.PURCHASE,
         "Einkauf vom " + Date.INSTANT_DATE.format(LocalDate.now()));
-  }
-
-  public static long getLastReportNo() {
-    return QueryBuilder.select(Transaction.class, max(Transaction_.accountingReportNo))
-        .getSingleResultOptional()
-        .map(tuple -> tuple.get(0, Long.class))
-        .orElse(0L);
-  }
-
-  public static Instant getLastOfReportNo(long reportNo) throws NoResultException {
-    return QueryBuilder.select(Transaction.class, max(Transaction_.date))
-        .where(
-            PredicateFactory.lessOrEq(
-                Transaction_.accountingReportNo, ExpressionFactory.asExpression(reportNo)))
-        .getSingleResult()
-        .get(0, Instant.class);
-  }
-
-  public static void writeAccountingReportNo(Collection<Transaction> transactions, long no) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    for (Transaction t : transactions) {
-      if (t.accountingReportNo == null) {
-        t.setAccountingReportNo(no);
-        em.merge(t);
-      }
-    }
-  }
-
-  public static List<Transaction> getTransactionsByReportNo(long reportNo) {
-    List<Transaction> transactions =
-        QueryBuilder.selectAll(Transaction.class)
-            .where(Transaction_.accountingReportNo.eq(reportNo))
-            .orderBy(Transaction_.seqNo.asc())
-            .getResultList();
-    if (transactions.isEmpty()) {
-      throw new NoTransactionsFoundException();
-    }
-    return transactions;
-  }
-
-  public static List<Transaction> getUnreportedTransactions() {
-    User kbUser = User.getKernbeisserUser();
-    List<Transaction> transactions =
-        QueryBuilder.selectAll(Transaction.class)
-            .where(
-                Transaction_.accountingReportNo.isNull(),
-                or(Transaction_.fromUser.eq(kbUser), Transaction_.toUser.eq(kbUser)))
-            .orderBy(Transaction_.seqNo.asc())
-            .getResultList();
-    if (transactions.isEmpty()) {
-      throw new NoTransactionsFoundException();
-    }
-    return transactions;
-  }
-
-  public boolean isPurchase() {
-    return (transactionType == TransactionType.PURCHASE);
-  }
-
-  public boolean isAccountingReportTransaction() {
-    switch (transactionType) {
-      case INITIALIZE:
-      case PAYIN:
-        return true;
-      case USER_GENERATED:
-        return relationToKernbeisser() != 0;
-      default:
-        return false;
-    }
   }
 
   @Override

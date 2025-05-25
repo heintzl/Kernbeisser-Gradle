@@ -5,6 +5,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+import kernbeisser.DBEntities.Repositories.TransactionRepository;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.ExportTypes;
@@ -80,22 +81,26 @@ public class AccountingReportsController
 
   public void exportAccountingReport(long reportNo, UserNameObfuscation withNames) {
     AccountingReportsView view = getView();
-    if (reportNo == Transaction.getLastReportNo() + 1) {
+    if (reportNo == TransactionRepository.getLastReportNo() + 1) {
       try {
         CashierShoppingMaskModel.printAccountingReports(
-            Transaction.getUnreportedTransactions(), view::messageNoAccountingReport);
+            TransactionRepository.getUnreportedTransactions(), view::messageNoAccountingReport);
       } catch (NoTransactionsFoundException e) {
         view.messageEmptyReportNo(reportNo);
       }
     } else {
       try {
         List<Transaction> reportTransactions =
-            Transaction.getTransactionsByReportNo(reportNo).stream()
-                .filter(t -> t.isAccountingReportTransaction() || t.isPurchase())
+            TransactionRepository.getTransactionsByReportNo(reportNo).stream()
+                .filter(t -> TransactionRepository.isAccountingReportTransaction(t) || TransactionRepository.isPurchase(t))
                 .collect(Collectors.toList());
         if (reportTransactions.isEmpty()) throw new NoTransactionsFoundException();
         AccountingReportsModel.exportAccountingReports(
-            reportTransactions, reportNo, withNames, view.getDuplexPrint());
+            reportTransactions,
+            reportNo,
+            withNames,
+            view.getDuplexPrint(),
+            view.getSelectedExportType());
       } catch (NoTransactionsFoundException e) {
         view.messageEmptyReportNo(reportNo);
       }
@@ -103,8 +108,7 @@ public class AccountingReportsController
   }
 
   public void exportUserBalance(long reportNo, boolean userBalanceWithNames) {
-    exportReport(
-        new UserBalanceReport(reportNo, userBalanceWithNames), "Erstelle Guthabenstände");
+    exportReport(new UserBalanceReport(reportNo, userBalanceWithNames), "Erstelle Guthabenstände");
   }
 
   public void exportKeyUserList(String sortOrder) {
@@ -112,8 +116,7 @@ public class AccountingReportsController
   }
 
   public void exportTransactionStatement(User user, StatementType statementType, boolean current) {
-    exportReport(
-        new TransactionStatement(user, statementType, current), "Erstelle Kontoauszug");
+    exportReport(new TransactionStatement(user, statementType, current), "Erstelle Kontoauszug");
   }
 
   public void exportPermissionHolders(boolean permissionHoldersWithKeys) {

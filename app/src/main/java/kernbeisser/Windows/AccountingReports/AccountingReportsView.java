@@ -19,6 +19,7 @@ import javax.swing.plaf.FontUIResource;
 import javax.swing.text.StyleContext;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.DBEntities.Purchase;
+import kernbeisser.DBEntities.Repositories.TransactionRepository;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.ExportTypes;
@@ -153,7 +154,7 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
     tillRollStartDate.setDate(now);
     tillRollEndDate.setDate(now);
 
-    int maxReportNo = (int) Transaction.getLastReportNo();
+    int maxReportNo = (int) TransactionRepository.getLastReportNo();
     for (int i = 1; i <= maxReportNo; i++) {
       accountingReportNo.addItem(Integer.toString(i));
       userBalanceReportNo.addItem(Integer.toString(i));
@@ -161,7 +162,7 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
     userBalanceReportNo.addItem("aktuell");
     userBalanceReportNo.setSelectedIndex(maxReportNo);
     try {
-      Transaction.getUnreportedTransactions();
+      TransactionRepository.getUnreportedTransactions();
       accountingReportNo.addItem((maxReportNo + 1) + " (neu erstellen)");
       accountingReportNo.setSelectedIndex(maxReportNo);
       userBalanceReportNo.setSelectedIndex(maxReportNo);

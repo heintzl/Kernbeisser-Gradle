@@ -8,6 +8,7 @@ import kernbeisser.CustomComponents.SearchBox.Filters.UserFilter;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.DBEntities.Post;
+import kernbeisser.DBEntities.Repositories.TransactionRepository;
 import kernbeisser.DBEntities.SaleSession;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
@@ -124,7 +125,7 @@ public class CashierShoppingMaskController
   @Override
   protected boolean commitClose() {
     try {
-      List<Transaction> unreportedTransactions = Transaction.getUnreportedTransactions();
+      List<Transaction> unreportedTransactions = TransactionRepository.getUnreportedTransactions();
       if (!getView().commitClose()) return false;
       model.printAccountingReports(unreportedTransactions, this::handleResult);
       return true;
@@ -135,7 +136,7 @@ public class CashierShoppingMaskController
 
   private void handleResult(Boolean b) {
     if (!b) {
-      long missedPurchases = Transaction.getUnreportedTransactions().size();
+      long missedPurchases = TransactionRepository.getUnreportedTransactions().size();
       if (missedPurchases > 40) {
         getView().messageDoPanic(missedPurchases);
       } else {
