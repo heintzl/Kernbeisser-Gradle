@@ -20,7 +20,6 @@ import javax.swing.text.StyleContext;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.Repositories.TransactionRepository;
-import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.ExportTypes;
 import kernbeisser.Enums.StatementType;
@@ -196,7 +195,16 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
   public void messageEmptyReportNo(long reportNo) {
     JOptionPane.showMessageDialog(
         getContent(),
-        "Zur Berichtsnummer " + reportNo + " liegen keine Umsätze vor.",
+        "Zur Berichtsnummer %d liegen keine Umsätze vor.".formatted(reportNo),
+        "Umsatzbericht",
+        JOptionPane.INFORMATION_MESSAGE);
+  }
+
+  public void messageInvalidReportNo(long reportNo) {
+    JOptionPane.showMessageDialog(
+        getContent(),
+        "Die Berichtsnummer %d ist inkonsistent. Die vorhergehende Berichtsnummer exisitert nicht."
+            .formatted(reportNo),
         "Umsatzbericht",
         JOptionPane.INFORMATION_MESSAGE);
   }
@@ -204,7 +212,7 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
   public void messageNoAccountingReport(boolean b) {
     JOptionPane.showMessageDialog(
         getContent(),
-        "Der Bericht wurde " + (b ? "" : "nicht") + " erfolgreich erstellt",
+        "Der Bericht wurde %s erfolgreich erstellt".formatted(b ? "" : "nicht"),
         "Umsatzbericht",
         JOptionPane.INFORMATION_MESSAGE);
   }
@@ -212,7 +220,7 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
   public void messageNotImplemented(ExportTypes exportType) {
     JOptionPane.showMessageDialog(
         getContent(),
-        exportType.getName() + ": Diese Methode ist noch nicht verfügbar!",
+        "%s: Diese Methode ist noch nicht verfügbar!".formatted(exportType.getName()),
         "Ausgabefehler",
         JOptionPane.WARNING_MESSAGE);
   }
