@@ -24,7 +24,6 @@ import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.ExportTypes;
 import kernbeisser.Enums.StatementType;
 import kernbeisser.Exeptions.NoTransactionsFoundException;
-import kernbeisser.Reports.UserNameObfuscation;
 import kernbeisser.Useful.Date;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
@@ -43,7 +42,7 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
   @Getter private JRadioButton optAccountingReport;
   private JRadioButton optUserBalance;
   private JCheckBox userBalanceWithNames;
-  private JComboBox<UserNameObfuscation> accountingReportWithNames;
+  private JCheckBox accountingReportWithNames;
   private JRadioButton optKeyUserList;
   private JComboBox<String> userKeySortOrder;
   private JRadioButton optTransactionStatement;
@@ -82,7 +81,7 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
       controller.exportAccountingReport(
           Long.parseLong(
               ((String) accountingReportNo.getSelectedItem()).replace(" (neu erstellen)", "")),
-          (UserNameObfuscation) accountingReportWithNames.getSelectedItem());
+          accountingReportWithNames.isSelected());
     } else if (optUserBalance.isSelected()) {
       String selectedReport = (String) userBalanceReportNo.getSelectedItem();
       long reportNo;
@@ -138,9 +137,6 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
     submit.addActionListener(e -> submit(controller));
     for (ExportTypes t : controller.getExportTypes()) {
       exportType.addItem(t);
-    }
-    for (UserNameObfuscation t : controller.getUserNameObfuscations()) {
-      accountingReportWithNames.addItem(t);
     }
     exportType.addActionListener(
         e -> duplexPrint.setEnabled(getSelectedExportType() == ExportTypes.PRINT));
@@ -482,7 +478,8 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
     gbc.anchor = GridBagConstraints.WEST;
     gbc.insets = new Insets(15, 5, 0, 5);
     panel3.add(accountingReportNo, gbc);
-    accountingReportWithNames = new JComboBox();
+    accountingReportWithNames = new JCheckBox();
+    accountingReportWithNames.setText("Klarnamen ausgeben");
     gbc = new GridBagConstraints();
     gbc.gridx = 3;
     gbc.gridy = 0;

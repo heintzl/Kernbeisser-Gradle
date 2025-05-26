@@ -75,11 +75,9 @@ public class AccountingReportsController
         new TillrollReport(startDate, endDate.plus(1, ChronoUnit.DAYS)), "Erstelle Bonrolle");
   }
 
-  public void exportAccountingReport(long reportNo, UserNameObfuscation withNames) {
+  public void exportAccountingReport(long reportNo, boolean withNames) {
     try {
-      exportReport(
-          new AccountingReport(reportNo, withNames == UserNameObfuscation.NONE),
-          "Erstelle Buchhaltungsbericht");
+      exportReport(new AccountingReport(reportNo, withNames), "Erstelle Buchhaltungsbericht");
     } catch (NoTransactionsFoundException e) {
       getView().messageEmptyReportNo(reportNo);
     } catch (InvalidReportNoException e) {
