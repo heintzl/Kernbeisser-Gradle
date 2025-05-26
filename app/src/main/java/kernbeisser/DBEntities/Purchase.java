@@ -48,22 +48,6 @@ public class Purchase implements UserRelated {
   @Setter(onMethod_ = {@Key(PermissionKey.PURCHASE_USER_SURCHARGE_WRITE)})
   private double userSurcharge;
 
-  /* the following member variables are used to pass non-static values to reports */
-  @Column @Transient @Getter private String sellerIdentification;
-
-  @Column @Transient @Getter private String customerIdentification;
-
-  public Purchase withUserIdentification(boolean withNames) {
-
-    Purchase out = this;
-    User seller = session.getSeller();
-    User customer = session.getCustomer();
-    out.sellerIdentification = withNames ? seller.getFullName() : Integer.toString(seller.getId());
-    out.customerIdentification =
-        withNames ? customer.getFullName() : Integer.toString(customer.getId());
-    return out;
-  }
-
   public Collection<ShoppingItem> getAllItems() {
     return QueryBuilder.selectAll(ShoppingItem.class)
         .where(ShoppingItem_.purchase.eq(this))

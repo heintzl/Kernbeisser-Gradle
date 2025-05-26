@@ -10,7 +10,6 @@ import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.InvalidTransactionException;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
-import kernbeisser.Reports.UserNameObfuscation;
 import kernbeisser.Security.Access.UserRelated;
 import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
@@ -100,38 +99,6 @@ public class Transaction implements UserRelated {
   @Getter(onMethod_ = {@Key(PermissionKey.TRANSACTION_CREATEDBY_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.TRANSACTION_CREATEDBY_WRITE)})
   private User createdBy;
-
-  /* the following member variables are used to pass non static values to reports */
-  // TODO Remove
-  @Column @Transient @Getter private String fromIdentification;
-
-  @Column @Transient @Getter private String toIdentification;
-
-  // TODO Remove
-  public Transaction withUserIdentifications(UserNameObfuscation withNames) {
-
-    Transaction out = this;
-    User from = fromUser;
-    User to = toUser;
-    switch (withNames) {
-      case NONE:
-        out.fromIdentification = from.getFullName();
-        out.toIdentification = to.getFullName();
-        break;
-      case WITHOUTPAYIN:
-        out.fromIdentification = Integer.toString(from.getId());
-        if (out.transactionType == TransactionType.PAYIN) {
-          out.toIdentification = to.getFullName();
-        } else {
-          out.toIdentification = Integer.toString(from.getId());
-        }
-        break;
-      default:
-        out.fromIdentification = Integer.toString(from.getId());
-        out.toIdentification = Integer.toString(to.getId());
-    }
-    return out;
-  }
 
   public byte relationToUserGroup(UserGroup userGroup) {
     byte result;
