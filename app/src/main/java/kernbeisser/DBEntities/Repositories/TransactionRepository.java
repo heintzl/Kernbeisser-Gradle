@@ -78,19 +78,19 @@ public class TransactionRepository {
     }
   }
 
-    public static boolean isPurchase(Transaction t) {
-        return (t.getTransactionType() == TransactionType.PURCHASE);
-    }
+  public static boolean isPurchase(Transaction t) {
+    return (t.getTransactionType() == TransactionType.PURCHASE);
+  }
 
-    public static boolean isAccountingReportTransaction(Transaction t) {
-        switch (t.getTransactionType()) {
-            case INITIALIZE:
-            case PAYIN:
-                return true;
-            case USER_GENERATED:
-                return t.relationToKernbeisser() != 0;
-            default:
-                return false;
-        }
+  public static boolean isAccountingReportTransaction(Transaction t) {
+    switch (t.getTransactionType()) {
+      case INITIALIZE:
+      case PAYIN:
+        return true;
+      case USER_GENERATED:
+        return t.relationToKernbeisser() != 0;
+      default:
+        return false;
     }
+  }
 }

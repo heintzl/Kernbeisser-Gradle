@@ -1,0 +1,216 @@
+<!-- Created with Jaspersoft Studio version 7.0.0.final using JasperReports Library version 7.0.0-b478feaa9aab4375eba71de77b4ca138ad2f62aa  -->
+<jasperReport name="BuchhaltungBonUebersicht" language="java" pageWidth="595" pageHeight="842" columnWidth="505" leftMargin="50" rightMargin="40" topMargin="20" bottomMargin="20" uuid="348b17df-f89e-49c3-a919-6d49e97f00a2" floatColumnFooter="true">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<style name="Bold" markup="none" bold="true"/>
+	<parameter name="start" forPrompting="false" class="java.sql.Timestamp"/>
+	<parameter name="end" forPrompting="false" class="java.sql.Timestamp"/>
+	<parameter name="vatHiValue" class="java.lang.Double"/>
+	<parameter name="vatLoValue" class="java.lang.Double"/>
+	<parameter name="sumTotalPurchased" class="java.lang.Double"/>
+	<parameter name="sumVatHiProductsPurchased" class="java.lang.Double"/>
+	<parameter name="sumVatLoProductsPurchased" class="java.lang.Double"/>
+	<parameter name="transactionSaldo" class="java.lang.Double"/>
+	<parameter name="transactionCreditPayIn" class="java.lang.Double"/>
+	<parameter name="transactionSpecialPayments" class="java.lang.Double"/>
+	<parameter name="transactionPurchases" class="java.lang.Double"/>
+	<parameter name="sumVatHiSolidarity" class="java.lang.Double"/>
+	<parameter name="sumVatLoSolidarity" class="java.lang.Double"/>
+	<parameter name="sumDeposit" class="java.lang.Double"/>
+	<parameter name="reportTitle" class="java.lang.String"/>
+	<parameter name="reportFooter" class="java.lang.String"/>
+	<parameter name="sum" class="java.lang.Double"/>
+	<parameter name="sum_positive" class="java.lang.Double"/>
+	<parameter name="sum_negative" class="java.lang.Double"/>
+	<query language="sql"><![CDATA[]]></query>
+	<field name="date" class="java.time.Instant"/>
+	<field name="description" class="java.lang.String"/>
+	<field name="customerIdentification" class="java.lang.String"/>
+	<field name="sellerIdentification" class="java.lang.String"/>
+	<field name="sum" class="java.lang.Double"/>
+	<field name="reportGroup" class="kernbeisser.Enums.AccountingReportGroups"/>
+	<variable name="isPurchase" resetType="None" class="java.lang.Boolean">
+		<expression><![CDATA[EnumSet.of(kernbeisser.Enums.AccountingReportGroups.ASSISTED_PURCHASE,kernbeisser.Enums.AccountingReportGroups.SOLO_PURCHASE).contains($F{reportGroup})]]></expression>
+	</variable>
+	<variable name="groupSum" resetType="Group" calculation="Sum" resetGroup="ReportGroup" class="java.lang.Double">
+		<expression><![CDATA[$F{sum}]]></expression>
+	</variable>
+	<group name="ReportGroup" keepTogether="true" reprintHeaderOnEachPage="true">
+		<expression><![CDATA[$F{reportGroup} == kernbeisser.Enums.AccountingReportGroups.ASSISTED_PURCHASE?$F{sellerIdentification}.toString():$F{reportGroup}.getName()]]></expression>
+		<groupHeader>
+			<band height="45">
+				<element kind="textField" uuid="d85052c5-6a4d-45ce-83cb-d5f427d7fd1b" x="226" y="17" width="126" height="14" fontName="DejaVu Sans Condensed" bold="true" hTextAlign="Left">
+					<expression><![CDATA[$V{isPurchase} ? "Bon-Nr." : "Beschreibung"]]></expression>
+				</element>
+				<element kind="textField" uuid="607828de-fe22-4d64-9a55-bfa3abb2166e" x="90" y="15" width="80" height="14" fontName="DejaVu Sans Condensed" bold="true" hTextAlign="Left">
+					<expression><![CDATA[ $V{isPurchase} ? "Einkäufer*in" : "Mitglied"]]></expression>
+				</element>
+				<element kind="staticText" uuid="8ff88ae2-245a-44b9-8ab6-f8793aef0890" x="450" y="17" width="55" height="14" fontName="DejaVu Sans Condensed" bold="true" hTextAlign="Right">
+					<text><![CDATA[Betrag]]></text>
+				</element>
+				<element kind="staticText" uuid="261f67af-a65a-4748-a3bb-89b641ae5510" x="0" y="15" width="84" height="14" fontName="DejaVu Sans Condensed" bold="true" hTextAlign="Left">
+					<text><![CDATA[Datum/Uhrzeit]]></text>
+				</element>
+				<element kind="textField" uuid="1a31ad33-6e97-4605-b12f-9cd68337c60e" x="0" y="1" width="250" height="16" fontName="DejaVu Sans Condensed" bold="true" italic="true" underline="false">
+					<expression><![CDATA[$F{reportGroup} == kernbeisser.Enums.AccountingReportGroups.ASSISTED_PURCHASE ? "Einkäufe beim Ladendienst (" + $F{sellerIdentification}.toString() + ")" : $F{reportGroup}.getName()]]></expression>
+				</element>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="9">
+				<element kind="staticText" uuid="6b4acc6c-9602-4652-b48b-b8ef540847fa" x="0" y="-9" width="44" height="14" fontName="DejaVu Sans Condensed" bold="true" hTextAlign="Left">
+					<text><![CDATA[Summe:]]></text>
+				</element>
+				<element kind="textField" uuid="a2da7f26-0ed1-4403-8c75-9666208407e2" x="450" y="-9" width="54" height="14" fontName="DejaVu Sans Condensed" textAdjust="ScaleFont" pattern="#,##0.00€;-#,##0.00€" bold="true" hTextAlign="Right">
+					<expression><![CDATA[$V{groupSum}]]></expression>
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="274c790d-bccd-4b9b-ad18-f5e418e86810"/>
+				</element>
+			</band>
+		</groupFooter>
+	</group>
+	<background height="400" splitType="Stretch">
+		<property name="com.jaspersoft.studio.unit.height" value="px"/>
+	</background>
+	<title height="38" splitType="Stretch">
+		<element kind="staticText" uuid="6dc79207-6383-458d-bd4a-9f7ba9e72633" x="0" y="22" width="502" height="16" fontName="DejaVu Sans Condensed" fontSize="12.0" bold="true" hTextAlign="Center">
+			<text><![CDATA[Warenumsätze und Guthabensummen]]></text>
+		</element>
+		<element kind="textField" uuid="2b89edce-2456-4adc-905c-42468ea0aefd" x="379" y="5" width="130" height="18" fontName="DejaVu Sans Condensed" fontSize="13.0" pattern="dd.MM.yyyy HH:mm" bold="true" hTextAlign="Right" style="Bold">
+			<expression><![CDATA[new java.util.Date()]]></expression>
+		</element>
+		<element kind="textField" uuid="2d53e684-1ff7-41e4-9e94-f8dc1232b200" x="5" y="5" width="370" height="18" markup="html" fontName="DejaVu Sans Condensed" fontSize="14.0" textAdjust="ScaleFont" bold="true">
+			<expression><![CDATA[$P{reportTitle}]]></expression>
+			<property name="com.jaspersoft.studio.unit.x" value="px"/>
+		</element>
+		<property name="com.jaspersoft.studio.unit.height" value="px"/>
+	</title>
+	<pageHeader height="21" splitType="Stretch">
+		<element kind="textField" uuid="10a6ff35-3dc0-4365-91b8-beb4f8813fc0" x="415" y="5" width="45" height="15" fontName="DejaVu Sans Condensed" fontSize="10.0" hTextAlign="Right">
+			<expression><![CDATA["Seite " + $V{PAGE_NUMBER}]]></expression>
+		</element>
+		<element kind="textField" uuid="24631cf1-5277-48a1-a10f-f758907adcdf" x="460" y="5" width="44" height="15" fontName="DejaVu Sans Condensed" fontSize="10.0" evaluationTime="Report" hTextAlign="Right">
+			<expression><![CDATA["von " + $V{PAGE_NUMBER}]]></expression>
+		</element>
+	</pageHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<element kind="textField" uuid="fc0393e4-f87e-4214-94dd-cc325ca76e8b" x="226" y="-11" width="214" height="14" fontName="DejaVu Sans Condensed" textAdjust="ScaleFont" hTextAlign="Left" vTextAlign="Middle">
+				<expression><![CDATA[$F{description}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="185c0b2e-8717-4813-8080-5602a762f222"/>
+			</element>
+			<element kind="textField" uuid="b5b27eb9-28ac-4c0b-8de8-d2eff2aaa9a8" x="90" y="-11" width="132" height="14" fontName="DejaVu Sans Condensed" textAdjust="ScaleFont" vTextAlign="Middle">
+				<expression><![CDATA[$F{customerIdentification}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ebd64202-798a-42b0-b81f-9cde60b2708c"/>
+			</element>
+			<element kind="textField" uuid="6efcde95-291f-43d1-b62e-72f55da53670" x="450" y="-11" width="54" height="14" fontName="DejaVu Sans Condensed" textAdjust="ScaleFont" pattern="#,##0.00€;-#,##0.00€" hTextAlign="Right" vTextAlign="Middle">
+				<expression><![CDATA[$F{sum}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="274c790d-bccd-4b9b-ad18-f5e418e86810"/>
+			</element>
+			<element kind="textField" uuid="5aefa67d-fda1-4504-a12d-756bfb4a293c" x="0" y="-11" width="84" height="14" fontName="DejaVu Sans Condensed" pattern="dd.MM.yyyy HH:mm" hTextAlign="Left" vTextAlign="Middle">
+				<expression><![CDATA[java.sql.Timestamp.from($F{date})]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="274c790d-bccd-4b9b-ad18-f5e418e86810"/>
+			</element>
+		</band>
+	</detail>
+	<pageFooter height="15" splitType="Stretch">
+		<element kind="textField" uuid="5db1e1b4-90c2-4d9d-a56f-e95d3d690d7d" x="0" y="5" width="503" height="10" fontName="DejaVu Sans Condensed" fontSize="7.0">
+			<paragraph lineSpacingSize="1.0"/>
+			<expression><![CDATA[$P{reportFooter}]]></expression>
+		</element>
+	</pageFooter>
+	<summary height="213" splitType="Stretch">
+		<element kind="staticText" uuid="dcbd839b-1ca3-488f-8499-25b01b4173a7" x="0" y="0" width="214" height="14" fontName="DejaVu Sans Condensed" underline="true">
+			<text><![CDATA[Gesamtumsatz durch Einkäufe:]]></text>
+		</element>
+		<element kind="staticText" uuid="d255007d-7d77-401e-8a18-5bce01f2f193" x="0" y="101" width="214" height="14" fontName="DejaVu Sans Condensed">
+			<text><![CDATA[Guthabenänderung Gesamt:]]></text>
+		</element>
+		<element kind="textField" uuid="1473da4f-f39c-4507-ba6a-fce9f1669714" x="0" y="13" width="250" height="14" fontName="DejaVu Sans Condensed" underline="false">
+			<expression><![CDATA["Warenumsatz " + (int) ($P{vatLoValue} * 100) + "% MWSt:"]]></expression>
+		</element>
+		<element kind="textField" uuid="1b633be8-e105-49dc-8b8d-b1a72662d269" x="0" y="27" width="250" height="14" fontName="DejaVu Sans Condensed" underline="false">
+			<expression><![CDATA["Warenumsatz " + (int) ($P{vatHiValue} * 100) + "% MWSt:"]]></expression>
+		</element>
+		<element kind="textField" uuid="3ebe1d71-0a6b-4dff-9ce7-e881456254b9" x="352" y="13" width="54" height="14" fontName="DejaVu Sans Condensed" textAdjust="ScaleFont" pattern="#,##0.00€;-#,##0.00€" bold="false" hTextAlign="Right">
+			<expression><![CDATA[$P{sumVatLoProductsPurchased}]]></expression>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="274c790d-bccd-4b9b-ad18-f5e418e86810"/>
+		</element>
+		<element kind="textField" uuid="a22b64bc-20bb-4892-be69-2d04f73e7fef" x="352" y="27" width="54" height="14" fontName="DejaVu Sans Condensed" textAdjust="ScaleFont" pattern="#,##0.00€;-#,##0.00€" bold="false" hTextAlign="Right">
+			<expression><![CDATA[$P{sumVatHiProductsPurchased}]]></expression>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="274c790d-bccd-4b9b-ad18-f5e418e86810"/>
+		</element>
+		<element kind="staticText" uuid="a1ed18ce-710b-42c0-aee2-483e3f8a455b" x="0" y="82" width="44" height="14" fontName="DejaVu Sans Condensed" bold="true" hTextAlign="Left">
+			<text><![CDATA[Summe:]]></text>
+		</element>
+		<element kind="textField" uuid="c43696e8-622e-41a1-a42d-f6848a677959" x="352" y="82" width="54" height="14" fontName="DejaVu Sans Condensed" textAdjust="ScaleFont" pattern="#,##0.00€;-#,##0.00€" bold="true" hTextAlign="Right">
+			<expression><![CDATA[$P{sumTotalPurchased}]]></expression>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="274c790d-bccd-4b9b-ad18-f5e418e86810"/>
+		</element>
+		<element kind="textField" uuid="b3d2eddf-40b0-45c7-97d7-f21b8a85b2ba" x="352" y="101" width="54" height="14" fontName="DejaVu Sans Condensed" textAdjust="ScaleFont" pattern="#,##0.00€;-#,##0.00€" bold="false" hTextAlign="Right">
+			<expression><![CDATA[$P{transactionSaldo}]]></expression>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="274c790d-bccd-4b9b-ad18-f5e418e86810"/>
+		</element>
+		<element kind="textField" uuid="f8f74ef0-959b-451b-ad1a-369d086eae60" x="352" y="136" width="54" height="14" fontName="DejaVu Sans Condensed" textAdjust="ScaleFont" pattern="#,##0.00€;-#,##0.00€" bold="false" hTextAlign="Right">
+			<expression><![CDATA[$P{transactionSpecialPayments}]]></expression>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="274c790d-bccd-4b9b-ad18-f5e418e86810"/>
+		</element>
+		<element kind="staticText" uuid="5ce867a2-f1e4-4423-b860-b3b3c6850271" x="0" y="136" width="214" height="14" fontName="DejaVu Sans Condensed">
+			<text><![CDATA[Sondereinnahmen / -ausgaben:]]></text>
+		</element>
+		<element kind="staticText" uuid="3145a409-f1bb-42f8-bc7c-257381838256" x="0" y="150" width="214" height="14" fontName="DejaVu Sans Condensed">
+			<text><![CDATA[Guthabeneinzahlungen:]]></text>
+		</element>
+		<element kind="textField" uuid="d84f0023-441f-4615-9c91-fb94dd801b71" x="352" y="150" width="54" height="14" fontName="DejaVu Sans Condensed" textAdjust="ScaleFont" pattern="#,##0.00€;-#,##0.00€" bold="false" hTextAlign="Right">
+			<expression><![CDATA[$P{transactionCreditPayIn}]]></expression>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="274c790d-bccd-4b9b-ad18-f5e418e86810"/>
+		</element>
+		<element kind="staticText" uuid="fa891076-e728-4dbe-820e-1590f36807fc" x="0" y="115" width="214" height="14" fontName="DejaVu Sans Condensed">
+			<text><![CDATA[Einkäufe vom Guthaben:]]></text>
+		</element>
+		<element kind="textField" uuid="9c7dc525-0b85-4c68-880e-4c3450402bde" x="352" y="115" width="54" height="14" fontName="DejaVu Sans Condensed" textAdjust="ScaleFont" pattern="#,##0.00€;-#,##0.00€" bold="false" hTextAlign="Right">
+			<expression><![CDATA[$P{transactionPurchases}]]></expression>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="274c790d-bccd-4b9b-ad18-f5e418e86810"/>
+		</element>
+		<element kind="textField" uuid="156747b1-b901-449d-9a0b-6afa8b4a071f" x="0" y="41" width="250" height="14" fontName="DejaVu Sans Condensed" underline="false">
+			<expression><![CDATA["Solidaritätsaufschlag " + (int) ($P{vatLoValue} * 100) + "% MWSt:"]]></expression>
+		</element>
+		<element kind="textField" uuid="b907eaf8-d24b-4148-996d-1f8551dbe450" x="0" y="55" width="250" height="14" fontName="DejaVu Sans Condensed" underline="false">
+			<expression><![CDATA["Solidaritätsaufschlag " + (int) ($P{vatHiValue} * 100) + "% MWSt:"]]></expression>
+		</element>
+		<element kind="textField" uuid="efdb1d20-9b2c-4d82-b2ce-8ad744aae438" x="352" y="41" width="54" height="14" fontName="DejaVu Sans Condensed" textAdjust="ScaleFont" pattern="#,##0.00€;-#,##0.00€" bold="false" hTextAlign="Right">
+			<expression><![CDATA[$P{sumVatLoSolidarity}]]></expression>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="274c790d-bccd-4b9b-ad18-f5e418e86810"/>
+		</element>
+		<element kind="textField" uuid="fce5e389-92aa-4484-b0a5-6c23b3cbb08f" x="352" y="55" width="54" height="14" fontName="DejaVu Sans Condensed" textAdjust="ScaleFont" pattern="#,##0.00€;-#,##0.00€" bold="false" hTextAlign="Right">
+			<expression><![CDATA[$P{sumVatHiSolidarity}]]></expression>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="274c790d-bccd-4b9b-ad18-f5e418e86810"/>
+		</element>
+		<element kind="textField" uuid="6a90e19d-0c35-4281-910e-81e4f6f45ec3" x="0" y="68" width="250" height="14" fontName="DejaVu Sans Condensed" underline="false">
+			<expression><![CDATA["Pfand " + (int) ($P{vatHiValue} * 100) + "% MWSt:"]]></expression>
+		</element>
+		<element kind="textField" uuid="68176d99-3a4b-414f-99d5-c0319916eca8" x="352" y="68" width="54" height="14" fontName="DejaVu Sans Condensed" textAdjust="ScaleFont" pattern="#,##0.00€;-#,##0.00€" bold="false" hTextAlign="Right">
+			<expression><![CDATA[$P{sumDeposit}]]></expression>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="274c790d-bccd-4b9b-ad18-f5e418e86810"/>
+		</element>
+		<element kind="textField" uuid="e464ff5c-6ced-454e-ba18-3331b3f99671" x="352" y="171" width="54" height="14" fontName="DejaVu Sans Condensed" textAdjust="ScaleFont" pattern="#,##0.00€;-#,##0.00€" bold="false" hTextAlign="Right">
+			<expression><![CDATA[$P{sum_positive}]]></expression>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="274c790d-bccd-4b9b-ad18-f5e418e86810"/>
+		</element>
+		<element kind="staticText" uuid="e3f1481d-acb8-465b-aa2d-cb1ef3a0b023" x="0" y="171" width="214" height="14" fontName="DejaVu Sans Condensed">
+			<text><![CDATA[Summe aller Guthaben:]]></text>
+		</element>
+		<element kind="textField" uuid="ea6ec9cd-686b-46bb-8a4c-ffe00c7838e7" x="352" y="185" width="54" height="14" fontName="DejaVu Sans Condensed" textAdjust="ScaleFont" pattern="#,##0.00€;-#,##0.00€" bold="false" hTextAlign="Right">
+			<expression><![CDATA[$P{sum_negative}]]></expression>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="274c790d-bccd-4b9b-ad18-f5e418e86810"/>
+		</element>
+		<element kind="staticText" uuid="af97e29f-0310-44e4-b621-d787e2d01713" x="0" y="185" width="214" height="14" fontName="DejaVu Sans Condensed">
+			<text><![CDATA[Summe aller Schulden:]]></text>
+		</element>
+		<element kind="textField" uuid="0d04302d-5502-40bf-87e9-80be2459522d" x="352" y="199" width="54" height="14" fontName="DejaVu Sans Condensed" textAdjust="ScaleFont" pattern="#,##0.00€;-#,##0.00€" bold="false" hTextAlign="Right">
+			<expression><![CDATA[$P{sum}]]></expression>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="274c790d-bccd-4b9b-ad18-f5e418e86810"/>
+		</element>
+		<element kind="staticText" uuid="a1cf2de0-01f6-4607-810f-76de8f8da630" x="0" y="199" width="214" height="14" fontName="DejaVu Sans Condensed">
+			<text><![CDATA[Summe aller Kontostände:]]></text>
+		</element>
+	</summary>
+</jasperReport>

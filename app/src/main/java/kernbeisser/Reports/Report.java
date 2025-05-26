@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import javax.print.attribute.HashPrintRequestAttributeSet;
@@ -133,14 +132,14 @@ public abstract class Report {
   }
 
   private void sendToPrinter(
-          boolean useOSDefaultPrinter,
+      boolean useOSDefaultPrinter,
       String message,
       boolean duplexPrint,
       Consumer<Throwable> exConsumer) {
 
     final AtomicInteger progressStep = new AtomicInteger(1);
     ProgressMonitor pm =
-            new ProgressMonitor(null, message, "Initialisiere Druckerservice...", 0, 3);
+        new ProgressMonitor(null, message, "Initialisiere Druckerservice...", 0, 3);
     pm.setMillisToDecideToPopup(0);
     pm.setMillisToPopup(0);
     pm.setProgress(0);
@@ -156,10 +155,9 @@ public abstract class Report {
           requestAttributeSet.add(Sides.DUPLEX);
         }
 
-        PrintServiceAttributeSet serviceAttributeSet =
-                getPrinter(useOSDefaultPrinter, jasperPrint);
+        PrintServiceAttributeSet serviceAttributeSet = getPrinter(useOSDefaultPrinter, jasperPrint);
         SimplePrintServiceExporterConfiguration printConfig =
-                new SimplePrintServiceExporterConfiguration();
+            new SimplePrintServiceExporterConfiguration();
         printConfig.setPrintRequestAttributeSet(requestAttributeSet);
         printConfig.setPrintServiceAttributeSet(serviceAttributeSet);
         printConfig.setDisplayPrintDialog(false);
@@ -185,20 +183,20 @@ public abstract class Report {
         } catch (Exception e) {
           String errorMessage = e.getMessage().toLowerCase(Locale.ROOT);
           Collection<String> printerNotFoundMessages =
-                  Arrays.asList(
-                          "not a 2d print service", // ubuntu
-                          "no suitable print service found" // windows
+              Arrays.asList(
+                  "not a 2d print service", // ubuntu
+                  "no suitable print service found" // windows
                   );
           if (printerNotFoundMessages.stream().anyMatch(errorMessage::contains)) {
             log.error(e.getMessage(), e);
             if (JOptionPane.showConfirmDialog(
                     null,
                     "Der konfigurierte Drucker \""
-                            + "\"\nkann nicht gefunden werden!\n"
-                            + "Soll stattdessen der Standarddrucker verwendet werden?",
+                        + "\"\nkann nicht gefunden werden!\n"
+                        + "Soll stattdessen der Standarddrucker verwendet werden?",
                     "Drucken",
                     JOptionPane.OK_CANCEL_OPTION)
-                    == JOptionPane.OK_OPTION) {
+                == JOptionPane.OK_OPTION) {
               sendToPrinter(true, message, duplexPrint, exConsumer);
             } else {
               UnexpectedExceptionHandler.showPrintAbortedWarning(e, false);
@@ -210,6 +208,7 @@ public abstract class Report {
       }
     }.execute();
   }
+
   public void exportPdf(String message, Consumer<Throwable> exConsumer) {
     Path filePath = getOutputFolder().resolve(getSafeOutFileName() + ".pdf").toAbsolutePath();
     exportPdf(message, exConsumer, filePath, true);
@@ -220,7 +219,8 @@ public abstract class Report {
     exportPdf(message, exConsumer, filePath, false);
   }
 
-  private void exportPdf(String message, Consumer<Throwable> exConsumer, Path filePath, boolean openFile) {
+  private void exportPdf(
+      String message, Consumer<Throwable> exConsumer, Path filePath, boolean openFile) {
 
     Path outputFolder = getOutputFolder();
     final AtomicInteger progressStep = new AtomicInteger(1);
@@ -232,7 +232,7 @@ public abstract class Report {
       }
     }
     ProgressMonitor pm =
-            new ProgressMonitor(null, message, "Initialisiere Druckerservice...", 0, 3);
+        new ProgressMonitor(null, message, "Initialisiere Druckerservice...", 0, 3);
     pm.setMillisToPopup(0);
     pm.setMillisToDecideToPopup(0);
     pm.setProgress(0);
@@ -276,18 +276,18 @@ public abstract class Report {
     } catch (FileNotFoundException f) {
       log.error(e.getMessage(), e);
       JOptionPane.showMessageDialog(
-              null,
-              "Die Datei kann nicht geschrieben werden,\nweil sie in einer anderen Anwendung geöffnet ist.\n"
-                      + "Bitte die Datei schließen und den Export erneut aufrufen!\n",
-              "Fehler beim Dateizugriff",
-              JOptionPane.ERROR_MESSAGE);
+          null,
+          "Die Datei kann nicht geschrieben werden,\nweil sie in einer anderen Anwendung geöffnet ist.\n"
+              + "Bitte die Datei schließen und den Export erneut aufrufen!\n",
+          "Fehler beim Dateizugriff",
+          JOptionPane.ERROR_MESSAGE);
       throw new RuntimeException(f);
     } catch (NoTransactionsFoundException n) {
       JOptionPane.showMessageDialog(
-              null,
-              "Keine Bons gefunden, die den Kriterien entsprechen!",
-              "Keine Bons",
-              JOptionPane.ERROR_MESSAGE);
+          null,
+          "Keine Bons gefunden, die den Kriterien entsprechen!",
+          "Keine Bons",
+          JOptionPane.ERROR_MESSAGE);
     } catch (Throwable t) {
       UnexpectedExceptionHandler.showUnexpectedErrorWarning(t);
     }
