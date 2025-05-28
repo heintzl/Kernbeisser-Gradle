@@ -1,5 +1,5 @@
 <!-- Created with Jaspersoft Studio version 7.0.0.final using JasperReports Library version 7.0.0-b478feaa9aab4375eba71de77b4ca138ad2f62aa  -->
-<jasperReport name="BuchhaltungBonUebersicht" language="java" pageWidth="595" pageHeight="842" columnWidth="505" leftMargin="50" rightMargin="40" topMargin="20" bottomMargin="20" uuid="348b17df-f89e-49c3-a919-6d49e97f00a2" floatColumnFooter="true">
+<jasperReport name="BuchhaltungBonUebersicht" language="java" pageWidth="595" pageHeight="842" columnWidth="505" leftMargin="50" rightMargin="40" topMargin="20" bottomMargin="20" uuid="348b17df-f89e-49c3-a919-6d49e97f00a2" summaryWithPageHeaderAndFooter="true" floatColumnFooter="true">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<style name="Bold" markup="none" bold="true"/>
 	<parameter name="start" forPrompting="false" class="java.sql.Timestamp"/>
@@ -22,33 +22,36 @@
 	<parameter name="sum_positive" class="java.lang.Double"/>
 	<parameter name="sum_negative" class="java.lang.Double"/>
 	<query language="sql"><![CDATA[]]></query>
-	<field name="createDate" class="java.time.Instant"/>
-	<field name="bonNo" class="java.lang.Long"/>
+	<field name="date" class="java.time.Instant"/>
+	<field name="description" class="java.lang.String"/>
 	<field name="customerIdentification" class="java.lang.String"/>
-	<field name="sum" class="java.lang.Double"/>
-	<field name="session.sessionTypeName" class="java.lang.String"/>
 	<field name="sellerIdentification" class="java.lang.String"/>
-	<variable name="sessionSum" resetType="Group" calculation="Sum" resetGroup="SessionType" class="java.lang.Double">
+	<field name="sum" class="java.lang.Double"/>
+	<field name="reportGroup" class="kernbeisser.Enums.AccountingReportGroups"/>
+	<variable name="isPurchase" resetType="None" class="java.lang.Boolean">
+		<expression><![CDATA[EnumSet.of(kernbeisser.Enums.AccountingReportGroups.ASSISTED_PURCHASE,kernbeisser.Enums.AccountingReportGroups.SOLO_PURCHASE).contains($F{reportGroup})]]></expression>
+	</variable>
+	<variable name="groupSum" resetType="Group" calculation="Sum" resetGroup="ReportGroup" class="java.lang.Double">
 		<expression><![CDATA[$F{sum}]]></expression>
 	</variable>
-	<group name="SessionType" reprintHeaderOnEachPage="true">
-		<expression><![CDATA[$F{session.sessionTypeName} == "SOLO"?"SOLO":$F{sellerIdentification}.toString()]]></expression>
+	<group name="ReportGroup" keepTogether="true" reprintHeaderOnEachPage="true">
+		<expression><![CDATA[$F{reportGroup} == kernbeisser.Enums.AccountingReportGroups.ASSISTED_PURCHASE?$F{sellerIdentification}.toString():$F{reportGroup}.getName()]]></expression>
 		<groupHeader>
 			<band height="45">
-				<element kind="staticText" uuid="aa9aa66a-1df7-4724-b260-ee40509e7c77" x="0" y="17" width="40" height="14" fontName="DejaVu Sans Condensed" bold="true" hTextAlign="Right">
-					<text><![CDATA[Bon-Nr.]]></text>
+				<element kind="textField" uuid="d85052c5-6a4d-45ce-83cb-d5f427d7fd1b" x="226" y="17" width="126" height="14" fontName="DejaVu Sans Condensed" bold="true" hTextAlign="Left">
+					<expression><![CDATA[$V{isPurchase} ? "Bon-Nr." : "Beschreibung"]]></expression>
 				</element>
-				<element kind="staticText" uuid="50835388-1e62-431c-82ea-414c6c294bd4" x="44" y="17" width="64" height="14" fontName="DejaVu Sans Condensed" bold="true" hTextAlign="Left">
-					<text><![CDATA[Einkäufer*in]]></text>
+				<element kind="textField" uuid="607828de-fe22-4d64-9a55-bfa3abb2166e" x="90" y="15" width="80" height="14" fontName="DejaVu Sans Condensed" bold="true" hTextAlign="Left">
+					<expression><![CDATA[ $V{isPurchase} ? "Einkäufer*in" : "Mitglied"]]></expression>
 				</element>
-				<element kind="staticText" uuid="8ff88ae2-245a-44b9-8ab6-f8793aef0890" x="343" y="17" width="64" height="14" fontName="DejaVu Sans Condensed" bold="true" hTextAlign="Right">
+				<element kind="staticText" uuid="8ff88ae2-245a-44b9-8ab6-f8793aef0890" x="450" y="17" width="55" height="14" fontName="DejaVu Sans Condensed" bold="true" hTextAlign="Right">
 					<text><![CDATA[Betrag]]></text>
 				</element>
-				<element kind="staticText" uuid="261f67af-a65a-4748-a3bb-89b641ae5510" x="420" y="16" width="84" height="14" fontName="DejaVu Sans Condensed" bold="true" hTextAlign="Right">
+				<element kind="staticText" uuid="261f67af-a65a-4748-a3bb-89b641ae5510" x="0" y="15" width="84" height="14" fontName="DejaVu Sans Condensed" bold="true" hTextAlign="Left">
 					<text><![CDATA[Datum/Uhrzeit]]></text>
 				</element>
-				<element kind="textField" uuid="1a31ad33-6e97-4605-b12f-9cd68337c60e" x="0" y="1" width="250" height="16" fontName="DejaVu Sans Condensed" underline="true">
-					<expression><![CDATA[$F{session.sessionTypeName} == "SOLO"?"Einkaufs-Selbsteingaben":$F{session.sessionTypeName} == "ASSISTED"?"Einkäufe beim Ladendienst (" + $F{sellerIdentification} +")":"Andere Einkäufe"]]></expression>
+				<element kind="textField" uuid="1a31ad33-6e97-4605-b12f-9cd68337c60e" x="0" y="1" width="250" height="16" fontName="DejaVu Sans Condensed" bold="true" italic="true" underline="false">
+					<expression><![CDATA[$F{reportGroup} == kernbeisser.Enums.AccountingReportGroups.ASSISTED_PURCHASE ? "Einkäufe beim Ladendienst (" + $F{sellerIdentification}.toString() + ")" : $F{reportGroup}.getName()]]></expression>
 				</element>
 			</band>
 		</groupHeader>
@@ -57,8 +60,8 @@
 				<element kind="staticText" uuid="6b4acc6c-9602-4652-b48b-b8ef540847fa" x="0" y="-9" width="44" height="14" fontName="DejaVu Sans Condensed" bold="true" hTextAlign="Left">
 					<text><![CDATA[Summe:]]></text>
 				</element>
-				<element kind="textField" uuid="a2da7f26-0ed1-4403-8c75-9666208407e2" x="352" y="-9" width="54" height="14" fontName="DejaVu Sans Condensed" textAdjust="ScaleFont" pattern="#,##0.00€;-#,##0.00€" bold="true" hTextAlign="Right">
-					<expression><![CDATA[$V{sessionSum}]]></expression>
+				<element kind="textField" uuid="a2da7f26-0ed1-4403-8c75-9666208407e2" x="450" y="-9" width="54" height="14" fontName="DejaVu Sans Condensed" textAdjust="ScaleFont" pattern="#,##0.00€;-#,##0.00€" bold="true" hTextAlign="Right">
+					<expression><![CDATA[$V{groupSum}]]></expression>
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="274c790d-bccd-4b9b-ad18-f5e418e86810"/>
 				</element>
 			</band>
@@ -80,30 +83,33 @@
 		</element>
 		<property name="com.jaspersoft.studio.unit.height" value="px"/>
 	</title>
-	<pageHeader height="21" splitType="Stretch">
+	<pageHeader height="20" splitType="Stretch">
 		<element kind="textField" uuid="10a6ff35-3dc0-4365-91b8-beb4f8813fc0" x="415" y="5" width="45" height="15" fontName="DejaVu Sans Condensed" fontSize="10.0" hTextAlign="Right">
 			<expression><![CDATA["Seite " + $V{PAGE_NUMBER}]]></expression>
 		</element>
 		<element kind="textField" uuid="24631cf1-5277-48a1-a10f-f758907adcdf" x="460" y="5" width="44" height="15" fontName="DejaVu Sans Condensed" fontSize="10.0" evaluationTime="Report" hTextAlign="Right">
 			<expression><![CDATA["von " + $V{PAGE_NUMBER}]]></expression>
 		</element>
+		<element kind="textField" uuid="8644f03a-b844-4402-bbe6-b9eae12076d0" x="0" y="5" width="196" height="15" hTextAlign="Left" vTextAlign="Top">
+			<expression><![CDATA[$P{reportTitle}]]></expression>
+		</element>
 	</pageHeader>
 	<detail>
 		<band height="15" splitType="Stretch">
-			<element kind="textField" uuid="fc0393e4-f87e-4214-94dd-cc325ca76e8b" x="0" y="-9" width="30" height="14" fontName="DejaVu Sans Condensed" hTextAlign="Right">
-				<expression><![CDATA[$F{bonNo}]]></expression>
+			<element kind="textField" uuid="fc0393e4-f87e-4214-94dd-cc325ca76e8b" x="226" y="-11" width="214" height="14" fontName="DejaVu Sans Condensed" textAdjust="ScaleFont" hTextAlign="Left" vTextAlign="Middle">
+				<expression><![CDATA[$F{description}]]></expression>
 				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="185c0b2e-8717-4813-8080-5602a762f222"/>
 			</element>
-			<element kind="textField" uuid="b5b27eb9-28ac-4c0b-8de8-d2eff2aaa9a8" x="44" y="-9" width="326" height="14" fontName="DejaVu Sans Condensed" textAdjust="ScaleFont">
+			<element kind="textField" uuid="b5b27eb9-28ac-4c0b-8de8-d2eff2aaa9a8" x="90" y="-11" width="132" height="14" fontName="DejaVu Sans Condensed" textAdjust="ScaleFont" vTextAlign="Middle">
 				<expression><![CDATA[$F{customerIdentification}]]></expression>
 				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ebd64202-798a-42b0-b81f-9cde60b2708c"/>
 			</element>
-			<element kind="textField" uuid="6efcde95-291f-43d1-b62e-72f55da53670" x="352" y="-9" width="54" height="14" fontName="DejaVu Sans Condensed" textAdjust="ScaleFont" pattern="#,##0.00€;-#,##0.00€" hTextAlign="Right">
+			<element kind="textField" uuid="6efcde95-291f-43d1-b62e-72f55da53670" x="450" y="-11" width="54" height="14" fontName="DejaVu Sans Condensed" textAdjust="ScaleFont" pattern="#,##0.00€;-#,##0.00€" hTextAlign="Right" vTextAlign="Middle">
 				<expression><![CDATA[$F{sum}]]></expression>
 				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="274c790d-bccd-4b9b-ad18-f5e418e86810"/>
 			</element>
-			<element kind="textField" uuid="5aefa67d-fda1-4504-a12d-756bfb4a293c" x="420" y="-10" width="84" height="14" fontName="DejaVu Sans Condensed" pattern="dd.MM.yyyy HH:mm" hTextAlign="Right">
-				<expression><![CDATA[java.sql.Timestamp.from($F{createDate})]]></expression>
+			<element kind="textField" uuid="5aefa67d-fda1-4504-a12d-756bfb4a293c" x="0" y="-11" width="84" height="14" fontName="DejaVu Sans Condensed" pattern="dd.MM.yyyy HH:mm" hTextAlign="Left" vTextAlign="Middle">
+				<expression><![CDATA[java.sql.Timestamp.from($F{date})]]></expression>
 				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="274c790d-bccd-4b9b-ad18-f5e418e86810"/>
 			</element>
 		</band>

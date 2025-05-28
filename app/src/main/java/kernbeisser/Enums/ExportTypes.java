@@ -6,6 +6,7 @@ import lombok.Getter;
 public enum ExportTypes implements Named {
   PRINT("Ausdruck", null),
   PDF("PDF-Datei", "pdf"),
+  CLOUD("PDF in Cloud-Verzeichnis", "pdf"),
   JSON("JSON-Datei", "json"),
   CSV("CSV-Datei", "csv");
 

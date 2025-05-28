@@ -5,9 +5,7 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class ReportFileNames {
   public static final String ARTICLE_LABEL_REPORT_FILENAME = "Etiketten.jrxml";
-  public static final String ACCOUNTING_TRANSACTION_REPORT_FILENAME =
-      "BuchhaltungGuthabenAenderungen.jrxml";
-  public static final String ACCOUNTING_REPORT_FILENAME = "BuchhaltungBonUebersicht.jrxml";
+  public static final String ACCOUNTING_REPORT_FILENAME = "BuchhaltungUmsaetze.jrxml";
   public static final String INVENTORY_COUNTING_LISTS_REPORT_FILENAME = "Inventur_Zaehlliste.jrxml";
   public static final String INVOICE_REPORT_FILENAME = "Kerni_Rechnung.jrxml";
   public static final String KEY_USER_LIST_REPORT_FILENAME = "BenutzerSchluessel.jrxml";

@@ -4,20 +4,19 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.NoResultException;
 import java.time.Instant;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.*;
 import javax.swing.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.*;
 import kernbeisser.DBEntities.Purchase_;
+import kernbeisser.DBEntities.Repositories.TransactionRepository;
 import kernbeisser.DBEntities.SaleSession_;
 import kernbeisser.Enums.VAT;
+import kernbeisser.Exeptions.InvalidReportNoException;
 import kernbeisser.Exeptions.InvalidVATValueException;
 import kernbeisser.Exeptions.NoTransactionsFoundException;
+import kernbeisser.Reports.ReportDTO.AccountingReportItem;
 import kernbeisser.Useful.Date;
 import lombok.Cleanup;
 import org.jetbrains.annotations.NotNull;
@@ -28,18 +27,29 @@ public class AccountingReport extends Report {
   private final List<Purchase> purchases;
   private final boolean withNames;
 
-  public AccountingReport(long reportNo, List<Transaction> transactions, boolean withNames)
-      throws NoTransactionsFoundException {
+  public AccountingReport(long reportNo, boolean withNames)
+      throws InvalidReportNoException, NoTransactionsFoundException {
     super(ReportFileNames.ACCOUNTING_REPORT_FILENAME);
     this.reportNo = reportNo;
-    this.transactions = transactions;
+    long lastReportNo = TransactionRepository.getLastReportNo();
+    if (reportNo > lastReportNo) {
+      if (reportNo > lastReportNo + 1) {
+        throw new InvalidReportNoException();
+      }
+      transactions = TransactionRepository.getUnreportedTransactions();
+      if (!transactions.isEmpty()) {
+        TransactionRepository.writeAccountingReportNo(transactions, reportNo);
+      }
+    } else {
+      transactions = TransactionRepository.getTransactionsByReportNo(reportNo);
+    }
     this.purchases = getPurchases();
     this.withNames = withNames;
   }
 
   @Override
   String createOutFileName() {
-    return String.format("KernbeisserBuchhaltungBonUebersicht_%d", reportNo);
+    return String.format("KernbeisserUmsaetze_%d", reportNo);
   }
 
   private List<Purchase> getPurchases() throws NoResultException {
@@ -53,7 +63,7 @@ public class AccountingReport extends Report {
     return purchases;
   }
 
-  static String getReportTitle(long reportNo, List<Transaction> transactions) {
+  private static String getReportTitle(long reportNo, List<Transaction> transactions) {
     return (reportNo == 0 ? "Umsatzbericht " : "LD-Endabrechnung Nr. " + reportNo)
         + "    "
         + Date.INSTANT_DATE.format(transactions.getFirst().getDate())
@@ -61,7 +71,7 @@ public class AccountingReport extends Report {
         + Date.INSTANT_DATE.format(transactions.getLast().getDate());
   }
 
-  static long countVatValues(Collection<Purchase> purchases, VAT vat) {
+  private static long countVatValues(Collection<Purchase> purchases, VAT vat) {
     return purchases.stream()
         .flatMap(p -> p.getAllItems().stream())
         .filter(s -> s.getVat() == vat)
@@ -70,7 +80,7 @@ public class AccountingReport extends Report {
         .count();
   }
 
-  static double getVatValue(Collection<Purchase> purchases, VAT vat) {
+  private static double getVatValue(Collection<Purchase> purchases, VAT vat) {
     return purchases.stream()
         .flatMap(p -> p.getAllItems().stream())
         .filter(s -> s.getVat() == vat)
@@ -207,9 +217,16 @@ public class AccountingReport extends Report {
   }
 
   @Override
-  Collection<?> getDetailCollection() {
-    return purchases.stream()
-        .map(p -> p.withUserIdentification(withNames))
-        .collect(Collectors.toList());
+  Collection<AccountingReportItem> getDetailCollection() {
+    Collection<AccountingReportItem> detailCollection = new ArrayList<>();
+    detailCollection.addAll(
+        purchases.stream().map(p -> new AccountingReportItem(p, withNames)).toList());
+    detailCollection.addAll(
+        transactions.stream()
+            .filter(TransactionRepository::isAccountingReportTransaction)
+            .map(t -> new AccountingReportItem(t, withNames))
+            .sorted(Comparator.comparingInt(reportItem -> reportItem.getReportGroup().ordinal()))
+            .toList());
+    return detailCollection;
   }
 }

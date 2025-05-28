@@ -19,12 +19,11 @@ import javax.swing.plaf.FontUIResource;
 import javax.swing.text.StyleContext;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
 import kernbeisser.DBEntities.Purchase;
-import kernbeisser.DBEntities.Transaction;
+import kernbeisser.DBEntities.Repositories.TransactionRepository;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.ExportTypes;
 import kernbeisser.Enums.StatementType;
 import kernbeisser.Exeptions.NoTransactionsFoundException;
-import kernbeisser.Reports.UserNameObfuscation;
 import kernbeisser.Useful.Date;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
@@ -43,7 +42,7 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
   @Getter private JRadioButton optAccountingReport;
   private JRadioButton optUserBalance;
   private JCheckBox userBalanceWithNames;
-  private JComboBox<UserNameObfuscation> accountingReportWithNames;
+  private JCheckBox accountingReportWithNames;
   private JRadioButton optKeyUserList;
   private JComboBox<String> userKeySortOrder;
   private JRadioButton optTransactionStatement;
@@ -82,7 +81,7 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
       controller.exportAccountingReport(
           Long.parseLong(
               ((String) accountingReportNo.getSelectedItem()).replace(" (neu erstellen)", "")),
-          (UserNameObfuscation) accountingReportWithNames.getSelectedItem());
+          accountingReportWithNames.isSelected());
     } else if (optUserBalance.isSelected()) {
       String selectedReport = (String) userBalanceReportNo.getSelectedItem();
       long reportNo;
@@ -139,9 +138,6 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
     for (ExportTypes t : controller.getExportTypes()) {
       exportType.addItem(t);
     }
-    for (UserNameObfuscation t : controller.getUserNameObfuscations()) {
-      accountingReportWithNames.addItem(t);
-    }
     exportType.addActionListener(
         e -> duplexPrint.setEnabled(getSelectedExportType() == ExportTypes.PRINT));
     for (String s : controller.getUserKeySortOrders()) {
@@ -153,7 +149,7 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
     tillRollStartDate.setDate(now);
     tillRollEndDate.setDate(now);
 
-    int maxReportNo = (int) Transaction.getLastReportNo();
+    int maxReportNo = (int) TransactionRepository.getLastReportNo();
     for (int i = 1; i <= maxReportNo; i++) {
       accountingReportNo.addItem(Integer.toString(i));
       userBalanceReportNo.addItem(Integer.toString(i));
@@ -161,7 +157,7 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
     userBalanceReportNo.addItem("aktuell");
     userBalanceReportNo.setSelectedIndex(maxReportNo);
     try {
-      Transaction.getUnreportedTransactions();
+      TransactionRepository.getUnreportedTransactions();
       accountingReportNo.addItem((maxReportNo + 1) + " (neu erstellen)");
       accountingReportNo.setSelectedIndex(maxReportNo);
       userBalanceReportNo.setSelectedIndex(maxReportNo);
@@ -195,7 +191,16 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
   public void messageEmptyReportNo(long reportNo) {
     JOptionPane.showMessageDialog(
         getContent(),
-        "Zur Berichtsnummer " + reportNo + " liegen keine Umsätze vor.",
+        "Zur Berichtsnummer %d liegen keine Umsätze vor.".formatted(reportNo),
+        "Umsatzbericht",
+        JOptionPane.INFORMATION_MESSAGE);
+  }
+
+  public void messageInvalidReportNo(long reportNo) {
+    JOptionPane.showMessageDialog(
+        getContent(),
+        "Die Berichtsnummer %d ist inkonsistent. Die vorhergehende Berichtsnummer exisitert nicht."
+            .formatted(reportNo),
         "Umsatzbericht",
         JOptionPane.INFORMATION_MESSAGE);
   }
@@ -203,7 +208,7 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
   public void messageNoAccountingReport(boolean b) {
     JOptionPane.showMessageDialog(
         getContent(),
-        "Der Bericht wurde " + (b ? "" : "nicht") + " erfolgreich erstellt",
+        "Der Bericht wurde %s erfolgreich erstellt".formatted(b ? "" : "nicht"),
         "Umsatzbericht",
         JOptionPane.INFORMATION_MESSAGE);
   }
@@ -211,7 +216,7 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
   public void messageNotImplemented(ExportTypes exportType) {
     JOptionPane.showMessageDialog(
         getContent(),
-        exportType.getName() + ": Diese Methode ist noch nicht verfügbar!",
+        "%s: Diese Methode ist noch nicht verfügbar!".formatted(exportType.getName()),
         "Ausgabefehler",
         JOptionPane.WARNING_MESSAGE);
   }
@@ -473,7 +478,8 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
     gbc.anchor = GridBagConstraints.WEST;
     gbc.insets = new Insets(15, 5, 0, 5);
     panel3.add(accountingReportNo, gbc);
-    accountingReportWithNames = new JComboBox();
+    accountingReportWithNames = new JCheckBox();
+    accountingReportWithNames.setText("Klarnamen ausgeben");
     gbc = new GridBagConstraints();
     gbc.gridx = 3;
     gbc.gridy = 0;

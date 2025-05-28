@@ -3,17 +3,14 @@ package kernbeisser.Windows.AccountingReports;
 import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
-import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.ExportTypes;
 import kernbeisser.Enums.StatementType;
 import kernbeisser.Exeptions.IncorrectInput;
+import kernbeisser.Exeptions.InvalidReportNoException;
 import kernbeisser.Exeptions.NoTransactionsFoundException;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
 import kernbeisser.Reports.*;
-import kernbeisser.Windows.CashierShoppingMask.CashierShoppingMaskModel;
 import kernbeisser.Windows.MVC.Controller;
 import rs.groump.Key;
 import rs.groump.PermissionKey;
@@ -75,50 +72,34 @@ public class AccountingReportsController
       return;
     }
     exportReport(
-        new TillrollReport(startDate, endDate.plus(1, ChronoUnit.DAYS)), "Bonrolle wird erstellt");
+        new TillrollReport(startDate, endDate.plus(1, ChronoUnit.DAYS)), "Erstelle Bonrolle");
   }
 
-  public void exportAccountingReport(long reportNo, UserNameObfuscation withNames) {
-    AccountingReportsView view = getView();
-    if (reportNo == Transaction.getLastReportNo() + 1) {
-      try {
-        CashierShoppingMaskModel.printAccountingReports(
-            Transaction.getUnreportedTransactions(), view::messageNoAccountingReport);
-      } catch (NoTransactionsFoundException e) {
-        view.messageEmptyReportNo(reportNo);
-      }
-    } else {
-      try {
-        List<Transaction> reportTransactions =
-            Transaction.getTransactionsByReportNo(reportNo).stream()
-                .filter(t -> t.isAccountingReportTransaction() || t.isPurchase())
-                .collect(Collectors.toList());
-        if (reportTransactions.isEmpty()) throw new NoTransactionsFoundException();
-        AccountingReportsModel.exportAccountingReports(
-            reportTransactions, reportNo, withNames, view.getDuplexPrint());
-      } catch (NoTransactionsFoundException e) {
-        view.messageEmptyReportNo(reportNo);
-      }
+  public void exportAccountingReport(long reportNo, boolean withNames) {
+    try {
+      exportReport(new AccountingReport(reportNo, withNames), "Erstelle Buchhaltungsbericht");
+    } catch (NoTransactionsFoundException e) {
+      getView().messageEmptyReportNo(reportNo);
+    } catch (InvalidReportNoException e) {
+      getView().messageInvalidReportNo(reportNo);
     }
   }
 
   public void exportUserBalance(long reportNo, boolean userBalanceWithNames) {
-    exportReport(
-        new UserBalanceReport(reportNo, userBalanceWithNames), "Guthabenstände werden erstellt");
+    exportReport(new UserBalanceReport(reportNo, userBalanceWithNames), "Erstelle Guthabenstände");
   }
 
   public void exportKeyUserList(String sortOrder) {
-    exportReport(new KeyUserList(sortOrder), "Benutzer-Schlüssel-Liste wird erstellt");
+    exportReport(new KeyUserList(sortOrder), "Erstelle Benutzer-Schlüssel");
   }
 
   public void exportTransactionStatement(User user, StatementType statementType, boolean current) {
-    exportReport(
-        new TransactionStatement(user, statementType, current), "Kontoauszug wird erstellt");
+    exportReport(new TransactionStatement(user, statementType, current), "Erstelle Kontoauszug");
   }
 
   public void exportPermissionHolders(boolean permissionHoldersWithKeys) {
     exportReport(
-        new PermissionHolders(permissionHoldersWithKeys), "Rolleninhaber-Bericht wird erstellt");
+        new PermissionHolders(permissionHoldersWithKeys), "Erstelle Rolleninhaber-Bericht");
   }
 
   public void exportLossAnalysis(Instant startDate, Instant endDate) {
@@ -128,7 +109,7 @@ public class AccountingReportsController
     }
     exportReport(
         new LossAnalysisReport(startDate, endDate.plus(1, ChronoUnit.DAYS)),
-        "Schwundanalyse wird erstellt");
+        "Erstelle Schwundanalyse");
   }
 
   @Override

@@ -11,6 +11,8 @@ import java.util.List;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.TransactionType;
+import kernbeisser.Exeptions.InvalidReportNoException;
+import kernbeisser.Exeptions.NoTransactionsFoundException;
 import net.sf.jasperreports.engine.JasperPrint;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
@@ -31,9 +33,7 @@ class AccountingReportTest {
 
       Purchase purchase = createPurchase();
       mockQuerys(entityManagerMock, purchase);
-
-      List<Transaction> transactions = createTransactions();
-      AccountingReport accountingReport = new AccountingReport(1L, transactions, false);
+      AccountingReport accountingReport = new AccountingReport(1L, false);
 
       // act
       JasperPrint jspPrint = accountingReport.lazyGetJspPrint();
@@ -42,6 +42,8 @@ class AccountingReportTest {
       Assertions.assertNotNull(jspPrint);
       Assertions.assertEquals(
           ReportFileNames.ACCOUNTING_REPORT_FILENAME, jspPrint.getName() + ".jrxml");
+    } catch (NoTransactionsFoundException | InvalidReportNoException e) {
+      Assertions.fail("unsuitable reportNo");
     }
   }
 
@@ -52,13 +54,15 @@ class AccountingReportTest {
       EntityManager entityManagerMock = EntityManagerMockHelper.mockEntityManager(dbConnectionMock);
       mockPurchaseQuery(entityManagerMock, new Purchase());
 
-      AccountingReport accountingReport = new AccountingReport(1337L, null, false);
+      AccountingReport accountingReport = new AccountingReport(1337L, false);
 
       // act
       String result = accountingReport.createOutFileName();
 
       // assert
       Assertions.assertEquals("KernbeisserBuchhaltungBonUebersicht_1337", result);
+    } catch (NoTransactionsFoundException | InvalidReportNoException e) {
+      Assertions.fail("unsuitable reportNo");
     }
   }
 

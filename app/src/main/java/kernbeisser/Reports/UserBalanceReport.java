@@ -5,7 +5,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
-import kernbeisser.DBEntities.Transaction;
+import kernbeisser.DBEntities.Repositories.TransactionRepository;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
 
@@ -38,7 +38,7 @@ public class UserBalanceReport extends Report {
         reportNo == -1
             ? new HashMap<>()
             : UserGroup.populateWithEntities(
-                UserGroup.getValueMapAt(Transaction.getLastOfReportNo(reportNo), true));
+                UserGroup.getValueMapAt(TransactionRepository.getLastOfReportNo(reportNo), true));
     if (reportNo == -1) {
       userGroups = UserGroup.getActiveUserGroups();
     } else {
@@ -57,7 +57,7 @@ public class UserBalanceReport extends Report {
     if (reportNo == -1) {
       params = UserGroup.getValueAggregates();
     } else {
-      params = UserGroup.getValueAggregatesAt(Transaction.getLastOfReportNo(reportNo));
+      params = UserGroup.getValueAggregatesAt(TransactionRepository.getLastOfReportNo(reportNo));
     }
     params.put(
         "reportTitle",

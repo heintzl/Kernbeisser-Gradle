@@ -9,11 +9,9 @@ import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxView;
 import kernbeisser.DBEntities.Post;
 import kernbeisser.DBEntities.SaleSession;
-import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.*;
 import kernbeisser.Exeptions.NoSelectionException;
-import kernbeisser.Exeptions.NoTransactionsFoundException;
 import kernbeisser.Exeptions.NotEnoughCreditException;
 import kernbeisser.Useful.Users;
 import kernbeisser.Windows.LogIn.LogInModel;
@@ -123,21 +121,15 @@ public class CashierShoppingMaskController
 
   @Override
   protected boolean commitClose() {
-    try {
-      List<Transaction> unreportedTransactions = Transaction.getUnreportedTransactions();
-      if (!getView().commitClose()) return false;
-      model.printAccountingReports(unreportedTransactions, this::handleResult);
-      return true;
-    } catch (NoTransactionsFoundException e) {
-      return true;
-    }
+    if (!getView().commitClose()) return false;
+    handleResult(CashierShoppingMaskModel.printAccountingReports());
+    return true;
   }
 
-  private void handleResult(Boolean b) {
-    if (!b) {
-      long missedPurchases = Transaction.getUnreportedTransactions().size();
-      if (missedPurchases > 40) {
-        getView().messageDoPanic(missedPurchases);
+  private void handleResult(int unreportedTransactions) {
+    if (unreportedTransactions > 0) {
+      if (unreportedTransactions > 40) {
+        getView().messageDoPanic(unreportedTransactions);
       } else {
         getView().messageDontPanic();
       }

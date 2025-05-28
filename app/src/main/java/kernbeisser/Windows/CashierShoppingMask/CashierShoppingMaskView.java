@@ -109,8 +109,7 @@ public class CashierShoppingMaskView implements IView<CashierShoppingMaskControl
   public boolean commitClose() {
     return JOptionPane.showConfirmDialog(
             getTopComponent(),
-            "Bist du dir sicher das du den Ladendienst beenden\n"
-                + "und den Ladendienst-Report ausdrucken möchtest?",
+            "Bist du dir sicher, dass du den Ladendienst beenden möchtest?",
             "Ladendienst beenden",
             JOptionPane.YES_NO_OPTION)
         == 0;

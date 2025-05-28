@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.HashPrintServiceAttributeSet;
@@ -89,6 +90,10 @@ public abstract class Report {
     return Config.getConfig().getReports().getOutputDirectory().toPath();
   }
 
+  private static Path getCloudOutputFolder() {
+    return Config.getConfig().getReports().getCloudOutputDirectory().toPath();
+  }
+
   private static PrintRequestAttributeSet getPageFormatFromReport(JasperPrint jspPrint) {
     PrintRequestAttributeSet result = new HashPrintRequestAttributeSet();
     result.add(
@@ -132,67 +137,93 @@ public abstract class Report {
       boolean duplexPrint,
       Consumer<Throwable> exConsumer) {
 
-    new Thread(
-            () -> {
-              ProgressMonitor pm =
-                  new ProgressMonitor(null, message, "Initialisiere Druckerservice...", 0, 2);
-              pm.setProgress(1);
-              pm.setNote("Druck wird erstellt...");
-              JasperPrint jasperPrint = getJspPrint();
-              JRPrintServiceExporter printExporter = new JRPrintServiceExporter();
-              printExporter.setExporterInput(new SimpleExporterInput(jasperPrint));
-              PrintRequestAttributeSet requestAttributeSet = getPageFormatFromReport(jasperPrint);
-              if (duplexPrint) {
-                requestAttributeSet.add(Sides.DUPLEX);
-              }
+    final AtomicInteger progressStep = new AtomicInteger(1);
+    ProgressMonitor pm =
+        new ProgressMonitor(null, message, "Initialisiere Druckerservice...", 0, 3);
+    pm.setMillisToDecideToPopup(0);
+    pm.setMillisToPopup(0);
+    pm.setProgress(0);
+    new SwingWorker<Void, String>() {
+      @Override
+      protected Void doInBackground() throws JRException {
+        publish("Erstelle Ausdruck ...");
+        JasperPrint jasperPrint = getJspPrint();
+        JRPrintServiceExporter printExporter = new JRPrintServiceExporter();
+        printExporter.setExporterInput(new SimpleExporterInput(jasperPrint));
+        PrintRequestAttributeSet requestAttributeSet = getPageFormatFromReport(jasperPrint);
+        if (duplexPrint) {
+          requestAttributeSet.add(Sides.DUPLEX);
+        }
 
-              PrintServiceAttributeSet serviceAttributeSet =
-                  getPrinter(useOSDefaultPrinter, jasperPrint);
-              SimplePrintServiceExporterConfiguration printConfig =
-                  new SimplePrintServiceExporterConfiguration();
-              printConfig.setPrintRequestAttributeSet(requestAttributeSet);
-              printConfig.setPrintServiceAttributeSet(serviceAttributeSet);
-              printConfig.setDisplayPrintDialog(false);
-              printConfig.setDisplayPageDialog(false);
-              printExporter.setConfiguration(printConfig);
+        PrintServiceAttributeSet serviceAttributeSet = getPrinter(useOSDefaultPrinter, jasperPrint);
+        SimplePrintServiceExporterConfiguration printConfig =
+            new SimplePrintServiceExporterConfiguration();
+        printConfig.setPrintRequestAttributeSet(requestAttributeSet);
+        printConfig.setPrintServiceAttributeSet(serviceAttributeSet);
+        printConfig.setDisplayPrintDialog(false);
+        printConfig.setDisplayPageDialog(false);
+        printExporter.setConfiguration(printConfig);
+        publish("Drucke ...");
+        printExporter.exportReport();
+        return null;
+      }
 
-              try {
-                printExporter.exportReport();
-                pm.setNote("Fertig");
-                pm.close();
-              } catch (JRException e) {
-                String errorMessage = e.getMessage().toLowerCase(Locale.ROOT);
-                Collection<String> printerNotFoundMessages =
-                    Arrays.asList(
-                        "not a 2d print service", // ubuntu
-                        "no suitable print service found" // windows
-                        );
-                if (printerNotFoundMessages.stream().anyMatch(errorMessage::contains)) {
-                  log.error(e.getMessage(), e);
-                  if (JOptionPane.showConfirmDialog(
-                          null,
-                          "Der konfigurierte Drucker \""
-                              + serviceAttributeSet.get(PrinterName.class)
-                              + "\"\nkann nicht gefunden werden!\n"
-                              + "Soll stattdessen der Standarddrucker verwendet werden?",
-                          "Drucken",
-                          JOptionPane.OK_CANCEL_OPTION)
-                      == JOptionPane.OK_OPTION) {
-                    sendToPrinter(true, message, duplexPrint, exConsumer);
-                  } else {
-                    UnexpectedExceptionHandler.showPrintAbortedWarning(e, false);
-                  }
-                } else {
-                  exConsumer.accept(e);
-                }
-              }
-            })
-        .start();
+      @Override
+      protected void process(List<String> progressMessages) {
+        pm.setNote(progressMessages.getLast());
+        pm.setProgress(progressStep.addAndGet(1));
+      }
+
+      @Override
+      protected void done() {
+
+        pm.close();
+        try {
+          get();
+        } catch (Exception e) {
+          String errorMessage = e.getMessage().toLowerCase(Locale.ROOT);
+          Collection<String> printerNotFoundMessages =
+              Arrays.asList(
+                  "not a 2d print service", // ubuntu
+                  "no suitable print service found" // windows
+                  );
+          if (printerNotFoundMessages.stream().anyMatch(errorMessage::contains)) {
+            log.error(e.getMessage(), e);
+            if (JOptionPane.showConfirmDialog(
+                    null,
+                    "Der konfigurierte Drucker \""
+                        + "\"\nkann nicht gefunden werden!\n"
+                        + "Soll stattdessen der Standarddrucker verwendet werden?",
+                    "Drucken",
+                    JOptionPane.OK_CANCEL_OPTION)
+                == JOptionPane.OK_OPTION) {
+              sendToPrinter(true, message, duplexPrint, exConsumer);
+            } else {
+              UnexpectedExceptionHandler.showPrintAbortedWarning(e, false);
+            }
+          } else {
+            exConsumer.accept(e);
+          }
+        }
+      }
+    }.execute();
   }
 
   public void exportPdf(String message, Consumer<Throwable> exConsumer) {
+    Path filePath = getOutputFolder().resolve(getSafeOutFileName() + ".pdf").toAbsolutePath();
+    exportPdf(message, exConsumer, filePath, true);
+  }
+
+  public void exportPdfToCloud(String message, Consumer<Throwable> exConsumer) {
+    Path filePath = getCloudOutputFolder().resolve(getSafeOutFileName() + ".pdf").toAbsolutePath();
+    exportPdf(message, exConsumer, filePath, false);
+  }
+
+  private void exportPdf(
+      String message, Consumer<Throwable> exConsumer, Path filePath, boolean openFile) {
 
     Path outputFolder = getOutputFolder();
+    final AtomicInteger progressStep = new AtomicInteger(1);
     if (!Files.exists(outputFolder)) {
       try {
         Files.createDirectories(outputFolder);
@@ -200,29 +231,43 @@ public abstract class Report {
         UnexpectedExceptionHandler.showUnexpectedErrorWarning(e);
       }
     }
-    Path filePath = getOutputFolder().resolve(getSafeOutFileName() + ".pdf").toAbsolutePath();
-    new Thread(
-            () -> {
-              ProgressMonitor pm =
-                  new ProgressMonitor(null, message, "Initialisiere Druckerservice...", 0, 2);
-              pm.setProgress(1);
-              pm.setNote("Exportiere PDF..");
-              try {
-                JasperExportManager.exportReportToPdfFile(getJspPrint(), filePath.toString());
-                pm.setNote("Fertig");
-                pm.close();
-                Tools.openFile(filePath.toFile());
-              } catch (JRException e) {
-                if (ExceptionUtils.indexOfType(e.getCause(), PrinterAbortException.class) != -1) {
-                  UnexpectedExceptionHandler.showPrintAbortedWarning(e, true);
-                } else {
-                  UnexpectedExceptionHandler.showUnexpectedErrorWarning(e);
-                }
-              } catch (Exception e) {
-                exConsumer.accept(e);
-              }
-            })
-        .start();
+    ProgressMonitor pm =
+        new ProgressMonitor(null, message, "Initialisiere Druckerservice...", 0, 3);
+    pm.setMillisToPopup(0);
+    pm.setMillisToDecideToPopup(0);
+    pm.setProgress(0);
+    new SwingWorker<Void, String>() {
+      @Override
+      protected Void doInBackground() throws Exception {
+        publish("Exportiere PDF...");
+        JasperExportManager.exportReportToPdfFile(getJspPrint(), filePath.toString());
+        publish("Fertig");
+        if (openFile) {
+          Tools.openFile(filePath.toFile());
+        }
+        return null;
+      }
+
+      @Override
+      protected void process(List<String> progressMessages) {
+        pm.setNote(progressMessages.getLast());
+        pm.setProgress(progressStep.addAndGet(1));
+      }
+
+      @Override
+      protected void done() {
+        pm.close();
+        try {
+          get();
+        } catch (Exception e) {
+          if (ExceptionUtils.indexOfType(e.getCause(), PrinterAbortException.class) != -1) {
+            UnexpectedExceptionHandler.showPrintAbortedWarning(e, true);
+          } else {
+            exConsumer.accept(e);
+          }
+        }
+      }
+    }.execute();
   }
 
   public static void pdfExportException(Throwable e) {
