@@ -19,6 +19,7 @@ import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
 import kernbeisser.Forms.ObjectForm.Exceptions.CannotParseException;
+import kernbeisser.Useful.Constants;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
 import org.hibernate.exception.ConstraintViolationException;
@@ -39,7 +40,7 @@ public class EditSurchargeGroupController
         model.getAllSuppliers().stream()
             .sorted(Comparator.comparing(Supplier::getName))
             .collect(Collectors.toList()));
-    editSurchargeGroupView.setSupplier(Supplier.KK_SUPPLIER);
+    editSurchargeGroupView.setSupplier(Constants.KK_SUPPLIER);
     loadForCurrentSupplier();
     getView().setEditAvailable(false);
   }

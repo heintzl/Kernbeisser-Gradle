@@ -30,6 +30,8 @@ import org.jetbrains.annotations.NotNull;
 import rs.groump.Key;
 import rs.groump.PermissionKey;
 
+import static kernbeisser.Useful.Constants.KK_SUPPLIER;
+
 public class ArticleView implements IView<ArticleController> {
 
   private AccessCheckingField<Article, String> itemName;
@@ -115,7 +117,7 @@ public class ArticleView implements IView<ArticleController> {
         new AccessCheckingComboBox<>(
             Article::getSurchargeGroup,
             Article::setSurchargeGroup,
-            () -> controller.getAllForSuppler(supplier.getSelected().orElse(Supplier.KK_SUPPLIER)));
+            () -> controller.getAllForSuppler(supplier.getSelected().orElse(KK_SUPPLIER)));
     shopRange =
         new AccessCheckingComboBox<Article, ShopRange>(
             Article::getShopRange, Article::setShopRange, controller::getAllShopRages);
@@ -226,9 +228,9 @@ public class ArticleView implements IView<ArticleController> {
     supplier.addActionListener(
         e -> {
           try {
-            controller.loadSurchargeGroupsFor(supplier.getSelected().orElse(Supplier.KK_SUPPLIER));
+            controller.loadSurchargeGroupsFor(supplier.getSelected().orElse(KK_SUPPLIER));
           } catch (NullPointerException nullPointerException) {
-            controller.loadSurchargeGroupsFor(Supplier.KK_SUPPLIER);
+            controller.loadSurchargeGroupsFor(KK_SUPPLIER);
           }
         });
     surchargeGroup.setRenderer(

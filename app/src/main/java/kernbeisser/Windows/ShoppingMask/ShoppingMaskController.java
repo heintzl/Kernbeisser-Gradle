@@ -15,6 +15,7 @@ import kernbeisser.Enums.*;
 import kernbeisser.Exeptions.NotEnoughCreditException;
 import kernbeisser.Exeptions.UndefinedInputException;
 import kernbeisser.Security.StaticPermissionChecks;
+import kernbeisser.Useful.Constants;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
@@ -310,7 +311,7 @@ public class ShoppingMaskController extends Controller<ShoppingMaskView, Shoppin
                               view.getSupplier().getOrPersistDefaultSurchargeGroup());
                         } else {
                           before.setSurchargeGroup(
-                              Supplier.KK_SUPPLIER.getOrPersistDefaultSurchargeGroup());
+                              Constants.KK_SUPPLIER.getOrPersistDefaultSurchargeGroup());
                         }
 
                         before.setNetPrice(

@@ -21,6 +21,8 @@ import kernbeisser.Useful.Date;
 import lombok.Cleanup;
 import org.jetbrains.annotations.NotNull;
 
+import static kernbeisser.Useful.Constants.SHOP_USER;
+
 public class AccountingReport extends Report {
   private final long reportNo;
   private final List<Transaction> transactions;
@@ -176,10 +178,9 @@ public class AccountingReport extends Report {
     double transactionCreditPayIn = 0.0;
     double transactionSpecialPayments = 0.0;
     double transactionPurchases = 0.0;
-    User kbUser = User.getKernbeisserUser();
     for (Transaction t : transactions) {
-      double direction = t.getFromUser().equals(kbUser) ? -1.0 : 1.0;
-      if (direction == -1.0 || t.getToUser().equals(kbUser)) {
+      double direction = t.getFromUser().equals(SHOP_USER) ? -1.0 : 1.0;
+      if (direction == -1.0 || t.getToUser().equals(SHOP_USER)) {
         transactionSaldo -= t.getValue() * direction;
         switch (t.getTransactionType()) {
           case PURCHASE:

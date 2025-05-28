@@ -22,6 +22,8 @@ import kernbeisser.Tasks.DTO.KornkraftGroup;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
 
+import static kernbeisser.Useful.Constants.KK_SUPPLIER;
+
 public class SynchronizeArticleModel implements IModel<SynchronizeArticleController> {
 
   private CatalogMergeSession mergeSession;
@@ -30,7 +32,7 @@ public class SynchronizeArticleModel implements IModel<SynchronizeArticleControl
       HashMap<KornkraftGroup, SurchargeGroup> surchargeGroupHashMap, EntityManager em) {
     Map<String, SurchargeGroup> nameRef =
         QueryBuilder.selectAll(SurchargeGroup.class)
-            .where(SurchargeGroup_.supplier.eq(Supplier.KK_SUPPLIER))
+            .where(SurchargeGroup_.supplier.eq(KK_SUPPLIER))
             .getResultMap(em, SurchargeGroup::pathString, sg -> sg);
     surchargeGroupHashMap.replaceAll((a, b) -> nameRef.get(b.pathString()));
   }
@@ -57,11 +59,11 @@ public class SynchronizeArticleModel implements IModel<SynchronizeArticleControl
         CatalogDataInterpreter.createNumberRefMap(catalog, surchargeGroupHashMap);
     List<Article> articleBases =
         QueryBuilder.selectAll(Article.class)
-            .where(Article_.supplier.eq(Supplier.KK_SUPPLIER))
+            .where(Article_.supplier.eq(KK_SUPPLIER))
             .getResultList(em);
     CatalogDataInterpreter.linkArticles(articleBases, kornkraftGroupHashMap);
     CatalogDataInterpreter.autoLinkArticle(
-        articleBases, Supplier.KK_SUPPLIER.getOrPersistDefaultSurchargeGroup(em));
+        articleBases, KK_SUPPLIER.getOrPersistDefaultSurchargeGroup(em));
     articleBases.forEach(em::persist);
     em.flush();
   }

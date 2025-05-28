@@ -14,8 +14,11 @@ import java.util.regex.PatternSyntaxException;
 import javax.swing.*;
 import javax.swing.RowFilter;
 import javax.swing.table.*;
+
+import jakarta.persistence.criteria.CriteriaBuilder;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
+import kernbeisser.Useful.Constants;
 import kernbeisser.Useful.DocumentChangeListener;
 import org.jetbrains.annotations.NotNull;
 
@@ -324,7 +327,7 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
 
           @Override
           public void selected(T t) {
-            if (t.equals(last) && Math.abs(System.nanoTime() - lastClick) < 5e+8) {
+            if (t.equals(last) && Math.abs(System.nanoTime() - lastClick) < Constants.SYSTEM_DBLCLK_INTERVAL) {
               listener.selected(t);
             } else last = t;
             lastClick = System.nanoTime();

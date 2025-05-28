@@ -29,6 +29,7 @@ import kernbeisser.DBEntities.*;
 import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.Enums.*;
 import kernbeisser.Forms.ObjectForm.Components.AccessCheckingField;
+import kernbeisser.Useful.Constants;
 import kernbeisser.Useful.Icons;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
@@ -894,7 +895,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
           e -> {
             variablePercentage.setEnabled(false);
             enablePreordered();
-            setSupplier(Supplier.KK_SUPPLIER);
+            setSupplier(Constants.KK_SUPPLIER);
             rememberReductionSetting.setSelected(true);
           });
     }

@@ -22,6 +22,7 @@ import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
 import kernbeisser.Forms.FormEditor.FormEditorController;
 import kernbeisser.Forms.FormImplemetations.Article.ArticleController;
 import kernbeisser.Reports.ProducePriceList;
+import kernbeisser.Useful.Constants;
 import kernbeisser.Useful.Date;
 import kernbeisser.Windows.MVC.ComponentController.ComponentController;
 import kernbeisser.Windows.MVC.Controller;
@@ -62,7 +63,7 @@ public class SupplySelectorController extends Controller<SupplySelectorView, Sup
   }
 
   public void editArticle(LineContent lineContent) {
-    Supplier kkSupplier = Supplier.KK_SUPPLIER;
+    Supplier kkSupplier = Constants.KK_SUPPLIER;
     switch (lineContent.getStatus()) {
       case OK:
         if (!getView().messageConfirmLineMerge()) {
