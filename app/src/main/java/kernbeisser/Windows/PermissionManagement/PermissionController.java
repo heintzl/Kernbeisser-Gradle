@@ -80,37 +80,38 @@ public class PermissionController extends Controller<PermissionView, PermissionM
             .map(
                 permission ->
                     Columns.create(
-                        permission.getNeatName(),
-                        (PermissionKey permissionKey) -> {
-                          if (permissionKey == PermissionKey.CHANGE_ALL) {
-                            boolean read = permission.getKeySet().containsAll(readPermission);
-                            boolean write = permission.getKeySet().containsAll(writePermission);
-                            return read ? write ? "Lesen & schreiben" : "Lesen" : "Keine";
-                          }
+                            permission.getNeatName(),
+                            (PermissionKey permissionKey) -> {
+                              if (permissionKey == PermissionKey.CHANGE_ALL) {
+                                boolean read = permission.getKeySet().containsAll(readPermission);
+                                boolean write = permission.getKeySet().containsAll(writePermission);
+                                return read ? write ? "Lesen & schreiben" : "Lesen" : "Keine";
+                              }
 
-                          if (PermissionKeyGroups.isInGroup(
-                              permissionKey, PermissionKeyGroups.ACTIONS)) {
-                            return permission.contains(permissionKey) ? "Ja" : "Nein";
-                          }
-                          boolean read = permission.contains(permissionKey);
-                          boolean write =
-                              permission.contains(PermissionKeys.getWriteKey(permissionKey));
-                          return read ? write ? "Lesen & schreiben" : "Lesen" : "Keine";
-                        },
-                        e -> {
-                          lastSelection = permission;
-                          if (e == PermissionKey.CHANGE_ALL) {
-                            boolean read = permission.getKeySet().containsAll(readPermission);
-                            boolean write = permission.getKeySet().containsAll(writePermission);
-                            if (read) {
-                              if (write) {
-                                model.removeKeys(permission, readPermission);
-                                model.removeKeys(permission, writePermission);
-                              } else model.addKeys(permission, writePermission);
-                            } else model.addKeys(permission, readPermission);
-                          }
-                          change(permission, e);
-                        }))
+                              if (PermissionKeyGroups.isInGroup(
+                                  permissionKey, PermissionKeyGroups.ACTIONS)) {
+                                return permission.contains(permissionKey) ? "Ja" : "Nein";
+                              }
+                              boolean read = permission.contains(permissionKey);
+                              boolean write =
+                                  permission.contains(PermissionKeys.getWriteKey(permissionKey));
+                              return read ? write ? "Lesen & schreiben" : "Lesen" : "Keine";
+                            })
+                        .withDoubleClickConsumer(
+                            e -> {
+                              lastSelection = permission;
+                              if (e == PermissionKey.CHANGE_ALL) {
+                                boolean read = permission.getKeySet().containsAll(readPermission);
+                                boolean write = permission.getKeySet().containsAll(writePermission);
+                                if (read) {
+                                  if (write) {
+                                    model.removeKeys(permission, readPermission);
+                                    model.removeKeys(permission, writePermission);
+                                  } else model.addKeys(permission, writePermission);
+                                } else model.addKeys(permission, readPermission);
+                              }
+                              change(permission, e);
+                            }))
             .collect(Collectors.toCollection(ArrayList::new)));
     List<PermissionKey> values =
         Arrays.stream(selected.getKeys())
