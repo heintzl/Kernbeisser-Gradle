@@ -7,7 +7,6 @@ import java.util.function.Predicate;
 import javax.swing.*;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Repositories.ArticleRepository;
-import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Enums.ArticleConstants;
 import kernbeisser.Enums.ShopRange;
 import kernbeisser.Useful.Constants;

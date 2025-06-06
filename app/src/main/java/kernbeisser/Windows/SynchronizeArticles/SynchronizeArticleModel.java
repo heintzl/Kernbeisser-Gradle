@@ -1,5 +1,7 @@
 package kernbeisser.Windows.SynchronizeArticles;
 
+import static kernbeisser.Useful.Constants.KK_SUPPLIER;
+
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import java.util.Collection;
@@ -11,7 +13,6 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Article_;
-import kernbeisser.DBEntities.Supplier;
 import kernbeisser.DBEntities.SurchargeGroup;
 import kernbeisser.DBEntities.SurchargeGroup_;
 import kernbeisser.Tasks.Catalog.CatalogDataInterpreter;
@@ -21,8 +22,6 @@ import kernbeisser.Tasks.DTO.Catalog;
 import kernbeisser.Tasks.DTO.KornkraftGroup;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
-
-import static kernbeisser.Useful.Constants.KK_SUPPLIER;
 
 public class SynchronizeArticleModel implements IModel<SynchronizeArticleController> {
 

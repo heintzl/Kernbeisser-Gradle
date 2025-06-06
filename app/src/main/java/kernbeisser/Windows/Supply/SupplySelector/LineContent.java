@@ -1,5 +1,7 @@
 package kernbeisser.Windows.Supply.SupplySelector;
 
+import static kernbeisser.Useful.Constants.KK_SUPPLIER;
+
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import java.awt.*;
@@ -30,8 +32,6 @@ import lombok.Data;
 import lombok.Setter;
 import org.apache.commons.lang3.Range;
 import org.jetbrains.annotations.NotNull;
-
-import static kernbeisser.Useful.Constants.KK_SUPPLIER;
 
 @Data
 @Setter(AccessLevel.PUBLIC)

@@ -7,7 +7,6 @@ import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.CatalogEntry;
 import kernbeisser.DBEntities.Repositories.ArticleRepository;
-import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Useful.Constants;
 import kernbeisser.Useful.OptionalPredicate;
 import kernbeisser.Useful.Tools;

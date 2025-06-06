@@ -5,6 +5,7 @@ import static kernbeisser.DBConnection.PredicateFactory.*;
 import static kernbeisser.Enums.ArticleDeletionResult.*;
 import static kernbeisser.Enums.ShopRange.DISCONTINUED;
 import static kernbeisser.Useful.Constants.KK_SUPPLIER;
+
 import com.google.common.collect.Lists;
 import jakarta.persistence.*;
 import java.time.Instant;

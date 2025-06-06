@@ -1,5 +1,7 @@
 package kernbeisser.Reports;
 
+import static kernbeisser.Useful.Constants.SHOP_USER;
+
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.NoResultException;
@@ -20,8 +22,6 @@ import kernbeisser.Reports.ReportDTO.AccountingReportItem;
 import kernbeisser.Useful.Date;
 import lombok.Cleanup;
 import org.jetbrains.annotations.NotNull;
-
-import static kernbeisser.Useful.Constants.SHOP_USER;
 
 public class AccountingReport extends Report {
   private final long reportNo;

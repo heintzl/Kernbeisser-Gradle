@@ -1,5 +1,7 @@
 package kernbeisser.Forms.FormImplemetations.Article;
 
+import static kernbeisser.Useful.Constants.KK_SUPPLIER;
+
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
@@ -29,8 +31,6 @@ import kernbeisser.Windows.MVC.Linked;
 import org.jetbrains.annotations.NotNull;
 import rs.groump.Key;
 import rs.groump.PermissionKey;
-
-import static kernbeisser.Useful.Constants.KK_SUPPLIER;
 
 public class ArticleView implements IView<ArticleController> {
 
