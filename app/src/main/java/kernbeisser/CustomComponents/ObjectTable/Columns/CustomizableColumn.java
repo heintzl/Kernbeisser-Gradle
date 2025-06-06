@@ -17,6 +17,7 @@ import kernbeisser.CustomComponents.ObjectTable.Adjustors.TableColumnAdjustor;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Renderer.AdjustableTableCellRenderer;
 import kernbeisser.Security.Utils.Getter;
+import kernbeisser.Useful.Constants;
 import kernbeisser.Useful.Tools;
 import org.intellij.lang.annotations.MagicConstant;
 import org.jetbrains.annotations.NotNull;
@@ -73,11 +74,32 @@ public class CustomizableColumn<T> extends DefaultColumn<T> {
         });
   }
 
+  private ColumnObjectSelectionListener<T> leftClickListener(@NotNull Consumer<T> clickConsumer) {
+    return (e, t) -> {
+      if (SwingUtilities.isLeftMouseButton(e)) {
+        clickConsumer.accept(t);
+      }
+    };
+  }
+
   public CustomizableColumn<T> withLeftClickConsumer(@NotNull Consumer<T> clickConsumer) {
+    return withListener(leftClickListener(clickConsumer));
+  }
+
+  public CustomizableColumn<T> withDoubleClickConsumer(Consumer<T> clickConsumer) {
+    ColumnObjectSelectionListener<T> listener = leftClickListener(clickConsumer);
     return withListener(
-        (e, t) -> {
-          if (SwingUtilities.isLeftMouseButton(e)) {
-            clickConsumer.accept(t);
+        new ColumnObjectSelectionListener<T>() {
+          T last;
+          long lastClick = System.nanoTime();
+
+          @Override
+          public void onAction(MouseEvent e, T t) {
+            if (t.equals(last)
+                && Math.abs(System.nanoTime() - lastClick) < Constants.SYSTEM_DBLCLK_INTERVAL) {
+              listener.onAction(e, t);
+            } else last = t;
+            lastClick = System.nanoTime();
           }
         });
   }
