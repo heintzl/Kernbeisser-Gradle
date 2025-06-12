@@ -34,7 +34,7 @@ public class PermissionModel implements IModel<PermissionController> {
   private final Set<PermissionKeyGroups> loadedGroups = new HashSet<>();
 
   private AccessLevel readPermissionLevel(PermissionKey permissionKey, Permission permission) {
-    if (PermissionKeyGroups.isInGroup(permissionKey, PermissionKeyGroups.ACTIONS)) {
+    if (PermissionKeyGroups.isInGroup(permissionKey, PermissionKeyGroups.ACTIONS) || !(permissionKey == PermissionKey.CHANGE_ALL || readPermission.contains(permissionKey))) {
       return permission.contains(permissionKey) ? ACTION : NO_ACTION;
     }
     boolean read;
