@@ -35,7 +35,7 @@ public class PermissionView implements IView<PermissionController> {
 
   @Getter private ObjectTable<PermissionKey> permission;
   private JPanel main;
-  private AdvancedComboBox<PermissionKeyGroups> category;
+  private AdvancedComboBox<PermissionKeyGroups> groupSelector;
   private JButton back;
   private JButton add;
   private JButton delete;
@@ -54,7 +54,7 @@ public class PermissionView implements IView<PermissionController> {
 
   private void createUIComponents() {
     permission = new ObjectTable<>();
-    category = new AdvancedComboBox<>();
+    groupSelector = new AdvancedComboBox<>();
   }
 
   void setColumns(Collection<Column<PermissionKey>> permissionColumns) {
@@ -74,24 +74,24 @@ public class PermissionView implements IView<PermissionController> {
     }
   }
 
-  void setValues(Collection<PermissionKey> permissions) {
-    this.permission.setObjects(permissions);
+  void setValues(Collection<PermissionKey> permissionKeys) {
+    this.permission.setObjects(permissionKeys);
   }
 
   void setCategories(List<PermissionKeyGroups> categories) {
-    category.setItems(categories);
+    groupSelector.setItems(categories);
   }
 
-  public Optional<PermissionKeyGroups> getCategory() {
-    return category.getSelected();
+  public Optional<PermissionKeyGroups> getSelectedGroup() {
+    return groupSelector.getSelected();
   }
 
   @Override
   public void initialize(PermissionController controller) {
     add.addActionListener(e -> controller.addPermission());
     delete.addActionListener(e -> controller.deletePermission());
-    category.addActionListener(e -> controller.loadSolutions());
-    category.setRenderer(
+    groupSelector.addActionListener(e -> controller.loadPermissionGroup());
+    groupSelector.setRenderer(
         new DefaultListCellRenderer() {
           @Override
           public Component getListCellRendererComponent(
@@ -283,7 +283,7 @@ public class PermissionView implements IView<PermissionController> {
     final JLabel label1 = new JLabel();
     label1.setText("Kategorie");
     panel2.add(label1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-    panel2.add(category, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+    panel2.add(groupSelector, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
   }
 
   /** @noinspection ALL */
