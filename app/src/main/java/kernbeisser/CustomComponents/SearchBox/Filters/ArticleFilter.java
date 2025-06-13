@@ -7,9 +7,9 @@ import java.util.function.Predicate;
 import javax.swing.*;
 import kernbeisser.DBEntities.Article;
 import kernbeisser.DBEntities.Repositories.ArticleRepository;
-import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Enums.ArticleConstants;
 import kernbeisser.Enums.ShopRange;
+import kernbeisser.Useful.Constants;
 import lombok.Setter;
 
 public class ArticleFilter implements SearchBoxFilter<Article> {
@@ -42,7 +42,7 @@ public class ArticleFilter implements SearchBoxFilter<Article> {
                   && (!filterNoBarcode || e.getBarcode() == null)
                   && (!filterShowInShop || e.isShowInShop())
                   && (!filterShopRange || e.getShopRange().isVisible())
-                  && (!filterKK || e.getSupplier().equals(Supplier.KK_SUPPLIER))
+                  && (!filterKK || e.getSupplier().equals(Constants.KK_SUPPLIER))
                   && (!filterActions || e.isOffer());
     }
     return ArticleRepository.getDefaultAll(query, predicate, 15000);

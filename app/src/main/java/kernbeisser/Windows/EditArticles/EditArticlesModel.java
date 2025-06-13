@@ -9,6 +9,7 @@ import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.Enums.ArticleDeletionResult;
 import kernbeisser.Tasks.ArticleComparedToCatalogEntry;
 import kernbeisser.Tasks.Catalog.Catalog;
+import kernbeisser.Useful.Constants;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
 import lombok.Getter;
@@ -21,7 +22,7 @@ public class EditArticlesModel implements IModel<EditArticlesController> {
       Catalog.supplierOfferNumbersValidFromMap();
 
   public void previewCatalog(Collection<Article> articles) {
-    differences = ArticleRepository.compareArticlesToCatalog(articles, Supplier.KK_SUPPLIER);
+    differences = ArticleRepository.compareArticlesToCatalog(articles, Constants.KK_SUPPLIER);
   }
 
   public List<String> mergeCatalog(Collection<Article> articles) {
@@ -40,7 +41,7 @@ public class EditArticlesModel implements IModel<EditArticlesController> {
 
   @Nullable
   public Instant supplierOfferFrom(Article article) {
-    if (!article.getSupplier().equals(Supplier.KK_SUPPLIER)) {
+    if (!article.getSupplier().equals(Constants.KK_SUPPLIER)) {
       return null;
     }
     return supplierOfferNumbersValidFromMap.get(article.getSuppliersItemNumber());

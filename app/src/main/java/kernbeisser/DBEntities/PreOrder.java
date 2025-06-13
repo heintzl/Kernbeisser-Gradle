@@ -9,6 +9,7 @@ import java.time.ZoneId;
 import java.time.temporal.TemporalAdjusters;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Security.Access.UserRelated;
+import kernbeisser.Useful.Constants;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -88,7 +89,7 @@ public class PreOrder implements Serializable, UserRelated {
   }
 
   public boolean isShopOrder() {
-    return user.equals(User.getKernbeisserUser());
+    return user.equals(Constants.SHOP_USER);
   }
 
   // report property! don't remove

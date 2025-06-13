@@ -18,6 +18,7 @@ import kernbeisser.DBEntities.Transaction_;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.NoTransactionsFoundException;
+import kernbeisser.Useful.Constants;
 import lombok.Cleanup;
 
 public class TransactionRepository {
@@ -51,7 +52,7 @@ public class TransactionRepository {
   }
 
   public static List<Transaction> getUnreportedTransactions() {
-    User kbUser = User.getKernbeisserUser();
+    User kbUser = Constants.SHOP_USER;
     List<Transaction> transactions =
         QueryBuilder.selectAll(Transaction.class)
             .where(

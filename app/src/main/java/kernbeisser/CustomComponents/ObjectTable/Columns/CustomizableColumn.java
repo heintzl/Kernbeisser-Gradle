@@ -2,12 +2,14 @@ package kernbeisser.CustomComponents.ObjectTable.Columns;
 
 import static javax.swing.SwingConstants.RIGHT;
 
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.function.Consumer;
-import javax.swing.SwingUtilities;
+import java.util.function.Function;
+import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import kernbeisser.CustomComponents.ObjectTable.Adjustors.SimpleCellAdjustor;
@@ -17,6 +19,7 @@ import kernbeisser.CustomComponents.ObjectTable.Adjustors.TableColumnAdjustor;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Renderer.AdjustableTableCellRenderer;
 import kernbeisser.Security.Utils.Getter;
+import kernbeisser.Useful.Constants;
 import kernbeisser.Useful.Tools;
 import org.intellij.lang.annotations.MagicConstant;
 import org.jetbrains.annotations.NotNull;
@@ -73,11 +76,32 @@ public class CustomizableColumn<T> extends DefaultColumn<T> {
         });
   }
 
+  private ColumnObjectSelectionListener<T> leftClickListener(@NotNull Consumer<T> clickConsumer) {
+    return (e, t) -> {
+      if (SwingUtilities.isLeftMouseButton(e)) {
+        clickConsumer.accept(t);
+      }
+    };
+  }
+
   public CustomizableColumn<T> withLeftClickConsumer(@NotNull Consumer<T> clickConsumer) {
+    return withListener(leftClickListener(clickConsumer));
+  }
+
+  public CustomizableColumn<T> withDoubleClickConsumer(Consumer<T> clickConsumer) {
+    ColumnObjectSelectionListener<T> listener = leftClickListener(clickConsumer);
     return withListener(
-        (e, t) -> {
-          if (SwingUtilities.isLeftMouseButton(e)) {
-            clickConsumer.accept(t);
+        new ColumnObjectSelectionListener<T>() {
+          T last;
+          long lastClick = System.nanoTime();
+
+          @Override
+          public void onAction(MouseEvent e, T t) {
+            if (t.equals(last)
+                && Math.abs(System.nanoTime() - lastClick) < Constants.SYSTEM_DBLCLK_INTERVAL) {
+              listener.onAction(e, t);
+            } else last = t;
+            lastClick = System.nanoTime();
           }
         });
   }
@@ -92,6 +116,28 @@ public class CustomizableColumn<T> extends DefaultColumn<T> {
     withColumnAdjustor(
         column -> column.setPreferredWidth(Tools.scaleWithLabelScalingFactor(preferredWidth)));
     return this;
+  }
+
+  public CustomizableColumn<T> withTooltip(@NotNull Function<T, String> stringSupplier) {
+    return withCellAdjustor(
+        (component, t, isSelected, hasFocus, row, column) ->
+            component.setToolTipText(stringSupplier.apply(t)));
+  }
+
+  public CustomizableColumn<T> withBgColor(@NotNull Function<T, Color> colorSupplier) {
+    return withCellAdjustor(
+        (component, t, isSelected, hasFocus, row, column) -> {
+          Color c = colorSupplier.apply(t);
+          if (c != null) component.setBackground(c);
+        });
+  }
+
+  public CustomizableColumn<T> withFgColor(@NotNull Function<T, Color> colorSupplier) {
+    return withCellAdjustor(
+        (component, t, isSelected, hasFocus, row, column) -> {
+          Color c = colorSupplier.apply(t);
+          if (c != null) component.setForeground(c);
+        });
   }
 
   @Override

@@ -12,6 +12,7 @@ import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.InvalidTransactionException;
 import kernbeisser.Exeptions.NoSelectionException;
+import kernbeisser.Useful.Constants;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
@@ -51,7 +52,7 @@ public class TransactionController extends Controller<TransactionView, Transacti
       view.setFromKBEnable(false);
       view.setToKBEnable(false);
       view.setFromEnabled(false);
-      view.setFrom(User.getKernbeisserUser());
+      view.setFrom(Constants.SHOP_USER);
     }
   }
 
@@ -135,7 +136,7 @@ public class TransactionController extends Controller<TransactionView, Transacti
       return;
     }
     if (transactionType != TransactionType.PAYIN
-        && view.getFrom().equals(User.getKernbeisserUser())
+        && view.getFrom().equals(Constants.SHOP_USER)
         && isNullOrEmpty(view.getInfo())) {
       view.invalidPayin();
       return;
@@ -229,12 +230,12 @@ public class TransactionController extends Controller<TransactionView, Transacti
         hideInactive ? u -> !u.isTestOnly() && u.isActive() : u -> !u.isTestOnly();
     List<User> boxItems = model.getUsers(filter);
     if (model.getTransactionType() == TransactionType.SHARED_CONTAINER) {
-      view.getToControl().setItems(Collections.singleton(User.getKernbeisserUser()));
+      view.getToControl().setItems(Collections.singleton(Constants.SHOP_USER));
     } else {
       TransactionView.populateUserComboBox(view.getToControl(), boxItems, filter);
     }
     if (model.getTransactionType() == TransactionType.PAYIN) {
-      view.getFromControl().setItems(Collections.singleton(User.getKernbeisserUser()));
+      view.getFromControl().setItems(Collections.singleton(Constants.SHOP_USER));
     } else {
       TransactionView.populateUserComboBox(view.getFromControl(), boxItems, filter);
     }
@@ -259,10 +260,6 @@ public class TransactionController extends Controller<TransactionView, Transacti
     } else {
       return true;
     }
-  }
-
-  User getKernbeisserUser() {
-    return User.getKernbeisserUser();
   }
 
   public User getLoggedInUser() {

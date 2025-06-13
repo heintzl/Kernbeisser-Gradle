@@ -22,6 +22,7 @@ import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
 import kernbeisser.Export.CSVExport;
 import kernbeisser.Reports.PreOrderChecklist;
 import kernbeisser.Reports.Report;
+import kernbeisser.Useful.Constants;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Getter;
@@ -40,7 +41,7 @@ public class PreOrderModel implements IModel<PreOrderController> {
   public void add(PreOrder preOrder) {
     Objects.requireNonNull(preOrder.getUser());
     et.begin();
-    if (preOrder.getUser().equals(User.getKernbeisserUser())) {
+    if (preOrder.getUser().equals(Constants.SHOP_USER)) {
       CatalogEntry e = em.find(CatalogEntry.class, preOrder.getCatalogEntry().getId());
       em.persist(e);
     }
@@ -56,7 +57,7 @@ public class PreOrderModel implements IModel<PreOrderController> {
     p.setCatalogEntry(newPreOrder.getCatalogEntry());
     p.setUser(newPreOrder.getUser());
     p.setInfo(newPreOrder.getInfo());
-    if (preOrder.getUser().equals(User.getKernbeisserUser())) {
+    if (preOrder.getUser().equals(Constants.SHOP_USER)) {
       CatalogEntry e = em.find(CatalogEntry.class, newPreOrder.getCatalogEntry().getId());
       em.persist(e);
     }
@@ -83,7 +84,7 @@ public class PreOrderModel implements IModel<PreOrderController> {
     Optional<Article> article =
         ArticleRepository.getByKbNumber(shopNumber, false).map(ObjectState::getValue);
     if (article.isPresent()) {
-      if (article.get().getSupplier().equals(Supplier.KK_SUPPLIER)) {
+      if (article.get().getSupplier().equals(Constants.KK_SUPPLIER)) {
         return getEntryByKkNumber(article.get().getSuppliersItemNumber());
       }
     }
@@ -125,7 +126,7 @@ public class PreOrderModel implements IModel<PreOrderController> {
     et.begin();
     delivery.forEach(
         p -> {
-          if (p.getUser().equals(User.getKernbeisserUser())) {
+          if (p.getUser().equals(Constants.SHOP_USER)) {
             removeLazy(p);
           } else {
             p.setDelivery(Instant.now());

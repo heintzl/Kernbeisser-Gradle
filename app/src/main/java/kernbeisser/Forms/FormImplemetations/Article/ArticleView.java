@@ -1,5 +1,7 @@
 package kernbeisser.Forms.FormImplemetations.Article;
 
+import static kernbeisser.Useful.Constants.KK_SUPPLIER;
+
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
@@ -115,7 +117,7 @@ public class ArticleView implements IView<ArticleController> {
         new AccessCheckingComboBox<>(
             Article::getSurchargeGroup,
             Article::setSurchargeGroup,
-            () -> controller.getAllForSuppler(supplier.getSelected().orElse(Supplier.KK_SUPPLIER)));
+            () -> controller.getAllForSuppler(supplier.getSelected().orElse(KK_SUPPLIER)));
     shopRange =
         new AccessCheckingComboBox<Article, ShopRange>(
             Article::getShopRange, Article::setShopRange, controller::getAllShopRages);
@@ -226,9 +228,9 @@ public class ArticleView implements IView<ArticleController> {
     supplier.addActionListener(
         e -> {
           try {
-            controller.loadSurchargeGroupsFor(supplier.getSelected().orElse(Supplier.KK_SUPPLIER));
+            controller.loadSurchargeGroupsFor(supplier.getSelected().orElse(KK_SUPPLIER));
           } catch (NullPointerException nullPointerException) {
-            controller.loadSurchargeGroupsFor(Supplier.KK_SUPPLIER);
+            controller.loadSurchargeGroupsFor(KK_SUPPLIER);
           }
         });
     surchargeGroup.setRenderer(

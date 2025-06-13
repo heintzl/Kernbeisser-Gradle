@@ -10,6 +10,7 @@ import kernbeisser.DBEntities.*;
 import kernbeisser.DBEntities.PreOrder_;
 import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.Enums.MetricUnits;
+import kernbeisser.Useful.Constants;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
 import kernbeisser.Windows.Supply.SupplySelector.LineContent;
@@ -136,7 +137,7 @@ public class SupplyModel implements IModel<SupplyController> {
         DBConnection.getConditioned(
             PreOrder.class,
             PreOrder_.delivery.isNull(),
-            PreOrder_.user.eq(User.getKernbeisserUser()).not());
+            PreOrder_.user.eq(Constants.SHOP_USER).not());
     Map<CatalogEntry, Integer> entryCounts = new HashMap<>(userPreorders.size());
     for (PreOrder preorder : userPreorders) {
       CatalogEntry entry = preorder.getCatalogEntry();
@@ -153,7 +154,7 @@ public class SupplyModel implements IModel<SupplyController> {
       double containerMultiplier,
       int preOrders) {
     if (article == null) return 0;
-    if (article.getSupplier().equals(Supplier.KK_SUPPLIER) && suppliersItemNumber < 1000) return 0;
+    if (article.getSupplier().equals(Constants.KK_SUPPLIER) && suppliersItemNumber < 1000) return 0;
     if (priceKk == 0.0) return 0;
     // TODO deactivate offer Print depending on result of process definition
     // if (article.isOffer()) return 0;
@@ -177,7 +178,7 @@ public class SupplyModel implements IModel<SupplyController> {
   public int calculatePrintNumberFromItem(ShoppingItem item) {
     Article article = item.getArticleAtBuyState();
     int preorders = 0;
-    if (article.getSupplier().equals(Supplier.KK_SUPPLIER)) {
+    if (article.getSupplier().equals(Constants.KK_SUPPLIER)) {
       preorders = getPreorderCount(article.getSuppliersItemNumber());
     }
     return getLabelCount(

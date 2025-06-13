@@ -24,6 +24,7 @@ import kernbeisser.DBEntities.Supplier;
 import kernbeisser.Enums.ArticleCatalogState;
 import kernbeisser.Tasks.ArticleComparedToCatalogEntry;
 import kernbeisser.Tasks.Catalog.Catalog;
+import kernbeisser.Useful.Constants;
 import kernbeisser.Windows.Supply.SupplyController;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -74,7 +75,7 @@ public class SupplierFile {
     @Cleanup("commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    Supplier kkSupplier = Supplier.KK_SUPPLIER;
+    Supplier kkSupplier = Constants.KK_SUPPLIER;
     return contents.stream()
         .filter(
             e ->
@@ -91,7 +92,7 @@ public class SupplierFile {
         Arrays.asList(
             ArticleCatalogState.BARCODE_CONFLICT_SAME_SUPPLIER,
             ArticleCatalogState.BARCODE_CONFLICT_OTHER_SUPPLIER);
-    Supplier kkSupplier = Supplier.KK_SUPPLIER;
+    Supplier kkSupplier = Constants.KK_SUPPLIER;
     Collection<ShoppingItem> shoppingItems = new ArrayList<>();
     Collection<ArticleComparedToCatalogEntry> collectErrors = new ArrayList<>();
     for (LineContent content : contents) {

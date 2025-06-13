@@ -92,8 +92,6 @@ public class Supplier implements Serializable, ActuallyCloneable {
   @Setter(onMethod_ = {@Key(PermissionKey.SUPPLIER_UPDATE_DATE_WRITE)})
   private Instant updateDate;
 
-  @Transient public static final Supplier KK_SUPPLIER = getKKSupplier();
-
   public SurchargeGroup getOrPersistDefaultSurchargeGroup() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
