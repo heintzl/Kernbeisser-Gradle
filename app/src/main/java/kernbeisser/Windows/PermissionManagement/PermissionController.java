@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.CancellationException;
-import java.util.concurrent.atomic.AtomicReference;
 import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
@@ -41,34 +40,27 @@ public class PermissionController extends Controller<PermissionView, PermissionM
 
   private void initialize() {
     Column<PermissionKey> nameColumn =
-            Columns.create(
-                    "Schlüssel-Name",
-                    e ->
-                            PermissionKeys.getPermissionHint(
-                                    e.name()
-                                            .replace("_WRITE", "")
-                                            .replace("_READ", "")
-                                            .replace("CHANGE_ALL", "Alle Bearbeiten")));
+        Columns.create(
+            "Schlüssel-Name",
+            e ->
+                PermissionKeys.getPermissionHint(
+                    e.name()
+                        .replace("_WRITE", "")
+                        .replace("_READ", "")
+                        .replace("CHANGE_ALL", "Alle Bearbeiten")));
     List<Column<PermissionKey>> permissionColumns = new ArrayList<>();
     permissionColumns.add(nameColumn);
     permissionColumns.addAll(
-            model.readAllPermissions().stream()
-                    .map(this::createPermissionColumn)
-                    .toList());
+        model.readAllPermissions().stream().map(this::createPermissionColumn).toList());
     getView().setColumns(permissionColumns);
   }
 
   public Column<PermissionKey> createPermissionColumn(Permission permission) {
     return Columns.<PermissionKey>create(
-                    permission.getNeatName(),
-                    (k) -> model.getPermissionLevel(k, permission).getName())
-            .withDoubleClickConsumer(k -> cycleAccess(permission, k))
-            .withTooltip(k -> PermissionKeys.getPermissionHint(k.toString()))
-            .withBgColor(
-                    k ->
-                            model.isDirty(permission, k)
-                                    ? Colors.BACKGROUND_DIRTY.getColor()
-                                    : null);
+            permission.getNeatName(), (k) -> model.getPermissionLevel(k, permission).getName())
+        .withDoubleClickConsumer(k -> cycleAccess(permission, k))
+        .withTooltip(k -> PermissionKeys.getPermissionHint(k.toString()))
+        .withBgColor(k -> model.isDirty(permission, k) ? Colors.BACKGROUND_DIRTY.getColor() : null);
   }
 
   public void loadPermissionGroup() {

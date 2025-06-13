@@ -5,8 +5,6 @@ import static kernbeisser.Windows.PermissionManagement.AccessLevel.*;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
-
-import java.security.Permissions;
 import java.util.*;
 import java.util.stream.Collectors;
 import kernbeisser.DBConnection.DBConnection;
@@ -23,7 +21,6 @@ import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
 import lombok.Getter;
-import org.checkerframework.checker.units.qual.N;
 import rs.groump.PermissionKey;
 
 @Getter
@@ -40,7 +37,8 @@ public class PermissionModel implements IModel<PermissionController> {
 
   private AccessLevel readPermissionLevel(PermissionKey permissionKey, Permission permission) {
     if (PermissionKeyGroups.isInGroup(permissionKey, PermissionKeyGroups.ACTIONS)
-        || !(permissionKey == PermissionKey.CHANGE_ALL || PermissionKeys.getWriteKey(permissionKey) != permissionKey)) {
+        || !(permissionKey == PermissionKey.CHANGE_ALL
+            || PermissionKeys.getWriteKey(permissionKey) != permissionKey)) {
       return permission.contains(permissionKey) ? ACTION : NO_ACTION;
     }
     boolean read;
@@ -151,8 +149,12 @@ public class PermissionModel implements IModel<PermissionController> {
     em.persist(permission);
     Map<PermissionKey, AccessLevel> permissionKeyMap = new HashMap<>();
     Map<PermissionKey, AccessLevel> originalPermissionKeyMap = new HashMap<>();
-    for (PermissionKey key : permissionKeyLevels.get(PermissionConstants.BASIC_ACCESS.getPermission()).keySet()) {
-      AccessLevel level = (key == PermissionKey.CHANGE_ALL || PermissionKeys.getWriteKey(key) != key) ? NONE : NO_ACTION;
+    for (PermissionKey key :
+        permissionKeyLevels.get(PermissionConstants.BASIC_ACCESS.getPermission()).keySet()) {
+      AccessLevel level =
+          (key == PermissionKey.CHANGE_ALL || PermissionKeys.getWriteKey(key) != key)
+              ? NONE
+              : NO_ACTION;
       permissionKeyMap.put(key, level);
       originalPermissionKeyMap.put(key, level);
     }
@@ -168,7 +170,8 @@ public class PermissionModel implements IModel<PermissionController> {
 
   public void removeUserFromPermission(Permission permission) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit") EntityTransaction et = em.getTransaction();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
     et.begin();
     List<User> resultList =
         QueryBuilder.selectAll(User.class)
