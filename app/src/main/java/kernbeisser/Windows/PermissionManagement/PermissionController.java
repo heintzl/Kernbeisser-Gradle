@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CancellationException;
+import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.DBEntities.Permission;
@@ -17,8 +18,6 @@ import kernbeisser.Windows.MVC.Controller;
 import org.jetbrains.annotations.NotNull;
 import rs.groump.Key;
 import rs.groump.PermissionKey;
-
-import javax.swing.*;
 
 public class PermissionController extends Controller<PermissionView, PermissionModel> {
 
@@ -106,7 +105,8 @@ public class PermissionController extends Controller<PermissionView, PermissionM
 
   public void close() {
     PermissionView view = getView();
-    Map<Permission, Map<PermissionKey, AccessLevel>> dirtyPermissionKeys = model.dirtyPermissionKeys();
+    Map<Permission, Map<PermissionKey, AccessLevel>> dirtyPermissionKeys =
+        model.dirtyPermissionKeys();
     if (dirtyPermissionKeys.isEmpty()) {
       view.back();
     } else {

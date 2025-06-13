@@ -7,7 +7,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.function.Consumer;
-import javax.swing.SwingUtilities;
+import java.util.function.Function;
+import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import kernbeisser.CustomComponents.ObjectTable.Adjustors.SimpleCellAdjustor;
@@ -114,6 +116,22 @@ public class CustomizableColumn<T> extends DefaultColumn<T> {
     withColumnAdjustor(
         column -> column.setPreferredWidth(Tools.scaleWithLabelScalingFactor(preferredWidth)));
     return this;
+  }
+
+  public CustomizableColumn<T> withTooltip(@NotNull Function<T, String> stringSupplier) {
+    return withCellAdjustor(
+        new TableCellAdjustor<T>() {
+          @Override
+          public void customizeFor(
+              DefaultTableCellRenderer component,
+              T t,
+              boolean isSelected,
+              boolean hasFocus,
+              int row,
+              int column) {
+            ((JComponent) component).setToolTipText(stringSupplier.apply(t));
+          }
+        });
   }
 
   @Override

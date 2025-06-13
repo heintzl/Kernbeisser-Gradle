@@ -234,13 +234,13 @@ public class PermissionView implements IView<PermissionController> {
 
   public int confirmCloseOnDirty() {
     return JOptionPane.showConfirmDialog(
-            getContent(),
-            "Sollen vor dem Schließen alle Änderungen gespeichert werden?",
-            "Ungespeicherte Änderungen",
-            JOptionPane.YES_NO_CANCEL_OPTION,
-            JOptionPane.QUESTION_MESSAGE
-    );
+        getContent(),
+        "Sollen vor dem Schließen alle Änderungen gespeichert werden?",
+        "Ungespeicherte Änderungen",
+        JOptionPane.YES_NO_CANCEL_OPTION,
+        JOptionPane.QUESTION_MESSAGE);
   }
+
   // @spotless:off
 
   {

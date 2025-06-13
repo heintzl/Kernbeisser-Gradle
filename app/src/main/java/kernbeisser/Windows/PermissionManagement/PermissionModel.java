@@ -32,11 +32,12 @@ public class PermissionModel implements IModel<PermissionController> {
   private final Map<Permission, Map<PermissionKey, AccessLevel>> permissionKeyLevels =
       new HashMap<>();
   private final Map<Permission, Map<PermissionKey, AccessLevel>> originalPermissionKeyLevels =
-          new HashMap<>();
+      new HashMap<>();
   private final Set<PermissionKeyGroups> loadedGroups = new HashSet<>();
 
   private AccessLevel readPermissionLevel(PermissionKey permissionKey, Permission permission) {
-    if (PermissionKeyGroups.isInGroup(permissionKey, PermissionKeyGroups.ACTIONS) || !(permissionKey == PermissionKey.CHANGE_ALL || readPermission.contains(permissionKey))) {
+    if (PermissionKeyGroups.isInGroup(permissionKey, PermissionKeyGroups.ACTIONS)
+        || !(permissionKey == PermissionKey.CHANGE_ALL || readPermission.contains(permissionKey))) {
       return permission.contains(permissionKey) ? ACTION : NO_ACTION;
     }
     boolean read;
@@ -52,22 +53,30 @@ public class PermissionModel implements IModel<PermissionController> {
   }
 
   private static void setPermissionLevelTo(
-      Map<Permission, Map<PermissionKey, AccessLevel>> permissionKeyLevels, PermissionKey permissionKey, Permission permission, AccessLevel level) {
+      Map<Permission, Map<PermissionKey, AccessLevel>> permissionKeyLevels,
+      PermissionKey permissionKey,
+      Permission permission,
+      AccessLevel level) {
     Map<PermissionKey, AccessLevel> permissionKeyMap =
         permissionKeyLevels.computeIfAbsent(
             permission, p -> new HashMap<PermissionKey, AccessLevel>());
     permissionKeyMap.put(permissionKey, level);
   }
 
-  public void setPermissionLevel(PermissionKey permissionKey, Permission permission, AccessLevel level) {
+  public void setPermissionLevel(
+      PermissionKey permissionKey, Permission permission, AccessLevel level) {
     setPermissionLevelTo(permissionKeyLevels, permissionKey, permission, level);
   }
 
-  private void setOriginalPermissionKeyLevels(PermissionKey permissionKey, Permission permission, AccessLevel level) {
+  private void setOriginalPermissionKeyLevels(
+      PermissionKey permissionKey, Permission permission, AccessLevel level) {
     setPermissionLevelTo(originalPermissionKeyLevels, permissionKey, permission, level);
   }
 
-  private AccessLevel getPermissionLevelFrom(Map<Permission, Map<PermissionKey, AccessLevel>> permissionKeyLevels, PermissionKey permissionKey, Permission permission) {
+  private AccessLevel getPermissionLevelFrom(
+      Map<Permission, Map<PermissionKey, AccessLevel>> permissionKeyLevels,
+      PermissionKey permissionKey,
+      Permission permission) {
     Map<PermissionKey, AccessLevel> permissionKeyMap = permissionKeyLevels.get(permission);
     if (permissionKeyMap == null) return null;
     else return permissionKeyMap.get(permissionKey);
@@ -77,7 +86,8 @@ public class PermissionModel implements IModel<PermissionController> {
     return getPermissionLevelFrom(permissionKeyLevels, permissionKey, permission);
   }
 
-  private AccessLevel getOriginalPermissionLevel(PermissionKey permissionKey, Permission permission) {
+  private AccessLevel getOriginalPermissionLevel(
+      PermissionKey permissionKey, Permission permission) {
     return getPermissionLevelFrom(originalPermissionKeyLevels, permissionKey, permission);
   }
 
@@ -115,7 +125,8 @@ public class PermissionModel implements IModel<PermissionController> {
                           || getPermissionLevel(k, permission).ordinal() < newLevel.ordinal()))
           .forEach(k -> setPermissionLevel(k, permission, newLevel));
     }
-    setPermissionLevel(permissionKey, permission, cycleLevel(getPermissionLevel(permissionKey, permission)));
+    setPermissionLevel(
+        permissionKey, permission, cycleLevel(getPermissionLevel(permissionKey, permission)));
     return permissionKey;
   }
 
