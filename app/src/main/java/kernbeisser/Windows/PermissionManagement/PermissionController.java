@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.CancellationException;
+import java.util.concurrent.atomic.AtomicReference;
 import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
@@ -35,40 +36,46 @@ public class PermissionController extends Controller<PermissionView, PermissionM
   })
   public PermissionController() {
     super(new PermissionModel());
+    initialize();
   }
 
-  void loadPermissionGroup() {
-    Optional<PermissionKeyGroups> selectedGroup = getView().getSelectedGroup();
-    if (selectedGroup.isEmpty()) return;
-    List<PermissionKey> groupKeys = model.selectGroup(selectedGroup.get());
+  private void initialize() {
     Column<PermissionKey> nameColumn =
-        Columns.create(
-            "Schlüssel-Name",
-            e ->
-                PermissionKeys.getPermissionHint(
-                    e.name()
-                        .replace("_WRITE", "")
-                        .replace("_READ", "")
-                        .replace("CHANGE_ALL", "Alle Bearbeiten")));
+            Columns.create(
+                    "Schlüssel-Name",
+                    e ->
+                            PermissionKeys.getPermissionHint(
+                                    e.name()
+                                            .replace("_WRITE", "")
+                                            .replace("_READ", "")
+                                            .replace("CHANGE_ALL", "Alle Bearbeiten")));
     List<Column<PermissionKey>> permissionColumns = new ArrayList<>();
     permissionColumns.add(nameColumn);
     permissionColumns.addAll(
-        model.readAllPermissions().stream()
-            .map(
-                permission ->
-                    Columns.<PermissionKey>create(
-                            permission.getNeatName(),
-                            (k) -> model.getPermissionLevel(k, permission).getName())
-                        .withDoubleClickConsumer(k -> cycleAccess(permission, k))
-                        .withTooltip(k -> PermissionKeys.getPermissionHint(k.toString()))
-                        .withBgColor(
-                            k ->
-                                model.isDirty(permission, k)
-                                    ? Colors.BACKGROUND_DIRTY.getColor()
-                                    : null))
-            .toList());
-    getView().setValues(groupKeys);
+            model.readAllPermissions().stream()
+                    .map(this::createPermissionColumn)
+                    .toList());
     getView().setColumns(permissionColumns);
+  }
+
+  public Column<PermissionKey> createPermissionColumn(Permission permission) {
+    return Columns.<PermissionKey>create(
+                    permission.getNeatName(),
+                    (k) -> model.getPermissionLevel(k, permission).getName())
+            .withDoubleClickConsumer(k -> cycleAccess(permission, k))
+            .withTooltip(k -> PermissionKeys.getPermissionHint(k.toString()))
+            .withBgColor(
+                    k ->
+                            model.isDirty(permission, k)
+                                    ? Colors.BACKGROUND_DIRTY.getColor()
+                                    : null);
+  }
+
+  public void loadPermissionGroup() {
+    Optional<PermissionKeyGroups> selectedGroup = getView().getSelectedGroup();
+    if (selectedGroup.isEmpty()) return;
+    List<PermissionKey> groupKeys = model.selectGroup(selectedGroup.get());
+    getView().setValues(groupKeys);
   }
 
   private void cycleAccess(Permission permission, PermissionKey key) {
@@ -83,6 +90,7 @@ public class PermissionController extends Controller<PermissionView, PermissionM
     } while (permissionName.isEmpty());
     try {
       model.addPermission(permissionName);
+      initialize();
       loadPermissionGroup();
     } catch (PersistenceException e) {
       getView().nameIsNotUnique();
@@ -92,15 +100,19 @@ public class PermissionController extends Controller<PermissionView, PermissionM
 
   public void deletePermission() {
     Permission permission = null;
+    String permissionName = "";
     try {
       permission = getView().inputAskForPermission(model.getAllPermissions());
+      permissionName = permission.getName();
       model.deletePermission(permission);
+      initialize();
       loadPermissionGroup();
       getView().successfulDeleted();
     } catch (CancellationException ignored) {
     } catch (PersistenceException e) {
       if (getView().permissionIsInUse()) {
         model.removeUserFromPermission(permission);
+        initialize();
         loadPermissionGroup();
         getView().successfulDeleted();
       }
@@ -143,6 +155,7 @@ public class PermissionController extends Controller<PermissionView, PermissionM
     if (!PermissionRepresentation.putInDB(selectedFile)) {
       return false;
     }
+    initialize();
     loadPermissionGroup();
     return true;
   }

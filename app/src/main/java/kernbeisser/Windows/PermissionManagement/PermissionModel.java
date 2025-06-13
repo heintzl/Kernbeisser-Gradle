@@ -141,11 +141,7 @@ public class PermissionModel implements IModel<PermissionController> {
     return Arrays.asList(PermissionKeyGroups.values());
   }
 
-  void deletePermission(Permission selectedObject) {
-    Tools.delete(Permission.class, selectedObject.getId());
-  }
-
-  void addPermission(String permissionName) {
+  public void addPermission(String permissionName) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
@@ -164,9 +160,15 @@ public class PermissionModel implements IModel<PermissionController> {
     originalPermissionKeyLevels.put(permission, originalPermissionKeyMap);
   }
 
+  void deletePermission(Permission permission) {
+    Tools.delete(Permission.class, permission.getId());
+    permissionKeyLevels.remove(permission);
+    originalPermissionKeyLevels.remove(permission);
+  }
+
   public void removeUserFromPermission(Permission permission) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
-    EntityTransaction et = em.getTransaction();
+    @Cleanup(value = "commit") EntityTransaction et = em.getTransaction();
     et.begin();
     List<User> resultList =
         QueryBuilder.selectAll(User.class)
@@ -174,13 +176,10 @@ public class PermissionModel implements IModel<PermissionController> {
             .getResultList(em);
     for (User e : resultList) {
       e.getPermissions().remove(permission);
-      em.persist(e);
+      em.merge(e);
     }
     em.flush();
-    em.remove(permission);
-    et.commit();
-    permissionKeyLevels.remove(permission);
-    originalPermissionKeyLevels.remove(permission);
+    deletePermission(permission);
   }
 
   public List<Permission> readAllPermissions() {
