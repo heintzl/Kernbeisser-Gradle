@@ -18,6 +18,8 @@ import org.jetbrains.annotations.NotNull;
 import rs.groump.Key;
 import rs.groump.PermissionKey;
 
+import javax.swing.*;
+
 public class PermissionController extends Controller<PermissionView, PermissionModel> {
 
   @Key({
@@ -56,7 +58,7 @@ public class PermissionController extends Controller<PermissionView, PermissionM
                             permission.getNeatName(),
                             (k) -> model.getPermissionLevel(k, permission).getName())
                         .withDoubleClickConsumer(k -> cycleAccess(permission, k))
-                )
+                        .withTooltip(p -> PermissionKeys.getPermissionHint(p.toString())))
             .toList());
     getView().setValues(groupKeys);
     getView().setColumns(permissionColumns);
@@ -95,6 +97,26 @@ public class PermissionController extends Controller<PermissionView, PermissionM
         loadPermissionGroup();
         getView().successfulDeleted();
       }
+    }
+  }
+
+  public void saveChanges() {
+    model.persistChanges(model.dirtyPermissionKeys());
+  }
+
+  public void close() {
+    PermissionView view = getView();
+    Map<Permission, Map<PermissionKey, AccessLevel>> dirtyPermissionKeys = model.dirtyPermissionKeys();
+    if (dirtyPermissionKeys.isEmpty()) {
+      view.back();
+    } else {
+      switch (view.confirmCloseOnDirty()) {
+        case JOptionPane.CANCEL_OPTION -> {
+          return;
+        }
+        case JOptionPane.YES_OPTION -> model.persistChanges(dirtyPermissionKeys);
+      }
+      view.back();
     }
   }
 

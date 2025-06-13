@@ -31,6 +31,8 @@ public class PermissionModel implements IModel<PermissionController> {
   private Collection<PermissionKey> writePermission;
   private final Map<Permission, Map<PermissionKey, AccessLevel>> permissionKeyLevels =
       new HashMap<>();
+  private final Map<Permission, Map<PermissionKey, AccessLevel>> originalPermissionKeyLevels =
+          new HashMap<>();
   private final Set<PermissionKeyGroups> loadedGroups = new HashSet<>();
 
   private AccessLevel readPermissionLevel(PermissionKey permissionKey, Permission permission) {
@@ -49,18 +51,34 @@ public class PermissionModel implements IModel<PermissionController> {
     return (read ? write ? READ_WRITE : READ : NONE);
   }
 
-  public void setPermissionLevel(
-      PermissionKey permissionKey, Permission permission, AccessLevel level) {
+  private static void setPermissionLevelTo(
+      Map<Permission, Map<PermissionKey, AccessLevel>> permissionKeyLevels, PermissionKey permissionKey, Permission permission, AccessLevel level) {
     Map<PermissionKey, AccessLevel> permissionKeyMap =
         permissionKeyLevels.computeIfAbsent(
             permission, p -> new HashMap<PermissionKey, AccessLevel>());
     permissionKeyMap.put(permissionKey, level);
   }
 
-  public AccessLevel getPermissionLevel(PermissionKey permissionKey, Permission permission) {
+  public void setPermissionLevel(PermissionKey permissionKey, Permission permission, AccessLevel level) {
+    setPermissionLevelTo(permissionKeyLevels, permissionKey, permission, level);
+  }
+
+  private void setOriginalPermissionKeyLevels(PermissionKey permissionKey, Permission permission, AccessLevel level) {
+    setPermissionLevelTo(originalPermissionKeyLevels, permissionKey, permission, level);
+  }
+
+  private AccessLevel getPermissionLevelFrom(Map<Permission, Map<PermissionKey, AccessLevel>> permissionKeyLevels, PermissionKey permissionKey, Permission permission) {
     Map<PermissionKey, AccessLevel> permissionKeyMap = permissionKeyLevels.get(permission);
     if (permissionKeyMap == null) return null;
     else return permissionKeyMap.get(permissionKey);
+  }
+
+  public AccessLevel getPermissionLevel(PermissionKey permissionKey, Permission permission) {
+    return getPermissionLevelFrom(permissionKeyLevels, permissionKey, permission);
+  }
+
+  private AccessLevel getOriginalPermissionLevel(PermissionKey permissionKey, Permission permission) {
+    return getPermissionLevelFrom(originalPermissionKeyLevels, permissionKey, permission);
   }
 
   private AccessLevel cycleLevel(AccessLevel level) {
@@ -97,8 +115,7 @@ public class PermissionModel implements IModel<PermissionController> {
                           || getPermissionLevel(k, permission).ordinal() < newLevel.ordinal()))
           .forEach(k -> setPermissionLevel(k, permission, newLevel));
     }
-    setPermissionLevel(
-        permissionKey, permission, cycleLevel(getPermissionLevel(permissionKey, permission)));
+    setPermissionLevel(permissionKey, permission, cycleLevel(getPermissionLevel(permissionKey, permission)));
     return permissionKey;
   }
 
@@ -174,8 +191,10 @@ public class PermissionModel implements IModel<PermissionController> {
                       .min(Comparator.comparingInt(AccessLevel::ordinal))
                       .orElse(NONE);
               setPermissionLevel(key, p, minimumLevel);
+              setOriginalPermissionKeyLevels(key, p, minimumLevel);
             } else {
               setPermissionLevel(key, p, readPermissionLevel(key, p));
+              setOriginalPermissionKeyLevels(key, p, readPermissionLevel(key, p));
             }
           }
         }
@@ -191,13 +210,17 @@ public class PermissionModel implements IModel<PermissionController> {
     return createAllKeysFor(group);
   }
 
+  public boolean isDirty(Permission permission, PermissionKey key) {
+    return getPermissionLevel(key, permission) != getOriginalPermissionLevel(key, permission);
+  }
+
   public Map<Permission, Map<PermissionKey, AccessLevel>> dirtyPermissionKeys() {
     Map<Permission, Map<PermissionKey, AccessLevel>> dirty = new HashMap<>();
     for (Permission p : permissionKeyLevels.keySet()) {
       for (PermissionKey k : permissionKeyLevels.get(p).keySet()) {
         if (!k.equals(PermissionKey.CHANGE_ALL)) {
           AccessLevel newLevel = getPermissionLevel(k, p);
-          if (readPermissionLevel(k, p) != newLevel) {
+          if (isDirty(p, k)) {
             Map<PermissionKey, AccessLevel> keyLevels =
                 dirty.computeIfAbsent(p, newP -> new HashMap<>());
             keyLevels.put(k, newLevel);
@@ -207,4 +230,41 @@ public class PermissionModel implements IModel<PermissionController> {
     }
     return dirty;
   }
+
+  public void persistChanges(Map<Permission, Map<PermissionKey, AccessLevel>> changedLevels) {
+    @Cleanup EntityManager em = DBConnection.getEntityManager();
+    @Cleanup(value = "commit")
+    EntityTransaction et = em.getTransaction();
+    et.begin();
+    for (Permission p : changedLevels.keySet()) {
+      Map<PermissionKey, AccessLevel> changedPermissionKeys = changedLevels.get(p);
+      Permission persistedPermission = em.find(Permission.class, p.getId());
+      Set<PermissionKey> permissionKeySet = persistedPermission.getKeySet();
+      for (PermissionKey k : changedPermissionKeys.keySet()) {
+        PermissionKey writeKey = PermissionKeys.getWriteKey(k);
+        AccessLevel level = changedPermissionKeys.get(k);
+        switch (level) {
+          case NONE -> {
+            permissionKeySet.remove(k);
+            permissionKeySet.remove(writeKey);
+          }
+          case READ -> {
+            permissionKeySet.add(k);
+            permissionKeySet.remove(writeKey);
+          }
+          case READ_WRITE -> {
+            permissionKeySet.add(k);
+            permissionKeySet.add(writeKey);
+          }
+          case NO_ACTION -> permissionKeySet.remove(k);
+          case ACTION -> permissionKeySet.add(k);
+        }
+        setOriginalPermissionKeyLevels(k, p, level);
+      }
+      persistedPermission.setKeySet(permissionKeySet);
+      em.merge(persistedPermission);
+    }
+  }
+
+  private void writePermissionLevel(PermissionKey k, Permission p, AccessLevel level) {}
 }
