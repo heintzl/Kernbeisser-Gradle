@@ -5,6 +5,8 @@ import static kernbeisser.Windows.PermissionManagement.AccessLevel.*;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
+
+import java.security.Permissions;
 import java.util.*;
 import java.util.stream.Collectors;
 import kernbeisser.DBConnection.DBConnection;
@@ -21,6 +23,7 @@ import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Cleanup;
 import lombok.Getter;
+import org.checkerframework.checker.units.qual.N;
 import rs.groump.PermissionKey;
 
 @Getter
@@ -37,7 +40,7 @@ public class PermissionModel implements IModel<PermissionController> {
 
   private AccessLevel readPermissionLevel(PermissionKey permissionKey, Permission permission) {
     if (PermissionKeyGroups.isInGroup(permissionKey, PermissionKeyGroups.ACTIONS)
-        || !(permissionKey == PermissionKey.CHANGE_ALL || readPermission.contains(permissionKey))) {
+        || !(permissionKey == PermissionKey.CHANGE_ALL || PermissionKeys.getWriteKey(permissionKey) != permissionKey)) {
       return permission.contains(permissionKey) ? ACTION : NO_ACTION;
     }
     boolean read;
@@ -147,17 +150,24 @@ public class PermissionModel implements IModel<PermissionController> {
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    Permission pm = new Permission();
-    pm.setName(permissionName);
-    em.persist(pm);
-    em.flush();
+    Permission permission = new Permission();
+    permission.setName(permissionName);
+    em.persist(permission);
+    Map<PermissionKey, AccessLevel> permissionKeyMap = new HashMap<>();
+    Map<PermissionKey, AccessLevel> originalPermissionKeyMap = new HashMap<>();
+    for (PermissionKey key : permissionKeyLevels.get(PermissionConstants.BASIC_ACCESS.getPermission()).keySet()) {
+      AccessLevel level = (key == PermissionKey.CHANGE_ALL || PermissionKeys.getWriteKey(key) != key) ? NONE : NO_ACTION;
+      permissionKeyMap.put(key, level);
+      originalPermissionKeyMap.put(key, level);
+    }
+    permissionKeyLevels.put(permission, permissionKeyMap);
+    originalPermissionKeyLevels.put(permission, originalPermissionKeyMap);
   }
 
   public void removeUserFromPermission(Permission permission) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     EntityTransaction et = em.getTransaction();
     et.begin();
-    // TODO: fix that inefficient query
     List<User> resultList =
         QueryBuilder.selectAll(User.class)
             .where(PredicateFactory.isMember(asExpression(permission), User_.permissions))
@@ -169,6 +179,8 @@ public class PermissionModel implements IModel<PermissionController> {
     em.flush();
     em.remove(permission);
     et.commit();
+    permissionKeyLevels.remove(permission);
+    originalPermissionKeyLevels.remove(permission);
   }
 
   public List<Permission> readAllPermissions() {
