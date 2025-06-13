@@ -2,6 +2,7 @@ package kernbeisser.CustomComponents.ObjectTable.Columns;
 
 import static javax.swing.SwingConstants.RIGHT;
 
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,7 +10,6 @@ import java.util.Comparator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import kernbeisser.CustomComponents.ObjectTable.Adjustors.SimpleCellAdjustor;
@@ -120,17 +120,23 @@ public class CustomizableColumn<T> extends DefaultColumn<T> {
 
   public CustomizableColumn<T> withTooltip(@NotNull Function<T, String> stringSupplier) {
     return withCellAdjustor(
-        new TableCellAdjustor<T>() {
-          @Override
-          public void customizeFor(
-              DefaultTableCellRenderer component,
-              T t,
-              boolean isSelected,
-              boolean hasFocus,
-              int row,
-              int column) {
-            ((JComponent) component).setToolTipText(stringSupplier.apply(t));
-          }
+        (component, t, isSelected, hasFocus, row, column) ->
+            component.setToolTipText(stringSupplier.apply(t)));
+  }
+
+  public CustomizableColumn<T> withBgColor(@NotNull Function<T, Color> colorSupplier) {
+    return withCellAdjustor(
+        (component, t, isSelected, hasFocus, row, column) -> {
+          Color c = colorSupplier.apply(t);
+          if (c != null) component.setBackground(c);
+        });
+  }
+
+  public CustomizableColumn<T> withFgColor(@NotNull Function<T, Color> colorSupplier) {
+    return withCellAdjustor(
+        (component, t, isSelected, hasFocus, row, column) -> {
+          Color c = colorSupplier.apply(t);
+          if (c != null) component.setForeground(c);
         });
   }
 

@@ -276,6 +276,4 @@ public class PermissionModel implements IModel<PermissionController> {
       em.merge(persistedPermission);
     }
   }
-
-  private void writePermissionLevel(PermissionKey k, Permission p, AccessLevel level) {}
 }

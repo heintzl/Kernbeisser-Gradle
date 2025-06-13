@@ -1,15 +1,18 @@
 package kernbeisser.Windows.PermissionManagement;
 
 import jakarta.persistence.PersistenceException;
+import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.CancellationException;
 import javax.swing.*;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.DBEntities.Permission;
+import kernbeisser.Enums.Colors;
 import kernbeisser.Security.PermissionKeyGroups;
 import kernbeisser.Security.PermissionKeys;
 import kernbeisser.Useful.CSV;
@@ -57,7 +60,12 @@ public class PermissionController extends Controller<PermissionView, PermissionM
                             permission.getNeatName(),
                             (k) -> model.getPermissionLevel(k, permission).getName())
                         .withDoubleClickConsumer(k -> cycleAccess(permission, k))
-                        .withTooltip(p -> PermissionKeys.getPermissionHint(p.toString())))
+                        .withTooltip(k -> PermissionKeys.getPermissionHint(k.toString()))
+                        .withBgColor(
+                            k ->
+                                model.isDirty(permission, k)
+                                    ? Colors.BACKGROUND_DIRTY.getColor()
+                                    : null))
             .toList());
     getView().setValues(groupKeys);
     getView().setColumns(permissionColumns);
