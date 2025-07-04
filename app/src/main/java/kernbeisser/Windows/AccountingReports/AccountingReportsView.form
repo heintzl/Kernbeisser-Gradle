@@ -208,7 +208,7 @@
                   <text value="Nr."/>
                 </properties>
               </component>
-              <component id="e22dd" class="javax.swing.JRadioButton" binding="optLast">
+              <component id="e22dd" class="javax.swing.JRadioButton" binding="optStatementLast">
                 <constraints>
                   <grid row="3" column="2" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
                   <gridbag weightx="0.0" weighty="0.0"/>
@@ -217,7 +217,7 @@
                   <text value="letzter"/>
                 </properties>
               </component>
-              <component id="7707" class="javax.swing.JRadioButton" binding="optCurrent">
+              <component id="7707" class="javax.swing.JRadioButton" binding="optStatementCurrent">
                 <constraints>
                   <grid row="3" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
                   <gridbag weightx="0.0" weighty="0.0"/>
@@ -278,29 +278,13 @@
                   <text value="Klarnamen ausgeben"/>
                 </properties>
               </component>
-              <component id="31ac9" class="javax.swing.JCheckBox" binding="userBalanceWithNames" default-binding="true">
-                <constraints>
-                  <grid row="1" column="3" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                  <gridbag top="15" left="5" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
-                </constraints>
-                <properties>
-                  <text value="Klarnamen ausgeben"/>
-                </properties>
-              </component>
-              <component id="2bcc9" class="javax.swing.JComboBox" binding="userBalanceReportNo">
-                <constraints>
-                  <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                  <gridbag top="15" left="5" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
-                </constraints>
-                <properties/>
-              </component>
               <component id="d2a3f" class="javax.swing.JLabel">
                 <constraints>
                   <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                   <gridbag top="15" left="10" bottom="6" right="10" weightx="0.0" weighty="0.0"/>
                 </constraints>
                 <properties>
-                  <text value="Nr."/>
+                  <text value="Stand"/>
                 </properties>
               </component>
               <component id="1dee" class="javax.swing.JRadioButton" binding="optLossAnalysis">
@@ -340,6 +324,31 @@
               <component id="d054f" class="com.github.lgooddatepicker.components.DatePicker" binding="lossAnalysisEndDate" custom-create="true">
                 <constraints>
                   <grid row="7" column="5" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <gridbag top="15" left="5" bottom="0" right="5" weightx="1.0" weighty="0.0"/>
+                </constraints>
+                <properties/>
+              </component>
+              <component id="1c6b6" class="javax.swing.JCheckBox" binding="balanceCurrent">
+                <constraints>
+                  <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <gridbag top="15" left="5" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
+                </constraints>
+                <properties>
+                  <text value="aktuell"/>
+                </properties>
+              </component>
+              <component id="31ac9" class="javax.swing.JCheckBox" binding="userBalanceWithNames" default-binding="true">
+                <constraints>
+                  <grid row="1" column="4" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <gridbag top="15" left="5" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
+                </constraints>
+                <properties>
+                  <text value="Klarnamen ausgeben"/>
+                </properties>
+              </component>
+              <component id="ebff2" class="com.github.lgooddatepicker.components.DatePicker" binding="balanceDate" custom-create="true">
+                <constraints>
+                  <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                   <gridbag top="15" left="5" bottom="0" right="5" weightx="1.0" weighty="0.0"/>
                 </constraints>
                 <properties/>

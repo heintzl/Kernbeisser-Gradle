@@ -85,8 +85,8 @@ public class AccountingReportsController
     }
   }
 
-  public void exportUserBalance(long reportNo, boolean userBalanceWithNames) {
-    exportReport(new UserBalanceReport(reportNo, userBalanceWithNames), "Erstelle Guthabenstände");
+  public void exportUserBalance(LocalDate date, boolean userBalanceWithNames) {
+    exportReport(new UserBalanceReport(date, userBalanceWithNames), "Erstelle Guthabenstände");
   }
 
   public void exportKeyUserList(String sortOrder) {
