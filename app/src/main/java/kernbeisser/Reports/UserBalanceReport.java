@@ -3,7 +3,6 @@ package kernbeisser.Reports;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 import kernbeisser.DBEntities.User;
@@ -59,9 +58,13 @@ public class UserBalanceReport extends Report {
     } else {
       params = UserGroup.getValueAggregatesAt(date);
     }
-    params.put("reportTitle", "Guthabenstände am %s".formatted(
-            now ? Date.zonedDateFormat(Instant.now(), Date.INSTANT_DATE_TIME)  : Date.zonedDateFormat(date, Date.INSTANT_DATE)
-    ));
+    params.put(
+        "reportTitle",
+        "Guthabenstände am %s"
+            .formatted(
+                now
+                    ? Date.zonedDateFormat(Instant.now(), Date.INSTANT_DATE_TIME)
+                    : Date.zonedDateFormat(date, Date.INSTANT_DATE)));
     return params;
   }
 

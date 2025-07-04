@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.PredicateFactory;
 import kernbeisser.DBConnection.QueryBuilder;
-import kernbeisser.Exeptions.InconsistentUserGroupValueException;
 import kernbeisser.Exeptions.MissingFullMemberException;
 import kernbeisser.Security.Access.UserRelated;
 import kernbeisser.Useful.Tools;
@@ -68,6 +67,7 @@ public class UserGroup implements UserRelated {
 
   @Column
   @Getter(onMethod_ = {@Key(PermissionKey.TRANSACTION_VALUE_READ)})
+  @Setter
   @Transient
   private Double transactionSum;
 
@@ -77,6 +77,13 @@ public class UserGroup implements UserRelated {
   private double solidaritySurcharge;
 
   @Transient private Double oldSolidarity;
+
+  public static void validateGroupMemberships(Collection<User> members, String exceptionMessage)
+      throws MissingFullMemberException {
+    if (members.size() > 1 && members.stream().noneMatch(User::isFullMember)) {
+      throw new MissingFullMemberException(exceptionMessage);
+    }
+  }
 
   @PostLoad
   private void rememberValues() {
@@ -205,45 +212,6 @@ public class UserGroup implements UserRelated {
     Map<UserGroup, V> resultMap = new HashMap<>(map.size());
     map.forEach((key, val) -> resultMap.put(ugIdMap.get(key), val));
     return resultMap;
-  }
-
-  private static Map<Integer, Double> getInvalidUserGroupTransactionSums() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    Map<Integer, Double> overValueTransactionSumThreshold = new HashMap<>();
-    Map<Integer, Double> valueMap = getValueMapAt(em, Instant.now());
-    for (Tuple tuple : QueryBuilder.select(UserGroup_.id, UserGroup_.value).getResultList()) {
-      Integer id = tuple.get(0, Integer.class);
-      Double value = tuple.get(1, Double.class);
-      Double transactionSum = valueMap.getOrDefault(id, 0.0);
-      if (Math.abs(transactionSum - value) > 0.004) {
-        overValueTransactionSumThreshold.put(id, transactionSum);
-      }
-    }
-    return overValueTransactionSumThreshold;
-  }
-
-  public static void checkUserGroupConsistency()
-      throws InconsistentUserGroupValueException, MissingFullMemberException {
-    if (!getInvalidUserGroupTransactionSums().isEmpty()) {
-      throw new InconsistentUserGroupValueException();
-    }
-    User.checkValidUserGroupMemberships();
-  }
-
-  private static UserGroup getWithTransactionSum(int id, double sum) {
-    UserGroup userGroup =
-        QueryBuilder.selectAll(UserGroup.class).where(UserGroup_.id.eq(id)).getSingleResult();
-    userGroup.transactionSum = sum;
-    return userGroup;
-  }
-
-  public static List<UserGroup> getInconsistentUserGroups() {
-    return getInvalidUserGroupTransactionSums().entrySet().stream()
-        .map(e -> getWithTransactionSum(e.getKey(), e.getValue()))
-        .collect(Collectors.toList());
   }
 
   public static Map<String, Object> getValueAggregatesAt(Instant transactionTimeStamp)
