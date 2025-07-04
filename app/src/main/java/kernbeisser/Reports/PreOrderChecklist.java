@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 import kernbeisser.DBEntities.PreOrder;
-import kernbeisser.DBEntities.User;
+import kernbeisser.Useful.Constants;
 
 public class PreOrderChecklist extends Report {
   private final LocalDate deliveryDate;
@@ -18,7 +18,7 @@ public class PreOrderChecklist extends Report {
     this.deliveryDate = deliveryDate;
     this.preorder =
         preorder.stream()
-            .filter(p -> !p.getUser().equals(User.getKernbeisserUser()))
+            .filter(p -> !p.getUser().equals(Constants.SHOP_USER))
             .sorted(Comparator.comparing(p -> p.getUser().getFullName(true)))
             .collect(Collectors.toList());
   }

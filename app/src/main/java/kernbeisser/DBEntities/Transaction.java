@@ -11,6 +11,7 @@ import kernbeisser.Enums.TransactionType;
 import kernbeisser.Exeptions.InvalidTransactionException;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
 import kernbeisser.Security.Access.UserRelated;
+import kernbeisser.Useful.Constants;
 import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
@@ -108,7 +109,7 @@ public class Transaction implements UserRelated {
   }
 
   public byte relationToKernbeisser() {
-    return relationToUserGroup(User.getKernbeisserUser().getUserGroup());
+    return relationToUserGroup(Constants.SHOP_USERGROUP);
   }
 
   public String getDescription() {
@@ -148,7 +149,7 @@ public class Transaction implements UserRelated {
         }
       }
       if (value < 0 && toUG.getValue() + value < minValue) {
-        if (!to.equals(User.getKernbeisserUser()) && !to.mayGoUnderMin()) {
+        if (!to.equals(Constants.SHOP_USER) && !to.mayGoUnderMin()) {
           throw new kernbeisser.Exeptions.InvalidTransactionException(
               "the receiving user ["
                   + from.getId()
@@ -236,7 +237,7 @@ public class Transaction implements UserRelated {
     return doTransaction(
         em,
         customer,
-        User.getKernbeisserUser(),
+        Constants.SHOP_USER,
         value,
         TransactionType.PURCHASE,
         "Einkauf vom " + Date.INSTANT_DATE.format(LocalDate.now()));

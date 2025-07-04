@@ -10,6 +10,7 @@ import kernbeisser.DBEntities.SurchargeGroup;
 import kernbeisser.Tasks.DTO.Catalog;
 import kernbeisser.Tasks.DTO.KornkraftArticle;
 import kernbeisser.Tasks.DTO.KornkraftGroup;
+import kernbeisser.Useful.Constants;
 import kernbeisser.Useful.Tree;
 
 public class CatalogDataInterpreter {
@@ -44,7 +45,7 @@ public class CatalogDataInterpreter {
 
   public static HashMap<KornkraftGroup, SurchargeGroup> extractSurchargeGroups(
       Tree<KornkraftGroup> kornkraftGroupTree) {
-    Supplier kk = Supplier.KK_SUPPLIER;
+    Supplier kk = Constants.KK_SUPPLIER;
     HashMap<KornkraftGroup, SurchargeGroup> out = new HashMap<>();
     kornkraftGroupTree.overAll(
         new KornkraftGroup(),
@@ -60,7 +61,7 @@ public class CatalogDataInterpreter {
 
   public static HashMap<KornkraftGroup, SurchargeGroup> extractSurchargeGroups(
       Tree<KornkraftGroup> kornkraftGroupTree, EntityManager entityManager) {
-    Supplier kk = Supplier.KK_SUPPLIER;
+    Supplier kk = Constants.KK_SUPPLIER;
     HashMap<KornkraftGroup, SurchargeGroup> out = new HashMap<>();
     kornkraftGroupTree.overAll(
         new KornkraftGroup(),

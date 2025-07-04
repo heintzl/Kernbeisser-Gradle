@@ -1,5 +1,7 @@
 package kernbeisser.Windows.Supply.SupplySelector;
 
+import static kernbeisser.Useful.Constants.KK_SUPPLIER;
+
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import java.awt.*;
@@ -136,7 +138,7 @@ public class LineContent {
           Article articleToCompare = content.article;
           if (articleToCompare == null) {
             articleToCompare = new Article();
-            articleToCompare.setSupplier(Supplier.KK_SUPPLIER);
+            articleToCompare.setSupplier(KK_SUPPLIER);
           }
           content.comparedToCatalog =
               new ArticleComparedToCatalogEntry(articleToCompare, matchingEntry);
@@ -255,7 +257,7 @@ public class LineContent {
       content.weighableKb = content.article.isWeighable();
       content.priceKb = content.calculatePriceKb();
     } else {
-      pattern = ArticleRepository.nextArticleTo(em, content.kkNumber, Supplier.KK_SUPPLIER);
+      pattern = ArticleRepository.nextArticleTo(em, content.kkNumber, KK_SUPPLIER);
       content.weighableKb = false;
       content.priceKb = content.priceKk;
     }
@@ -306,7 +308,7 @@ public class LineContent {
       return ResolveStatus.PRODUCE;
     }
     resolveStatus =
-        ArticleRepository.getBySuppliersItemNumber(Supplier.KK_SUPPLIER, kkNumber, em)
+        ArticleRepository.getBySuppliersItemNumber(KK_SUPPLIER, kkNumber, em)
             .map(e -> ResolveStatus.OK)
             .orElse(ResolveStatus.ADDED);
     return resolveStatus;

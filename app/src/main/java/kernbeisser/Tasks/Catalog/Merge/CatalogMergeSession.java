@@ -26,6 +26,7 @@ import kernbeisser.DBEntities.Supplier;
 import kernbeisser.DBEntities.SurchargeGroup;
 import kernbeisser.Enums.ShopRange;
 import kernbeisser.Tasks.Catalog.CatalogImporter;
+import kernbeisser.Useful.Constants;
 import lombok.Getter;
 import org.hibernate.Session;
 import org.jetbrains.annotations.NotNull;
@@ -63,7 +64,7 @@ public class CatalogMergeSession {
 
   private Map<Integer, Article> loadCurrentState() {
     return QueryBuilder.selectAll(Article.class)
-        .where(Article_.supplier.eq(Supplier.KK_SUPPLIER))
+        .where(Article_.supplier.eq(Constants.KK_SUPPLIER))
         .getResultMap(Article::getSuppliersItemNumber, article -> article);
   }
 
@@ -91,7 +92,7 @@ public class CatalogMergeSession {
   }
 
   private Collection<ArticleMerge> loadSource(Collection<String> source) {
-    Supplier kkSupplier = Supplier.KK_SUPPLIER;
+    Supplier kkSupplier = Constants.KK_SUPPLIER;
 
     UniqueValidator<CatalogEntry> uniqueValidator =
         new UniqueValidator<>(

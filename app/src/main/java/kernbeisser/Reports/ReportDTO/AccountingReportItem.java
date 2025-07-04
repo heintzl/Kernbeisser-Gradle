@@ -5,6 +5,7 @@ import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.AccountingReportGroups;
+import kernbeisser.Useful.Constants;
 import lombok.Data;
 
 @Data
@@ -35,7 +36,7 @@ public class AccountingReportItem {
     this.date = transaction.getDate();
     this.description = transaction.getDescription();
     User customer;
-    if (transaction.getFromUser().equals(User.getKernbeisserUser())) {
+    if (transaction.getFromUser().equals(Constants.SHOP_USER)) {
       customer = transaction.getToUser();
       sum = -transaction.getValue();
     } else {

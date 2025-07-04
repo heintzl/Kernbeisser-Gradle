@@ -29,6 +29,7 @@ import kernbeisser.CustomComponents.TextFields.PermissionField;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Setting;
+import kernbeisser.Useful.Constants;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
@@ -352,7 +353,7 @@ public class TransactionView implements IView<TransactionController> {
             lastState = !lastState;
             if (fromKBValue.isSelected()) {
               toKBValue.setSelected(false);
-              setFrom(controller.getKernbeisserUser());
+              setFrom(Constants.SHOP_USER);
               from.setEnabled(false);
             } else {
               setFrom(controller.getLoggedInUser());
@@ -373,7 +374,7 @@ public class TransactionView implements IView<TransactionController> {
             lastState = !lastState;
             if (toKBValue.isSelected()) {
               fromKBValue.setSelected(false);
-              setTo(controller.getKernbeisserUser());
+              setTo(Constants.SHOP_USER);
               to.setEnabled(false);
             } else {
               setTo(null);

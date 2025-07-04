@@ -1,5 +1,7 @@
 package kernbeisser.Reports;
 
+import static kernbeisser.Useful.Constants.SHOP_USER;
+
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.NoResultException;
@@ -176,10 +178,9 @@ public class AccountingReport extends Report {
     double transactionCreditPayIn = 0.0;
     double transactionSpecialPayments = 0.0;
     double transactionPurchases = 0.0;
-    User kbUser = User.getKernbeisserUser();
     for (Transaction t : transactions) {
-      double direction = t.getFromUser().equals(kbUser) ? -1.0 : 1.0;
-      if (direction == -1.0 || t.getToUser().equals(kbUser)) {
+      double direction = t.getFromUser().equals(SHOP_USER) ? -1.0 : 1.0;
+      if (direction == -1.0 || t.getToUser().equals(SHOP_USER)) {
         transactionSaldo -= t.getValue() * direction;
         switch (t.getTransactionType()) {
           case PURCHASE:
