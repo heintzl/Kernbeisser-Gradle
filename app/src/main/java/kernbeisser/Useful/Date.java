@@ -38,6 +38,13 @@ public class Date {
     return formatter.format(instant);
   }
 
+  public static String zonedDateFormat(Instant instant, DateTimeFormatter formatter) {
+    if (instant == null) {
+      return "";
+    }
+    return formatter.format(instant.atZone(ZoneId.systemDefault()));
+  }
+
   public static Instant atStartOrEndOfDay(LocalDate localDate, boolean atStart) {
     return (atStart
             ? localDate.atStartOfDay(currentZone)
