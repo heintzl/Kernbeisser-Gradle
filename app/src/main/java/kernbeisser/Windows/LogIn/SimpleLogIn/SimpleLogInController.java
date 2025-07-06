@@ -5,13 +5,13 @@ import java.time.temporal.ChronoUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.swing.*;
 import kernbeisser.DBEntities.User;
-import kernbeisser.DBEntities.UserGroup;
 import kernbeisser.Enums.PermissionConstants;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.Theme;
 import kernbeisser.Enums.UserSetting;
 import kernbeisser.Exeptions.*;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
+import kernbeisser.Tasks.AutomaticTasks;
 import kernbeisser.Tasks.Executor;
 import kernbeisser.Useful.UiTools;
 import kernbeisser.Windows.ChangePassword.ChangePasswordController;
@@ -75,7 +75,7 @@ public class SimpleLogInController extends Controller<SimpleLogInView, SimpleLog
     view.indicateProgress(true);
     new Thread(
             () -> {
-              Executor.scheduleTask(this::checkValidDataOnDB);
+              Executor.scheduleTask(this::performEntryChecks);
               loadUserSettings();
               if (shouldForcePasswordChange(LogInModel.getLoggedIn())) {
                 new ChangePasswordController(LogInModel.getLoggedIn(), true)
@@ -91,15 +91,11 @@ public class SimpleLogInController extends Controller<SimpleLogInView, SimpleLog
         .start();
   }
 
-  private void checkValidDataOnDB() {
-    User.refreshActivity();
+  private void performEntryChecks() {
     try {
-      User.checkAdminConsistency();
+      AutomaticTasks.entryChecks();
     } catch (InvalidValue e) {
       UnexpectedExceptionHandler.showUnexpectedErrorWarning(e);
-    }
-    try {
-      UserGroup.checkUserGroupConsistency();
     } catch (AccessDeniedException ignored) {
     } catch (InconsistentUserGroupValueException e) {
       JOptionPane.showMessageDialog(

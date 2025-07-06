@@ -48,8 +48,8 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
   private JRadioButton optTransactionStatement;
   private AdvancedComboBox<User> user;
   private JComboBox<StatementType> transactionStatementType;
-  private JRadioButton optLast;
-  private JRadioButton optCurrent;
+  private JRadioButton optStatementLast;
+  private JRadioButton optStatementCurrent;
   private JRadioButton optPermissionHolders;
   private JCheckBox permissionHoldersWithKeys;
   private JComboBox<String> accountingReportNo;
@@ -58,6 +58,8 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
   private JRadioButton optLossAnalysis;
   private DatePicker lossAnalysisStartDate;
   private DatePicker lossAnalysisEndDate;
+  private JCheckBox balanceCurrent;
+  private DatePicker balanceDate;
   private Map<JComponent, JRadioButton> optionalComponents;
 
   @Linked private AccountingReportsController controller;
@@ -83,21 +85,18 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
               ((String) accountingReportNo.getSelectedItem()).replace(" (neu erstellen)", "")),
           accountingReportWithNames.isSelected());
     } else if (optUserBalance.isSelected()) {
-      String selectedReport = (String) userBalanceReportNo.getSelectedItem();
-      long reportNo;
-      if (selectedReport.equals("aktuell")) {
-        reportNo = -1;
-      } else {
-        reportNo = Long.parseLong(selectedReport);
+      LocalDate date = null;
+      if (balanceDate.isEnabled()) {
+        date = balanceDate.getDate();
       }
-      controller.exportUserBalance(reportNo, userBalanceWithNames.isSelected());
+      controller.exportUserBalance(date, userBalanceWithNames.isSelected());
     } else if (optKeyUserList.isSelected()) {
       controller.exportKeyUserList(userKeySortOrder.getSelectedItem().toString());
     } else if (optTransactionStatement.isSelected()) {
       controller.exportTransactionStatement(
           user.getSelected().orElse(null),
           (StatementType) transactionStatementType.getSelectedItem(),
-          optCurrent.isSelected());
+          optStatementCurrent.isSelected());
     } else if (optPermissionHolders.isSelected()) {
       controller.exportPermissionHolders(permissionHoldersWithKeys.isSelected());
     } else if (optLossAnalysis.isSelected()) {
@@ -111,8 +110,16 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
     allUser.forEach(user::addItem);
   }
 
+  private void enableBalanceDate() {
+    balanceDate.setEnabled(!balanceCurrent.isSelected());
+  }
+
   private void enableComponents() {
     optionalComponents.forEach((c, opt) -> c.setEnabled(opt.isSelected()));
+    if (balanceCurrent.isEnabled()) {
+      enableBalanceDate();
+    }
+    ;
   }
 
   @Override
@@ -123,10 +130,11 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
     optionalComponents.put(tillRollStartDate, optTillRoll);
     optionalComponents.put(tillRollEndDate, optTillRoll);
     optionalComponents.put(userBalanceWithNames, optUserBalance);
-    optionalComponents.put(userBalanceReportNo, optUserBalance);
+    optionalComponents.put(balanceCurrent, optUserBalance);
+    optionalComponents.put(balanceDate, optUserBalance);
     optionalComponents.put(user, optTransactionStatement);
-    optionalComponents.put(optLast, optTransactionStatement);
-    optionalComponents.put(optCurrent, optTransactionStatement);
+    optionalComponents.put(optStatementLast, optTransactionStatement);
+    optionalComponents.put(optStatementCurrent, optTransactionStatement);
     optionalComponents.put(transactionStatementType, optTransactionStatement);
     optionalComponents.put(userKeySortOrder, optKeyUserList);
     optionalComponents.put(permissionHoldersWithKeys, optPermissionHolders);
@@ -143,7 +151,7 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
     for (String s : controller.getUserKeySortOrders()) {
       userKeySortOrder.addItem(s);
     }
-    optCurrent.setSelected(true);
+    optStatementCurrent.setSelected(true);
 
     LocalDate now = LocalDate.now(ZoneId.systemDefault());
     tillRollStartDate.setDate(now);
@@ -152,18 +160,17 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
     int maxReportNo = (int) TransactionRepository.getLastReportNo();
     for (int i = 1; i <= maxReportNo; i++) {
       accountingReportNo.addItem(Integer.toString(i));
-      userBalanceReportNo.addItem(Integer.toString(i));
     }
-    userBalanceReportNo.addItem("aktuell");
-    userBalanceReportNo.setSelectedIndex(maxReportNo);
+    balanceCurrent.setSelected(true);
+    balanceCurrent.addActionListener(e -> enableBalanceDate());
     try {
       TransactionRepository.getUnreportedTransactions();
       accountingReportNo.addItem((maxReportNo + 1) + " (neu erstellen)");
       accountingReportNo.setSelectedIndex(maxReportNo);
-      userBalanceReportNo.setSelectedIndex(maxReportNo);
     } catch (NoTransactionsFoundException ignored) {
       accountingReportNo.setSelectedIndex(maxReportNo - 1);
     }
+    enableBalanceDate();
 
     transactionStatementType.setModel(new DefaultComboBoxModel<>(StatementType.values()));
     optionalComponents.values().stream()
@@ -236,6 +243,7 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
     tillRollEndDate = new DatePicker(new DatePickerSettings(Locale.GERMANY));
     lossAnalysisStartDate = new DatePicker(new DatePickerSettings(Locale.GERMANY));
     lossAnalysisEndDate = new DatePicker(new DatePickerSettings(Locale.GERMANY));
+    balanceDate = new DatePicker(new DatePickerSettings(Locale.GERMANY));
   }
 
   public void messageDateValues() {
@@ -423,20 +431,20 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
     gbc.anchor = GridBagConstraints.WEST;
     gbc.insets = new Insets(15, 10, 6, 10);
     panel3.add(label7, gbc);
-    optLast = new JRadioButton();
-    optLast.setText("letzter");
+    optStatementLast = new JRadioButton();
+    optStatementLast.setText("letzter");
     gbc = new GridBagConstraints();
     gbc.gridx = 2;
     gbc.gridy = 3;
     gbc.gridwidth = 2;
     gbc.anchor = GridBagConstraints.EAST;
-    panel3.add(optLast, gbc);
-    optCurrent = new JRadioButton();
-    optCurrent.setText("aktueller");
+    panel3.add(optStatementLast, gbc);
+    optStatementCurrent = new JRadioButton();
+    optStatementCurrent.setText("aktueller");
     gbc = new GridBagConstraints();
     gbc.gridx = 4;
     gbc.gridy = 3;
-    panel3.add(optCurrent, gbc);
+    panel3.add(optStatementCurrent, gbc);
     optPermissionHolders = new JRadioButton();
     optPermissionHolders.setText("Rolleninhaber");
     gbc = new GridBagConstraints();
@@ -486,24 +494,8 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
     gbc.anchor = GridBagConstraints.WEST;
     gbc.insets = new Insets(15, 5, 0, 5);
     panel3.add(accountingReportWithNames, gbc);
-    userBalanceWithNames = new JCheckBox();
-    userBalanceWithNames.setText("Klarnamen ausgeben");
-    gbc = new GridBagConstraints();
-    gbc.gridx = 3;
-    gbc.gridy = 1;
-    gbc.gridwidth = 3;
-    gbc.anchor = GridBagConstraints.WEST;
-    gbc.insets = new Insets(15, 5, 0, 5);
-    panel3.add(userBalanceWithNames, gbc);
-    userBalanceReportNo = new JComboBox();
-    gbc = new GridBagConstraints();
-    gbc.gridx = 2;
-    gbc.gridy = 1;
-    gbc.anchor = GridBagConstraints.WEST;
-    gbc.insets = new Insets(15, 5, 0, 5);
-    panel3.add(userBalanceReportNo, gbc);
     final JLabel label9 = new JLabel();
-    label9.setText("Nr.");
+    label9.setText("Stand");
     gbc = new GridBagConstraints();
     gbc.gridx = 1;
     gbc.gridy = 1;
@@ -549,6 +541,30 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
     gbc.fill = GridBagConstraints.HORIZONTAL;
     gbc.insets = new Insets(15, 5, 0, 5);
     panel3.add(lossAnalysisEndDate, gbc);
+    balanceCurrent = new JCheckBox();
+    balanceCurrent.setText("aktuell");
+    gbc = new GridBagConstraints();
+    gbc.gridx = 2;
+    gbc.gridy = 1;
+    gbc.anchor = GridBagConstraints.WEST;
+    gbc.insets = new Insets(15, 5, 0, 5);
+    panel3.add(balanceCurrent, gbc);
+    userBalanceWithNames = new JCheckBox();
+    userBalanceWithNames.setText("Klarnamen ausgeben");
+    gbc = new GridBagConstraints();
+    gbc.gridx = 4;
+    gbc.gridy = 1;
+    gbc.gridwidth = 3;
+    gbc.anchor = GridBagConstraints.WEST;
+    gbc.insets = new Insets(15, 5, 0, 5);
+    panel3.add(userBalanceWithNames, gbc);
+    gbc = new GridBagConstraints();
+    gbc.gridx = 3;
+    gbc.gridy = 1;
+    gbc.weightx = 1.0;
+    gbc.fill = GridBagConstraints.HORIZONTAL;
+    gbc.insets = new Insets(15, 5, 0, 5);
+    panel3.add(balanceDate, gbc);
     label5.setLabelFor(user);
     ButtonGroup buttonGroup;
     buttonGroup = new ButtonGroup();
@@ -560,8 +576,8 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
     buttonGroup.add(optPermissionHolders);
     buttonGroup.add(optLossAnalysis);
     buttonGroup = new ButtonGroup();
-    buttonGroup.add(optLast);
-    buttonGroup.add(optCurrent);
+    buttonGroup.add(optStatementLast);
+    buttonGroup.add(optStatementCurrent);
   }
 
   /**

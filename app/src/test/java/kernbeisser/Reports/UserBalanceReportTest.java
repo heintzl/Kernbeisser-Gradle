@@ -8,6 +8,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import kernbeisser.DBConnection.DBConnection;
@@ -30,7 +31,7 @@ class UserBalanceReportTest {
       EntityManager entityManagerMock = EntityManagerMockHelper.mockEntityManager(dbConnectionMock);
       mockUserGroupQuery(entityManagerMock, userGroup);
 
-      Report report = new UserBalanceReport(-1L, true);
+      Report report = new UserBalanceReport(null, true);
 
       // act
       String result = report.createOutFileName();
@@ -55,7 +56,7 @@ class UserBalanceReportTest {
       mockLongQuery(entityManagerMock);
       EntityManagerMockHelper.mockTupleQuery(entityManagerMock);
 
-      Report report = new UserBalanceReport(42L, true);
+      Report report = new UserBalanceReport(LocalDate.parse("2023-11-11"), true);
 
       // act
       String result = report.createOutFileName();
@@ -79,7 +80,7 @@ class UserBalanceReportTest {
       EntityManagerMockHelper.mockTupleQuery(entityManagerMock);
       EntityManagerMockHelper.mockSettingValueQuery(entityManagerMock);
 
-      Report report = new UserBalanceReport(42L, true);
+      Report report = new UserBalanceReport(LocalDate.parse("2023-11-11"), true);
 
       // act
       JasperPrint jspPrint = report.lazyGetJspPrint();

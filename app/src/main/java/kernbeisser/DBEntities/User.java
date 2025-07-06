@@ -8,16 +8,12 @@ import at.favre.lib.crypto.bcrypt.BCrypt;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.ExpressionFactory;
 import kernbeisser.DBConnection.PredicateFactory;
 import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.Enums.PermissionConstants;
-import kernbeisser.Enums.Setting;
-import kernbeisser.Enums.TransactionType;
-import kernbeisser.Exeptions.InvalidValue;
 import kernbeisser.Exeptions.MissingFullMemberException;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
 import kernbeisser.Security.Access.UserRelated;
@@ -28,7 +24,6 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.jetbrains.annotations.NotNull;
-import rs.groump.AccessDeniedException;
 import rs.groump.Key;
 import rs.groump.PermissionKey;
 import rs.groump.PermissionSet;
@@ -192,74 +187,8 @@ public class User implements Serializable, UserRelated, ActuallyCloneable {
     this.username = username;
   }
 
-  public static void validateGroupMemberships(Collection<User> members, String exceptionMessage)
-      throws MissingFullMemberException {
-    if (members.size() > 1 && members.stream().noneMatch(User::isFullMember)) {
-      throw new MissingFullMemberException(exceptionMessage);
-    }
-  }
-
-  public static void checkValidUserGroupMemberships() throws MissingFullMemberException {
-    int lastUgId = -1;
-    boolean hasFullMember = true;
-    int memberCount = 1;
-    // orders all users by ug, then looks for invalid userGroups
-    for (Tuple tuple :
-        QueryBuilder.select(User.class, User_.userGroup.child(UserGroup_.id), User.IS_FULL_USER)
-            .orderBy(User_.userGroup.child(UserGroup_.id).asc())
-            .getResultList()) {
-      int ugId = Objects.requireNonNull(tuple.get(0, Integer.class));
-      boolean isFullMember = Objects.requireNonNull(tuple.get(1, Boolean.class));
-      if (ugId != lastUgId) {
-        checkValidUserGroup(lastUgId, memberCount, hasFullMember);
-        hasFullMember = false;
-        memberCount = 0;
-        lastUgId = ugId;
-      }
-      hasFullMember = hasFullMember | isFullMember;
-      memberCount++;
-    }
-    checkValidUserGroup(lastUgId, memberCount, hasFullMember);
-  }
-
-  private static void checkValidUserGroup(int ugId, int memberCount, boolean hasFullMember)
-      throws MissingFullMemberException {
-    if (memberCount <= 1) return;
-    if (hasFullMember) return;
-    throw new MissingFullMemberException(
-        "Benutzergruppe(n) ohne Vollmitglied gefunden. Bitte den Vorstand informieren.");
-  }
-
   public static User getByUsername(String username) throws NoResultException {
     return QueryBuilder.getByProperty(User_.username, username);
-  }
-
-  public static void refreshActivity() {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    List<Integer> activeUserIds =
-        QueryBuilder.select(Transaction_.fromUser.child(User_.id))
-            .where(
-                greaterOrEq(
-                    Transaction_.date,
-                    asExpression(
-                        Instant.now()
-                            .minus(Setting.DAYS_BEFORE_INACTIVITY.getIntValue(), ChronoUnit.DAYS))),
-                Transaction_.transactionType.eq(TransactionType.PURCHASE))
-            .distinct()
-            .getResultList();
-    List<User> inactiveUsers =
-        QueryBuilder.selectAll(User.class)
-            .where(User_.active.eq(true), User_.id.in(activeUserIds).not())
-            .getResultList(em);
-    for (User u : inactiveUsers) {
-      u.setSetUpdatedBy(false);
-      u.setActive(false);
-      em.persist(u);
-    }
-    em.flush();
   }
 
   public static Collection<User> defaultSearch(String s, int max) {
@@ -279,25 +208,6 @@ public class User implements Serializable, UserRelated, ActuallyCloneable {
 
   public static User getById(int parseInt) {
     return QueryBuilder.selectAll(User.class).where(User_.id.eq(parseInt)).getSingleResult();
-  }
-
-  public static void checkAdminConsistency() throws InvalidValue {
-    try {
-      User adminUser = QueryBuilder.getByProperty(User_.username, "Admin");
-      if (QueryBuilder.selectAll(Transaction.class)
-          .where(
-              or(
-                  Transaction_.toUserGroup.eq(adminUser.userGroup),
-                  Transaction_.fromUserGroup.eq(adminUser.userGroup)))
-          .hasResult()) {
-        throw new InvalidValue("Found transactions involving the admin user!");
-      }
-      if (adminUser.userGroup.getValue() != 0.0)
-        throw new InvalidValue("The admin user group has value!");
-    } catch (AccessDeniedException ignored) {
-    } catch (Exception e) {
-      throw UnexpectedExceptionHandler.showUnexpectedErrorWarning(e);
-    }
   }
 
   public static User getKernbeisserUser() {
@@ -352,7 +262,7 @@ public class User implements Serializable, UserRelated, ActuallyCloneable {
 
   public static void validateGroupMemberships(User user, String exceptionMessage)
       throws MissingFullMemberException {
-    validateGroupMemberships(user.getAllGroupMembers(), exceptionMessage);
+    UserGroup.validateGroupMemberships(user.getAllGroupMembers(), exceptionMessage);
   }
 
   @Key(PermissionKey.USER_USER_GROUP_WRITE)
@@ -374,14 +284,14 @@ public class User implements Serializable, UserRelated, ActuallyCloneable {
       if (this.userGroup != null) {
         Collection<User> remainingMembers = this.userGroup.getMembers();
         remainingMembers.remove(this);
-        validateGroupMemberships(
+        UserGroup.validateGroupMemberships(
             remainingMembers,
             "In der alten Benutzergruppe muss mindestens ein Vollmitglied bleiben");
       }
     } else {
       Collection<User> newMembers = userGroup.getMembers();
       newMembers.add(this);
-      validateGroupMemberships(
+      UserGroup.validateGroupMemberships(
           newMembers, "In der neuen Benutzergruppe muss mindestens ein Vollmitglied sein");
     }
     this.userGroup = userGroup;
