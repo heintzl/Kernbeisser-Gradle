@@ -209,18 +209,27 @@ public abstract class Report {
     }.execute();
   }
 
-  public void exportPdf(String message, Consumer<Throwable> exConsumer) {
-    Path filePath = getOutputFolder().resolve(getSafeOutFileName() + ".pdf").toAbsolutePath();
-    exportPdf(message, exConsumer, filePath, true);
+  public void exportPdfToCloud(String message, Consumer<Throwable> exConsumer) {
+    exportPdfToCloudAndThen(message, exConsumer, () -> {});
   }
 
-  public void exportPdfToCloud(String message, Consumer<Throwable> exConsumer) {
+  public void exportPdfToCloudAndThen(
+      String message, Consumer<Throwable> exConsumer, Runnable then) {
     Path filePath = getCloudOutputFolder().resolve(getSafeOutFileName() + ".pdf").toAbsolutePath();
-    exportPdf(message, exConsumer, filePath, false);
+    exportPdf(message, exConsumer, filePath, false, then);
+  }
+
+  public void exportPdf(String message, Consumer<Throwable> exConsumer) {
+    Path filePath = getOutputFolder().resolve(getSafeOutFileName() + ".pdf").toAbsolutePath();
+    exportPdf(message, exConsumer, filePath, true, () -> {});
   }
 
   private void exportPdf(
-      String message, Consumer<Throwable> exConsumer, Path filePath, boolean openFile) {
+      String message,
+      Consumer<Throwable> exConsumer,
+      Path filePath,
+      boolean openFile,
+      Runnable callback) {
 
     Path outputFolder = getOutputFolder();
     final AtomicInteger progressStep = new AtomicInteger(1);
@@ -259,6 +268,7 @@ public abstract class Report {
         pm.close();
         try {
           get();
+          callback.run();
         } catch (Exception e) {
           if (ExceptionUtils.indexOfType(e.getCause(), PrinterAbortException.class) != -1) {
             UnexpectedExceptionHandler.showPrintAbortedWarning(e, true);
@@ -294,7 +304,7 @@ public abstract class Report {
   }
 
   @NotNull
-  private String getSafeOutFileName() {
+  public String getSafeOutFileName() {
     return createOutFileName().replaceAll("[\\\\/:*?\"<>|]", "_");
   }
 

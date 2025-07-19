@@ -18,13 +18,10 @@ import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
 import javax.swing.text.StyleContext;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
-import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.Repositories.TransactionRepository;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.ExportTypes;
 import kernbeisser.Enums.StatementType;
-import kernbeisser.Exeptions.NoTransactionsFoundException;
-import kernbeisser.Useful.Date;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import lombok.Getter;
@@ -53,7 +50,6 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
   private JRadioButton optPermissionHolders;
   private JCheckBox permissionHoldersWithKeys;
   private JComboBox<String> accountingReportNo;
-  private JComboBox<String> userBalanceReportNo;
   private JCheckBox duplexPrint;
   private JRadioButton optLossAnalysis;
   private DatePicker lossAnalysisStartDate;
@@ -81,8 +77,7 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
       controller.exportTillroll(getDateValue(tillRollStartDate), getDateValue(tillRollEndDate));
     } else if (optAccountingReport.isSelected()) {
       controller.exportAccountingReport(
-          Long.parseLong(
-              ((String) accountingReportNo.getSelectedItem()).replace(" (neu erstellen)", "")),
+          Long.parseLong(((String) accountingReportNo.getSelectedItem())),
           accountingReportWithNames.isSelected());
     } else if (optUserBalance.isSelected()) {
       LocalDate date = null;
@@ -119,7 +114,6 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
     if (balanceCurrent.isEnabled()) {
       enableBalanceDate();
     }
-    ;
   }
 
   @Override
@@ -163,13 +157,7 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
     }
     balanceCurrent.setSelected(true);
     balanceCurrent.addActionListener(e -> enableBalanceDate());
-    try {
-      TransactionRepository.getUnreportedTransactions();
-      accountingReportNo.addItem((maxReportNo + 1) + " (neu erstellen)");
-      accountingReportNo.setSelectedIndex(maxReportNo);
-    } catch (NoTransactionsFoundException ignored) {
-      accountingReportNo.setSelectedIndex(maxReportNo - 1);
-    }
+    accountingReportNo.setSelectedIndex(maxReportNo - 1);
     enableBalanceDate();
 
     transactionStatementType.setModel(new DefaultComboBoxModel<>(StatementType.values()));
@@ -212,14 +200,6 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
         JOptionPane.INFORMATION_MESSAGE);
   }
 
-  public void messageNoAccountingReport(boolean b) {
-    JOptionPane.showMessageDialog(
-        getContent(),
-        "Der Bericht wurde %s erfolgreich erstellt".formatted(b ? "" : "nicht"),
-        "Umsatzbericht",
-        JOptionPane.INFORMATION_MESSAGE);
-  }
-
   public void messageNotImplemented(ExportTypes exportType) {
     JOptionPane.showMessageDialog(
         getContent(),
@@ -231,10 +211,6 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
   @Override
   public String getTitle() {
     return "Buchhaltungsberichte";
-  }
-
-  private String BonNoAndDate(Purchase p) {
-    return p.getBonNo() + " (" + Date.INSTANT_DATE.format(p.getCreateDate()) + ")";
   }
 
   private void createUIComponents() {
