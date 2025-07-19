@@ -1,10 +1,9 @@
 package kernbeisser.Windows.CashierShoppingMask;
 
-import java.util.Collection;
 import java.util.List;
+import kernbeisser.Config.Config;
 import kernbeisser.DBEntities.Repositories.TransactionRepository;
 import kernbeisser.DBEntities.Transaction;
-import kernbeisser.DBEntities.User;
 import kernbeisser.Exeptions.InvalidReportNoException;
 import kernbeisser.Exeptions.NoTransactionsFoundException;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
@@ -16,8 +15,19 @@ import lombok.Data;
 public class CashierShoppingMaskModel implements IModel<CashierShoppingMaskController> {
   private boolean openLock = false;
 
-  public Collection<User> searchUser(String searchQuery) {
-    return User.defaultSearch(searchQuery, 500);
+  private static void markTransactionsAsReported(
+      List<Transaction> transactions, String fileName, long no) {
+    if (!transactions.isEmpty()) {
+      if (Config.getConfig()
+          .getReports()
+          .getCloudOutputDirectory()
+          .toPath()
+          .resolve(fileName + ".pdf")
+          .toFile()
+          .exists()) {
+        TransactionRepository.writeAccountingReportNo(transactions, no);
+      }
+    }
   }
 
   public static int printAccountingReports() {
@@ -27,10 +37,13 @@ public class CashierShoppingMaskModel implements IModel<CashierShoppingMaskContr
         return 0;
       }
       long no = TransactionRepository.getLastReportNo() + 1;
-      new AccountingReport(no, true)
-          .exportPdfToCloud(
-              "Erstelle Buchhaltungsbericht",
-              UnexpectedExceptionHandler::showUnexpectedErrorWarning);
+      AccountingReport accountingReport = new AccountingReport(no, true);
+      accountingReport.exportPdfToCloudAndThen(
+          "Erstelle Buchhaltungsbericht",
+          UnexpectedExceptionHandler::showUnexpectedErrorWarning,
+          () ->
+              markTransactionsAsReported(
+                  unreportedTransactions, accountingReport.getSafeOutFileName(), no));
       return 0;
     } catch (NoTransactionsFoundException e) {
       return 0;

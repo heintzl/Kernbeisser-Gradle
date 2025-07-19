@@ -21,11 +21,12 @@ import kernbeisser.Exeptions.NoTransactionsFoundException;
 import kernbeisser.Reports.ReportDTO.AccountingReportItem;
 import kernbeisser.Useful.Date;
 import lombok.Cleanup;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 public class AccountingReport extends Report {
   private final long reportNo;
-  private final List<Transaction> transactions;
+  @Getter private final List<Transaction> transactions;
   private final List<Purchase> purchases;
   private final boolean withNames;
 
@@ -39,9 +40,6 @@ public class AccountingReport extends Report {
         throw new InvalidReportNoException();
       }
       transactions = TransactionRepository.getUnreportedTransactions();
-      if (!transactions.isEmpty()) {
-        TransactionRepository.writeAccountingReportNo(transactions, reportNo);
-      }
     } else {
       transactions = TransactionRepository.getTransactionsByReportNo(reportNo);
     }
