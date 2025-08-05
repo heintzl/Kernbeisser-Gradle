@@ -164,13 +164,13 @@ public class UserGroup implements UserRelated {
     return sb.toString();
   }
 
-  public static Map<Integer, Double> getValueMapAt(
-      Instant dataOfLastTransaction, boolean withUnreadables) {
+  public static Map<Integer, Double> getCustomerValueMapAt(
+      Instant transactionTimestamp, boolean withUnreadables) {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    Map<Integer, Double> userGroupIdValueMap = getValueMapAt(em, dataOfLastTransaction);
+    Map<Integer, Double> userGroupIdValueMap = getValueMapAt(em, transactionTimestamp);
     QueryBuilder.select(User_.userGroup.child(UserGroup_.id))
         .where(
             or(
@@ -181,15 +181,13 @@ public class UserGroup implements UserRelated {
     return userGroupIdValueMap;
   }
 
-  public static Map<Integer, Double> getValueMapAt(
-      EntityManager em, Instant dateOfLastTransaction) {
+  public static Map<Integer, Double> getValueMapAt(EntityManager em, Instant transactionTimestamp) {
     List<Tuple> transactionsUntilDate =
         QueryBuilder.select(
                 Transaction_.fromUserGroup.child(UserGroup_.id),
                 Transaction_.toUserGroup.child(UserGroup_.id),
                 Transaction_.value)
-            .where(
-                PredicateFactory.lessOrEq(Transaction_.date, asExpression(dateOfLastTransaction)))
+            .where(PredicateFactory.lessOrEq(Transaction_.date, asExpression(transactionTimestamp)))
             .getResultList(em);
     Map<Integer, Double> userGroupIdValueMap = new HashMap<>(200);
     for (Tuple tuple : transactionsUntilDate) {
@@ -229,7 +227,8 @@ public class UserGroup implements UserRelated {
     double sum = 0;
     double sum_negative = 0;
     double sum_positive = 0;
-    Map<Integer, Double> historicGroups = getValueMapAt(transactionTimeStamp, withUnreadables);
+    Map<Integer, Double> historicGroups =
+        getCustomerValueMapAt(transactionTimeStamp, withUnreadables);
     for (Double value : historicGroups.values()) {
       if (value < 0) sum_negative += value;
       else sum_positive += value;
