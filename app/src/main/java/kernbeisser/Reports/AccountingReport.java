@@ -63,12 +63,16 @@ public class AccountingReport extends Report {
     return purchases;
   }
 
-  private static String getReportTitle(long reportNo, List<Transaction> transactions) {
+  private Instant getLastReportedInstant() {
+    return transactions.getLast().getDate();
+  }
+
+  private String getReportTitle(long reportNo) {
     return (reportNo == 0 ? "Umsatzbericht " : "LD-Endabrechnung Nr. " + reportNo)
         + "    "
         + Date.INSTANT_DATE.format(transactions.getFirst().getDate())
         + " bis "
-        + Date.INSTANT_DATE.format(transactions.getLast().getDate());
+        + Date.INSTANT_DATE.format(getLastReportedInstant());
   }
 
   private static long countVatValues(Collection<Purchase> purchases, VAT vat) {
@@ -194,7 +198,7 @@ public class AccountingReport extends Report {
         }
       }
     }
-    Map<String, Object> reportParams = UserGroup.getValueAggregatesAt(Instant.now());
+    Map<String, Object> reportParams = UserGroup.getValueAggregatesAt(Date.shiftInstantToUTC(getLastReportedInstant()));
     reportParams.put("transactionSaldo", transactionSaldo);
     reportParams.put("transactionCreditPayIn", transactionCreditPayIn);
     reportParams.put("transactionSpecialPayments", transactionSpecialPayments);
@@ -208,7 +212,7 @@ public class AccountingReport extends Report {
     try {
       Map<String, Object> reportParams = getAccountingPurchaseParams(purchases);
       reportParams.putAll(getAccountingTransactionParams(transactions));
-      reportParams.put("reportTitle", getReportTitle(reportNo, transactions));
+      reportParams.put("reportTitle", getReportTitle(reportNo));
       return reportParams;
     } catch (InvalidVATValueException e) {
       throw new RuntimeException(e);
