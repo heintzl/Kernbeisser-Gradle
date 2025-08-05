@@ -7,29 +7,31 @@ import java.util.Locale;
 
 public class Date {
 
-  private static final ZoneId currentZone = ZoneId.systemDefault();
-  public static DateTimeFormatter INSTANT_DATE_TIME =
+  public static final ZoneId CURRENT_ZONE = ZoneId.systemDefault();
+  public static final DateTimeFormatter INSTANT_DATE_TIME =
       DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
           .withLocale(Locale.getDefault())
-          .withZone(currentZone);
-  public static DateTimeFormatter INSTANT_DATE_TIME_SEC =
+          .withZone(CURRENT_ZONE);
+  public static final DateTimeFormatter INSTANT_DATE_TIME_SEC =
       DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT, FormatStyle.MEDIUM)
           .withLocale(Locale.getDefault())
-          .withZone(currentZone);
-  public static DateTimeFormatter INSTANT_TIME =
+          .withZone(CURRENT_ZONE);
+  public static final DateTimeFormatter INSTANT_TIME =
       DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)
           .withLocale(Locale.getDefault())
-          .withZone(currentZone);
-  public static DateTimeFormatter INSTANT_DATE =
+          .withZone(CURRENT_ZONE);
+  public static final DateTimeFormatter INSTANT_DATE =
       DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
           .withLocale(Locale.getDefault())
-          .withZone(currentZone);
-  public static DateTimeFormatter INSTANT_MONTH_YEAR =
-      DateTimeFormatter.ofPattern("MMMuu").withLocale(Locale.getDefault()).withZone(currentZone);
-  public static DateTimeFormatter INSTANT_CATALOG_DATE =
-      DateTimeFormatter.ofPattern("uuuuMMdd").withLocale(Locale.getDefault()).withZone(currentZone);
-  public static DateTimeFormatter INSTANT_CATALOG_TIME =
-      DateTimeFormatter.ofPattern("HHmm").withLocale(Locale.getDefault()).withZone(currentZone);
+          .withZone(CURRENT_ZONE);
+  public static final DateTimeFormatter INSTANT_MONTH_YEAR =
+      DateTimeFormatter.ofPattern("MMMuu").withLocale(Locale.getDefault()).withZone(CURRENT_ZONE);
+  public static final DateTimeFormatter INSTANT_CATALOG_DATE =
+      DateTimeFormatter.ofPattern("uuuuMMdd")
+          .withLocale(Locale.getDefault())
+          .withZone(CURRENT_ZONE);
+  public static final DateTimeFormatter INSTANT_CATALOG_TIME =
+      DateTimeFormatter.ofPattern("HHmm").withLocale(Locale.getDefault()).withZone(CURRENT_ZONE);
 
   public static String safeDateFormat(Instant instant, DateTimeFormatter formatter) {
     if (instant == null) {
@@ -42,13 +44,13 @@ public class Date {
     if (instant == null) {
       return "";
     }
-    return formatter.format(instant.atZone(ZoneId.systemDefault()));
+    return formatter.format(instant.atZone(CURRENT_ZONE));
   }
 
   public static Instant atStartOrEndOfDay(LocalDate localDate, boolean atStart) {
     return (atStart
-            ? localDate.atStartOfDay(currentZone)
-            : localDate.plusDays(1).atStartOfDay(currentZone).minusNanos(1))
+            ? localDate.atStartOfDay(CURRENT_ZONE)
+            : localDate.plusDays(1).atStartOfDay(CURRENT_ZONE).minusNanos(1))
         .toInstant();
   }
 
@@ -64,8 +66,14 @@ public class Date {
       return null;
     }
     return LocalTime.parse(s, format)
-        .atDate(date.atZone(currentZone).toLocalDate())
-        .atZone(currentZone)
+        .atDate(date.atZone(CURRENT_ZONE).toLocalDate())
+        .atZone(CURRENT_ZONE)
         .toInstant();
+  }
+
+  public static Instant shiftInstantToUTC(Instant instant) {
+    // Criteria Query of getCustomerValueMapAt applies time zone conversion to Instant, which is
+    // not safely applied to Transaction.getDate, so this conversion gets applied explicitly here
+    return instant.minusSeconds(Date.CURRENT_ZONE.getRules().getOffset(instant).getTotalSeconds());
   }
 }
