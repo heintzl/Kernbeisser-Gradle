@@ -2,7 +2,6 @@ package kernbeisser.Reports;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 import kernbeisser.DBEntities.User;
@@ -23,7 +22,7 @@ public class UserBalanceReport extends Report {
     } else {
       now = false;
     }
-    this.date = date.plusDays(1).atStartOfDay(ZoneId.systemDefault()).minusNanos(1).toInstant();
+    this.date = date.plusDays(1).atStartOfDay(Date.CURRENT_ZONE).minusNanos(1).toInstant();
     this.withNames = withNames;
     this.userGroups = getUserGroups();
   }
@@ -36,11 +35,13 @@ public class UserBalanceReport extends Report {
 
   private List<UserGroup> getUserGroups() {
     List<UserGroup> userGroups;
-    final Map<UserGroup, Double> historicUserGroupValues =
-        now ? new HashMap<>() : UserGroup.populateWithEntities(UserGroup.getValueMapAt(date, true));
+    Map<UserGroup, Double> historicUserGroupValues;
     if (now) {
       userGroups = UserGroup.getActiveUserGroups();
+      historicUserGroupValues = new HashMap<>();
     } else {
+      historicUserGroupValues =
+          UserGroup.populateWithEntities(UserGroup.getCustomerValueMapAt(date, true));
       userGroups = new ArrayList<>(historicUserGroupValues.keySet());
     }
     return userGroups.stream()
