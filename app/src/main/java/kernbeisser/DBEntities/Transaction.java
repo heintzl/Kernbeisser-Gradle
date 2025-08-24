@@ -149,7 +149,7 @@ public class Transaction implements UserRelated {
         }
       }
       if (value < 0 && toUG.getValue() + value < minValue) {
-        if (!to.equals(Constants.SHOP_USER) && !to.mayGoUnderMin()) {
+        if (!to.isShopUser() && !to.mayGoUnderMin()) {
           throw new kernbeisser.Exeptions.InvalidTransactionException(
               "the receiving user ["
                   + from.getId()

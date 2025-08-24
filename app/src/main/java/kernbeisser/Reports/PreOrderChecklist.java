@@ -18,7 +18,7 @@ public class PreOrderChecklist extends Report {
     this.deliveryDate = deliveryDate;
     this.preorder =
         preorder.stream()
-            .filter(p -> !p.getUser().equals(Constants.SHOP_USER))
+            .filter(p -> !p.getUser().isShopUser())
             .sorted(Comparator.comparing(p -> p.getUser().getFullName(true)))
             .collect(Collectors.toList());
   }

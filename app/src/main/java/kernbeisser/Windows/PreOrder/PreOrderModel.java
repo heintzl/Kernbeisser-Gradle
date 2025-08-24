@@ -41,7 +41,7 @@ public class PreOrderModel implements IModel<PreOrderController> {
   public void add(PreOrder preOrder) {
     Objects.requireNonNull(preOrder.getUser());
     et.begin();
-    if (preOrder.getUser().equals(Constants.SHOP_USER)) {
+    if (preOrder.getUser().isShopUser()) {
       CatalogEntry e = em.find(CatalogEntry.class, preOrder.getCatalogEntry().getId());
       em.persist(e);
     }
@@ -57,7 +57,7 @@ public class PreOrderModel implements IModel<PreOrderController> {
     p.setCatalogEntry(newPreOrder.getCatalogEntry());
     p.setUser(newPreOrder.getUser());
     p.setInfo(newPreOrder.getInfo());
-    if (preOrder.getUser().equals(Constants.SHOP_USER)) {
+    if (preOrder.getUser().isShopUser()) {
       CatalogEntry e = em.find(CatalogEntry.class, newPreOrder.getCatalogEntry().getId());
       em.persist(e);
     }
@@ -126,7 +126,7 @@ public class PreOrderModel implements IModel<PreOrderController> {
     et.begin();
     delivery.forEach(
         p -> {
-          if (p.getUser().equals(Constants.SHOP_USER)) {
+          if (p.getUser().isShopUser()) {
             removeLazy(p);
           } else {
             p.setDelivery(Instant.now());

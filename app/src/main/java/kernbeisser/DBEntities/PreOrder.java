@@ -89,7 +89,7 @@ public class PreOrder implements Serializable, UserRelated {
   }
 
   public boolean isShopOrder() {
-    return user.equals(Constants.SHOP_USER);
+    return user.isShopUser();
   }
 
   // report property! don't remove
