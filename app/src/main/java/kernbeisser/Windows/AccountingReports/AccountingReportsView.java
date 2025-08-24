@@ -191,15 +191,6 @@ public class AccountingReportsView extends JDialog implements IView<AccountingRe
         JOptionPane.INFORMATION_MESSAGE);
   }
 
-  public void messageInvalidReportNo(long reportNo) {
-    JOptionPane.showMessageDialog(
-        getContent(),
-        "Die Berichtsnummer %d ist inkonsistent. Die vorhergehende Berichtsnummer exisitert nicht."
-            .formatted(reportNo),
-        "Umsatzbericht",
-        JOptionPane.INFORMATION_MESSAGE);
-  }
-
   public void messageNotImplemented(ExportTypes exportType) {
     JOptionPane.showMessageDialog(
         getContent(),
