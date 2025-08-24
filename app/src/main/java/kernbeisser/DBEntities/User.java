@@ -18,6 +18,7 @@ import kernbeisser.Exeptions.MissingFullMemberException;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
 import kernbeisser.Security.Access.UserRelated;
 import kernbeisser.Useful.ActuallyCloneable;
+import kernbeisser.Useful.Constants;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
 import lombok.*;
@@ -210,7 +211,11 @@ public class User implements Serializable, UserRelated, ActuallyCloneable {
     return QueryBuilder.selectAll(User.class).where(User_.id.eq(parseInt)).getSingleResult();
   }
 
-  public static User getKernbeisserUser() {
+  public boolean isShopUser() {
+      return this.getId() == Constants.SHOP_USER_ID;
+  }
+
+  public static User getShopUser() {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     try {
       @Cleanup(value = "commit")
@@ -232,7 +237,7 @@ public class User implements Serializable, UserRelated, ActuallyCloneable {
       em.persist(kernbeisser);
       em.flush();
       et.commit();
-      return getKernbeisserUser();
+      return getShopUser();
     }
   }
 
@@ -246,7 +251,7 @@ public class User implements Serializable, UserRelated, ActuallyCloneable {
       qb.orderBy(User_.firstName.asc(), User_.surname.asc());
     }
     var result = qb.getResultList();
-    if (withKbUser) result.addFirst(getKernbeisserUser());
+    if (withKbUser) result.addFirst(getShopUser());
     return result;
   }
 

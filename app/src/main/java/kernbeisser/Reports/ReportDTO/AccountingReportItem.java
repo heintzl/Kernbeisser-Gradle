@@ -36,7 +36,7 @@ public class AccountingReportItem {
     this.date = transaction.getDate();
     this.description = transaction.getDescription();
     User customer;
-    if (transaction.getFromUser().equals(Constants.SHOP_USER)) {
+    if (transaction.getFromUser().isShopUser()) {
       customer = transaction.getToUser();
       sum = -transaction.getValue();
     } else {
