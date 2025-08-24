@@ -7,7 +7,7 @@ import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.ExportTypes;
 import kernbeisser.Enums.StatementType;
 import kernbeisser.Exeptions.IncorrectInput;
-import kernbeisser.Exeptions.InvalidReportNoException;
+import kernbeisser.Exeptions.InvalidVATValueException;
 import kernbeisser.Exeptions.NoTransactionsFoundException;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
 import kernbeisser.Reports.*;
@@ -77,11 +77,11 @@ public class AccountingReportsController
 
   public void exportAccountingReport(long reportNo, boolean withNames) {
     try {
-      exportReport(new AccountingReport(reportNo, withNames), "Erstelle Buchhaltungsbericht");
+      exportReport(AccountingReport.old(reportNo, withNames), "Erstelle Buchhaltungsbericht");
     } catch (NoTransactionsFoundException e) {
       getView().messageEmptyReportNo(reportNo);
-    } catch (InvalidReportNoException e) {
-      getView().messageInvalidReportNo(reportNo);
+    } catch (InvalidVATValueException f) {
+      AccountingReport.messageInvalidVatValues(getView().getContent(), f.getMessage());
     }
   }
 

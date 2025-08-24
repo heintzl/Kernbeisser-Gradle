@@ -11,7 +11,7 @@ import java.util.List;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.TransactionType;
-import kernbeisser.Exeptions.InvalidReportNoException;
+import kernbeisser.Exeptions.InvalidVATValueException;
 import kernbeisser.Exeptions.NoTransactionsFoundException;
 import net.sf.jasperreports.engine.JasperPrint;
 import org.jetbrains.annotations.NotNull;
@@ -33,7 +33,7 @@ class AccountingReportTest {
 
       Purchase purchase = createPurchase();
       mockQuerys(entityManagerMock, purchase);
-      AccountingReport accountingReport = new AccountingReport(1L, false);
+      AccountingReport accountingReport = AccountingReport.old(1L, false);
 
       // act
       JasperPrint jspPrint = accountingReport.lazyGetJspPrint();
@@ -42,8 +42,10 @@ class AccountingReportTest {
       Assertions.assertNotNull(jspPrint);
       Assertions.assertEquals(
           ReportFileNames.ACCOUNTING_REPORT_FILENAME, jspPrint.getName() + ".jrxml");
-    } catch (NoTransactionsFoundException | InvalidReportNoException e) {
+    } catch (NoTransactionsFoundException e) {
       Assertions.fail("unsuitable reportNo");
+    } catch (InvalidVATValueException f) {
+      Assertions.fail("unsuitable report data");
     }
   }
 
@@ -54,15 +56,18 @@ class AccountingReportTest {
       EntityManager entityManagerMock = EntityManagerMockHelper.mockEntityManager(dbConnectionMock);
       mockPurchaseQuery(entityManagerMock, new Purchase());
 
-      AccountingReport accountingReport = new AccountingReport(1337L, false);
+      AccountingReport accountingReport =
+          AccountingReport.latest(1337L, Collections.emptyList(), false);
 
       // act
       String result = accountingReport.createOutFileName();
 
       // assert
       Assertions.assertEquals("KernbeisserBuchhaltungBonUebersicht_1337", result);
-    } catch (NoTransactionsFoundException | InvalidReportNoException e) {
+    } catch (NoTransactionsFoundException e) {
       Assertions.fail("unsuitable reportNo");
+    } catch (InvalidVATValueException f) {
+      Assertions.fail("unsuitable report data");
     }
   }
 

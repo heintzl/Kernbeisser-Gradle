@@ -60,7 +60,7 @@
 				<element kind="staticText" uuid="6b4acc6c-9602-4652-b48b-b8ef540847fa" x="0" y="-9" width="44" height="14" fontName="DejaVu Sans Condensed" bold="true" hTextAlign="Left">
 					<text><![CDATA[Summe:]]></text>
 				</element>
-				<element kind="textField" uuid="a2da7f26-0ed1-4403-8c75-9666208407e2" x="450" y="-9" width="54" height="14" fontName="DejaVu Sans Condensed" textAdjust="ScaleFont" pattern="#,##0.00€;-#,##0.00€" bold="true" hTextAlign="Right">
+				<element kind="textField" uuid="a2da7f26-0ed1-4403-8c75-9666208407e2" x="430" y="-9" width="74" height="14" fontName="DejaVu Sans Condensed" textAdjust="ScaleFont" pattern="#,##0.00€;-#,##0.00€" bold="true" hTextAlign="Right">
 					<expression><![CDATA[$V{groupSum}]]></expression>
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="274c790d-bccd-4b9b-ad18-f5e418e86810"/>
 				</element>

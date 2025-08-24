@@ -4,7 +4,6 @@ import java.util.List;
 import kernbeisser.Config.Config;
 import kernbeisser.DBEntities.Repositories.TransactionRepository;
 import kernbeisser.DBEntities.Transaction;
-import kernbeisser.Exeptions.InvalidReportNoException;
 import kernbeisser.Exeptions.NoTransactionsFoundException;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
 import kernbeisser.Reports.AccountingReport;
@@ -31,13 +30,13 @@ public class CashierShoppingMaskModel implements IModel<CashierShoppingMaskContr
   }
 
   public static int printAccountingReports() {
+    List<Transaction> unreportedTransactions = TransactionRepository.getUnreportedTransactions();
+    if (unreportedTransactions.stream().noneMatch(TransactionRepository::isPurchase)) {
+      return 0;
+    }
     try {
-      List<Transaction> unreportedTransactions = TransactionRepository.getUnreportedTransactions();
-      if (unreportedTransactions.isEmpty()) {
-        return 0;
-      }
       long no = TransactionRepository.getLastReportNo() + 1;
-      AccountingReport accountingReport = new AccountingReport(no, true);
+      AccountingReport accountingReport = AccountingReport.latest(no, unreportedTransactions, true);
       accountingReport.exportPdfToCloudAndThen(
           "Erstelle Buchhaltungsbericht",
           UnexpectedExceptionHandler::showUnexpectedErrorWarning,
@@ -47,8 +46,8 @@ public class CashierShoppingMaskModel implements IModel<CashierShoppingMaskContr
       return 0;
     } catch (NoTransactionsFoundException e) {
       return 0;
-    } catch (InvalidReportNoException e) {
-      return TransactionRepository.getUnreportedTransactions().size();
+    } catch (Exception e) {
+      return unreportedTransactions.size();
     }
   }
 }

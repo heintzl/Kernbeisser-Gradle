@@ -1,50 +1,54 @@
 package kernbeisser.Reports;
 
-import static kernbeisser.Useful.Constants.SHOP_USER;
-
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.NoResultException;
+import java.awt.*;
 import java.time.Instant;
 import java.util.*;
+import java.util.List;
 import javax.swing.*;
-import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.*;
 import kernbeisser.DBEntities.Purchase_;
 import kernbeisser.DBEntities.Repositories.TransactionRepository;
 import kernbeisser.DBEntities.SaleSession_;
 import kernbeisser.Enums.VAT;
-import kernbeisser.Exeptions.InvalidReportNoException;
 import kernbeisser.Exeptions.InvalidVATValueException;
 import kernbeisser.Exeptions.NoTransactionsFoundException;
 import kernbeisser.Reports.ReportDTO.AccountingReportItem;
+import kernbeisser.Useful.Constants;
 import kernbeisser.Useful.Date;
-import lombok.Cleanup;
-import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 public class AccountingReport extends Report {
   private final long reportNo;
-  @Getter private final List<Transaction> transactions;
-  private final List<Purchase> purchases;
+  private final List<AccountingReportItem> reportItems = new ArrayList<>();
   private final boolean withNames;
+  private final Map<String, Object> reportParams;
 
-  public AccountingReport(long reportNo, boolean withNames)
-      throws InvalidReportNoException, NoTransactionsFoundException {
+  private AccountingReport(long reportNo, boolean withNames, List<Transaction> transactions)
+      throws NoTransactionsFoundException, InvalidVATValueException {
     super(ReportFileNames.ACCOUNTING_REPORT_FILENAME);
     this.reportNo = reportNo;
-    long lastReportNo = TransactionRepository.getLastReportNo();
-    if (reportNo > lastReportNo) {
-      if (reportNo > lastReportNo + 1) {
-        throw new InvalidReportNoException();
-      }
-      transactions = TransactionRepository.getUnreportedTransactions();
-    } else {
-      transactions = TransactionRepository.getTransactionsByReportNo(reportNo);
-    }
-    this.purchases = getPurchases();
     this.withNames = withNames;
+    List<Purchase> purchases =
+        QueryBuilder.selectAll(Purchase.class)
+            .where(Purchase_.session.child(SaleSession_.transaction).in(transactions))
+            .getResultList();
+    this.addAccountingReportItems(transactions, purchases);
+    this.reportParams =
+        UserGroup.getValueAggregatesAt(Date.shiftInstantToUTC(getLastReportedInstant()));
+    this.addPurchaseAndTransactionParams(purchases);
+  }
+
+  public static AccountingReport old(long reportNo, boolean withNames)
+      throws InvalidVATValueException {
+    return new AccountingReport(
+        reportNo, withNames, TransactionRepository.getTransactionsByReportNo(reportNo));
+  }
+
+  public static AccountingReport latest(
+      long reportNo, List<Transaction> unreportedTransactions, boolean withNames)
+      throws InvalidVATValueException {
+    return new AccountingReport(reportNo, withNames, unreportedTransactions);
   }
 
   @Override
@@ -52,49 +56,35 @@ public class AccountingReport extends Report {
     return String.format("KernbeisserUmsaetze_%d", reportNo);
   }
 
-  private List<Purchase> getPurchases() throws NoResultException {
-    List<Purchase> purchases =
-        QueryBuilder.selectAll(Purchase.class)
-            .where(Purchase_.session.child(SaleSession_.transaction).in(transactions))
-            .getResultList();
-    if (purchases.isEmpty()) {
-      throw new NoTransactionsFoundException();
-    }
-    return purchases;
+  private @NotNull void addAccountingReportItems(
+      List<Transaction> transactions, List<Purchase> purchases) {
+    this.reportItems.addAll(
+        purchases.stream().map(p -> new AccountingReportItem(p, withNames)).toList());
+    this.reportItems.addAll(
+        transactions.stream()
+            .filter(TransactionRepository::isAccountingReportTransaction)
+            .map(t -> new AccountingReportItem(t, withNames))
+            .sorted(Comparator.comparingInt(reportItem -> reportItem.getReportGroup().ordinal()))
+            .toList());
   }
 
   private Instant getLastReportedInstant() {
-    return transactions.getLast().getDate();
+    return reportItems.stream()
+        .map(AccountingReportItem::getDate)
+        .max(Instant::compareTo)
+        .orElse(Instant.MIN);
   }
 
   private String getReportTitle(long reportNo) {
     return (reportNo == 0 ? "Umsatzbericht " : "LD-Endabrechnung Nr. " + reportNo)
         + "    "
-        + Date.INSTANT_DATE.format(transactions.getFirst().getDate())
+        + Date.INSTANT_DATE.format(reportItems.getFirst().getDate())
         + " bis "
         + Date.INSTANT_DATE.format(getLastReportedInstant());
   }
 
-  private static long countVatValues(Collection<Purchase> purchases, VAT vat) {
-    return purchases.stream()
-        .flatMap(p -> p.getAllItems().stream())
-        .filter(s -> s.getVat() == vat)
-        .mapToDouble(ShoppingItem::getVatValue)
-        .distinct()
-        .count();
-  }
-
-  private static double getVatValue(Collection<Purchase> purchases, VAT vat) {
-    return purchases.stream()
-        .flatMap(p -> p.getAllItems().stream())
-        .filter(s -> s.getVat() == vat)
-        .mapToDouble(ShoppingItem::getVatValue)
-        .findFirst()
-        .orElse(vat.getValue());
-  }
-
   @NotNull
-  private static Map<String, Object> getAccountingPurchaseParams(List<Purchase> purchases)
+  private void addPurchaseAndTransactionParams(List<Purchase> purchases)
       throws InvalidVATValueException {
     double sumTotalPurchased = 0.0;
     double sumVatHiProductsPurchased = 0.0;
@@ -102,63 +92,62 @@ public class AccountingReport extends Report {
     double sumVatHiSolidarity = 0.0;
     double sumVatLoSolidarity = 0.0;
     double sumDeposit = 0.0;
+    double transactionSaldo = 0.0;
+    double transactionCreditPayIn = 0.0;
+    double transactionSpecialPayments = 0.0;
+    double transactionPurchases = 0.0;
 
-    long t_high = countVatValues(purchases, VAT.HIGH);
-    long t_low = countVatValues(purchases, VAT.LOW);
-    if (t_high > 1 || t_low > 1) {
-      String message = "";
-      if (t_low > 1) {
-        message += "Mehrere Werte für niedrigen MWSt.-Satz gefunden \n";
+    // audit and calculate purchase sums
+
+    List<ShoppingItem> reportedItems =
+        QueryBuilder.selectAll(ShoppingItem.class)
+            .where(ShoppingItem_.purchase.in(purchases))
+            .getResultList();
+
+    double vatLoValue = -1.0, vatHiValue = -1.0;
+    final String DEPOSIT = Constants.DEPOSIT_SUPPLIER.getShortName();
+    final String SOLIDARITY = Constants.SOLIDARITY_SUPPLIER.getShortName();
+    for (ShoppingItem i : reportedItems) {
+      final double itemValue = i.getRetailPrice();
+      final double itemVatValue = i.getVatValue();
+      final String itemSupplier = i.getSafeSuppliersShortName();
+      if (i.getVat() == VAT.HIGH) {
+        if (vatHiValue == -1.0) {
+          vatHiValue = itemVatValue;
+        } else if (vatHiValue != itemVatValue) {
+          throw new InvalidVATValueException(VAT.HIGH, itemVatValue);
+        }
+        if (itemSupplier.equals(DEPOSIT)) {
+          sumDeposit += itemValue;
+        } else if (itemSupplier.equals(SOLIDARITY)) {
+          sumVatHiSolidarity += itemValue;
+        } else {
+          sumVatHiProductsPurchased += itemValue;
+        }
+      } else {
+        if (vatLoValue == -1.0) {
+          vatLoValue = itemVatValue;
+        } else if (vatLoValue != itemVatValue) {
+          throw new InvalidVATValueException(VAT.LOW, itemVatValue);
+        }
+        if (itemSupplier.equals(SOLIDARITY)) {
+          sumVatLoSolidarity += itemValue;
+        } else {
+          sumVatLoProductsPurchased += itemValue;
+        }
       }
-      if (t_high > 1) {
-        message += "Mehrere Werte für hohen MWSt.-Satz gefunden \n";
-      }
-      message +=
-          "Gab es zwischenzeitlich einen Wechsel des Steuersatzes?\n"
-              + "Der Bericht muss für einen Zeitraum mit eindeutigen Steuersätzen ausgegeben werden!";
-      JOptionPane.showMessageDialog(
-          JOptionPane.getRootFrame(),
-          message,
-          "Uneindeutige Steuersätze",
-          JOptionPane.ERROR_MESSAGE);
-      throw new InvalidVATValueException(1000.0);
-    }
-    double vatLoValue = getVatValue(purchases, VAT.LOW);
-    double vatHiValue = getVatValue(purchases, VAT.HIGH);
-    String solidaritySupplier = Supplier.getSolidaritySupplier().getShortName();
-    String depositSupplier = Supplier.getDepositSupplier().getShortName();
-    for (Purchase p : purchases) {
-      sumVatHiProductsPurchased +=
-          p.getFilteredSum(
-              s ->
-                  s.getVat() == VAT.HIGH
-                      && !s.getSafeSuppliersShortName().equalsIgnoreCase(depositSupplier)
-                      && !s.getSafeSuppliersShortName().equalsIgnoreCase(solidaritySupplier));
-      sumVatLoProductsPurchased +=
-          p.getFilteredSum(
-              s ->
-                  s.getVat() == VAT.LOW
-                      && !s.getSafeSuppliersShortName().equalsIgnoreCase(depositSupplier)
-                      && !s.getSafeSuppliersShortName().equalsIgnoreCase(solidaritySupplier));
-      sumVatHiSolidarity +=
-          p.getFilteredSum(
-              s ->
-                  s.getVat() == VAT.HIGH
-                      && s.getSafeSuppliersShortName().equalsIgnoreCase(solidaritySupplier));
-      sumVatLoSolidarity +=
-          p.getFilteredSum(
-              s ->
-                  s.getVat() == VAT.LOW
-                      && s.getSafeSuppliersShortName().equalsIgnoreCase(solidaritySupplier));
-      sumDeposit +=
-          p.getFilteredSum(
-              s ->
-                  s.getVat() == VAT.HIGH
-                      && s.getSafeSuppliersShortName().equalsIgnoreCase(depositSupplier));
-      sumTotalPurchased += p.getSum();
+      sumTotalPurchased += itemValue;
     }
 
-    Map<String, Object> reportParams = new HashMap<>();
+    for (AccountingReportItem i : reportItems) {
+      double value = i.getSum();
+      transactionSaldo -= value;
+      switch (i.getReportGroup()) {
+        case ASSISTED_PURCHASE, SOLO_PURCHASE -> transactionPurchases += value;
+        case REFUND, OTHER -> transactionSpecialPayments += value;
+        case PAYIN -> transactionCreditPayIn -= value;
+      }
+    }
     reportParams.put("vatHiValue", vatHiValue);
     reportParams.put("vatLoValue", vatLoValue);
     reportParams.put("sumTotalPurchased", sumTotalPurchased);
@@ -167,69 +156,31 @@ public class AccountingReport extends Report {
     reportParams.put("sumDeposit", sumDeposit);
     reportParams.put("sumVatHiSolidarity", sumVatHiSolidarity);
     reportParams.put("sumVatLoSolidarity", sumVatLoSolidarity);
-
-    return reportParams;
-  }
-
-  private Map<String, Object> getAccountingTransactionParams(List<Transaction> transactions) {
-    @Cleanup EntityManager em = DBConnection.getEntityManager();
-    @Cleanup(value = "commit")
-    EntityTransaction et = em.getTransaction();
-    et.begin();
-    double transactionSaldo = 0.0;
-    double transactionCreditPayIn = 0.0;
-    double transactionSpecialPayments = 0.0;
-    double transactionPurchases = 0.0;
-    for (Transaction t : transactions) {
-      double direction = t.getFromUser().equals(SHOP_USER) ? -1.0 : 1.0;
-      if (direction == -1.0 || t.getToUser().equals(SHOP_USER)) {
-        transactionSaldo -= t.getValue() * direction;
-        switch (t.getTransactionType()) {
-          case PURCHASE:
-            transactionPurchases += t.getValue();
-            break;
-          case USER_GENERATED:
-            transactionSpecialPayments += t.getValue() * direction;
-            break;
-          case PAYIN:
-          case INITIALIZE:
-            transactionCreditPayIn += t.getValue();
-            break;
-        }
-      }
-    }
-    Map<String, Object> reportParams = UserGroup.getValueAggregatesAt(Date.shiftInstantToUTC(getLastReportedInstant()));
     reportParams.put("transactionSaldo", transactionSaldo);
     reportParams.put("transactionCreditPayIn", transactionCreditPayIn);
     reportParams.put("transactionSpecialPayments", transactionSpecialPayments);
     reportParams.put("transactionPurchases", transactionPurchases);
+  }
 
-    return reportParams;
+  public static void messageInvalidVatValues(Component parentComponent, String errorMessage) {
+    JOptionPane.showMessageDialog(
+        parentComponent,
+        "Inkonsistente Steuersätze im Berichtszeitraum!\n"
+            + "(%s)\n".formatted(errorMessage)
+            + "Gab es zwischenzeitlich einen Wechsel des Steuersatzes?\n"
+            + "Der Bericht muss für einen Zeitraum mit eindeutigen Steuersätzen ausgegeben werden!",
+        "Uneindeutige Steuersätze",
+        JOptionPane.ERROR_MESSAGE);
   }
 
   @Override
   Map<String, Object> getReportParams() {
-    try {
-      Map<String, Object> reportParams = getAccountingPurchaseParams(purchases);
-      reportParams.putAll(getAccountingTransactionParams(transactions));
-      reportParams.put("reportTitle", getReportTitle(reportNo));
-      return reportParams;
-    } catch (InvalidVATValueException e) {
-      throw new RuntimeException(e);
-    }
+    reportParams.put("reportTitle", getReportTitle(reportNo));
+    return reportParams;
   }
 
   @Override
   Collection<AccountingReportItem> getDetailCollection() {
-    Collection<AccountingReportItem> detailCollection = new ArrayList<>();
-    detailCollection.addAll(
-        purchases.stream().map(p -> new AccountingReportItem(p, withNames)).toList());
-    detailCollection.addAll(
-        transactions.stream()
-            .filter(TransactionRepository::isAccountingReportTransaction)
-            .map(t -> new AccountingReportItem(t, withNames))
-            .sorted(Comparator.comparingInt(reportItem -> reportItem.getReportGroup().ordinal()))
-            .toList());
-    return detailCollection;
+    return reportItems;
   }
 }

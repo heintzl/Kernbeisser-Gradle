@@ -5,13 +5,9 @@ import static kernbeisser.DBConnection.PredicateFactory.or;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.NoResultException;
-import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.DBConnection.ExpressionFactory;
-import kernbeisser.DBConnection.PredicateFactory;
 import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.Transaction_;
@@ -30,15 +26,6 @@ public class TransactionRepository {
         .orElse(0L);
   }
 
-  public static Instant getLastOfReportNo(long reportNo) throws NoResultException {
-    return QueryBuilder.select(Transaction.class, max(Transaction_.date))
-        .where(
-            PredicateFactory.lessOrEq(
-                Transaction_.accountingReportNo, ExpressionFactory.asExpression(reportNo)))
-        .getSingleResult()
-        .get(0, Instant.class);
-  }
-
   public static List<Transaction> getTransactionsByReportNo(long reportNo) {
     List<Transaction> transactions =
         QueryBuilder.selectAll(Transaction.class)
@@ -53,17 +40,12 @@ public class TransactionRepository {
 
   public static List<Transaction> getUnreportedTransactions() {
     User kbUser = Constants.SHOP_USER;
-    List<Transaction> transactions =
-        QueryBuilder.selectAll(Transaction.class)
-            .where(
-                Transaction_.accountingReportNo.isNull(),
-                or(Transaction_.fromUser.eq(kbUser), Transaction_.toUser.eq(kbUser)))
-            .orderBy(Transaction_.seqNo.asc())
-            .getResultList();
-    if (transactions.isEmpty()) {
-      throw new NoTransactionsFoundException();
-    }
-    return transactions;
+    return QueryBuilder.selectAll(Transaction.class)
+        .where(
+            Transaction_.accountingReportNo.isNull(),
+            or(Transaction_.fromUser.eq(kbUser), Transaction_.toUser.eq(kbUser)))
+        .orderBy(Transaction_.seqNo.asc())
+        .getResultList();
   }
 
   public static void writeAccountingReportNo(Collection<Transaction> transactions, long no) {
@@ -85,13 +67,15 @@ public class TransactionRepository {
 
   public static boolean isAccountingReportTransaction(Transaction t) {
     switch (t.getTransactionType()) {
-      case INITIALIZE:
-      case PAYIN:
+      case INITIALIZE, PAYIN -> {
         return true;
-      case USER_GENERATED:
+      }
+      case USER_GENERATED -> {
         return t.relationToKernbeisser() != 0;
-      default:
+      }
+      default -> {
         return false;
+      }
     }
   }
 }
