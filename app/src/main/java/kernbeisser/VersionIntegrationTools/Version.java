@@ -22,7 +22,8 @@ public enum Version {
   HIBERNATE_6_ID_SEQUENCE(PopulateSeqNo::new),
   REMOVE_TABLE_OFFER(RemoveOfferFromDB::new),
   ADD_SHARED_CONTAINER_TRANSACTION(ExtendTransactionTypeEnum::new),
-  CATALOG_ACTIONPRICE_DEFAULT(SetCatalogEntryAktionspreisDefault::new);
+  CATALOG_ACTIONPRICE_DEFAULT(SetCatalogEntryAktionspreisDefault::new),
+  ENHANCED_PREORDER(AddSelfServicePreorderPermissions::new);
 
   private final Supplier<VersionUpdatingTool> versionUpdatingToolSupplier;
 
