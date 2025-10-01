@@ -7,9 +7,9 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.TemporalAdjusters;
+import kernbeisser.Enums.PreOrderCreator;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Security.Access.UserRelated;
-import kernbeisser.Useful.Constants;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -70,6 +70,34 @@ public class PreOrder implements Serializable, UserRelated {
   @Getter(onMethod_ = {@Key(PermissionKey.CONTAINER_DELIVERY_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.CONTAINER_DELIVERY_WRITE)})
   private Instant orderedOn;
+
+  @ManyToOne
+  @JoinColumn
+  @Getter(onMethod_ = {@Key(PermissionKey.CONTAINER_ALTERNATIVE_ITEM_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.CONTAINER_ALTERNATIVE_ITEM_WRITE)})
+  private CatalogEntry alternativeCatalogEntry;
+
+  @Column
+  @Getter(onMethod_ = {@Key(PermissionKey.CONTAINER_LAST_WEEK_OF_DELIVERY_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.CONTAINER_LAST_WEEK_OF_DELIVERY_WRITE)})
+  private Integer latestWeekOfDelivery;
+
+  @Column(columnDefinition = "TEXT")
+  @Getter(onMethod_ = {@Key(PermissionKey.CONTAINER_COMMENT_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.CONTAINER_COMMENT_WRITE)})
+  private String comment;
+
+  @Column
+  @Getter(onMethod_ = {@Key(PermissionKey.CONTAINER_CREATION_TYPE_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.CONTAINER_CREATION_TYPE_WRITE)})
+  private PreOrderCreator CreationType;
+
+  @ManyToOne
+  @EqualsAndHashCode.Exclude
+  @JoinColumn(nullable = true)
+  @Getter(onMethod_ = {@rs.groump.Key(PermissionKey.CONTAINER_CREATED_BY_READ)})
+  @Setter(onMethod_ = {@rs.groump.Key(PermissionKey.CONTAINER_CREATED_BY_WRITE)})
+  private User createdBy;
 
   public LocalDate getDueDate() {
     Instant orderDate = orderedOn == null ? Instant.now() : orderedOn;
