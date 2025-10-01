@@ -2,10 +2,12 @@ package kernbeisser.VersionIntegrationTools;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import kernbeisser.DBConnection.DBConnection;
 import lombok.Cleanup;
+import rs.groump.PermissionKey;
 
 public interface VersionUpdatingTool {
 
@@ -21,7 +23,7 @@ public interface VersionUpdatingTool {
           + "SELECT Permission_id, :new "
           + "FROM Permission_keySet WHERE keySet = :template";
 
-  default void updateEnum(List<String> enumNames, String table, String column) {
+  private void updateEnum(List<String> enumNames, String table, String column, String strategy) {
     String sql =
         "ALTER TABLE %s MODIFY COLUMN %s ENUM(%s)"
             .formatted(
@@ -32,7 +34,19 @@ public interface VersionUpdatingTool {
     @Cleanup("commit")
     EntityTransaction et = em.getTransaction();
     et.begin();
-    em.createNativeQuery("SET SESSION alter_algorithm='INSTANT';").executeUpdate();
+    em.createNativeQuery("SET SESSION alter_algorithm = :strategy")
+        .setParameter("strategy", strategy)
+        .executeUpdate();
     em.createNativeQuery(sql).executeUpdate();
+  }
+
+  default void updateEnum(List<String> enumNames, String table, String column) {
+    updateEnum(enumNames, table, column, "INSTANT");
+  }
+
+  default void updatePermissionKeyset() {
+    List<String> permissionNames =
+        Arrays.stream(PermissionKey.values()).map(PermissionKey::name).toList();
+    this.updateEnum(permissionNames, "Permission_keySet", "keySet", "COPY");
   }
 }
