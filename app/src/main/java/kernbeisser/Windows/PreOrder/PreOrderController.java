@@ -26,9 +26,7 @@ import kernbeisser.Windows.ViewContainers.SubWindow;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import rs.groump.AccessDeniedException;
-import rs.groump.Key;
-import rs.groump.PermissionKey;
+import rs.groump.*;
 
 public class PreOrderController extends Controller<PreOrderView, PreOrderModel> {
 
@@ -45,7 +43,9 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     this.preOrderCreator = preOrderCreator;
     keyCapture = new KeyCapture();
     barcodeCapture = new BarcodeCapture(this::processBarcode);
-    isPreOrderManager = preOrderCreator == PreOrderCreator.PRE_ORDER_MANAGER;
+    isPreOrderManager =
+        preOrderCreator == PreOrderCreator.PRE_ORDER_MANAGER
+            && Tools.canInvoke(model::checkGeneralOrderPlacementPermission);
   }
 
   @Override
@@ -247,21 +247,15 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
 
   boolean userMayEdit() {
     try {
-      checkUserOrderContainerPermission();
+      model.checkUserOrderContainerPermission();
       return true;
     } catch (AccessDeniedException e) {
       if (preOrderCreator == PreOrderCreator.SELF) {
-        return Tools.canInvoke(this::checkOrderOwnContainerPermission);
+        return Tools.canInvoke(model::checkOrderOwnContainerPermission);
       }
       return false;
     }
   }
-
-  @Key(PermissionKey.ACTION_ORDER_OWN_CONTAINER)
-  private void checkOrderOwnContainerPermission() {}
-
-  @Key(PermissionKey.ACTION_ORDER_CONTAINER)
-  private void checkUserOrderContainerPermission() {}
 
   @Override
   protected boolean processKeyboardInput(KeyEvent e) {

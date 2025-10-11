@@ -25,6 +25,8 @@ import kernbeisser.Reports.Report;
 import kernbeisser.Useful.Constants;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Getter;
+import rs.groump.Key;
+import rs.groump.PermissionKey;
 
 public class PreOrderModel implements IModel<PreOrderController> {
 
@@ -192,4 +194,13 @@ public class PreOrderModel implements IModel<PreOrderController> {
     }
     et.commit();
   }
+
+  @Key(PermissionKey.ACTION_ORDER_OWN_CONTAINER)
+  public void checkOrderOwnContainerPermission() {}
+
+  @Key(PermissionKey.ACTION_ORDER_CONTAINER)
+  public void checkUserOrderContainerPermission() {}
+
+  @Key(PermissionKey.ACTION_ORDER_CONTAINER)
+  public void checkGeneralOrderPlacementPermission() {}
 }
