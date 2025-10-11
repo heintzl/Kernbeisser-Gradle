@@ -14,6 +14,7 @@ import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Collection;
 import java.util.Locale;
+import java.util.Optional;
 import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
 import javax.swing.text.StyleContext;
@@ -119,21 +120,6 @@ public class PreOrderView implements IView<PreOrderController> {
   }
 
   private void createUIComponents() {
-    Icon selected =
-        IconFontSwing.buildIcon(
-            FontAwesome.CHECK_SQUARE, Tools.scaleWithLabelScalingFactor(20), new Color(0x38FF00));
-    Icon unselected =
-        IconFontSwing.buildIcon(
-            FontAwesome.SQUARE, Tools.scaleWithLabelScalingFactor(20), new Color(0xC7C7C7));
-    if (!controller.isRestrictToLoggedIn()) {
-      JMenuItem popupSelectAll = new JMenuItem("alle auswählen");
-      popupSelectAll.addActionListener(e -> setAllDelivered(true));
-      JMenuItem popupDeselectAll = new JMenuItem("alle abwählen");
-      popupDeselectAll.addActionListener(e -> setAllDelivered(false));
-      popupSelectionColumn = new JPopupMenu();
-      popupSelectionColumn.add(popupSelectAll);
-      popupSelectionColumn.add(popupDeselectAll);
-    }
     CustomizableColumn<PreOrder> hiddenSortColumn =
         Columns.<PreOrder>create("", p -> Date.INSTANT_DATE_TIME_SEC.format(p.getCreateDate()))
             .withSorter(Column.DATE_TIME_SORTER(Date.INSTANT_DATE_TIME_SEC))
@@ -188,7 +174,20 @@ public class PreOrderView implements IView<PreOrderController> {
                 .withSorter(Column.DATE_SORTER(Date.INSTANT_DATE)),
             Columns.create("erwartete Lieferung", PreOrderView::getDueDateAsString));
     Column<PreOrder> sortColumn = Columns.create("Id", PreOrder::getId);
-    if (!controller.isRestrictToLoggedIn())
+    if (controller.isPreOrderManager()) {
+      Icon selected =
+          IconFontSwing.buildIcon(
+              FontAwesome.CHECK_SQUARE, Tools.scaleWithLabelScalingFactor(20), new Color(0x38FF00));
+      Icon unselected =
+          IconFontSwing.buildIcon(
+              FontAwesome.SQUARE, Tools.scaleWithLabelScalingFactor(20), new Color(0xC7C7C7));
+      JMenuItem popupSelectAll = new JMenuItem("alle auswählen");
+      popupSelectAll.addActionListener(e -> setAllDelivered(true));
+      JMenuItem popupDeselectAll = new JMenuItem("alle abwählen");
+      popupDeselectAll.addActionListener(e -> setAllDelivered(false));
+      popupSelectionColumn = new JPopupMenu();
+      popupSelectionColumn.add(popupSelectAll);
+      popupSelectionColumn.add(popupDeselectAll);
       preOrders.addColumnAtIndex(
           0,
           Columns.createIconColumn(
@@ -197,6 +196,7 @@ public class PreOrderView implements IView<PreOrderController> {
               controller::toggleDelivery,
               e -> showSelectionPopup(),
               100));
+    }
     if (controller.userMayEdit()) {
       preOrders.addColumn(
           Columns.createIconColumn(
@@ -372,7 +372,7 @@ public class PreOrderView implements IView<PreOrderController> {
   }
 
   private void deletePreOrder() {
-    controller.forceDelete(preOrders.getSelectedObject().get());
+    preOrders.getSelectedObject().ifPresent(p -> controller.forceDelete(p));
   }
 
   void submitAction() {
@@ -381,7 +381,7 @@ public class PreOrderView implements IView<PreOrderController> {
         controller.add();
         break;
       case EDIT:
-        controller.edit(preOrders.getSelectedObject().get());
+        preOrders.getSelectedObject().ifPresent(p -> controller.edit(p));
         user.setSelectedItem(null);
         break;
       default:
@@ -395,7 +395,7 @@ public class PreOrderView implements IView<PreOrderController> {
 
   void refreshUIMode() {
     boolean addMode = mode == Mode.ADD;
-    boolean restrictToLoggedIn = controller.isRestrictToLoggedIn();
+    boolean isPreOrderManager = controller.isPreOrderManager();
     if (addMode) {
       user.getModel().setSelectedItem(addModeUser);
       enableControls(addModeUser != null);
@@ -404,8 +404,8 @@ public class PreOrderView implements IView<PreOrderController> {
     } else {
       addModeUser = (User) user.getSelectedItem();
     }
-    bestellungExportierenButton.setEnabled(!restrictToLoggedIn && addMode);
-    abhakplanButton.setEnabled(!restrictToLoggedIn && addMode);
+    bestellungExportierenButton.setEnabled(isPreOrderManager && addMode);
+    abhakplanButton.setEnabled(isPreOrderManager && addMode);
     close.setEnabled(addMode);
     enableEditPreorder();
     duplexPrint.setEnabled(addMode);
@@ -419,8 +419,12 @@ public class PreOrderView implements IView<PreOrderController> {
   }
 
   private void enableEditPreorder() {
+    Optional<PreOrder> activeOrder = preOrders.getSelectedObject();
     editPreOrder.setEnabled(
-        !controller.isRestrictToLoggedIn() && mode == Mode.ADD && preOrders.getSelectedRow() > -1);
+        mode == Mode.ADD
+            && activeOrder.isPresent()
+            && (controller.isPreOrderManager() || activeOrder.get().getOrderedOn() == null)
+            && controller.userMayEdit());
   }
 
   public User getUser() {
@@ -432,8 +436,8 @@ public class PreOrderView implements IView<PreOrderController> {
     setDefaultSortOrder();
   }
 
-  public void refreshPreOrder(PreOrder order) {
-    preOrders.replace(order, order);
+  public void refreshPreOrder(PreOrder preOrder) {
+    preOrders.replace(preOrder, preOrder);
   }
 
   public void noPreOrderSelected() {
@@ -449,7 +453,7 @@ public class PreOrderView implements IView<PreOrderController> {
     if (user.getModel().getSize() > 1) {
       user.setSelectedItem(null);
     }
-    enableControls(controller.isRestrictToLoggedIn());
+    enableControls(!controller.isPreOrderManager());
   }
 
   public void setCaption(String forWho, boolean editable) {
@@ -488,18 +492,6 @@ public class PreOrderView implements IView<PreOrderController> {
         JOptionPane.WARNING_MESSAGE);
   }
 
-  public void messageIsNotKKArticle(boolean ísShopOrder) {
-    Tools.beep();
-    JOptionPane.showMessageDialog(
-        getContent(),
-        "Zur Zeit können hier nur Kornkraft Artikel "
-            + (ísShopOrder
-                ? "bestellt werden."
-                : "vorbestellt werden.\nFür andere Lieferanten bitte einen Bestellzettel ausfüllen."),
-        "Falscher Lieferant",
-        JOptionPane.WARNING_MESSAGE);
-  }
-
   public void notifyNoUserSelected() {
     Tools.beep();
     JOptionPane.showMessageDialog(
@@ -513,7 +505,7 @@ public class PreOrderView implements IView<PreOrderController> {
   }
 
   public boolean confirmDelivery(long numDelivered, long numOverdue) {
-    if (controller.isRestrictToLoggedIn() || (numDelivered == 0 && numOverdue == 0)) {
+    if (!controller.isPreOrderManager() || (numDelivered == 0 && numOverdue == 0)) {
       return true;
     }
     Tools.beep();
@@ -575,7 +567,16 @@ public class PreOrderView implements IView<PreOrderController> {
 
   @Override
   public String getTitle() {
-    return (controller.isRestrictToLoggedIn() ? "Meine " : "") + "Vorbestellung";
+    switch (controller.getPreOrderCreator()) {
+      case SELF -> {
+        return "Meine Vorbestellung";
+      }
+      case POS -> {
+        return "%ss Vorbestellung"
+            .formatted(controller.getRestrictToUser().map(User::getFullName).orElse("?"));
+      }
+    }
+    return "Vorbestellung";
   }
 
   public String inputShopNumber(boolean inputError) {

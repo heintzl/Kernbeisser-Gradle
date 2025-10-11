@@ -10,6 +10,7 @@ import java.time.temporal.TemporalAdjusters;
 import kernbeisser.Enums.PreOrderCreator;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Security.Access.UserRelated;
+import kernbeisser.Windows.LogIn.LogInModel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -99,6 +100,11 @@ public class PreOrder implements Serializable, UserRelated {
   @Getter(onMethod_ = {@rs.groump.Key(PermissionKey.CONTAINER_CREATED_BY_READ)})
   @Setter(onMethod_ = {@rs.groump.Key(PermissionKey.CONTAINER_CREATED_BY_WRITE)})
   private User createdBy;
+
+  @PrePersist
+  private void setCreatedBy() {
+    createdBy = LogInModel.getLoggedIn();
+  }
 
   public LocalDate getDueDate() {
     Instant orderDate = orderedOn == null ? Instant.now() : orderedOn;

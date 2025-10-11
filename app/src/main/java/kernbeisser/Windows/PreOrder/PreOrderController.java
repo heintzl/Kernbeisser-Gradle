@@ -15,6 +15,7 @@ import kernbeisser.CustomComponents.Dialogs.DateSelectorDialog;
 import kernbeisser.CustomComponents.KeyCapture;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.Mode;
+import kernbeisser.Enums.PreOrderCreator;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.InvalidValue;
 import kernbeisser.Useful.Tools;
@@ -24,6 +25,7 @@ import kernbeisser.Windows.PreOrder.CatalogSelector.CatalogSelectorController;
 import kernbeisser.Windows.ViewContainers.SubWindow;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import rs.groump.AccessDeniedException;
 import rs.groump.Key;
 import rs.groump.PermissionKey;
@@ -32,14 +34,18 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
 
   private final KeyCapture keyCapture;
   private final BarcodeCapture barcodeCapture;
+  @Getter private final PreOrderCreator preOrderCreator;
   private CatalogEntry selectedEntry = null;
-  @Getter private final boolean restrictToLoggedIn;
+  @Getter private final Optional<User> restrictToUser;
+  @Getter private final boolean isPreOrderManager;
 
-  public PreOrderController(boolean restrictToLoggedIn) {
+  public PreOrderController(@NotNull PreOrderCreator preOrderCreator, @Nullable User orderingUser) {
     super(new PreOrderModel());
-    this.restrictToLoggedIn = restrictToLoggedIn;
+    this.restrictToUser = Optional.ofNullable(orderingUser);
+    this.preOrderCreator = preOrderCreator;
     keyCapture = new KeyCapture();
     barcodeCapture = new BarcodeCapture(this::processBarcode);
+    isPreOrderManager = preOrderCreator == PreOrderCreator.PRE_ORDER_MANAGER;
   }
 
   @Override
@@ -47,7 +53,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     return model;
   }
 
-  boolean searchKK() {
+  public boolean searchKK() {
     PreOrderView view = getView();
     if (view.getKkNumber() != 0) {
       Optional<CatalogEntry> searchResult = model.getEntryByKkNumber(view.getKkNumber());
@@ -66,6 +72,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     PreOrderView view = getView();
     try {
       PreOrder order = obtainFromView();
+      order.setCreationType(preOrderCreator);
       model.add(order);
       view.addPreOrder(order);
       noEntryFound();
@@ -80,8 +87,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     PreOrderView view = getView();
     try {
       PreOrder order = obtainFromView();
-      model.edit(preOrder, order);
-      view.refreshPreOrder(preOrder);
+      view.refreshPreOrder(model.edit(preOrder, order));
       view.setMode(Mode.ADD);
     } catch (NoResultException e) {
       view.noItemFound();
@@ -131,7 +137,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
   protected boolean commitClose() {
     Collection<PreOrder> delivery = model.getDelivery();
     int numDelivered = delivery.size();
-    Collection<PreOrder> remaining = model.getAllPreOrders(false);
+    Collection<PreOrder> remaining = model.getAllPreOrders();
     remaining.removeAll(delivery);
     long numOverdue =
         remaining.stream()
@@ -186,7 +192,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     preOrder.setCatalogEntry(entry);
     preOrder.setAmount(view.getAmount());
     preOrder.setInfo(entry.getInfo());
-
+    preOrder.setCreationType(preOrderCreator);
     model.add(preOrder);
     getView().addPreOrder(preOrder);
   }
@@ -218,23 +224,24 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     keyCapture.addCTRL(KeyEvent.VK_F, this::openSearchWindow);
     boolean editable = userMayEdit();
     view.setInsertSectionEnabled(editable);
-    String preOrdersFor =
-        restrictToLoggedIn
-            ? LogInModel.getLoggedIn().getFullName()
-            : "den Laden und alle Mitglieder";
-    view.setCaption(preOrdersFor, editable);
+    String preOrdersFor;
     view.enableControls(false);
-    if (restrictToLoggedIn) {
-      view.setUsers(Collections.singletonList(LogInModel.getLoggedIn()));
+    if (restrictToUser.isPresent()) {
+      User user = restrictToUser.get();
+      view.setUsers(Collections.singletonList(user));
       view.setUserEnabled(false);
+      view.setPreOrders(model.getPreOrdersByUser(user));
+      preOrdersFor = LogInModel.getLoggedIn().getFullName();
     } else {
       view.setUsers(User.getAllUserFullNames(true, true));
+      view.setPreOrders(model.getAllPreOrders());
+      preOrdersFor = "den Laden und alle Mitglieder";
     }
-    view.setPreOrders(model.getAllPreOrders(restrictToLoggedIn));
+    view.setCaption(preOrdersFor, editable);
     view.setAmount("1");
     view.searchCatalog.addActionListener(e -> openSearchWindow());
-    view.bestellungExportierenButton.setEnabled(!restrictToLoggedIn);
-    view.abhakplanButton.setEnabled(!restrictToLoggedIn);
+    view.bestellungExportierenButton.setEnabled(isPreOrderManager);
+    view.abhakplanButton.setEnabled(isPreOrderManager);
     noEntryFound();
   }
 
@@ -243,7 +250,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
       checkUserOrderContainerPermission();
       return true;
     } catch (AccessDeniedException e) {
-      if (restrictToLoggedIn) {
+      if (preOrderCreator == PreOrderCreator.SELF) {
         return Tools.canInvoke(this::checkOrderOwnContainerPermission);
       }
       return false;
@@ -359,7 +366,6 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
   }
 
   public void startEditPreOrder(PreOrder preOrder) {
-    if (isRestrictToLoggedIn()) return;
     PreOrderView view = getView();
     if (isDelivered(preOrder)) {
       view.warningEditDelivered();
