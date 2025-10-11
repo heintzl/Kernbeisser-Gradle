@@ -23,7 +23,6 @@ import kernbeisser.Export.CSVExport;
 import kernbeisser.Reports.PreOrderChecklist;
 import kernbeisser.Reports.Report;
 import kernbeisser.Useful.Constants;
-import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Getter;
 
@@ -49,7 +48,7 @@ public class PreOrderModel implements IModel<PreOrderController> {
     et.commit();
   }
 
-  public void edit(PreOrder preOrder, PreOrder newPreOrder) {
+  public PreOrder edit(PreOrder preOrder, PreOrder newPreOrder) {
     Objects.requireNonNull(newPreOrder.getUser());
     et.begin();
     PreOrder p = em.find(PreOrder.class, preOrder.getId());
@@ -63,6 +62,7 @@ public class PreOrderModel implements IModel<PreOrderController> {
     }
     em.merge(preOrder);
     et.commit();
+    return p;
   }
 
   private void removeLazy(PreOrder selected) {
@@ -95,20 +95,20 @@ public class PreOrderModel implements IModel<PreOrderController> {
     return CatalogEntry.getByBarcode(s).orElseThrow(NoResultException::new);
   }
 
-  Collection<PreOrder> getAllPreOrders(boolean restricted) {
-    if (restricted) {
-      return QueryBuilder.selectAll(PreOrder.class)
-          .where(PreOrder_.delivery.isNull(), PreOrder_.user.eq(LogInModel.getLoggedIn()))
-          .orderBy(PreOrder_.catalogEntry.child(CatalogEntry_.artikelNr).asc())
-          .getResultList();
-    } else {
-      return QueryBuilder.selectAll(PreOrder.class)
-          .where(PreOrder_.delivery.isNull())
-          .orderBy(
-              PreOrder_.user.child(User_.username).asc(),
-              PreOrder_.catalogEntry.child(CatalogEntry_.artikelNr).asc())
-          .getResultList();
-    }
+  Collection<PreOrder> getPreOrdersByUser(User user) {
+    return QueryBuilder.selectAll(PreOrder.class)
+        .where(PreOrder_.delivery.isNull(), PreOrder_.user.eq(user))
+        .orderBy(PreOrder_.catalogEntry.child(CatalogEntry_.artikelNr).asc())
+        .getResultList();
+  }
+
+  Collection<PreOrder> getAllPreOrders() {
+    return QueryBuilder.selectAll(PreOrder.class)
+        .where(PreOrder_.delivery.isNull())
+        .orderBy(
+            PreOrder_.user.child(User_.username).asc(),
+            PreOrder_.catalogEntry.child(CatalogEntry_.artikelNr).asc())
+        .getResultList();
   }
 
   Collection<PreOrder> getUnorderedPreOrders() {
@@ -142,13 +142,11 @@ public class PreOrderModel implements IModel<PreOrderController> {
     Report report =
         new PreOrderChecklist(
             deliveryDate,
-            getAllPreOrders(false).stream()
-                .filter(p -> !isDelivered(p))
-                .collect(Collectors.toList()));
+            getAllPreOrders().stream().filter(p -> !isDelivered(p)).collect(Collectors.toList()));
     report.setDuplexPrint(duplexPrint);
     report.sendToPrinter(
         "Abhakplan wird gedruckt...", UnexpectedExceptionHandler::showUnexpectedErrorWarning);
-    for (PreOrder p : getAllPreOrders(false)) {
+    for (PreOrder p : getAllPreOrders()) {
       if (p.getOrderedOn() != null && p.isShopOrder()) {
         delivery.add(p);
       }
@@ -177,7 +175,7 @@ public class PreOrderModel implements IModel<PreOrderController> {
   public void setAllDelivered(boolean allDelivered) {
     delivery.clear();
     if (allDelivered) {
-      delivery.addAll(getAllPreOrders(false));
+      delivery.addAll(getAllPreOrders());
     }
   }
 
