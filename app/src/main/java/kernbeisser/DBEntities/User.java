@@ -212,7 +212,7 @@ public class User implements Serializable, UserRelated, ActuallyCloneable {
   }
 
   public boolean isShopUser() {
-      return this.getId() == Constants.SHOP_USER_ID;
+    return this.getId() == Constants.SHOP_USER_ID;
   }
 
   public static User getShopUser() {

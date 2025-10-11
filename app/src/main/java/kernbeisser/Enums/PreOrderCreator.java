@@ -4,7 +4,7 @@ import kernbeisser.Useful.Named;
 import lombok.Getter;
 
 public enum PreOrderCreator implements Named {
-  PRODUCT_COORDINATOR("Bestelldienst"),
+  PRE_ORDER_MANAGER("Bestelldienst"),
   SELF("selbst"),
   ONLINE("online"),
   POS("LD");

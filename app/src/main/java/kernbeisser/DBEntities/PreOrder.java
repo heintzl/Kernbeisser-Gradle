@@ -87,6 +87,7 @@ public class PreOrder implements Serializable, UserRelated {
   @Setter(onMethod_ = {@Key(PermissionKey.CONTAINER_COMMENT_WRITE)})
   private String comment;
 
+  @Enumerated(EnumType.STRING)
   @Column
   @Getter(onMethod_ = {@Key(PermissionKey.CONTAINER_CREATION_TYPE_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.CONTAINER_CREATION_TYPE_WRITE)})

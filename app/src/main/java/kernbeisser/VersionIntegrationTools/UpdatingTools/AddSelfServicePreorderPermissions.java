@@ -3,7 +3,6 @@ package kernbeisser.VersionIntegrationTools.UpdatingTools;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import kernbeisser.DBConnection.DBConnection;
-import kernbeisser.Enums.PreOrderCreator;
 import kernbeisser.VersionIntegrationTools.VersionUpdatingTool;
 import lombok.Cleanup;
 
@@ -36,8 +35,6 @@ public class AddSelfServicePreorderPermissions implements VersionUpdatingTool {
         .setParameter("template", "CONTAINER_ID_")
         .setParameter("new", "CONTAINER_CREATED_BY_")
         .executeUpdate();
-    em.createNativeQuery(
-            "UPDATE PreOrder Set CreationType = " + PreOrderCreator.PRODUCT_COORDINATOR.ordinal())
-        .executeUpdate();
+    em.createNativeQuery("UPDATE PreOrder Set CreationType = 'PRE_ORDER_MANAGER'").executeUpdate();
   }
 }
