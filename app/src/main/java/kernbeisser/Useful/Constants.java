@@ -3,6 +3,7 @@ package kernbeisser.Useful;
 import java.awt.*;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.DBEntities.User;
+import kernbeisser.DBEntities.UserGroup;
 
 public class Constants {
 
