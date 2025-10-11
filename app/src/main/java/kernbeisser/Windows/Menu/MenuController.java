@@ -3,6 +3,7 @@ package kernbeisser.Windows.Menu;
 import javax.swing.*;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.Mode;
+import kernbeisser.Enums.PreOrderCreator;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Enums.TransactionType;
 import kernbeisser.Forms.FormEditor.FormEditorController;
@@ -43,12 +44,12 @@ public class MenuController extends Controller<MenuView, MenuModel> {
 
   @Key(PermissionKey.ACTION_OPEN_OWN_PRE_ORDER)
   public PreOrderController getOwnPreorderController() {
-    return new PreOrderController(true);
+    return new PreOrderController(PreOrderCreator.SELF, LogInModel.getLoggedIn());
   }
 
   @Key(PermissionKey.ACTION_OPEN_PRE_ORDER)
   public PreOrderController getPreorderController() {
-    return new PreOrderController(false);
+    return new PreOrderController(PreOrderCreator.PRE_ORDER_MANAGER, null);
   }
 
   @Key(PermissionKey.ACTION_EDIT_OWN_DATA)
