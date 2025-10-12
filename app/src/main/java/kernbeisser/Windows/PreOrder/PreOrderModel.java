@@ -62,7 +62,7 @@ public class PreOrderModel implements IModel<PreOrderController> {
       CatalogEntry e = em.find(CatalogEntry.class, newPreOrder.getCatalogEntry().getId());
       em.persist(e);
     }
-    em.merge(preOrder);
+    em.merge(p);
     et.commit();
     return p;
   }

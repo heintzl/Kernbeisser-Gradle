@@ -87,7 +87,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     PreOrderView view = getView();
     try {
       PreOrder order = obtainFromView();
-      view.refreshPreOrder(model.edit(preOrder, order));
+      view.refreshPreOrder(preOrder, model.edit(preOrder, order));
       view.setMode(Mode.ADD);
     } catch (NoResultException e) {
       view.noItemFound();
@@ -356,7 +356,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
       return;
     }
     model.setAmount(preOrder, newValue);
-    getView().refreshPreOrder(preOrder);
+    getView().refreshPreOrder(preOrder, preOrder);
   }
 
   public void startEditPreOrder(PreOrder preOrder) {
