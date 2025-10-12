@@ -436,8 +436,8 @@ public class PreOrderView implements IView<PreOrderController> {
     setDefaultSortOrder();
   }
 
-  public void refreshPreOrder(PreOrder preOrder) {
-    preOrders.replace(preOrder, preOrder);
+  public void refreshPreOrder(PreOrder preOrder, PreOrder newPreOrder) {
+    preOrders.replace(preOrder, newPreOrder);
   }
 
   public void noPreOrderSelected() {
