@@ -23,6 +23,7 @@ import kernbeisser.Export.CSVExport;
 import kernbeisser.Reports.PreOrderChecklist;
 import kernbeisser.Reports.Report;
 import kernbeisser.Useful.Constants;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Getter;
 import rs.groump.Key;
@@ -58,6 +59,9 @@ public class PreOrderModel implements IModel<PreOrderController> {
     p.setCatalogEntry(newPreOrder.getCatalogEntry());
     p.setUser(newPreOrder.getUser());
     p.setInfo(newPreOrder.getInfo());
+    p.setLatestWeekOfDelivery(newPreOrder.getLatestWeekOfDelivery());
+    p.setAlternativeCatalogEntry(newPreOrder.getAlternativeCatalogEntry());
+    p.setComment(newPreOrder.getComment());
     if (preOrder.getUser().isShopUser()) {
       CatalogEntry e = em.find(CatalogEntry.class, newPreOrder.getCatalogEntry().getId());
       em.persist(e);
@@ -120,8 +124,12 @@ public class PreOrderModel implements IModel<PreOrderController> {
         .getResultList();
   }
 
-  static double containerNetPrice(CatalogEntry entry) throws NullPointerException {
-    return entry.getPreis() * entry.getBestelleinheitsMenge();
+  static Double containerNetPrice(CatalogEntry entry) {
+    try {
+        return entry.getPreis() * entry.getBestelleinheitsMenge();
+    } catch (NullPointerException e) {
+        return null;
+    }
   }
 
   public void close() {
