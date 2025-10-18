@@ -24,6 +24,7 @@ import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.PreOrder.CatalogSelector.CatalogSelectorController;
 import kernbeisser.Windows.ViewContainers.SubWindow;
 import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import rs.groump.*;
@@ -33,7 +34,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
   private final KeyCapture keyCapture;
   private final BarcodeCapture barcodeCapture;
   @Getter private final PreOrderCreator preOrderCreator;
-  private CatalogEntry selectedEntry = null;
+  @Setter private CatalogEntry selectedEntry = null;
   @Getter private final Optional<User> restrictToUser;
   @Getter private final boolean isPreOrderManager;
 
@@ -53,19 +54,12 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     return model;
   }
 
-  public boolean searchKK() {
+  public Optional<CatalogEntry> searchKK(int kkNumber) {
     PreOrderView view = getView();
     if (view.getKkNumber() != 0) {
-      Optional<CatalogEntry> searchResult = model.getEntryByKkNumber(view.getKkNumber());
-      if (searchResult.isPresent()) {
-        pasteDataInView(searchResult.get());
-        return true;
-      } else {
-        return false;
-      }
-    } else {
-      return false;
+        return model.getEntryByKkNumber(kkNumber);
     }
+    return Optional.empty();
   }
 
   void add() {
@@ -129,7 +123,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
   }
 
   void noEntryFound() {
-    pasteDataInView(new CatalogEntry());
+    getView().pasteEntryDataInView(new CatalogEntry(), false);
     selectedEntry = null;
   }
 
@@ -150,19 +144,6 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     return true;
   }
 
-  void pasteDataInView(CatalogEntry entry) {
-    selectedEntry = entry;
-    PreOrderView view = getView();
-    view.setContainerSize(entry.getBestelleinheit());
-    view.setItemName(entry.getBezeichnung());
-    view.setKkNumber(entry.getArtikelNr());
-    try {
-      view.setNetPrice(PreOrderModel.containerNetPrice(entry));
-    } catch (NullPointerException e) {
-      view.setNetPrice(0.00);
-    }
-  }
-
   private PreOrder obtainFromView() throws InvalidValue, NoResultException {
     if (selectedEntry == null) {
       throw new NoResultException();
@@ -173,6 +154,12 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     preOrder.setCatalogEntry(selectedEntry);
     preOrder.setAmount(view.getAmount());
     preOrder.setInfo(selectedEntry.getInfo());
+    preOrder.setLatestWeekOfDelivery(view.getLatestWeekOfDelivery().orElse(null));
+    view.getAlternativeKkNumber()
+            .flatMap(model::getEntryByKkNumber)
+            .filter(e -> !e.equals(selectedEntry))
+            .ifPresent(preOrder::setAlternativeCatalogEntry);
+    preOrder.setComment(view.getComment());
     if (preOrder.getUser() == null) {
       view.notifyNoUserSelected();
       throw new InvalidValue();
@@ -197,14 +184,20 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     getView().addPreOrder(preOrder);
   }
 
-  void catalogSearch(CatalogEntry entry) {
-    pasteDataInView(entry);
-    getView().setKkNumber(entry.getArtikelNr());
-    getView().focusOnAmount();
+  void catalogSearch(CatalogEntry entry, boolean targetAlternative) {
+      PreOrderView view = getView();
+      view.pasteEntryDataInView(entry, targetAlternative);
+      String artikelNr = entry.getArtikelNr();
+    if (targetAlternative) {
+      view.setAlternativeKkNumber(artikelNr);
+      return;
+    }
+    view.setKkNumber(artikelNr);
+    view.focusOnAmount();
   }
 
-  void openSearchWindow() {
-    CatalogSelectorController searchWindow = new CatalogSelectorController(this::catalogSearch);
+  void openSearchWindow(boolean targetAlternative) {
+    CatalogSelectorController searchWindow = new CatalogSelectorController(e -> catalogSearch(e,targetAlternative));
     searchWindow.modifyNamedComponent(
         "KKFilter",
         c -> {
@@ -220,8 +213,8 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
   @Override
   public void fillView(PreOrderView view) {
     keyCapture.addF2ToF8NumberActions(view::fnKeyAction);
-    keyCapture.addALT(KeyEvent.VK_S, this::openSearchWindow);
-    keyCapture.addCTRL(KeyEvent.VK_F, this::openSearchWindow);
+    keyCapture.addALT(KeyEvent.VK_S, () -> openSearchWindow(false));
+    keyCapture.addCTRL(KeyEvent.VK_F, () -> openSearchWindow(false));
     boolean editable = userMayEdit();
     view.setInsertSectionEnabled(editable);
     String preOrdersFor;
@@ -239,9 +232,10 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     }
     view.setCaption(preOrdersFor, editable);
     view.setAmount("1");
-    view.searchCatalog.addActionListener(e -> openSearchWindow());
-    view.bestellungExportierenButton.setEnabled(isPreOrderManager);
-    view.abhakplanButton.setEnabled(isPreOrderManager);
+      view.getSearchCatalog().addActionListener(e -> openSearchWindow(false));
+      view.getSearchCatalogAlternative().addActionListener(e -> openSearchWindow(true));
+    view.getBestellungExportierenButton().setEnabled(isPreOrderManager);
+    view.getAbhakplanButton().setEnabled(isPreOrderManager);
     noEntryFound();
   }
 
@@ -270,7 +264,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     }
   }
 
-  public void findArtikelNrByShopNumber() {
+  public void findArtikelNrByShopNumber(boolean targetAlternative) {
     PreOrderView view = getView();
     boolean inputError = false;
     boolean canceled = false;
@@ -293,12 +287,12 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     Optional<CatalogEntry> optEntry = model.findEntriesByShopNumber(shopNumber);
     if (optEntry.isPresent()) {
       CatalogEntry entry = optEntry.get();
-      pasteDataInView(entry);
+      view.pasteEntryDataInView(entry, targetAlternative);
       view.setKkNumber(entry.getArtikelNr());
       view.focusOnAmount();
     } else {
       view.messageArticleNotInCatalog(shopNumber);
-      findArtikelNrByShopNumber();
+      findArtikelNrByShopNumber(targetAlternative);
     }
   }
 
