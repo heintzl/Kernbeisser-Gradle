@@ -146,6 +146,7 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
           }
         });
     setRowSorter(createRowSorter());
+    setRowHeight((int) Math.round(getRowHeight() * 1.2));
   }
 
   private void addStandardFilterListener(MouseEvent e, Column<T> column) {
