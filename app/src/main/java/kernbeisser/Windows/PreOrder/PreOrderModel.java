@@ -6,6 +6,7 @@ import jakarta.persistence.NoResultException;
 import java.awt.*;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.temporal.ChronoField;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,7 +24,7 @@ import kernbeisser.Export.CSVExport;
 import kernbeisser.Reports.PreOrderChecklist;
 import kernbeisser.Reports.Report;
 import kernbeisser.Useful.Constants;
-import kernbeisser.Useful.Tools;
+import kernbeisser.Useful.Date;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Getter;
 import rs.groump.Key;
@@ -126,9 +127,9 @@ public class PreOrderModel implements IModel<PreOrderController> {
 
   static Double containerNetPrice(CatalogEntry entry) {
     try {
-        return entry.getPreis() * entry.getBestelleinheitsMenge();
+      return entry.getPreis() * entry.getBestelleinheitsMenge();
     } catch (NullPointerException e) {
-        return null;
+      return null;
     }
   }
 
@@ -201,6 +202,18 @@ public class PreOrderModel implements IModel<PreOrderController> {
       em.merge(o);
     }
     et.commit();
+  }
+
+  public static boolean isOverdue(PreOrder p) {
+    Integer latestWeekOfDelivery = p.getLatestWeekOfDelivery();
+    if (latestWeekOfDelivery == null) {
+      return true;
+    }
+    int weekOfCreation =
+        LocalDate.ofInstant(p.getCreateDate(), Date.CURRENT_ZONE)
+            .get(ChronoField.ALIGNED_WEEK_OF_YEAR);
+    return Constants.CURRENT_WEEK_OF_YEAR >= latestWeekOfDelivery
+        && latestWeekOfDelivery > weekOfCreation;
   }
 
   @Key(PermissionKey.ACTION_ORDER_OWN_CONTAINER)

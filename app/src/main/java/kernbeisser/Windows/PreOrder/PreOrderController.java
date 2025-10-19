@@ -37,6 +37,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
   @Setter private CatalogEntry selectedEntry = null;
   @Getter private final Optional<User> restrictToUser;
   @Getter private final boolean isPreOrderManager;
+  @Getter private final boolean isEditAllowed;
 
   public PreOrderController(@NotNull PreOrderCreator preOrderCreator, @Nullable User orderingUser) {
     super(new PreOrderModel());
@@ -47,6 +48,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     isPreOrderManager =
         preOrderCreator == PreOrderCreator.PRE_ORDER_MANAGER
             && Tools.canInvoke(model::checkGeneralOrderPlacementPermission);
+    isEditAllowed = userMayEdit();
   }
 
   @Override
@@ -57,7 +59,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
   public Optional<CatalogEntry> searchKK(int kkNumber) {
     PreOrderView view = getView();
     if (view.getKkNumber() != 0) {
-        return model.getEntryByKkNumber(kkNumber);
+      return model.getEntryByKkNumber(kkNumber);
     }
     return Optional.empty();
   }
@@ -156,9 +158,9 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     preOrder.setInfo(selectedEntry.getInfo());
     preOrder.setLatestWeekOfDelivery(view.getLatestWeekOfDelivery().orElse(null));
     view.getAlternativeKkNumber()
-            .flatMap(model::getEntryByKkNumber)
-            .filter(e -> !e.equals(selectedEntry))
-            .ifPresent(preOrder::setAlternativeCatalogEntry);
+        .flatMap(model::getEntryByKkNumber)
+        .filter(e -> !e.equals(selectedEntry))
+        .ifPresent(preOrder::setAlternativeCatalogEntry);
     preOrder.setComment(view.getComment());
     if (preOrder.getUser() == null) {
       view.notifyNoUserSelected();
@@ -185,9 +187,9 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
   }
 
   void catalogSearch(CatalogEntry entry, boolean targetAlternative) {
-      PreOrderView view = getView();
-      view.pasteEntryDataInView(entry, targetAlternative);
-      String artikelNr = entry.getArtikelNr();
+    PreOrderView view = getView();
+    view.pasteEntryDataInView(entry, targetAlternative);
+    String artikelNr = entry.getArtikelNr();
     if (targetAlternative) {
       view.setAlternativeKkNumber(artikelNr);
       return;
@@ -197,7 +199,8 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
   }
 
   void openSearchWindow(boolean targetAlternative) {
-    CatalogSelectorController searchWindow = new CatalogSelectorController(e -> catalogSearch(e,targetAlternative));
+    CatalogSelectorController searchWindow =
+        new CatalogSelectorController(e -> catalogSearch(e, targetAlternative));
     searchWindow.modifyNamedComponent(
         "KKFilter",
         c -> {
@@ -215,8 +218,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     keyCapture.addF2ToF8NumberActions(view::fnKeyAction);
     keyCapture.addALT(KeyEvent.VK_S, () -> openSearchWindow(false));
     keyCapture.addCTRL(KeyEvent.VK_F, () -> openSearchWindow(false));
-    boolean editable = userMayEdit();
-    view.setInsertSectionEnabled(editable);
+    view.setInsertSectionEnabled(isEditAllowed);
     String preOrdersFor;
     view.enableControls(false);
     if (restrictToUser.isPresent()) {
@@ -226,20 +228,21 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
       view.setPreOrders(model.getPreOrdersByUser(user));
       preOrdersFor = LogInModel.getLoggedIn().getFullName();
     } else {
+      // slow!
       view.setUsers(User.getAllUserFullNames(true, true));
       view.setPreOrders(model.getAllPreOrders());
       preOrdersFor = "den Laden und alle Mitglieder";
     }
-    view.setCaption(preOrdersFor, editable);
+    view.setCaption(preOrdersFor, isEditAllowed);
     view.setAmount("1");
-      view.getSearchCatalog().addActionListener(e -> openSearchWindow(false));
-      view.getSearchCatalogAlternative().addActionListener(e -> openSearchWindow(true));
+    view.getSearchCatalog().addActionListener(e -> openSearchWindow(false));
+    view.getSearchCatalogAlternative().addActionListener(e -> openSearchWindow(true));
     view.getBestellungExportierenButton().setEnabled(isPreOrderManager);
     view.getAbhakplanButton().setEnabled(isPreOrderManager);
     noEntryFound();
   }
 
-  boolean userMayEdit() {
+  public boolean userMayEdit() {
     try {
       model.checkUserOrderContainerPermission();
       return true;
