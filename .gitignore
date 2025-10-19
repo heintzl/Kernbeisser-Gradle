@@ -206,3 +206,11 @@ gradle-app.setting
 /**/META-INF/MANIFEST.MF
 /app/src/main/generated
 /.metadata/
+/configDemo.json
+/gradlew
+/gradlew.bat
+/.idea/modules/app/Kernbeisser.kernbeisser.app.test.iml
+/.idea/modules/kbmetamodel/de.kernbeisser.kernbeisser.kbmetamodel.main.iml
+/.idea/modules/kbmetamodel/kernbeisser.kbmetamodel.main.iml
+/src/main/resources/EMFModels/ecore.ecore
+/src/main/resources/EMFModels/genmodel.genmodel
