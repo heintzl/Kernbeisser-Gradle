@@ -1,6 +1,8 @@
 package kernbeisser.Useful;
 
 import java.awt.*;
+import java.time.LocalDate;
+import java.time.temporal.ChronoField;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
@@ -16,6 +18,8 @@ public class Constants {
   public static final Supplier SOLIDARITY_SUPPLIER = Supplier.getSolidaritySupplier();
   public static final Supplier BAKERY_SUPPLIER = Supplier.getBakerySupplier();
   public static final Supplier PRODUCE_SUPPLIER = Supplier.getProduceSupplier();
+  public static final int CURRENT_WEEK_OF_YEAR =
+      LocalDate.now().get(ChronoField.ALIGNED_WEEK_OF_YEAR);
 
   private static int getSystemDblClkInterval() {
     Object interval = Toolkit.getDefaultToolkit().getDesktopProperty("awt.multiClickInterval");

@@ -20,7 +20,10 @@ import rs.groump.Key;
 import rs.groump.PermissionKey;
 
 @Entity
-@Table
+@Table(
+    indexes = {
+      @Index(name = "IX_preorder_delivery", columnList = "delivery"),
+    })
 @EqualsAndHashCode(doNotUseGetters = true)
 public class PreOrder implements Serializable, UserRelated {
   @Id
