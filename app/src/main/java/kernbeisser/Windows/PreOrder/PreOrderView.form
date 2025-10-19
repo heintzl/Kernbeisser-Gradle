@@ -297,6 +297,16 @@
               <text value=""/>
             </properties>
           </component>
+          <component id="f3c2c" class="javax.swing.JButton" binding="clearAlternative">
+            <constraints>
+              <grid row="3" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="1" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                <preferred-size width="15" height="15"/>
+              </grid>
+            </constraints>
+            <properties>
+              <text value=""/>
+            </properties>
+          </component>
         </children>
       </grid>
       <grid id="fce46" layout-manager="GridLayoutManager" row-count="1" column-count="7" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
