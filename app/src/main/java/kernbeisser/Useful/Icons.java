@@ -64,6 +64,9 @@ public class Icons {
       IconFontSwing.buildIcon(
           FontAwesome.MINUS, Tools.scaleWithLabelScalingFactor(16), new Color(0xBD0000));
 
+  public static final Icon clearInputIcon =
+      IconFontSwing.buildIcon(FontAwesome.TIMES, 14, new Color(0x680C00));
+
   public static Icon catalogArticleIcon(Optional<Boolean> optionalOffer) {
     return optionalOffer.map(offer -> offer ? offerIcon : articleIcon).orElse(noArticleIcon);
   }

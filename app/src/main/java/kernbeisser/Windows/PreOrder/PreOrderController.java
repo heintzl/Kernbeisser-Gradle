@@ -299,6 +299,14 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     }
   }
 
+  public Optional<CatalogEntry> getEntryByKKNr(String ArtikelNr) {
+    try {
+      return model.getEntryByKkNumber(Integer.parseInt(ArtikelNr));
+    } catch (NumberFormatException e) {
+      return Optional.empty();
+    }
+  }
+
   public void printChecklist() {
     PreOrderView view = getView();
     LocalDate defaultDate =

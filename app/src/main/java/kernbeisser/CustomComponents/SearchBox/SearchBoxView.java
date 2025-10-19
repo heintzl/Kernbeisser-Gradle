@@ -15,6 +15,7 @@ import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.ObjectSelectionListener;
 import kernbeisser.CustomComponents.ObjectTable.ObjectTable;
 import kernbeisser.CustomComponents.ObjectTable.RowFilter;
+import kernbeisser.Useful.Icons;
 import kernbeisser.Windows.MVC.IView;
 import kernbeisser.Windows.MVC.Linked;
 import lombok.Getter;
@@ -55,7 +56,7 @@ public class SearchBoxView<T> implements IView<SearchBoxController<T>> {
   public void initialize(SearchBoxController<T> controller) {
     search.setIcon(IconFontSwing.buildIcon(FontAwesome.SEARCH, 14, new Color(0x757EFF)));
     search.addActionListener(e -> controller.invokeSearch());
-    clearSearch.setIcon(IconFontSwing.buildIcon(FontAwesome.TIMES, 14, new Color(0x680C00)));
+    clearSearch.setIcon(Icons.clearInputIcon);
     clearSearch.addActionListener(e -> setSearch(""));
     searchInput.addKeyListener(
         new KeyAdapter() {

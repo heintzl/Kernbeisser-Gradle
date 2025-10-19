@@ -78,6 +78,7 @@ public class PreOrderView implements IView<PreOrderController> {
   private JLabel alternativeContainerSize;
   private JLabel alternativeNetPrice;
   private JLabel currentWeekOfYear;
+  private JButton clearAlternative;
   private JPopupMenu popupSelectionColumn;
 
   private Mode mode;
@@ -213,12 +214,12 @@ public class PreOrderView implements IView<PreOrderController> {
     return displayText;
   }
 
-  private static final Icon selfIcon = Icons.defaultIcon(FontAwesome.USER, new Color(0x015A10));
-  private static final Icon cloudIcon = Icons.defaultIcon(FontAwesome.CLOUD, new Color(0x5C5A5A));
+  private static final Icon selfIcon = Icons.defaultIcon(FontAwesome.USER, new Color(0x008515));
+  private static final Icon cloudIcon = Icons.defaultIcon(FontAwesome.CLOUD, new Color(0x8C8C8C));
   private static final Icon posIcon =
-      Icons.defaultIcon(FontAwesome.SHOPPING_BASKET, new Color(0x680C00));
+      Icons.defaultIcon(FontAwesome.SHOPPING_BASKET, new Color(0xAC1200));
   private static final Icon shopManagerIcon =
-      Icons.defaultIcon(FontAwesome.HOME, new Color(0x002B97));
+      Icons.defaultIcon(FontAwesome.USER_O, new Color(0x0038CD));
 
   private static Icon getCreationTypeIcon(PreOrder p) {
     switch (p.getCreationType()) {
@@ -358,25 +359,25 @@ public class PreOrderView implements IView<PreOrderController> {
     popupSelectionColumn.show(preOrders, mousePosition.x, mousePosition.y);
   }
 
-  void setDefaultSortOrder() {
+  private void setDefaultSortOrder() {
     preOrders.setSortKeys(new RowSorter.SortKey(0, SortOrder.DESCENDING));
     preOrders.sort();
   }
 
-  void setAllDelivered(boolean allDelivered) {
+  private void setAllDelivered(boolean allDelivered) {
     controller.setAllDelivered(allDelivered);
     popupSelectionColumn.setVisible(false);
   }
 
-  void setPreOrders(Collection<PreOrder> preOrders) {
+  public void setPreOrders(Collection<PreOrder> preOrders) {
     this.preOrders.setObjects(preOrders);
   }
 
-  Collection<PreOrder> getSelectedOrders() {
+  private Collection<PreOrder> getSelectedOrders() {
     return preOrders.getSelectedObjects();
   }
 
-  void noItemFound() {
+  public void noItemFound() {
     JOptionPane.showMessageDialog(
         getTopComponent(),
         "Es konnte kein Kornkraft-Artikel mit dieser Kornkraft-/"
@@ -384,7 +385,7 @@ public class PreOrderView implements IView<PreOrderController> {
             + "-Nummer gefunden werden.");
   }
 
-  void resetArticleNr() {
+  public void resetArticleNr() {
     kkNumber.setText("");
     amount.setText("1");
     kkNumber.requestFocusInWindow();
@@ -393,24 +394,24 @@ public class PreOrderView implements IView<PreOrderController> {
     comment.setText("");
   }
 
-  void repaintTable() {
+  public void repaintTable() {
     preOrders.repaint();
   }
 
-  void clearItemDetails() {
+  private void clearItemDetails() {
     controller.setSelectedEntry(null);
     setItemName("");
     setContainerSize("");
     setNetPrice(null);
   }
 
-  void clearAlternativeItemDetails() {
+  private void clearAlternativeItemDetails() {
     setAlternativeItemName("");
     setAlternativeContainerSize("");
     setAlternativeNetPrice(null);
   }
 
-  void pasteEntryDataInView(CatalogEntry entry, boolean targetAlternative) {
+  public void pasteEntryDataInView(CatalogEntry entry, boolean targetAlternative) {
     if (entry == null) {
       if (targetAlternative) {
         clearAlternativeItemDetails();
@@ -436,6 +437,9 @@ public class PreOrderView implements IView<PreOrderController> {
     setItemName(bezeichnung);
     setContainerSize(bestellEinheit);
     setNetPrice(containerNetPrice);
+    Optional.ofNullable(entry.getErsatzArtikelNr())
+        .flatMap(nr -> controller.getEntryByKKNr(nr))
+        .ifPresent(e -> pasteEntryDataInView(e, true));
   }
 
   @Override
@@ -499,11 +503,10 @@ public class PreOrderView implements IView<PreOrderController> {
 
     amount.addActionListener(e -> submitAction());
     abhakplanButton.addActionListener(e -> controller.printChecklist());
-
-    searchCatalog.setIcon(IconFontSwing.buildIcon(FontAwesome.SEARCH, 20, new Color(49, 114, 128)));
+    Icon searchIcon = IconFontSwing.buildIcon(FontAwesome.SEARCH, 20, new Color(49, 114, 128));
+    searchCatalog.setIcon(searchIcon);
     searchCatalog.setToolTipText("Katalog durchsuchen");
-    searchCatalogAlternative.setIcon(
-        IconFontSwing.buildIcon(FontAwesome.SEARCH, 20, new Color(49, 114, 128)));
+    searchCatalogAlternative.setIcon(searchIcon);
     searchCatalogAlternative.setToolTipText("Katalog nach Alternative durchsuchen");
 
     findByShopNumber.addActionListener(e -> controller.findArtikelNrByShopNumber(false));
@@ -513,6 +516,12 @@ public class PreOrderView implements IView<PreOrderController> {
     findAlternativeByShopNumber.setToolTipText(
         "Alternativ-Katalog-Eintrag über Ladennummer suchen");
     findAlternativeByShopNumber.setIcon(Icons.SHOP_ICON);
+    clearAlternative.setIcon(Icons.clearInputIcon);
+    clearAlternative.addActionListener(
+        e -> {
+          setAlternativeKkNumber("");
+          clearAlternativeItemDetails();
+        });
     bestellungExportierenButton.addActionListener(e -> controller.exportPreOrder());
     close.addActionListener(e -> back());
     defaultSortOrder.addActionListener(e -> setDefaultSortOrder());
@@ -937,6 +946,9 @@ public class PreOrderView implements IView<PreOrderController> {
         alternativeNetPrice = new JLabel();
         alternativeNetPrice.setText("");
         insertSection.add(alternativeNetPrice, new GridConstraints(3, 7, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        clearAlternative = new JButton();
+        clearAlternative.setText("");
+        insertSection.add(clearAlternative, new GridConstraints(3, 4, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, 1, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(15, 15), null, 0, false));
         final JPanel panel1 = new JPanel();
         panel1.setLayout(new GridLayoutManager(1, 7, new Insets(0, 0, 0, 0), -1, -1));
         main.add(panel1, new GridConstraints(3, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
