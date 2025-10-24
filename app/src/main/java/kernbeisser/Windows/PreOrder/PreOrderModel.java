@@ -35,6 +35,7 @@ public class PreOrderModel implements IModel<PreOrderController> {
   private final EntityManager em = DBConnection.getEntityManager();
   private final EntityTransaction et = em.getTransaction();
   @Getter private final Set<PreOrder> delivery = new HashSet<>();
+  private final Set<PreOrder> dirty = new HashSet<>();
 
   Optional<CatalogEntry> getEntryByKkNumber(Integer kkNumber) {
     List<CatalogEntry> entries = CatalogEntry.getByArticleNo(kkNumber.toString(), true, false);
@@ -144,6 +145,8 @@ public class PreOrderModel implements IModel<PreOrderController> {
             em.merge(p);
           }
         });
+    dirty.removeAll(delivery);
+    dirty.forEach(em::merge);
     et.commit();
     em.close();
   }
@@ -192,6 +195,12 @@ public class PreOrderModel implements IModel<PreOrderController> {
 
   public void setAmount(PreOrder preOrder, int amount) {
     preOrder.setAmount(amount);
+    dirty.add(preOrder);
+  }
+
+  public void setComment(PreOrder preOrder, String comment) {
+    preOrder.setComment(comment);
+    dirty.add(preOrder);
   }
 
   private void setAllExported() {

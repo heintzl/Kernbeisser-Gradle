@@ -12,6 +12,7 @@ import java.util.Optional;
 import javax.swing.*;
 import kernbeisser.CustomComponents.BarcodeCapture;
 import kernbeisser.CustomComponents.Dialogs.DateSelectorDialog;
+import kernbeisser.CustomComponents.Dialogs.TextAreaDialog;
 import kernbeisser.CustomComponents.KeyCapture;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Enums.Mode;
@@ -362,6 +363,16 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     }
     model.setAmount(preOrder, newValue);
     getView().refreshPreOrder(preOrder, preOrder);
+  }
+
+  public void editComment(PreOrder preOrder) {
+    String comment = Tools.ifNull(preOrder.getComment(), "");
+    String newComment =
+        TextAreaDialog.getText(getView().getContent(), comment, "Bemerkung bearbeiten");
+    if (!comment.equals(newComment)) {
+      model.setComment(preOrder, newComment);
+      getView().refreshPreOrder(preOrder, preOrder);
+    }
   }
 
   public void startEditPreOrder(PreOrder preOrder) {
