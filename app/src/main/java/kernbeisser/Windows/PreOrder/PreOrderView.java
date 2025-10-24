@@ -303,9 +303,12 @@ public class PreOrderView implements IView<PreOrderController> {
                 .withPreferredWidth(40)
                 .withSorter(Column.NUMBER_SORTER)
                 .withFgColor(p -> PreOrderModel.isOverdue(p) ? Color.RED : Color.BLACK),
-            Columns.create("Bemerkung", PreOrder::getComment)
+            Columns.<PreOrder>create(
+                    "Bemerkung", p -> Tools.ifNull(p.getComment(), "").replace("\n", " // "))
                 .withPreferredWidth(150)
-                .withTooltip(PreOrder::getComment),
+                .withTooltip(PreOrder::getComment)
+                .withLeftClickConsumer(controller::editComment)
+                .withRightClickConsumer(controller::editComment),
             Columns.<PreOrder>create(
                     "eingegeben am",
                     e -> Date.INSTANT_DATE.format(e.getCreateDate()),
