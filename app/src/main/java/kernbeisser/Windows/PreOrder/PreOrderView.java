@@ -525,6 +525,7 @@ public class PreOrderView implements IView<PreOrderController> {
           setAlternativeKkNumber("");
           clearAlternativeItemDetails();
         });
+    clearAlternative.setToolTipText("Alternativ-Katalog-Eintrag löschen");
     bestellungExportierenButton.addActionListener(e -> controller.exportPreOrder());
     close.addActionListener(e -> back());
     defaultSortOrder.addActionListener(e -> setDefaultSortOrder());
@@ -561,6 +562,7 @@ public class PreOrderView implements IView<PreOrderController> {
     kkNumber.setEnabled(enabled);
     alternativeKkNumber.setEnabled(enabled);
     latestWeekOfDelivery.setEnabled(enabled);
+    clearAlternative.setEnabled(enabled);
     comment.setEnabled(enabled);
     amount.setEnabled(enabled);
     submit.setEnabled(enabled);
