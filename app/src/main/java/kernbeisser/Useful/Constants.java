@@ -3,15 +3,14 @@ package kernbeisser.Useful;
 import java.awt.*;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.DBEntities.User;
-import kernbeisser.DBEntities.UserGroup;
 
 public class Constants {
 
   public static final int SYSTEM_DBLCLK_INTERVAL = getSystemDblClkInterval();
   public static final User SHOP_USER = User.getShopUser();
   public static final int SHOP_USER_ID = SHOP_USER.getId();
-    public static final UserGroup SHOP_USERGROUP = SHOP_USER.getUserGroup();
-    public static final Supplier KK_SUPPLIER = Supplier.getKKSupplier();
+  public static int SHOP_USERGROUP_ID = SHOP_USER.getUserGroup().getId();
+  public static final Supplier KK_SUPPLIER = Supplier.getKKSupplier();
   public static final Supplier DEPOSIT_SUPPLIER = Supplier.getDepositSupplier();
   public static final Supplier SOLIDARITY_SUPPLIER = Supplier.getSolidaritySupplier();
   public static final Supplier BAKERY_SUPPLIER = Supplier.getBakerySupplier();

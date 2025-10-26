@@ -9,7 +9,6 @@ import java.time.ZoneId;
 import java.time.temporal.TemporalAdjusters;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Security.Access.UserRelated;
-import kernbeisser.Useful.Constants;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -107,7 +106,7 @@ public class PreOrder implements Serializable, UserRelated {
     if (this.createDate == null) { // must be a new preorder that cannot have a user relation
       return true;
     }
-    return this.user.equals(user);
+    return this.user.getId() == user.getId();
   }
 
   public boolean isDelivered() {

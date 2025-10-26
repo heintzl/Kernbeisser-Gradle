@@ -102,14 +102,18 @@ public class Transaction implements UserRelated {
   private User createdBy;
 
   public byte relationToUserGroup(UserGroup userGroup) {
+    return relationToUserGroup(userGroup.getId());
+  }
+
+  public byte relationToUserGroup(int userGroupId) {
     byte result;
-    if (fromUserGroup.equals(userGroup)) return -1;
-    if (toUserGroup.equals(userGroup)) return 1;
+    if (fromUserGroup.getId() == userGroupId) return -1;
+    if (toUserGroup.getId() == userGroupId) return 1;
     return 0;
   }
 
   public byte relationToKernbeisser() {
-    return relationToUserGroup(Constants.SHOP_USERGROUP);
+    return relationToUserGroup(Constants.SHOP_USERGROUP_ID);
   }
 
   public String getDescription() {
