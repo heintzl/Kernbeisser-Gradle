@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import java.util.Collection;
 import java.util.Optional;
+import javax.naming.OperationNotSupportedException;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
@@ -32,7 +33,8 @@ public class EditUserGroupModel implements IModel<EditUserGroupController> {
     user = User.getById(user.getId());
   }
 
-  boolean changeUserGroup(int user, int destination) throws MissingFullMemberException {
+  boolean changeUserGroup(int user, int destination)
+      throws MissingFullMemberException, OperationNotSupportedException {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
     EntityTransaction et = em.getTransaction();

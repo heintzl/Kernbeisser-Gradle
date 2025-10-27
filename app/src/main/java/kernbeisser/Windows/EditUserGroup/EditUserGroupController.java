@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import javax.naming.OperationNotSupportedException;
 import javax.swing.*;
 import kernbeisser.CustomComponents.Dialogs.LogInDialog;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
@@ -86,7 +87,7 @@ public class EditUserGroupController extends Controller<EditUserGroupView, EditU
       Users.leaveUserGroup(model.getUser());
       pushViewRefresh();
       return true;
-    } catch (MissingFullMemberException e) {
+    } catch (MissingFullMemberException | OperationNotSupportedException e) {
       return false;
     }
   }
@@ -94,13 +95,18 @@ public class EditUserGroupController extends Controller<EditUserGroupView, EditU
   public boolean changeUserGroup() throws CannotLogInException, MissingFullMemberException {
     boolean success;
     Optional<UserGroup> targetGroup = userGroupSearchBoxController.getSelectedObject();
-    if (targetGroup.isPresent()
-        && LogInDialog.showLogInRequest(
-            getView().getTopComponent(), model.getLogIns(targetGroup.get().getMembers()))) {
-      success = model.changeUserGroup(model.getUser().getId(), targetGroup.get().getId());
-    } else throw new CannotLogInException();
-    pushViewRefresh();
-    return success;
+    try {
+      if (targetGroup.isPresent()
+          && LogInDialog.showLogInRequest(
+              getView().getTopComponent(), model.getLogIns(targetGroup.get().getMembers()))) {
+        success = model.changeUserGroup(model.getUser().getId(), targetGroup.get().getId());
+      } else throw new CannotLogInException();
+      pushViewRefresh();
+      return success;
+    } catch (OperationNotSupportedException e) {
+      getView().message("Die ausgewählte Benutzergruppe ist ungültig!");
+      return false;
+    }
   }
 
   private void pushViewRefresh() {

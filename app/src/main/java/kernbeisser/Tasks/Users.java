@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import java.util.*;
+import javax.naming.OperationNotSupportedException;
 import javax.swing.*;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBEntities.*;
@@ -21,7 +22,7 @@ import rs.groump.AccessManager;
 
 public class Users {
   public static boolean switchUserGroup(int userId, int userGroupId)
-      throws MissingFullMemberException {
+      throws MissingFullMemberException, OperationNotSupportedException {
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     try {
       @Cleanup(value = "commit")
@@ -30,6 +31,9 @@ public class Users {
       User currentUser = em.find(User.class, userId);
       UserGroup current = currentUser.getUserGroup();
       UserGroup destination = em.find(UserGroup.class, userGroupId);
+      if (destination.getMembers().stream().anyMatch(User::isUnreadable)) {
+        throw new OperationNotSupportedException("target usergroup has invalid member");
+      }
       LogInModel.checkRefreshRequirements(currentUser, current, destination);
       if (current.getMembers().size() < 2) {
         if (!confirmGroupVoid(currentUser)) return false;
@@ -92,7 +96,8 @@ public class Users {
     return response != JOptionPane.CANCEL_OPTION;
   }
 
-  public static void leaveUserGroup(User user) throws MissingFullMemberException {
+  public static void leaveUserGroup(User user)
+      throws MissingFullMemberException, OperationNotSupportedException {
     UserGroup newUserGroup = new UserGroup();
     @Cleanup EntityManager em = DBConnection.getEntityManager();
     @Cleanup(value = "commit")
@@ -103,7 +108,7 @@ public class Users {
     et.begin();
     try {
       switchUserGroup(user.getId(), newUserGroup.getId());
-    } catch (MissingFullMemberException e) {
+    } catch (MissingFullMemberException | OperationNotSupportedException e) {
       em.remove(newUserGroup);
       throw e;
     }
