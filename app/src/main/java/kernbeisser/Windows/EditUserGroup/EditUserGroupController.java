@@ -6,13 +6,16 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.naming.OperationNotSupportedException;
 import javax.swing.*;
 import kernbeisser.CustomComponents.Dialogs.LogInDialog;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
+import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
+import kernbeisser.DBEntities.User_;
 import kernbeisser.Exeptions.CannotLogInException;
 import kernbeisser.Exeptions.MissingFullMemberException;
 import kernbeisser.Tasks.Users;
@@ -41,7 +44,12 @@ public class EditUserGroupController extends Controller<EditUserGroupView, EditU
                     .filter(
                         new Predicate<UserGroup>() {
                           final List<UserGroup> genericUserGroups =
-                              User.getGenericUsers().stream()
+                              Stream.concat(
+                                      QueryBuilder.selectAll(User.class)
+                                          .where(User_.unreadable.eq(Boolean.TRUE))
+                                          .getResultList()
+                                          .stream(),
+                                      User.getGenericUsers().stream())
                                   .map(User::getUserGroup)
                                   .collect(Collectors.toList());
 
