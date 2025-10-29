@@ -17,16 +17,16 @@ public class AddArticleSupplyPermissions implements VersionUpdatingTool {
     EntityTransaction et = em.getTransaction();
     et.begin();
     em.createNativeQuery(VersionUpdatingTool.insertRwKeySetPairQuery)
-        .setParameter("template", "ARTICLE_PRODUCER_")
-        .setParameter("new", "ARTICLE_CATALOGPRICEFACTOR_")
+        .setParameter("template", "ARTICLE_PRODUCER")
+        .setParameter("new", "ARTICLE_CATALOGPRICEFACTOR")
         .executeUpdate();
     em.createNativeQuery(VersionUpdatingTool.insertRwKeySetPairQuery)
-        .setParameter("template", "ARTICLE_PRODUCER_")
-        .setParameter("new", "ARTICLE_LABELCOUNT_")
+        .setParameter("template", "ARTICLE_PRODUCER")
+        .setParameter("new", "ARTICLE_LABELCOUNT")
         .executeUpdate();
     em.createNativeQuery(VersionUpdatingTool.insertRwKeySetPairQuery)
-        .setParameter("template", "ARTICLE_PRODUCER_")
-        .setParameter("new", "ARTICLE_LABELPERUNIT_")
+        .setParameter("template", "ARTICLE_PRODUCER")
+        .setParameter("new", "ARTICLE_LABELPERUNIT")
         .executeUpdate();
     em.createNativeQuery(
             "UPDATE Article Set catalogPriceFactor = 1, labelCount = 1, labelperunit = 0")

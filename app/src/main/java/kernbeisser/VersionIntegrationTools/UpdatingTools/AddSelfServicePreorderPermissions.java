@@ -16,24 +16,28 @@ public class AddSelfServicePreorderPermissions implements VersionUpdatingTool {
     EntityTransaction et = em.getTransaction();
     et.begin();
     em.createNativeQuery(VersionUpdatingTool.insertRwKeySetPairQuery)
-        .setParameter("template", "CONTAINER_ID_")
-        .setParameter("new", "CONTAINER_ALTERNATIVE_ITEM_")
+        .setParameter("template", "CONTAINER_ID")
+        .setParameter("new", "CONTAINER_ALTERNATIVE_ITEM")
         .executeUpdate();
     em.createNativeQuery(VersionUpdatingTool.insertRwKeySetPairQuery)
-        .setParameter("template", "CONTAINER_ID_")
-        .setParameter("new", "CONTAINER_LAST_WEEK_OF_DELIVERY_")
+        .setParameter("template", "CONTAINER_ID")
+        .setParameter("new", "CONTAINER_FIRST_WEEK_OF_DELIVERY")
         .executeUpdate();
     em.createNativeQuery(VersionUpdatingTool.insertRwKeySetPairQuery)
-        .setParameter("template", "CONTAINER_ID_")
-        .setParameter("new", "CONTAINER_COMMENT_")
+        .setParameter("template", "CONTAINER_ID")
+        .setParameter("new", "CONTAINER_LAST_WEEK_OF_DELIVERY")
         .executeUpdate();
     em.createNativeQuery(VersionUpdatingTool.insertRwKeySetPairQuery)
-        .setParameter("template", "CONTAINER_ID_")
-        .setParameter("new", "CONTAINER_CREATION_TYPE_")
+        .setParameter("template", "CONTAINER_ID")
+        .setParameter("new", "CONTAINER_COMMENT")
         .executeUpdate();
     em.createNativeQuery(VersionUpdatingTool.insertRwKeySetPairQuery)
-        .setParameter("template", "CONTAINER_ID_")
-        .setParameter("new", "CONTAINER_CREATED_BY_")
+        .setParameter("template", "CONTAINER_ID")
+        .setParameter("new", "CONTAINER_CREATION_TYPE")
+        .executeUpdate();
+    em.createNativeQuery(VersionUpdatingTool.insertRwKeySetPairQuery)
+        .setParameter("template", "CONTAINER_ID")
+        .setParameter("new", "CONTAINER_CREATED_BY")
         .executeUpdate();
     em.createNativeQuery("UPDATE PreOrder Set CreationType = 'PRE_ORDER_MANAGER'").executeUpdate();
   }

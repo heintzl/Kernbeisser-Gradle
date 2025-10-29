@@ -17,8 +17,8 @@ public class AddTransactionReportNo implements VersionUpdatingTool {
     EntityTransaction et = em.getTransaction();
     et.begin();
     em.createNativeQuery(VersionUpdatingTool.insertRwKeySetPairQuery)
-        .setParameter("template", "TRANSACTION_ID_")
-        .setParameter("new", "TRANSACTION_ACCOUNTINGREPORTNO_")
+        .setParameter("template", "TRANSACTION_ID")
+        .setParameter("new", "TRANSACTION_ACCOUNTINGREPORTNO")
         .executeUpdate();
   }
 }
