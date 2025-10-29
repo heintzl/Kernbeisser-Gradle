@@ -82,6 +82,11 @@ public class PreOrder implements Serializable, UserRelated {
   private CatalogEntry alternativeCatalogEntry;
 
   @Column
+  @Getter(onMethod_ = {@Key(PermissionKey.CONTAINER_FIRST_WEEK_OF_DELIVERY_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.CONTAINER_FIRST_WEEK_OF_DELIVERY_WRITE)})
+  private Integer firstWeekOfDelivery;
+
+  @Column
   @Getter(onMethod_ = {@Key(PermissionKey.CONTAINER_LAST_WEEK_OF_DELIVERY_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.CONTAINER_LAST_WEEK_OF_DELIVERY_WRITE)})
   private Integer latestWeekOfDelivery;
