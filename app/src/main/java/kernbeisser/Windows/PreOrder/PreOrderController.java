@@ -3,9 +3,12 @@ package kernbeisser.Windows.PreOrder;
 import jakarta.persistence.NoResultException;
 import java.awt.event.KeyEvent;
 import java.time.DayOfWeek;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
+import java.time.temporal.WeekFields;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
@@ -19,6 +22,7 @@ import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PreOrderCreator;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.InvalidValue;
+import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
@@ -39,6 +43,10 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
   @Getter private final Optional<User> restrictToUser;
   @Getter private final boolean isPreOrderManager;
   @Getter private final boolean isEditAllowed;
+
+  @Getter
+  private static final DayOfWeek weekdayOfDelivery =
+      Setting.KK_SUPPLY_DAY_OF_WEEK.getEnumValue(DayOfWeek.class).plus(1);
 
   public PreOrderController(@NotNull PreOrderCreator preOrderCreator, @Nullable User orderingUser) {
     super(new PreOrderModel());
@@ -385,5 +393,35 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
       return;
     }
     view.populatePreOrderEditor(preOrder);
+  }
+
+  public static Optional<Integer> getWeekOfYear(@Nullable LocalDate date) {
+    return Optional.ofNullable(date).map(d -> d.get(ChronoField.ALIGNED_WEEK_OF_YEAR));
+  }
+
+  public static LocalDate getDateFromWeekOfYear(Integer weekOfYear, Instant createDate) {
+    if (weekOfYear == null) {
+      return null;
+    }
+    LocalDate date =
+        LocalDate.now()
+            .with(WeekFields.ISO.weekOfWeekBasedYear(), weekOfYear)
+            .with(WeekFields.ISO.dayOfWeek(), getWeekdayOfDelivery().getValue());
+    int weekOfCreation =
+        LocalDate.ofInstant(createDate, Date.CURRENT_ZONE).get(ChronoField.ALIGNED_WEEK_OF_YEAR);
+    if (weekOfCreation >= weekOfYear) {
+      date = date.plusYears(1);
+    }
+    return date;
+  }
+
+  public static boolean isDateAllowed(LocalDate date, LocalDate compareDate, boolean last) {
+    boolean comparesWell =
+        Optional.ofNullable(compareDate)
+            .map(d -> last ? !date.isAfter(d) : !date.isBefore(d))
+            .orElse(true);
+    return comparesWell
+        && !date.isBefore(LocalDate.now())
+        && date.getDayOfWeek() == weekdayOfDelivery;
   }
 }
