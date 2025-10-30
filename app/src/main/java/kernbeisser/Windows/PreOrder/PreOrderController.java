@@ -165,6 +165,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     preOrder.setCatalogEntry(selectedEntry);
     preOrder.setAmount(view.getAmount());
     preOrder.setInfo(selectedEntry.getInfo());
+    preOrder.setFirstWeekOfDelivery(view.getFirstWeekOfDelivery().orElse(null));
     preOrder.setLatestWeekOfDelivery(view.getLatestWeekOfDelivery().orElse(null));
     view.getAlternativeKkNumber()
         .flatMap(model::getEntryByKkNumber)
@@ -413,15 +414,5 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
       date = date.plusYears(1);
     }
     return date;
-  }
-
-  public static boolean isDateAllowed(LocalDate date, LocalDate compareDate, boolean last) {
-    boolean comparesWell =
-        Optional.ofNullable(compareDate)
-            .map(d -> last ? !date.isAfter(d) : !date.isBefore(d))
-            .orElse(true);
-    return comparesWell
-        && !date.isBefore(LocalDate.now())
-        && date.getDayOfWeek() == weekdayOfDelivery;
   }
 }
