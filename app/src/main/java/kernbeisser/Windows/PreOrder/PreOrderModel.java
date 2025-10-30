@@ -61,6 +61,7 @@ public class PreOrderModel implements IModel<PreOrderController> {
     p.setCatalogEntry(newPreOrder.getCatalogEntry());
     p.setUser(newPreOrder.getUser());
     p.setInfo(newPreOrder.getInfo());
+    p.setFirstWeekOfDelivery(newPreOrder.getFirstWeekOfDelivery());
     p.setLatestWeekOfDelivery(newPreOrder.getLatestWeekOfDelivery());
     p.setAlternativeCatalogEntry(newPreOrder.getAlternativeCatalogEntry());
     p.setComment(newPreOrder.getComment());
@@ -213,16 +214,36 @@ public class PreOrderModel implements IModel<PreOrderController> {
     et.commit();
   }
 
+  private static int getWeekOfCreation(PreOrder preOrder) {
+    return LocalDate.ofInstant(preOrder.getCreateDate(), Date.CURRENT_ZONE)
+            .get(ChronoField.ALIGNED_WEEK_OF_YEAR);
+  }
+
+  public static boolean isPostponed(PreOrder p) {
+    Integer firstWeekOfDelivery = p.getFirstWeekOfDelivery();
+    if (firstWeekOfDelivery == null) {
+      return true;
+    }
+    return Constants.CURRENT_WEEK_OF_YEAR < firstWeekOfDelivery
+            && firstWeekOfDelivery > getWeekOfCreation(p);
+  }
+
   public static boolean isOverdue(PreOrder p) {
     Integer latestWeekOfDelivery = p.getLatestWeekOfDelivery();
     if (latestWeekOfDelivery == null) {
       return true;
     }
-    int weekOfCreation =
-        LocalDate.ofInstant(p.getCreateDate(), Date.CURRENT_ZONE)
-            .get(ChronoField.ALIGNED_WEEK_OF_YEAR);
     return Constants.CURRENT_WEEK_OF_YEAR >= latestWeekOfDelivery
-        && latestWeekOfDelivery > weekOfCreation;
+            && latestWeekOfDelivery > getWeekOfCreation(p);
+  }
+  public static boolean isDateAllowed(LocalDate date, LocalDate compareDate, boolean last) {
+    boolean comparesWell =
+            Optional.ofNullable(compareDate)
+                    .map(d -> last ? !date.isAfter(d) : !date.isBefore(d))
+                    .orElse(true);
+    return comparesWell
+            && !date.isBefore(LocalDate.now())
+            && date.getDayOfWeek() == PreOrderController.getWeekdayOfDelivery();
   }
 
   @Key(PermissionKey.ACTION_ORDER_OWN_CONTAINER)
