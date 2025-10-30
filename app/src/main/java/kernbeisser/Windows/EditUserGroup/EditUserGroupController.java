@@ -6,12 +6,16 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import javax.naming.OperationNotSupportedException;
 import javax.swing.*;
 import kernbeisser.CustomComponents.Dialogs.LogInDialog;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.SearchBox.SearchBoxController;
+import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.User;
 import kernbeisser.DBEntities.UserGroup;
+import kernbeisser.DBEntities.User_;
 import kernbeisser.Exeptions.CannotLogInException;
 import kernbeisser.Exeptions.MissingFullMemberException;
 import kernbeisser.Tasks.Users;
@@ -40,7 +44,12 @@ public class EditUserGroupController extends Controller<EditUserGroupView, EditU
                     .filter(
                         new Predicate<UserGroup>() {
                           final List<UserGroup> genericUserGroups =
-                              User.getGenericUsers().stream()
+                              Stream.concat(
+                                      QueryBuilder.selectAll(User.class)
+                                          .where(User_.unreadable.eq(Boolean.TRUE))
+                                          .getResultList()
+                                          .stream(),
+                                      User.getGenericUsers().stream())
                                   .map(User::getUserGroup)
                                   .collect(Collectors.toList());
 
@@ -86,7 +95,7 @@ public class EditUserGroupController extends Controller<EditUserGroupView, EditU
       Users.leaveUserGroup(model.getUser());
       pushViewRefresh();
       return true;
-    } catch (MissingFullMemberException e) {
+    } catch (MissingFullMemberException | OperationNotSupportedException e) {
       return false;
     }
   }
@@ -94,13 +103,18 @@ public class EditUserGroupController extends Controller<EditUserGroupView, EditU
   public boolean changeUserGroup() throws CannotLogInException, MissingFullMemberException {
     boolean success;
     Optional<UserGroup> targetGroup = userGroupSearchBoxController.getSelectedObject();
-    if (targetGroup.isPresent()
-        && LogInDialog.showLogInRequest(
-            getView().getTopComponent(), model.getLogIns(targetGroup.get().getMembers()))) {
-      success = model.changeUserGroup(model.getUser().getId(), targetGroup.get().getId());
-    } else throw new CannotLogInException();
-    pushViewRefresh();
-    return success;
+    try {
+      if (targetGroup.isPresent()
+          && LogInDialog.showLogInRequest(
+              getView().getTopComponent(), model.getLogIns(targetGroup.get().getMembers()))) {
+        success = model.changeUserGroup(model.getUser().getId(), targetGroup.get().getId());
+      } else throw new CannotLogInException();
+      pushViewRefresh();
+      return success;
+    } catch (OperationNotSupportedException e) {
+      getView().message("Die ausgewählte Benutzergruppe ist ungültig!");
+      return false;
+    }
   }
 
   private void pushViewRefresh() {

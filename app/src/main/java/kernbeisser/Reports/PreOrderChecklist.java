@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 import kernbeisser.DBEntities.PreOrder;
-import kernbeisser.Useful.Constants;
 
 public class PreOrderChecklist extends Report {
   private final LocalDate deliveryDate;

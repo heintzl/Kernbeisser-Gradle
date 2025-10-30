@@ -212,7 +212,7 @@ public class User implements Serializable, UserRelated, ActuallyCloneable {
   }
 
   public boolean isShopUser() {
-      return this.getId() == Constants.SHOP_USER_ID;
+    return this.getId() == Constants.SHOP_USER_ID;
   }
 
   public static User getShopUser() {
@@ -486,11 +486,11 @@ public class User implements Serializable, UserRelated, ActuallyCloneable {
 
   @Override
   public boolean isInRelation(@NotNull User user) {
-    return user.id == this.id || user.userGroup.equals(this.userGroup);
+    return user.id == this.id || user.userGroup.getId() == this.userGroup.getId();
   }
 
   public boolean userGroupEquals(UserGroup userGroup) {
-    return this.userGroup.equals(userGroup);
+    return this.userGroup.getId() == userGroup.getId();
   }
 
   public boolean verifyPassword(char[] password) {

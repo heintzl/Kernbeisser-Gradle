@@ -5,7 +5,6 @@ import kernbeisser.DBEntities.Purchase;
 import kernbeisser.DBEntities.Transaction;
 import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.AccountingReportGroups;
-import kernbeisser.Useful.Constants;
 import lombok.Data;
 
 @Data

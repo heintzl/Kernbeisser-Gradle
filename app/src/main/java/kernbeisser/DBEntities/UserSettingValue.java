@@ -110,6 +110,6 @@ public class UserSettingValue implements UserRelated {
 
   @Override
   public boolean isInRelation(@NotNull User user) {
-    return user.equals(this.user);
+    return user.getId() == this.user.getId();
   }
 }
