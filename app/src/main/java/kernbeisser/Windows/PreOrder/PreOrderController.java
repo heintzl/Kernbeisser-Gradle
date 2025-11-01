@@ -66,11 +66,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
   }
 
   public Optional<CatalogEntry> searchKK(int kkNumber) {
-    PreOrderView view = getView();
-    if (view.getKkNumber() != 0) {
-      return model.getEntryByKkNumber(kkNumber);
-    }
-    return Optional.empty();
+    return model.getEntryByKkNumber(kkNumber);
   }
 
   void add() {

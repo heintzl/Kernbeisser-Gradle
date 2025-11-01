@@ -216,7 +216,7 @@ public class PreOrderModel implements IModel<PreOrderController> {
 
   private static int getWeekOfCreation(PreOrder preOrder) {
     return LocalDate.ofInstant(preOrder.getCreateDate(), Date.CURRENT_ZONE)
-            .get(ChronoField.ALIGNED_WEEK_OF_YEAR);
+        .get(ChronoField.ALIGNED_WEEK_OF_YEAR);
   }
 
   public static boolean isPostponed(PreOrder p) {
@@ -224,8 +224,8 @@ public class PreOrderModel implements IModel<PreOrderController> {
     if (firstWeekOfDelivery == null) {
       return true;
     }
-    return Constants.CURRENT_WEEK_OF_YEAR < firstWeekOfDelivery
-            && firstWeekOfDelivery > getWeekOfCreation(p);
+    return Constants.CURRENT_WEEK_OF_YEAR < firstWeekOfDelivery + 1
+        || firstWeekOfDelivery <= getWeekOfCreation(p);
   }
 
   public static boolean isOverdue(PreOrder p) {
@@ -234,16 +234,17 @@ public class PreOrderModel implements IModel<PreOrderController> {
       return true;
     }
     return Constants.CURRENT_WEEK_OF_YEAR >= latestWeekOfDelivery
-            && latestWeekOfDelivery > getWeekOfCreation(p);
+        && latestWeekOfDelivery > getWeekOfCreation(p);
   }
+
   public static boolean isDateAllowed(LocalDate date, LocalDate compareDate, boolean last) {
     boolean comparesWell =
-            Optional.ofNullable(compareDate)
-                    .map(d -> last ? !date.isAfter(d) : !date.isBefore(d))
-                    .orElse(true);
+        Optional.ofNullable(compareDate)
+            .map(d -> last ? !date.isAfter(d) : !date.isBefore(d))
+            .orElse(true);
     return comparesWell
-            && !date.isBefore(LocalDate.now())
-            && date.getDayOfWeek() == PreOrderController.getWeekdayOfDelivery();
+        && !date.isBefore(LocalDate.now())
+        && date.getDayOfWeek() == PreOrderController.getWeekdayOfDelivery();
   }
 
   @Key(PermissionKey.ACTION_ORDER_OWN_CONTAINER)
