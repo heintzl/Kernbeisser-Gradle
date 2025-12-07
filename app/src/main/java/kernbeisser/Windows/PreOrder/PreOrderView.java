@@ -11,9 +11,6 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.temporal.TemporalAdjusters;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.Optional;
@@ -190,24 +187,6 @@ public class PreOrderView implements IView<PreOrderController> {
     return duplexPrint.isSelected();
   }
 
-  private static String getDueDateAsString(PreOrder preOrder) {
-    boolean isSlow = preOrder.getCatalogEntry().getBezeichnung().contains("*V*");
-    String displayText = isSlow ? "ab " : "";
-    if (preOrder.getDueDate().isAfter(LocalDate.now())) {
-      displayText += Date.INSTANT_DATE.format(preOrder.getDueDate());
-    } else {
-      displayText =
-          "NL "
-              + displayText
-              + Date.INSTANT_DATE.format(
-                  LocalDate.now()
-                      .with(
-                          TemporalAdjusters.next(
-                              Setting.KK_SUPPLY_DAY_OF_WEEK.getEnumValue(DayOfWeek.class))));
-    }
-    return displayText;
-  }
-
   private static final Icon selfIcon = Icons.defaultIcon(FontAwesome.USER, new Color(0x008515));
   private static final Icon cloudIcon = Icons.defaultIcon(FontAwesome.CLOUD, new Color(0x8C8C8C));
   private static final Icon posIcon =
@@ -325,7 +304,7 @@ public class PreOrderView implements IView<PreOrderController> {
                     e -> e.getOrderedOn() == null ? "" : Date.INSTANT_DATE.format(e.getOrderedOn()),
                     SwingConstants.RIGHT)
                 .withSorter(Column.DATE_SORTER(Date.INSTANT_DATE)),
-            Columns.create("erwartete Lieferung", PreOrderView::getDueDateAsString));
+            Columns.create("erwartete Lieferung", PreOrder::getDueDateAsString));
     if (controller.isPreOrderManager()) {
       Icon selected =
           IconFontSwing.buildIcon(

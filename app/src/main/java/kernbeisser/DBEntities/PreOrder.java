@@ -10,6 +10,7 @@ import java.time.temporal.TemporalAdjusters;
 import kernbeisser.Enums.PreOrderCreator;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Security.Access.UserRelated;
+import kernbeisser.Useful.Date;
 import kernbeisser.Windows.LogIn.LogInModel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -108,6 +109,29 @@ public class PreOrder implements Serializable, UserRelated {
   @Getter(onMethod_ = {@rs.groump.Key(PermissionKey.CONTAINER_CREATED_BY_READ)})
   @Setter(onMethod_ = {@rs.groump.Key(PermissionKey.CONTAINER_CREATED_BY_WRITE)})
   private User createdBy;
+
+  @Column
+  @Getter(onMethod_ = {@Key(PermissionKey.CONTAINER_DELIVERY_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.CONTAINER_DELIVERY_WRITE)})
+  private Boolean alternativeDelivery;
+
+  public String getDueDateAsString() {
+    boolean isSlow = this.getCatalogEntry().getBezeichnung().contains("*V*");
+    String displayText = isSlow ? "ab " : "";
+    if (this.getDueDate().isAfter(LocalDate.now())) {
+      displayText += Date.INSTANT_DATE.format(this.getDueDate());
+    } else {
+      displayText =
+          "NL "
+              + displayText
+              + Date.INSTANT_DATE.format(
+                  LocalDate.now()
+                      .with(
+                          TemporalAdjusters.next(
+                              Setting.KK_SUPPLY_DAY_OF_WEEK.getEnumValue(DayOfWeek.class))));
+    }
+    return displayText;
+  }
 
   @PrePersist
   private void setCreatedBy() {
