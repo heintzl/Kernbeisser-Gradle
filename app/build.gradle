@@ -54,28 +54,29 @@ dependencies {
     implementation 'org.hibernate:hibernate-core:'+hibernateVersion
     implementation "org.hibernate:hibernate-envers:"+hibernateVersion
     implementation files("libs/forms_rt.jar")
-    implementation 'org.mariadb.jdbc:mariadb-java-client:3.3.3'
+    implementation 'org.mariadb.jdbc:mariadb-java-client:3.5.6'
     implementation 'at.favre.lib:bcrypt:0.9.0'
     implementation "com.github.jiconfont:jiconfont-font_awesome:4.7.0.1"
     implementation 'com.github.jiconfont:jiconfont-swing:1.0.1'
     implementation 'org.apache.logging.log4j:log4j-api:2.17.1'
     implementation 'org.apache.logging.log4j:log4j-core:2.17.1'
-    implementation 'net.sf.jasperreports:jasperreports:7.0.3'
-    implementation 'net.sf.jasperreports:jasperreports-fonts:7.0.0'
-    implementation 'net.sf.jasperreports:jasperreports-pdf:7.0.0'
+    def jasperreportsVersion = '7.0.3'
+    implementation 'net.sf.jasperreports:jasperreports:'+jasperreportsVersion
+    implementation 'net.sf.jasperreports:jasperreports-fonts:'+jasperreportsVersion
+    implementation 'net.sf.jasperreports:jasperreports-pdf:'+jasperreportsVersion
     implementation 'org.jfree:jfreechart:1.5.3'
-    implementation 'com.formdev:flatlaf:2.4'
+    implementation 'com.formdev:flatlaf:3.6.2'
     implementation 'org.json:json:20250517'
     implementation 'org.jetbrains:annotations:23.0.0'
-    implementation 'com.google.code.gson:gson:2.9.0'
+    implementation 'com.google.code.gson:gson:2.13.2'
     implementation 'com.google.guava:guava:33.5.0-jre'
     implementation 'com.opencsv:opencsv:5.12.0'
     implementation group: 'com.github.lgooddatepicker', name: 'LGoodDatePicker', version: '11.2.1'
-    implementation 'org.slf4j:slf4j-nop:2.0.13'
+    implementation 'org.slf4j:slf4j-nop:2.0.17'
 
     //Bytecode Tools
     implementation group: 'org.ow2.asm', name: 'asm', version: '9.6'
-    implementation 'org.javassist:javassist:3.27.0-GA'
+    implementation 'org.javassist:javassist:3.30.2-GA'
 
     //Unsafe alternative
     implementation 'org.objenesis:objenesis:1.2'
