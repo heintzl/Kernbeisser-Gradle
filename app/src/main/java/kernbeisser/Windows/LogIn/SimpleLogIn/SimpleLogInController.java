@@ -76,7 +76,6 @@ public class SimpleLogInController extends Controller<SimpleLogInView, SimpleLog
     new Thread(
             () -> {
               Executor.scheduleTask(this::performEntryChecks);
-              loadUserSettings();
               if (shouldForcePasswordChange(LogInModel.getLoggedIn())) {
                 new ChangePasswordController(LogInModel.getLoggedIn(), true)
                     .openIn(new SubWindow(view.traceViewContainer()));
@@ -89,6 +88,7 @@ public class SimpleLogInController extends Controller<SimpleLogInView, SimpleLog
               }
             })
         .start();
+    loadUserSettings();
   }
 
   private void performEntryChecks() {
