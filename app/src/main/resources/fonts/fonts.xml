@@ -39,4 +39,9 @@
         <pdfEncoding>Identity-H</pdfEncoding>
         <pdfEmbedded><![CDATA[true]]></pdfEmbedded>
     </fontFamily>
+    <fontFamily name="Font Awesome">
+        <normal>fonts/font_awesome/fontawesome-webfont.ttf</normal>
+        <pdfEncoding>Identity-H</pdfEncoding>
+        <pdfEmbedded><![CDATA[true]]></pdfEmbedded>
+    </fontFamily>
 </fontFamilies>

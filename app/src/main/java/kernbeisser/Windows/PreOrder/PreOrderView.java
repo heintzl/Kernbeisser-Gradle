@@ -187,30 +187,6 @@ public class PreOrderView implements IView<PreOrderController> {
     return duplexPrint.isSelected();
   }
 
-  private static final Icon selfIcon = Icons.defaultIcon(FontAwesome.USER, new Color(0x008515));
-  private static final Icon cloudIcon = Icons.defaultIcon(FontAwesome.CLOUD, new Color(0x8C8C8C));
-  private static final Icon posIcon =
-      Icons.defaultIcon(FontAwesome.SHOPPING_BASKET, new Color(0xAC1200));
-  private static final Icon shopManagerIcon =
-      Icons.defaultIcon(FontAwesome.USER_O, new Color(0x0038CD));
-
-  private static Icon getCreationTypeIcon(PreOrder p) {
-    switch (p.getCreationType()) {
-      case SELF -> {
-        return selfIcon;
-      }
-      case ONLINE -> {
-        return cloudIcon;
-      }
-      case POS -> {
-        return posIcon;
-      }
-      default -> {
-        return shopManagerIcon;
-      }
-    }
-  }
-
   private void createUIComponents() {
     CustomizableColumn<PreOrder> hiddenSortColumn =
         Columns.<PreOrder>create("", p -> Date.INSTANT_DATE_TIME_SEC.format(p.getCreateDate()))
@@ -223,7 +199,7 @@ public class PreOrderView implements IView<PreOrderController> {
                 });
     preOrders =
         new ObjectTable<>(
-            Columns.createIconColumn("Herkunft", PreOrderView::getCreationTypeIcon)
+            Columns.<PreOrder>createIconColumn("Herkunft", e -> e.getCreationType().getIcon())
                 .withHorizontalAlignment(SwingConstants.CENTER)
                 .withPreferredWidth(35)
                 .withTooltip(

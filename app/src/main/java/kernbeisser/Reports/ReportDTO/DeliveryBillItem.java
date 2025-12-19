@@ -50,7 +50,7 @@ public class DeliveryBillItem {
     String alternativeFor = "";
     if(preOrder.getAlternativeDelivery() == Boolean.TRUE) {
       deliveredEntry = Tools.ifNull(preOrder.getAlternativeCatalogEntry(), preOrder.getCatalogEntry());
-      alternativeFor = preOrder.getCatalogEntry().getArtikelNr();
+      alternativeFor = "Ersatz für %s".formatted(preOrder.getCatalogEntry().getArtikelNr());
     } else {
       deliveredEntry = preOrder.getCatalogEntry();
     }
@@ -61,14 +61,14 @@ public class DeliveryBillItem {
 
     return new DeliveryBillItem(
             preOrder.getUser().getFullName(),
-            deliveredEntry.getBezeichnung(),
+            "%s %s".formatted(deliveredEntry.getBestelleinheit(),deliveredEntry.getBezeichnung()),
             deliveredEntry.getArtikelNr(),
-            deliveredEntry.getPreis(),
+            deliveredEntry.getPreis() * deliveredEntry.getBestelleinheitsMenge(),
             preOrder.getAmount(),
-            preOrder.getComment() ,
+            Tools.ifNull(preOrder.getComment(), ""),
             preOrder.isDelivered(),
             expectedDelivery,
-            preOrder.getCreationType().getName(),
+            preOrder.getCreationType().getIconCode(),
             alternativeFor);
   }
 }
