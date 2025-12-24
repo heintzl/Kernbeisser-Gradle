@@ -74,9 +74,7 @@ public class PreOrderView implements IView<PreOrderController> {
   private JLabel alternativeContainerSize;
   private JLabel alternativeNetPrice;
   private JLabel currentWeekOfYear;
-  // TODO remove either clearAlternative or useAlternative
-  private JButton clearAlternative;
-  private JCheckBox useAlternative;
+  private JCheckBox alternativePermitted;
   private JPopupMenu popupSelectionColumn;
 
   private Mode mode;
@@ -134,6 +132,10 @@ public class PreOrderView implements IView<PreOrderController> {
 
   void setKkNumber(String s) {
     kkNumber.setText(s);
+  }
+
+  public boolean isAlternativePermitted() {
+    return alternativePermitted.isSelected();
   }
 
   Optional<Integer> getAlternativeKkNumber() {
@@ -241,7 +243,7 @@ public class PreOrderView implements IView<PreOrderController> {
                     p ->
                         Optional.ofNullable(p.getAlternativeCatalogEntry())
                             .map(CatalogEntry::getArtikelNr)
-                            .orElse(""))
+                            .orElse(p.isAlternativePermitted() ? "irgendwas" : ""))
                 .withSorter(Column.NUMBER_SORTER)
                 .withTooltip(
                     p ->
@@ -403,6 +405,7 @@ public class PreOrderView implements IView<PreOrderController> {
 
     if (targetAlternative) {
       useAlternative.setSelected(true);
+      alternativePermitted.setSelected(true);
       setAlternativeKkNumber(artikelNr);
       setAlternativeItemName(bezeichnung);
       setAlternativeContainerSize(bestellEinheit);
@@ -507,14 +510,6 @@ public class PreOrderView implements IView<PreOrderController> {
     findAlternativeByShopNumber.setToolTipText(
         "Alternativ-Katalog-Eintrag über Ladennummer suchen");
     findAlternativeByShopNumber.setIcon(Icons.SHOP_ICON);
-    clearAlternative.setVisible(false);
-    clearAlternative.setIcon(Icons.clearInputIcon);
-    clearAlternative.addActionListener(
-        e -> {
-          setAlternativeKkNumber("");
-          clearAlternativeItemDetails();
-        });
-    clearAlternative.setToolTipText("Alternativ-Katalog-Eintrag löschen");
     bestellungExportierenButton.addActionListener(e -> controller.exportPreOrder());
     close.addActionListener(e -> back());
     defaultSortOrder.addActionListener(e -> setDefaultSortOrder());
@@ -523,8 +518,9 @@ public class PreOrderView implements IView<PreOrderController> {
     deletePreOrder.addActionListener(e -> deletePreOrder());
     currentWeekOfYear.setText("Aktuelle KW: %d".formatted(Constants.CURRENT_WEEK_OF_YEAR));
     mode = Mode.ADD;
-    useAlternative.addChangeListener(e -> enableAlternativeControls(useAlternative.isSelected()));
-    useAlternative.setToolTipText(
+    alternativePermitted.addChangeListener(
+        e -> enableAlternativeControls(alternativePermitted.isSelected()));
+    alternativePermitted.setToolTipText(
         "Falls der Artikel nicht verfügbar ist, soll ein Ersatzartikel bestellt werden");
     refreshUIMode();
   }
@@ -555,15 +551,14 @@ public class PreOrderView implements IView<PreOrderController> {
     latestWeekOfDelivery.setEnabled(enabled);
     amount.setEnabled(enabled);
     submit.setEnabled(enabled);
-    useAlternative.setEnabled(enabled);
-    enableAlternativeControls(enabled && useAlternative.isSelected());
+    alternativePermitted.setEnabled(enabled);
+    enableAlternativeControls(enabled && alternativePermitted.isSelected());
   }
 
   void enableAlternativeControls(boolean enabled) {
     searchCatalogAlternative.setEnabled(enabled);
     findAlternativeByShopNumber.setEnabled(enabled);
     alternativeKkNumber.setEnabled(enabled);
-    clearAlternative.setEnabled(enabled);
     if (!enabled && !alternativeKkNumber.getText().isEmpty()) {
       alternativeKkNumber.setText("");
       clearAlternativeItemDetails();
@@ -586,7 +581,12 @@ public class PreOrderView implements IView<PreOrderController> {
     user.repaint();
     setAmount(Integer.toString(preOrder.getAmount()));
     pasteEntryDataInView(preOrder.getCatalogEntry(), false);
-    pasteEntryDataInView(preOrder.getAlternativeCatalogEntry(), true);
+    if (preOrder.isAlternativePermitted()) {
+      alternativePermitted.setEnabled(true);
+      pasteEntryDataInView(preOrder.getAlternativeCatalogEntry(), true);
+    } else {
+      alternativePermitted.setEnabled(false);
+    }
     setComment(preOrder.getComment());
     setFirstWeekOfDelivery(preOrder);
     setLatestWeekOfDelivery(preOrder);

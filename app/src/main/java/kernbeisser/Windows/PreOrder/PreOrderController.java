@@ -163,10 +163,17 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     preOrder.setInfo(selectedEntry.getInfo());
     preOrder.setFirstWeekOfDelivery(view.getFirstWeekOfDelivery().orElse(null));
     preOrder.setLatestWeekOfDelivery(view.getLatestWeekOfDelivery().orElse(null));
-    view.getAlternativeKkNumber()
-        .flatMap(model::getEntryByKkNumber)
-        .filter(e -> !e.equals(selectedEntry))
-        .ifPresent(preOrder::setAlternativeCatalogEntry);
+
+    if (view.isAlternativePermitted()) {
+      preOrder.setAlternativePermitted(true);
+      view.getAlternativeKkNumber()
+          .flatMap(model::getEntryByKkNumber)
+          .filter(e -> !e.equals(selectedEntry))
+          .ifPresent(preOrder::setAlternativeCatalogEntry);
+    } else {
+      preOrder.setAlternativePermitted(false);
+    }
+
     preOrder.setComment(view.getComment());
     if (preOrder.getUser() == null) {
       view.notifyNoUserSelected();

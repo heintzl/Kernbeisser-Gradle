@@ -76,6 +76,10 @@ public class PreOrder implements Serializable, UserRelated {
   @Setter(onMethod_ = {@Key(PermissionKey.CONTAINER_DELIVERY_WRITE)})
   private Instant orderedOn;
 
+  @Column
+  @Setter(onMethod_ = {@Key(PermissionKey.CONTAINER_DELIVERY_WRITE)})
+  private Boolean alternativePermitted;
+
   @ManyToOne
   @JoinColumn
   @Getter(onMethod_ = {@Key(PermissionKey.CONTAINER_ALTERNATIVE_ITEM_READ)})
@@ -111,9 +115,18 @@ public class PreOrder implements Serializable, UserRelated {
   private User createdBy;
 
   @Column
-  @Getter(onMethod_ = {@Key(PermissionKey.CONTAINER_DELIVERY_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.CONTAINER_DELIVERY_WRITE)})
   private Boolean alternativeDelivery;
+
+  @Key(PermissionKey.CONTAINER_DELIVERY_READ)
+  public boolean isAlternativePermitted() {
+    return (alternativePermitted == Boolean.TRUE);
+  }
+
+  @Key(PermissionKey.CONTAINER_DELIVERY_READ)
+  public boolean isAlternativeDelivery() {
+    return (alternativeDelivery == true);
+  }
 
   public String getDueDateAsString() {
     boolean isSlow = this.getCatalogEntry().getBezeichnung().contains("*V*");

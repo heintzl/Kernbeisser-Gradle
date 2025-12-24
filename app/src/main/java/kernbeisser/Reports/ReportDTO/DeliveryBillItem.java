@@ -5,9 +5,6 @@ import kernbeisser.DBEntities.PreOrder;
 import kernbeisser.Useful.Tools;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.time.LocalDate;
 
 @Data
 public class DeliveryBillItem {
@@ -23,15 +20,17 @@ public class DeliveryBillItem {
   @NotNull private final String placedBy;
   @NotNull private final String alternativeFor;
 
-  private DeliveryBillItem(@NotNull String orderBy, @NotNull String name,
-                           @NotNull String kkNumber,
-                           double netPrice,
-                           int amount,
-                           @NotNull String comment,
-                           boolean delivered,
-                           @NotNull String expectedDelivery,
-                           @NotNull String placedBy,
-                           @NotNull String alternativeFor) {
+  private DeliveryBillItem(
+      @NotNull String orderBy,
+      @NotNull String name,
+      @NotNull String kkNumber,
+      double netPrice,
+      int amount,
+      @NotNull String comment,
+      boolean delivered,
+      @NotNull String expectedDelivery,
+      @NotNull String placedBy,
+      @NotNull String alternativeFor) {
     this.orderBy = orderBy;
 
     this.name = name;
@@ -48,8 +47,9 @@ public class DeliveryBillItem {
   public static DeliveryBillItem ofPreOrder(PreOrder preOrder) {
     CatalogEntry deliveredEntry;
     String alternativeFor = "";
-    if(preOrder.getAlternativeDelivery() == Boolean.TRUE) {
-      deliveredEntry = Tools.ifNull(preOrder.getAlternativeCatalogEntry(), preOrder.getCatalogEntry());
+    if (preOrder.isAlternativeDelivery()) {
+      deliveredEntry =
+          Tools.ifNull(preOrder.getAlternativeCatalogEntry(), preOrder.getCatalogEntry());
       alternativeFor = "Ersatz für %s".formatted(preOrder.getCatalogEntry().getArtikelNr());
     } else {
       deliveredEntry = preOrder.getCatalogEntry();
@@ -60,15 +60,15 @@ public class DeliveryBillItem {
     }
 
     return new DeliveryBillItem(
-            preOrder.getUser().getFullName(),
-            "%s %s".formatted(deliveredEntry.getBestelleinheit(),deliveredEntry.getBezeichnung()),
-            deliveredEntry.getArtikelNr(),
-            deliveredEntry.getPreis() * deliveredEntry.getBestelleinheitsMenge(),
-            preOrder.getAmount(),
-            Tools.ifNull(preOrder.getComment(), ""),
-            preOrder.isDelivered(),
-            expectedDelivery,
-            preOrder.getCreationType().getIconCode(),
-            alternativeFor);
+        preOrder.getUser().getFullName(),
+        "%s %s".formatted(deliveredEntry.getBestelleinheit(), deliveredEntry.getBezeichnung()),
+        deliveredEntry.getArtikelNr(),
+        deliveredEntry.getPreis() * deliveredEntry.getBestelleinheitsMenge(),
+        preOrder.getAmount(),
+        Tools.ifNull(preOrder.getComment(), ""),
+        preOrder.isDelivered(),
+        expectedDelivery,
+        preOrder.getCreationType().getIconCode(),
+        alternativeFor);
   }
 }
