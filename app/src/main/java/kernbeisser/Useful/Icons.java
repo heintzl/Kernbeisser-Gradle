@@ -71,12 +71,12 @@ public class Icons {
     return optionalOffer.map(offer -> offer ? offerIcon : articleIcon).orElse(noArticleIcon);
   }
 
-  public static final Icon preorderSelfIcon = Icons.defaultIcon(FontAwesome.USER, new Color(0x008515));
-  public static final Icon preorderCloudIcon = Icons.defaultIcon(FontAwesome.CLOUD, new Color(0x8C8C8C));
+  public static final Icon preorderSelfIcon =
+      Icons.defaultIcon(FontAwesome.USER, new Color(0x008515));
+  public static final Icon preorderCloudIcon =
+      Icons.defaultIcon(FontAwesome.CLOUD, new Color(0x8C8C8C));
   public static final Icon preoorderPosIcon =
-          Icons.defaultIcon(FontAwesome.SHOPPING_BASKET, new Color(0xAC1200));
+      Icons.defaultIcon(FontAwesome.SHOPPING_BASKET, new Color(0xAC1200));
   public static final Icon preoorderShopManagerIcon =
-          Icons.defaultIcon(FontAwesome.PENCIL_SQUARE, new Color(0x0038CD));
-
-
+      Icons.defaultIcon(FontAwesome.PENCIL_SQUARE, new Color(0x0038CD));
 }

@@ -781,12 +781,12 @@ public class PreOrderView implements IView<PreOrderController> {
   private boolean confirmSlowOrder(CatalogEntry entry) {
     return JOptionPane.showConfirmDialog(
             getContent(),
-            "Die Bereitstellung von %s durch den Großhandel kann längere ".formatted(entry.getBezeichnung())
+            "Die Bereitstellung von %s durch den Großhandel kann längere "
+                    .formatted(entry.getBezeichnung())
                 + "Zeit in Anspruch nehmen (Erkennbar am *V* im namen). \n"
                 + "Sobald die Bestellung beim Großhandel eingegangen ist, kann diese Bestellung nicht "
                 + "mehr storniert werden. \n"
-                + "Daher musst Du Dich verpflichten, den Artikel, wenn er dann geliefert wurde, auch abzunehmen."
-                    ,
+                + "Daher musst Du Dich verpflichten, den Artikel, wenn er dann geliefert wurde, auch abzunehmen.",
             "Lange Lieferzeit",
             JOptionPane.YES_NO_OPTION)
         == JOptionPane.YES_OPTION;
@@ -794,7 +794,8 @@ public class PreOrderView implements IView<PreOrderController> {
 
   private void messageNoSlowOrder(CatalogEntry entry) {
     message(
-        "Die Bereitstellung von %s durch den Großhandel kann längere ".formatted(entry.getBezeichnung())
+        "Die Bereitstellung von %s durch den Großhandel kann längere "
+                .formatted(entry.getBezeichnung())
             + "Zeit in Anspruch nehmen (Erkennbar am *V* im namen). \n"
             + "Daher taugt er nicht als Ersatzartikel.",
         "Ungeeigneter Ersatzartikel",

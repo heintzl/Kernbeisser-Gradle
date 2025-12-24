@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoField;
 import kernbeisser.DBEntities.Supplier;
 import kernbeisser.DBEntities.User;
-import kernbeisser.DBEntities.UserGroup;
 
 public class Constants {
 

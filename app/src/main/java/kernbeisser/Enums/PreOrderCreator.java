@@ -1,13 +1,10 @@
 package kernbeisser.Enums;
 
-import jiconfont.icons.font_awesome.FontAwesome;
-import kernbeisser.DBEntities.PreOrder;
+import java.awt.*;
+import javax.swing.*;
 import kernbeisser.Useful.Icons;
 import kernbeisser.Useful.Named;
 import lombok.Getter;
-
-import javax.swing.*;
-import java.awt.*;
 
 public enum PreOrderCreator implements Named {
   PRE_ORDER_MANAGER("Bestelldienst"),
@@ -54,7 +51,6 @@ public enum PreOrderCreator implements Named {
       }
     }
   }
-
 
   @Override
   public String toString() {
