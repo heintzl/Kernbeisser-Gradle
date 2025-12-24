@@ -39,7 +39,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
   private final KeyCapture keyCapture;
   private final BarcodeCapture barcodeCapture;
   @Getter private final PreOrderCreator preOrderCreator;
-  @Setter private CatalogEntry selectedEntry = null;
+  @Getter @Setter private CatalogEntry selectedEntry = null;
   @Getter private final Optional<User> restrictToUser;
   @Getter private final boolean isPreOrderManager;
   @Getter private final boolean isEditAllowed;
@@ -358,6 +358,10 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
 
   boolean isDelivered(PreOrder p) {
     return model.isDelivered(p);
+  }
+
+  public boolean isSlowOrder(CatalogEntry catalogEntry) {
+    return model.isSlowOrder(catalogEntry);
   }
 
   void setAllDelivered(boolean allDelivered) {

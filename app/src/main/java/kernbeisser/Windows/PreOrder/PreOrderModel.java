@@ -21,6 +21,7 @@ import kernbeisser.EntityWrapper.ObjectState;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
 import kernbeisser.Export.CSVExport;
+import kernbeisser.Reports.DeliveryBillReport;
 import kernbeisser.Reports.PreOrderChecklist;
 import kernbeisser.Reports.Report;
 import kernbeisser.Useful.Constants;
@@ -63,6 +64,7 @@ public class PreOrderModel implements IModel<PreOrderController> {
     p.setInfo(newPreOrder.getInfo());
     p.setFirstWeekOfDelivery(newPreOrder.getFirstWeekOfDelivery());
     p.setLatestWeekOfDelivery(newPreOrder.getLatestWeekOfDelivery());
+    p.setAlternativePermitted(newPreOrder.isAlternativePermitted());
     p.setAlternativeCatalogEntry(newPreOrder.getAlternativeCatalogEntry());
     p.setComment(newPreOrder.getComment());
     if (preOrder.getUser().isShopUser()) {
@@ -135,6 +137,10 @@ public class PreOrderModel implements IModel<PreOrderController> {
     }
   }
 
+  public boolean isSlowOrder(CatalogEntry catalogEntry) {
+    return catalogEntry.getBezeichnung().contains("*V*");
+  }
+
   public void close() {
     et.begin();
     delivery.forEach(
@@ -166,6 +172,12 @@ public class PreOrderModel implements IModel<PreOrderController> {
         delivery.add(p);
       }
     }
+  }
+
+  public void printDeliveryBills() {
+    new DeliveryBillReport()
+        .sendToPrinter(
+            "Erstelle Lieferscheine", UnexpectedExceptionHandler::showUnexpectedErrorWarning);
   }
 
   public boolean exportPreOrder(Component parent) {

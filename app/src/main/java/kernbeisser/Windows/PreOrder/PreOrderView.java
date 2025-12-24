@@ -390,7 +390,7 @@ public class PreOrderView implements IView<PreOrderController> {
   }
 
   public void pasteEntryDataInView(CatalogEntry entry, boolean targetAlternative) {
-    if (entry == null) {
+    if (entry == null || entry.getArtikelNr() == null) {
       if (targetAlternative) {
         clearAlternativeItemDetails();
       } else {
@@ -404,12 +404,19 @@ public class PreOrderView implements IView<PreOrderController> {
     Double containerNetPrice = PreOrderModel.containerNetPrice(entry);
 
     if (targetAlternative) {
-      useAlternative.setSelected(true);
+      if (controller.isSlowOrder(entry) && !controller.isSlowOrder(controller.getSelectedEntry())) {
+        messageNoSlowOrder(entry);
+        clearAlternativeItemDetails();
+        return;
+      }
       alternativePermitted.setSelected(true);
       setAlternativeKkNumber(artikelNr);
       setAlternativeItemName(bezeichnung);
       setAlternativeContainerSize(bestellEinheit);
       setAlternativeNetPrice(containerNetPrice);
+      return;
+    }
+    if (controller.isSlowOrder(entry) && !confirmSlowOrder(entry)) {
       return;
     }
     controller.setSelectedEntry(entry);
@@ -420,20 +427,6 @@ public class PreOrderView implements IView<PreOrderController> {
     Optional.ofNullable(entry.getErsatzArtikelNr())
         .flatMap(nr -> controller.getEntryByKKNr(nr))
         .ifPresent(this::confirmAlternativeFromCatalog);
-  }
-
-  private void confirmAlternativeFromCatalog(CatalogEntry entry) {
-    int result =
-        JOptionPane.showConfirmDialog(
-            getContent(),
-            "Der Großhandel kann die Lieferung dieses Artikels nicht garantieren und schlägt daher "
-                + "einen alternativen Artikel vor. Soll dieser als Ersatzartikel übernommen werden?\n"
-                + "Dieser Artikel wird nur dann geliefert, wenn der gewünschte Artikel nicht vorrätig ist.",
-            "Ersatzartikel verwenden",
-            JOptionPane.YES_NO_OPTION);
-    if (result == JOptionPane.YES_OPTION) {
-      pasteEntryDataInView(entry, true);
-    }
   }
 
   @Override
@@ -771,6 +764,43 @@ public class PreOrderView implements IView<PreOrderController> {
         JOptionPane.WARNING_MESSAGE);
   }
 
+  private void confirmAlternativeFromCatalog(CatalogEntry entry) {
+    int result =
+        JOptionPane.showConfirmDialog(
+            getContent(),
+            "Der Großhandel kann die Lieferung dieses Artikels nicht garantieren und schlägt daher "
+                + "einen alternativen Artikel vor. Soll dieser als Ersatzartikel übernommen werden?\n"
+                + "Dieser Artikel wird nur dann geliefert, wenn der gewünschte Artikel nicht vorrätig ist.",
+            "Ersatzartikel verwenden",
+            JOptionPane.YES_NO_OPTION);
+    if (result == JOptionPane.YES_OPTION) {
+      pasteEntryDataInView(entry, true);
+    }
+  }
+
+  private boolean confirmSlowOrder(CatalogEntry entry) {
+    return JOptionPane.showConfirmDialog(
+            getContent(),
+            "Die Bereitstellung von %s durch den Großhandel kann längere ".formatted(entry.getBezeichnung())
+                + "Zeit in Anspruch nehmen (Erkennbar am *V* im namen). \n"
+                + "Sobald die Bestellung beim Großhandel eingegangen ist, kann diese Bestellung nicht "
+                + "mehr storniert werden. \n"
+                + "Daher musst Du Dich verpflichten, den Artikel, wenn er dann geliefert wurde, auch abzunehmen."
+                    ,
+            "Lange Lieferzeit",
+            JOptionPane.YES_NO_OPTION)
+        == JOptionPane.YES_OPTION;
+  }
+
+  private void messageNoSlowOrder(CatalogEntry entry) {
+    message(
+        "Die Bereitstellung von %s durch den Großhandel kann längere ".formatted(entry.getBezeichnung())
+            + "Zeit in Anspruch nehmen (Erkennbar am *V* im namen). \n"
+            + "Daher taugt er nicht als Ersatzartikel.",
+        "Ungeeigneter Ersatzartikel",
+        JOptionPane.WARNING_MESSAGE);
+  }
+
   boolean confirmEditOrdered() {
     return JOptionPane.showConfirmDialog(
             getContent(),
@@ -953,17 +983,14 @@ public class PreOrderView implements IView<PreOrderController> {
     alternativeNetPrice = new JLabel();
     alternativeNetPrice.setText("");
     insertSection.add(alternativeNetPrice, new GridConstraints(3, 10, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-    clearAlternative = new JButton();
-    clearAlternative.setText("");
-    insertSection.add(clearAlternative, new GridConstraints(3, 7, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, 1, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(15, 15), null, 0, false));
     final JLabel label10 = new JLabel();
     label10.setText("bis");
     insertSection.add(label10, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     insertSection.add(firstWeekOfDelivery, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
     insertSection.add(latestWeekOfDelivery, new GridConstraints(3, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-    useAlternative = new JCheckBox();
-    useAlternative.setText("");
-    insertSection.add(useAlternative, new GridConstraints(3, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    alternativePermitted = new JCheckBox();
+    alternativePermitted.setText("");
+    insertSection.add(alternativePermitted, new GridConstraints(3, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     final JPanel panel1 = new JPanel();
     panel1.setLayout(new GridLayoutManager(1, 7, new Insets(0, 0, 0, 0), -1, -1));
     main.add(panel1, new GridConstraints(3, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
