@@ -40,19 +40,22 @@ public class CSVExport {
   }
 
   private static List<String[]> getOrdersFileContent(Collection<PreOrder> preOrders) {
-    Map<Integer, List<PreOrder>> orderMap =
-        preOrders.stream()
-            .collect(Collectors.groupingBy(p -> p.getCatalogEntry().getArtikelNrInt()));
+    Map<OrderWithAlternative, List<PreOrder>> orderMap =
+        preOrders.stream().collect(Collectors.groupingBy(OrderWithAlternative::of));
     List<String[]> orders = new ArrayList<>();
     orderMap.forEach(
-        (i, preOrderList) ->
+        (o, preOrderList) ->
             orders.add(
                 new String[] {
-                  Integer.toString(i),
+                  o.getOrderEntry().getArtikelNr(),
                   Long.toString(
                       preOrderList.stream()
                           .collect(Collectors.summarizingInt(PreOrder::getAmount))
-                          .getSum())
+                          .getSum()),
+                  o.getAlternativeEntry() != null
+                      ? "Falls nicht sofort lieferbar, bitte Artikel %s liefern"
+                          .formatted(o.getAlternativeEntry().getArtikelNr())
+                      : ""
                 }));
     orders.add(0, new String[] {"artnr", "menge"});
     return orders;
