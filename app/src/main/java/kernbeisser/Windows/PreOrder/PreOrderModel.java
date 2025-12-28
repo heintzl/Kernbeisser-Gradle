@@ -122,11 +122,15 @@ public class PreOrderModel implements IModel<PreOrderController> {
         .getResultList();
   }
 
-  Collection<PreOrder> getUnorderedPreOrders() {
-    return QueryBuilder.selectAll(PreOrder.class)
-        .where(PreOrder_.delivery.isNull(), PreOrder_.orderedOn.isNull())
-        .orderBy(PreOrder_.catalogEntry.child(CatalogEntry_.artikelNr).asc())
-        .getResultList();
+  List<PreOrder> getExportablePreorders() {
+    List<PreOrder> unexportedPreorders =
+        QueryBuilder.selectAll(PreOrder.class)
+            .where(PreOrder_.delivery.isNull(), PreOrder_.orderedOn.isNull())
+            .orderBy(PreOrder_.catalogEntry.child(CatalogEntry_.artikelNr).asc())
+            .getResultStream(em)
+            .filter(p -> !isPostponed(p))
+            .toList();
+    return unexportedPreorders;
   }
 
   static Double containerNetPrice(CatalogEntry entry) {
@@ -180,12 +184,18 @@ public class PreOrderModel implements IModel<PreOrderController> {
             "Erstelle Lieferscheine", UnexpectedExceptionHandler::showUnexpectedErrorWarning);
   }
 
-  public boolean exportPreOrder(Component parent) {
+  public boolean exportPreOrders(Component parent, List<PreOrder> preOrders) {
     int preorderNr = Setting.LAST_EXPORTED_PREORDER_NR.getIntValue() + 1;
     String defaultFilename = "KornkraftBestellung_" + String.format("%05d.csv", preorderNr);
-    boolean result = CSVExport.exportPreOrder(parent, getUnorderedPreOrders(), defaultFilename);
+    boolean result = CSVExport.exportPreOrder(parent, preOrders, defaultFilename);
     if (result) {
-      setAllExported();
+      Instant orderInstant = Instant.now();
+      et.begin();
+      for (PreOrder o : preOrders) {
+        o.setOrderedOn(orderInstant);
+        em.merge(o);
+      }
+      et.commit();
       Setting.LAST_EXPORTED_PREORDER_NR.changeValue(preorderNr);
     }
     return result;
@@ -216,16 +226,6 @@ public class PreOrderModel implements IModel<PreOrderController> {
     dirty.add(preOrder);
   }
 
-  private void setAllExported() {
-    Instant orderInstant = Instant.now();
-    et.begin();
-    for (PreOrder o : getUnorderedPreOrders()) {
-      o.setOrderedOn(orderInstant);
-      em.merge(o);
-    }
-    et.commit();
-  }
-
   private static int getWeekOfCreation(PreOrder preOrder) {
     return LocalDate.ofInstant(preOrder.getCreateDate(), Date.CURRENT_ZONE)
         .get(ChronoField.ALIGNED_WEEK_OF_YEAR);
@@ -234,7 +234,7 @@ public class PreOrderModel implements IModel<PreOrderController> {
   public static boolean isPostponed(PreOrder p) {
     Integer firstWeekOfDelivery = p.getFirstWeekOfDelivery();
     if (firstWeekOfDelivery == null) {
-      return true;
+      return false;
     }
     return Constants.CURRENT_WEEK_OF_YEAR < firstWeekOfDelivery + 1
         || firstWeekOfDelivery <= getWeekOfCreation(p);

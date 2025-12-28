@@ -11,6 +11,7 @@ import java.time.temporal.TemporalAdjusters;
 import java.time.temporal.WeekFields;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import javax.swing.*;
 import kernbeisser.CustomComponents.BarcodeCapture;
@@ -339,11 +340,12 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
 
   public void exportPreOrder() {
     PreOrderView view = getView();
-    if (model.getUnorderedPreOrders().isEmpty()) {
+    List<PreOrder> exportablePreorders = model.getExportablePreorders();
+    if (exportablePreorders.isEmpty()) {
       getView().messageNothingToExport();
       return;
     }
-    if (model.exportPreOrder(view.getContent())) {
+    if (model.exportPreOrders(view.getContent(), exportablePreorders)) {
       view.messageExportSuccess();
     } else {
       view.messageExportCanceled();
