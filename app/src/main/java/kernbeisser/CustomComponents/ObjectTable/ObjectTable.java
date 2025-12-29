@@ -8,6 +8,7 @@ import java.awt.event.MouseEvent;
 import java.util.*;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -390,6 +391,29 @@ public class ObjectTable<T> extends JTable implements Iterable<T> {
     if (index == -1) throw new IllegalArgumentException("Object isn't contained in the table");
     getModel().replaceObject(index, newValue);
     repaint();
+  }
+
+  public void refreshChanges(List<T> changedObjects, Function<T, Object> identityFunction) {
+    if (changedObjects.isEmpty()) {
+      return;
+    }
+    List<T> objectsToRefresh = new ArrayList<>(changedObjects);
+    for (T tableObject : new ArrayList<>(getObjects())) {
+      boolean replaced = false;
+      for (T objectToRefresh : objectsToRefresh) {
+        if (identityFunction.apply(objectToRefresh).equals(identityFunction.apply(tableObject))) {
+          replace(tableObject, objectToRefresh);
+          objectsToRefresh.remove(objectToRefresh);
+          if (objectsToRefresh.isEmpty()) {
+            replaced = true;
+          }
+          break;
+        }
+      }
+      if (replaced) {
+        break;
+      }
+    }
   }
 
   @NotNull
