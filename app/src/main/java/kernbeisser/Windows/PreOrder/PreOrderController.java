@@ -350,7 +350,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     } else {
       view.messageExportCanceled();
     }
-    getView().repaintTable();
+    getView().refreshObjects(exportablePreorders);
   }
 
   void toggleDelivery(PreOrder p) {

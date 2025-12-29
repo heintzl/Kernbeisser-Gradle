@@ -12,6 +12,7 @@ import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import javax.swing.*;
@@ -374,6 +375,10 @@ public class PreOrderView implements IView<PreOrderController> {
 
   public void repaintTable() {
     preOrders.repaint();
+  }
+
+  public void refreshObjects(List<PreOrder> objects) {
+    preOrders.refreshChanges(objects, PreOrder::getId);
   }
 
   private void clearItemDetails() {
