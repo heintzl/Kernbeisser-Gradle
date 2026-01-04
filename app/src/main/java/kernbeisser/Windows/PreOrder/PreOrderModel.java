@@ -35,7 +35,7 @@ public class PreOrderModel implements IModel<PreOrderController> {
 
   private final EntityManager em = DBConnection.getEntityManager();
   private final EntityTransaction et = em.getTransaction();
-  @Getter private final Set<PreOrder> delivery = new HashSet<>();
+  @Getter private final Map<PreOrder, Delivery> delivery = new HashMap<>();
   private final Set<PreOrder> dirty = new HashSet<>();
 
   Optional<CatalogEntry> getEntryByKkNumber(Integer kkNumber) {
@@ -148,15 +148,16 @@ public class PreOrderModel implements IModel<PreOrderController> {
   public void close() {
     et.begin();
     delivery.forEach(
-        p -> {
-          if (p.getUser().isShopUser()) {
+        (p, d) -> {
+          if (p.isShopOrder()) {
             removeLazy(p);
           } else {
             p.setDelivery(Instant.now());
+            p.setAlternativeDelivery(d == Delivery.ALTERNATIVE_DELIVERED);
             em.merge(p);
           }
+          dirty.remove(p);
         });
-    dirty.removeAll(delivery);
     dirty.forEach(em::merge);
     et.commit();
     em.close();
@@ -173,7 +174,7 @@ public class PreOrderModel implements IModel<PreOrderController> {
         "Abhakplan wird gedruckt...", UnexpectedExceptionHandler::showUnexpectedErrorWarning);
     for (PreOrder p : getAllPreOrders()) {
       if (p.getOrderedOn() != null && p.isShopOrder()) {
-        delivery.add(p);
+        delivery.put(p, Delivery.DELIVERED);
       }
     }
   }
@@ -201,18 +202,34 @@ public class PreOrderModel implements IModel<PreOrderController> {
     return result;
   }
 
-  void toggleDelivery(PreOrder p) {
-    if (!delivery.remove(p)) delivery.add(p);
+  void toggleDelivery(PreOrder p, Delivery newState) {
+    if (p.getOrderedOn() == null) {
+      return;
+    }
+    Delivery currentState = delivery.get(p);
+    if (currentState != newState) {
+      delivery.put(p, newState);
+    } else {
+      delivery.remove(p);
+    }
   }
 
   boolean isDelivered(PreOrder p) {
-    return delivery.contains(p);
+    return delivery.get(p) == Delivery.DELIVERED;
+  }
+
+  boolean isAlternativeDelivered(PreOrder p) {
+    return delivery.get(p) == Delivery.ALTERNATIVE_DELIVERED;
   }
 
   public void setAllDelivered(boolean allDelivered) {
     delivery.clear();
     if (allDelivered) {
-      delivery.addAll(getAllPreOrders());
+      for (PreOrder p : getAllPreOrders()) {
+        if (p.getOrderedOn() != null) {
+          delivery.put(p, Delivery.DELIVERED);
+        }
+      }
     }
   }
 

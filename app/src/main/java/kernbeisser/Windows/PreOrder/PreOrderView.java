@@ -284,10 +284,14 @@ public class PreOrderView implements IView<PreOrderController> {
                     SwingConstants.RIGHT)
                 .withSorter(Column.DATE_SORTER(Date.INSTANT_DATE)),
             Columns.create("erwartete Lieferung", PreOrder::getDueDateAsString));
+
     if (controller.isPreOrderManager()) {
       Icon selected =
           IconFontSwing.buildIcon(
               FontAwesome.CHECK_SQUARE, Tools.scaleWithLabelScalingFactor(20), new Color(0x38FF00));
+      Icon selectedAlt =
+          IconFontSwing.buildIcon(
+              FontAwesome.CHECK_SQUARE, Tools.scaleWithLabelScalingFactor(20), new Color(0xFF8000));
       Icon unselected =
           IconFontSwing.buildIcon(
               FontAwesome.SQUARE, Tools.scaleWithLabelScalingFactor(20), new Color(0xC7C7C7));
@@ -300,12 +304,17 @@ public class PreOrderView implements IView<PreOrderController> {
       popupSelectionColumn.add(popupDeselectAll);
       preOrders.addColumnAtIndex(
           0,
-          Columns.createIconColumn(
-              "ausgeliefert",
-              e -> controller.isDelivered(e) ? selected : unselected,
-              controller::toggleDelivery,
-              e -> showSelectionPopup(),
-              70));
+          Columns.<PreOrder>createIconColumn(
+                  "gel.", e -> controller.isDelivered(e) ? selected : unselected)
+              .withLeftClickConsumer(controller::toggleDelivery)
+              .withRightClickConsumer(e -> showSelectionPopup())
+              .withPreferredWidth(35));
+      preOrders.addColumnAtIndex(
+          1,
+          Columns.<PreOrder>createIconColumn(
+                  "Ersatz", e -> controller.isAlternativeDelivered(e) ? selectedAlt : unselected)
+              .withLeftClickConsumer(controller::toggleAlternativeDelivery)
+              .withPreferredWidth(35));
     }
     if (controller.isEditAllowed()) {
       preOrders.addColumn(

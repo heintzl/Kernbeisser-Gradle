@@ -137,7 +137,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
 
   @Override
   protected boolean commitClose() {
-    Collection<PreOrder> delivery = model.getDelivery();
+    Collection<PreOrder> delivery = model.getDelivery().keySet();
     int numDelivered = delivery.size();
     Collection<PreOrder> remaining = model.getAllPreOrders();
     remaining.removeAll(delivery);
@@ -354,12 +354,21 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
   }
 
   void toggleDelivery(PreOrder p) {
-    model.toggleDelivery(p);
+    model.toggleDelivery(p, Delivery.DELIVERED);
+    getView().repaintTable();
+  }
+
+  void toggleAlternativeDelivery(PreOrder p) {
+    model.toggleDelivery(p, Delivery.ALTERNATIVE_DELIVERED);
     getView().repaintTable();
   }
 
   boolean isDelivered(PreOrder p) {
     return model.isDelivered(p);
+  }
+
+  boolean isAlternativeDelivered(PreOrder p) {
+    return model.isAlternativeDelivered(p);
   }
 
   public boolean isSlowOrder(CatalogEntry catalogEntry) {
