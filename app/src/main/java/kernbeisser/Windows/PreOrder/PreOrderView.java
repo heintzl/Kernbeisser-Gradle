@@ -21,6 +21,7 @@ import javax.swing.text.StyleContext;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import kernbeisser.CustomComponents.ComboBox.AdvancedComboBox;
+import kernbeisser.CustomComponents.Dialogs.NumberInputDialog;
 import kernbeisser.CustomComponents.ObjectTable.Column;
 import kernbeisser.CustomComponents.ObjectTable.Columns.Columns;
 import kernbeisser.CustomComponents.ObjectTable.Columns.CustomizableColumn;
@@ -313,7 +314,7 @@ public class PreOrderView implements IView<PreOrderController> {
           1,
           Columns.<PreOrder>createIconColumn(
                   "Ersatz", e -> controller.isAlternativeDelivered(e) ? selectedAlt : unselected)
-              .withLeftClickConsumer(controller::toggleAlternativeDelivery)
+              .withLeftClickConsumer(p -> toggleAlternativeDelivery(p))
               .withPreferredWidth(35));
     }
     if (controller.isEditAllowed()) {
@@ -351,9 +352,41 @@ public class PreOrderView implements IView<PreOrderController> {
     preOrders.sort();
   }
 
+  private void toggleAlternativeDelivery(PreOrder p) {
+    switch (controller.toggleAlternativeDelivery(p)) {
+      case OK -> repaintTable();
+      case NOT_PERMITTED ->
+          message(
+              "Für diese Bestellung ist kein Ersatzartikel gewünscht!",
+              "Ungültige Auswahl",
+              JOptionPane.ERROR_MESSAGE);
+      case MISSING_ALTERNATIVE -> selectAlternativeProduct(p);
+    }
+  }
+
   private void setAllDelivered(boolean allDelivered) {
     controller.setAllDelivered(allDelivered);
     popupSelectionColumn.setVisible(false);
+  }
+
+  private void selectAlternativeProduct(PreOrder p) {
+    Integer alternativeArticleNo =
+        NumberInputDialog.getInt(
+            getContent(),
+            "Für diese Bestellung ist kein Ersatzartikel angegeben. Bitte gib die Artikelnummer des gelieferten Ersatzartikels an.",
+            "Fehlender Ersatzartikel");
+    Optional<PreOrder> possiblyUpdated = controller.setAlternative(p, alternativeArticleNo);
+    if (possiblyUpdated.isPresent()) {
+      PreOrder updated = possiblyUpdated.get();
+      toggleAlternativeDelivery(updated);
+      preOrders.replace(p, updated);
+    } else {
+      message(
+          "Dieser Artikel ist nicht bekannt. Bitte korrigiere die Artikelnummer oder aktualisiere den Großhandelskatalog",
+          "Unbekannte Artikelnummer",
+          JOptionPane.WARNING_MESSAGE);
+      selectAlternativeProduct(p);
+    }
   }
 
   public void setPreOrders(Collection<PreOrder> preOrders) {

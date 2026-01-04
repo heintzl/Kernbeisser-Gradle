@@ -202,16 +202,32 @@ public class PreOrderModel implements IModel<PreOrderController> {
     return result;
   }
 
-  void toggleDelivery(PreOrder p, Delivery newState) {
+  enum toggleResult {
+    OK,
+    NOT_YET_ORDERED,
+    NOT_PERMITTED,
+    MISSING_ALTERNATIVE;
+  }
+
+  toggleResult toggleDelivery(PreOrder p, Delivery newState) {
     if (p.getOrderedOn() == null) {
-      return;
+      return toggleResult.NOT_YET_ORDERED;
     }
     Delivery currentState = delivery.get(p);
     if (currentState != newState) {
+      if (newState == Delivery.ALTERNATIVE_DELIVERED) {
+        if (!p.isAlternativePermitted()) {
+          return toggleResult.NOT_PERMITTED;
+        }
+        if (p.getAlternativeCatalogEntry() == null) {
+          return toggleResult.MISSING_ALTERNATIVE;
+        }
+      }
       delivery.put(p, newState);
     } else {
       delivery.remove(p);
     }
+    return toggleResult.OK;
   }
 
   boolean isDelivered(PreOrder p) {
@@ -241,6 +257,11 @@ public class PreOrderModel implements IModel<PreOrderController> {
   public void setComment(PreOrder preOrder, String comment) {
     preOrder.setComment(comment);
     dirty.add(preOrder);
+  }
+
+  public void setAlternative(PreOrder p, CatalogEntry entry) {
+    p.setAlternativeCatalogEntry(entry);
+    dirty.add(p);
   }
 
   private static int getWeekOfCreation(PreOrder preOrder) {

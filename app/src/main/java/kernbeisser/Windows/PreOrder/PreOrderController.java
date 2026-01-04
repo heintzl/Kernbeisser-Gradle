@@ -358,9 +358,18 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     getView().repaintTable();
   }
 
-  void toggleAlternativeDelivery(PreOrder p) {
-    model.toggleDelivery(p, Delivery.ALTERNATIVE_DELIVERED);
-    getView().repaintTable();
+  public Optional<PreOrder> setAlternative(PreOrder p, Integer alternativeArticleNo) {
+    Optional<CatalogEntry> alternativeArticle = getEntryByKKNr(alternativeArticleNo.toString());
+    if (alternativeArticle.isPresent()) {
+      model.setAlternative(p, alternativeArticle.get());
+      return Optional.of(p);
+    } else {
+      return Optional.empty();
+    }
+  }
+
+  PreOrderModel.toggleResult toggleAlternativeDelivery(PreOrder p) {
+    return model.toggleDelivery(p, Delivery.ALTERNATIVE_DELIVERED);
   }
 
   boolean isDelivered(PreOrder p) {
