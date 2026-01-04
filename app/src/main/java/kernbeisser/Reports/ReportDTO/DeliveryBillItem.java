@@ -47,7 +47,7 @@ public class DeliveryBillItem {
   public static DeliveryBillItem ofPreOrder(PreOrder preOrder) {
     CatalogEntry deliveredEntry;
     String alternativeFor = "";
-    if (preOrder.isAlternativeDelivery()) {
+    if (preOrder.isAlternativeDelivered()) {
       deliveredEntry =
           Tools.ifNull(preOrder.getAlternativeCatalogEntry(), preOrder.getCatalogEntry());
       alternativeFor = "Ersatz für %s".formatted(preOrder.getCatalogEntry().getArtikelNr());

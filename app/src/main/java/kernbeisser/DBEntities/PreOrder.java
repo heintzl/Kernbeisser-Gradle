@@ -124,8 +124,8 @@ public class PreOrder implements Serializable, UserRelated {
   }
 
   @Key(PermissionKey.CONTAINER_DELIVERY_READ)
-  public boolean isAlternativeDelivery() {
-    return (alternativeDelivery == true);
+  public boolean isAlternativeDelivered() {
+    return (alternativeDelivery == Boolean.TRUE);
   }
 
   public String getDueDateAsString() {
