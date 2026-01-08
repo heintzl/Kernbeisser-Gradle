@@ -18,6 +18,7 @@ import kernbeisser.DBEntities.PreOrder_;
 import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.DBEntities.User_;
 import kernbeisser.EntityWrapper.ObjectState;
+import kernbeisser.Enums.Delivery;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
 import kernbeisser.Export.CSVExport;
@@ -154,6 +155,8 @@ public class PreOrderModel implements IModel<PreOrderController> {
           } else {
             p.setDelivery(Instant.now());
             p.setAlternativeDelivery(d == Delivery.ALTERNATIVE_DELIVERED);
+            p.setDeliveryType(delivery.get(p));
+              p.setDelivery(Instant.now());
             em.merge(p);
           }
           dirty.remove(p);

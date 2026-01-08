@@ -2,6 +2,7 @@ package kernbeisser.Reports.ReportDTO;
 
 import kernbeisser.DBEntities.CatalogEntry;
 import kernbeisser.DBEntities.PreOrder;
+import kernbeisser.Enums.Delivery;
 import kernbeisser.Useful.Tools;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
@@ -47,7 +48,7 @@ public class DeliveryBillItem {
   public static DeliveryBillItem ofPreOrder(PreOrder preOrder) {
     CatalogEntry deliveredEntry;
     String alternativeFor = "";
-    if (preOrder.isAlternativeDelivered()) {
+    if (preOrder.getDeliveryType() == Delivery.ALTERNATIVE_DELIVERED) {
       deliveredEntry =
           Tools.ifNull(preOrder.getAlternativeCatalogEntry(), preOrder.getCatalogEntry());
       alternativeFor = "Ersatz für %s".formatted(preOrder.getCatalogEntry().getArtikelNr());

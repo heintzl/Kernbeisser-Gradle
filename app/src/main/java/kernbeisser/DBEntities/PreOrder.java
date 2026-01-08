@@ -7,6 +7,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.TemporalAdjusters;
+import kernbeisser.Enums.Delivery;
 import kernbeisser.Enums.PreOrderCreator;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Security.Access.UserRelated;
@@ -105,27 +106,24 @@ public class PreOrder implements Serializable, UserRelated {
   @Column
   @Getter(onMethod_ = {@Key(PermissionKey.CONTAINER_CREATION_TYPE_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.CONTAINER_CREATION_TYPE_WRITE)})
-  private PreOrderCreator CreationType;
+  private PreOrderCreator creationType;
 
   @ManyToOne
   @EqualsAndHashCode.Exclude
   @JoinColumn(nullable = true)
-  @Getter(onMethod_ = {@rs.groump.Key(PermissionKey.CONTAINER_CREATED_BY_READ)})
-  @Setter(onMethod_ = {@rs.groump.Key(PermissionKey.CONTAINER_CREATED_BY_WRITE)})
+  @Getter(onMethod_ = {@Key(PermissionKey.CONTAINER_CREATED_BY_READ)})
+  @Setter(onMethod_ = {@Key(PermissionKey.CONTAINER_CREATED_BY_WRITE)})
   private User createdBy;
 
+  @Enumerated(EnumType.STRING)
   @Column
+  @Getter(onMethod_ = {@Key(PermissionKey.CONTAINER_DELIVERY_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.CONTAINER_DELIVERY_WRITE)})
-  private Boolean alternativeDelivery;
+  private Delivery deliveryType = Delivery.UNDELIVERED;
 
   @Key(PermissionKey.CONTAINER_DELIVERY_READ)
   public boolean isAlternativePermitted() {
     return (alternativePermitted == Boolean.TRUE);
-  }
-
-  @Key(PermissionKey.CONTAINER_DELIVERY_READ)
-  public boolean isAlternativeDelivered() {
-    return (alternativeDelivery == Boolean.TRUE);
   }
 
   public String getDueDateAsString() {

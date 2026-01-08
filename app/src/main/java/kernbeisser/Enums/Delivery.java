@@ -1,7 +1,7 @@
-package kernbeisser.Windows.PreOrder;
+package kernbeisser.Enums;
 
 public enum Delivery {
-  NONE,
+  UNDELIVERED,
   DELIVERED,
   ALTERNATIVE_DELIVERED;
 }

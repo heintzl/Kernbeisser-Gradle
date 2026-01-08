@@ -19,6 +19,7 @@ import kernbeisser.CustomComponents.Dialogs.DateSelectorDialog;
 import kernbeisser.CustomComponents.Dialogs.TextAreaDialog;
 import kernbeisser.CustomComponents.KeyCapture;
 import kernbeisser.DBEntities.*;
+import kernbeisser.Enums.Delivery;
 import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PreOrderCreator;
 import kernbeisser.Enums.Setting;
