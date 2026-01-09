@@ -411,6 +411,7 @@ public class PreOrderView implements IView<PreOrderController> {
     kkNumber.requestFocusInWindow();
     firstWeekOfDelivery.setDate(null);
     latestWeekOfDelivery.setDate(null);
+    alternativePermitted.setSelected(false);
     alternativeKkNumber.setText("");
     comment.setText("");
   }
@@ -622,10 +623,10 @@ public class PreOrderView implements IView<PreOrderController> {
     setAmount(Integer.toString(preOrder.getAmount()));
     pasteEntryDataInView(preOrder.getCatalogEntry(), false);
     if (preOrder.isAlternativePermitted()) {
-      alternativePermitted.setEnabled(true);
+      alternativePermitted.setSelected(true);
       pasteEntryDataInView(preOrder.getAlternativeCatalogEntry(), true);
     } else {
-      alternativePermitted.setEnabled(false);
+      alternativePermitted.setSelected(false);
     }
     setComment(preOrder.getComment());
     setFirstWeekOfDelivery(preOrder);
