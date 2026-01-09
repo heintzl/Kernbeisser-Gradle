@@ -339,6 +339,16 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     }
   }
 
+  private void afterPrint(List<PreOrder> preOrders) {
+    if (getView().confirmBillsPrinted(preOrders.size())) {
+      model.setDeliveryDate(preOrders);
+    }
+  }
+
+  public void printDeliveryBills() {
+    model.printDeliveryBills(this::afterPrint);
+  }
+
   public void exportPreOrder() {
     PreOrderView view = getView();
     List<PreOrder> exportablePreorders = model.getExportablePreorders();

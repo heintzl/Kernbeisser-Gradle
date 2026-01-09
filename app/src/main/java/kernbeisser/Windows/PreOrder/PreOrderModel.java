@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoField;
 import java.util.*;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import kernbeisser.DBConnection.DBConnection;
 import kernbeisser.DBConnection.QueryBuilder;
@@ -36,7 +37,7 @@ public class PreOrderModel implements IModel<PreOrderController> {
 
   private final EntityManager em = DBConnection.getEntityManager();
   private final EntityTransaction et = em.getTransaction();
-  @Getter private final Map<PreOrder, Delivery> delivery = new HashMap<>();
+  @Getter private final Map<PreOrder, Delivery> delivery = initializeDelivery();
   private final Set<PreOrder> dirty = new HashSet<>();
 
   Optional<CatalogEntry> getEntryByKkNumber(Integer kkNumber) {
@@ -53,6 +54,12 @@ public class PreOrderModel implements IModel<PreOrderController> {
     }
     em.persist(preOrder);
     et.commit();
+  }
+
+  private Map<PreOrder, Delivery> initializeDelivery() {
+    return getAllPreOrders().stream()
+        .filter(p -> p.getDeliveryType() != null && p.getDeliveryType() != Delivery.UNDELIVERED)
+        .collect(Collectors.toMap(p -> p, PreOrder::getDeliveryType));
   }
 
   public PreOrder edit(PreOrder preOrder, PreOrder newPreOrder) {
@@ -153,10 +160,7 @@ public class PreOrderModel implements IModel<PreOrderController> {
           if (p.isShopOrder()) {
             removeLazy(p);
           } else {
-            p.setDelivery(Instant.now());
-            p.setAlternativeDelivery(d == Delivery.ALTERNATIVE_DELIVERED);
             p.setDeliveryType(delivery.get(p));
-              p.setDelivery(Instant.now());
             em.merge(p);
           }
           dirty.remove(p);
@@ -182,8 +186,24 @@ public class PreOrderModel implements IModel<PreOrderController> {
     }
   }
 
-  public void printDeliveryBills() {
-    new DeliveryBillReport()
+  public void setDeliveryDate(Collection<PreOrder> preOrders) {
+    for (PreOrder p : preOrders) {
+      p.setDelivery(Instant.now());
+    }
+  }
+
+  public void printDeliveryBills(Consumer<List<PreOrder>> controllerCallback) {
+    List<PreOrder> deliveredPreOrders =
+        QueryBuilder.selectAll(PreOrder.class)
+            .where(
+                PreOrder_.delivery.isNull(),
+                PreOrder_.orderedOn.isNull().not(),
+                PreOrder_.user.child(User_.id).eq(Constants.SHOP_USER_ID).not())
+            .orderBy(PreOrder_.user.child(User_.username).asc())
+            .getResultList();
+
+    new DeliveryBillReport(deliveredPreOrders)
+        .then(() -> controllerCallback.accept(deliveredPreOrders))
         .sendToPrinter(
             "Erstelle Lieferscheine", UnexpectedExceptionHandler::showUnexpectedErrorWarning);
   }

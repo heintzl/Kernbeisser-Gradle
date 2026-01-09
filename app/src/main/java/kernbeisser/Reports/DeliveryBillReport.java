@@ -3,16 +3,19 @@ package kernbeisser.Reports;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import kernbeisser.DBConnection.QueryBuilder;
 import kernbeisser.DBEntities.*;
 import kernbeisser.Reports.ReportDTO.DeliveryBillItem;
-import kernbeisser.Useful.Constants;
 
 public class DeliveryBillReport extends Report {
 
-  public DeliveryBillReport() {
+  private final List<PreOrder> preOrders;
+
+  public DeliveryBillReport(List<PreOrder> preOrders) {
     super(ReportFileNames.DELIVERY_BILL_REPORT_FILENAME);
+    this.preOrders = preOrders;
+
     setDuplexPrint(false);
   }
 
@@ -28,18 +31,6 @@ public class DeliveryBillReport extends Report {
 
   @Override
   Collection<?> getDetailCollection() {
-    Collection<DeliveryBillItem> details =
-        QueryBuilder.selectAll(PreOrder.class)
-            .where(
-                PreOrder_.delivery.isNull(),
-                PreOrder_.orderedOn.isNull().not(),
-                PreOrder_.user.child(User_.id).eq(Constants.SHOP_USER_ID).not())
-            .orderBy(PreOrder_.user.child(User_.username).asc())
-            .getResultList()
-            .stream()
-            // .filter(p -> p.getCatalogEntry() != null)
-            .map(DeliveryBillItem::ofPreOrder)
-            .toList();
-    return details;
+    return preOrders.stream().map(DeliveryBillItem::ofPreOrder).toList();
   }
 }
