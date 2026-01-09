@@ -46,6 +46,8 @@ public abstract class Report {
 
   private final String reportFileName;
 
+  private Runnable callbackMethod = () -> {};
+
   private static Path getReportsFolder() {
     return Config.getConfig().getReports().getReportDirectory().toPath();
   }
@@ -180,6 +182,7 @@ public abstract class Report {
         pm.close();
         try {
           get();
+          callbackMethod.run();
         } catch (Exception e) {
           String errorMessage = e.getMessage().toLowerCase(Locale.ROOT);
           Collection<String> printerNotFoundMessages =
@@ -210,26 +213,17 @@ public abstract class Report {
   }
 
   public void exportPdfToCloud(String message, Consumer<Throwable> exConsumer) {
-    exportPdfToCloudAndThen(message, exConsumer, () -> {});
-  }
-
-  public void exportPdfToCloudAndThen(
-      String message, Consumer<Throwable> exConsumer, Runnable then) {
     Path filePath = getCloudOutputFolder().resolve(getSafeOutFileName() + ".pdf").toAbsolutePath();
-    exportPdf(message, exConsumer, filePath, false, then);
+    exportPdf(message, exConsumer, filePath, false);
   }
 
   public void exportPdf(String message, Consumer<Throwable> exConsumer) {
     Path filePath = getOutputFolder().resolve(getSafeOutFileName() + ".pdf").toAbsolutePath();
-    exportPdf(message, exConsumer, filePath, true, () -> {});
+    exportPdf(message, exConsumer, filePath, true);
   }
 
   private void exportPdf(
-      String message,
-      Consumer<Throwable> exConsumer,
-      Path filePath,
-      boolean openFile,
-      Runnable callback) {
+      String message, Consumer<Throwable> exConsumer, Path filePath, boolean openFile) {
 
     Path outputFolder = getOutputFolder();
     final AtomicInteger progressStep = new AtomicInteger(1);
@@ -268,7 +262,7 @@ public abstract class Report {
         pm.close();
         try {
           get();
-          callback.run();
+          callbackMethod.run();
         } catch (Exception e) {
           if (ExceptionUtils.indexOfType(e.getCause(), PrinterAbortException.class) != -1) {
             UnexpectedExceptionHandler.showPrintAbortedWarning(e, true);
@@ -301,6 +295,11 @@ public abstract class Report {
     } catch (Throwable t) {
       UnexpectedExceptionHandler.showUnexpectedErrorWarning(t);
     }
+  }
+
+  public Report then(Runnable callbackMethod) {
+    this.callbackMethod = callbackMethod;
+    return this;
   }
 
   @NotNull

@@ -37,12 +37,14 @@ public class CashierShoppingMaskModel implements IModel<CashierShoppingMaskContr
     try {
       long no = TransactionRepository.getLastReportNo() + 1;
       AccountingReport accountingReport = AccountingReport.latest(no, unreportedTransactions, true);
-      accountingReport.exportPdfToCloudAndThen(
-          "Erstelle Buchhaltungsbericht",
-          UnexpectedExceptionHandler::showUnexpectedErrorWarning,
-          () ->
-              markTransactionsAsReported(
-                  unreportedTransactions, accountingReport.getSafeOutFileName(), no));
+      accountingReport
+          .then(
+              () ->
+                  markTransactionsAsReported(
+                      unreportedTransactions, accountingReport.getSafeOutFileName(), no))
+          .exportPdfToCloud(
+              "Erstelle Buchhaltungsbericht",
+              UnexpectedExceptionHandler::showUnexpectedErrorWarning);
       return 0;
     } catch (NoTransactionsFoundException e) {
       return 0;
