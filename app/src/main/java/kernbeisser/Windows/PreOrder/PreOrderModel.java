@@ -175,7 +175,9 @@ public class PreOrderModel implements IModel<PreOrderController> {
     Report report =
         new PreOrderChecklist(
             deliveryDate,
-            getAllPreOrders().stream().filter(p -> !isDelivered(p)).collect(Collectors.toList()));
+            getAllPreOrders().stream()
+                .filter(p -> p.getOrderedOn() != null && !isDelivered(p))
+                .collect(Collectors.toList()));
     report.setDuplexPrint(duplexPrint);
     report.sendToPrinter(
         "Abhakplan wird gedruckt...", UnexpectedExceptionHandler::showUnexpectedErrorWarning);
