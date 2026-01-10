@@ -153,19 +153,28 @@ public class PreOrderModel implements IModel<PreOrderController> {
     return catalogEntry.getBezeichnung().contains("*V*");
   }
 
-  public void close() {
+  public void saveChanges() {
     et.begin();
+    for (PreOrder p : dirty) {
+      if (!p.isShopOrder()) {
+        Delivery deliveryType = delivery.remove(p);
+        if (deliveryType != null && deliveryType != Delivery.UNDELIVERED) {
+          p.setDeliveryType(deliveryType);
+        }
+      }
+      em.merge(p);
+    }
+
     delivery.forEach(
         (p, d) -> {
           if (p.isShopOrder()) {
             removeLazy(p);
           } else {
-            p.setDeliveryType(delivery.get(p));
-            em.merge(p);
+            PreOrder persitedPreOrder = em.find(PreOrder.class, p.getId());
+            persitedPreOrder.setDeliveryType(delivery.get(p));
+            em.merge(persitedPreOrder);
           }
-          dirty.remove(p);
         });
-    dirty.forEach(em::merge);
     et.commit();
     em.close();
   }
@@ -190,7 +199,10 @@ public class PreOrderModel implements IModel<PreOrderController> {
 
   public void setDeliveryDate(Collection<PreOrder> preOrders) {
     for (PreOrder p : preOrders) {
-      p.setDelivery(Instant.now());
+      if (delivery.containsKey(p)) {
+        p.setDelivery(Instant.now());
+        dirty.add(p);
+      }
     }
   }
 

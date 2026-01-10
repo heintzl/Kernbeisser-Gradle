@@ -6,7 +6,6 @@ import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.temporal.ChronoField;
-import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 import java.time.temporal.WeekFields;
 import java.util.Collection;
@@ -149,7 +148,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     if (!getView().confirmDelivery(numDelivered, numOverdue)) {
       return false;
     }
-    model.close();
+    model.saveChanges();
     return true;
   }
 
@@ -329,7 +328,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
             .minusDays(2)
             .with(
                 TemporalAdjusters.next(Setting.KK_SUPPLY_DAY_OF_WEEK.getEnumValue(DayOfWeek.class)))
-            .plus(1, ChronoUnit.DAYS);
+            .plusDays(1);
     LocalDate deliveryDate =
         DateSelectorDialog.getDate(
             view.getContent(), "Abhakplan", "Bitte das Lieferdatum auswählen:", defaultDate);
