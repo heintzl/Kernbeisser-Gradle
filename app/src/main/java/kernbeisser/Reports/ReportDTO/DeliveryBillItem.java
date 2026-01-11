@@ -56,7 +56,7 @@ public class DeliveryBillItem {
       deliveredEntry = preOrder.getCatalogEntry();
     }
     String expectedDelivery = "";
-    if (!preOrder.isDelivered()) {
+    if (preOrder.getDeliveryType() == Delivery.UNDELIVERED) {
       expectedDelivery = preOrder.getDueDateAsString();
     }
 
