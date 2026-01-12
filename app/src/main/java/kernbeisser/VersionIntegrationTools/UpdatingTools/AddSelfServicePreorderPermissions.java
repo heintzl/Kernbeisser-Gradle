@@ -43,7 +43,7 @@ public class AddSelfServicePreorderPermissions implements VersionUpdatingTool {
             "UPDATE PreOrder Set creationType = 'PRE_ORDER_MANAGER' WHERE creationType IS NULL")
         .executeUpdate();
     em.createNativeQuery(
-            "UPDATE PreOrder Set deliveryType = CASE WHEN delivery IS NULL THEN 'UNDELIVERED' ELSE 'DELIVERED' END WHERE deliveryType IS NULL")
+            "UPDATE PreOrder Set deliveryState = CASE WHEN delivery IS NULL THEN 'UNDELIVERED' ELSE 'DELIVERED' END WHERE deliveryState IS NULL")
         .executeUpdate();
   }
 }

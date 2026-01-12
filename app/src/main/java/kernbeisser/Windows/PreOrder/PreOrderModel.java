@@ -58,8 +58,8 @@ public class PreOrderModel implements IModel<PreOrderController> {
 
   private Map<PreOrder, Delivery> initializeDelivery() {
     return getAllPreOrders().stream()
-        .filter(p -> p.getDeliveryType() != null && p.getDeliveryType() != Delivery.UNDELIVERED)
-        .collect(Collectors.toMap(p -> p, PreOrder::getDeliveryType));
+        .filter(p -> p.getDeliveryState() != null)
+        .collect(Collectors.toMap(p -> p, PreOrder::getDeliveryState));
   }
 
   public PreOrder edit(PreOrder preOrder, PreOrder newPreOrder) {
@@ -153,17 +153,20 @@ public class PreOrderModel implements IModel<PreOrderController> {
     return catalogEntry.getBezeichnung().contains("*V*");
   }
 
-  public void saveChanges() {
+  public void close() {
+    saveChanges();
+    em.close();
+  }
+
+  private void saveChanges() {
     et.begin();
     for (PreOrder p : dirty) {
       if (!p.isShopOrder()) {
-        Delivery deliveryType = delivery.remove(p);
-        if (deliveryType != null && deliveryType != Delivery.UNDELIVERED) {
-          p.setDeliveryType(deliveryType);
-        }
+        p.setDeliveryState(delivery.getOrDefault(p, Delivery.UNDELIVERED));
       }
       em.merge(p);
     }
+    dirty.clear();
 
     delivery.forEach(
         (p, d) -> {
@@ -171,12 +174,13 @@ public class PreOrderModel implements IModel<PreOrderController> {
             removeLazy(p);
           } else {
             PreOrder persitedPreOrder = em.find(PreOrder.class, p.getId());
-            persitedPreOrder.setDeliveryType(delivery.get(p));
+            Delivery deliveryState = delivery.getOrDefault(p, Delivery.UNDELIVERED);
+            persitedPreOrder.setDeliveryState(deliveryState);
             em.merge(persitedPreOrder);
           }
         });
     et.commit();
-    em.close();
+    em.clear();
   }
 
   public void printCheckList(LocalDate deliveryDate, boolean duplexPrint) {
@@ -199,7 +203,7 @@ public class PreOrderModel implements IModel<PreOrderController> {
 
   public void setDeliveryDate(Collection<PreOrder> preOrders) {
     for (PreOrder p : preOrders) {
-      if (delivery.containsKey(p)) {
+      if (delivery.getOrDefault(p, Delivery.UNDELIVERED) != Delivery.UNDELIVERED) {
         p.setDelivery(Instant.now());
         dirty.add(p);
       }
@@ -207,7 +211,8 @@ public class PreOrderModel implements IModel<PreOrderController> {
   }
 
   public void printDeliveryBills(Consumer<List<PreOrder>> controllerCallback) {
-    List<PreOrder> deliveredPreOrders =
+    saveChanges();
+    List<PreOrder> preOrders =
         QueryBuilder.selectAll(PreOrder.class)
             .where(
                 PreOrder_.delivery.isNull(),
@@ -216,6 +221,13 @@ public class PreOrderModel implements IModel<PreOrderController> {
             .orderBy(PreOrder_.user.child(User_.username).asc())
             .getResultList();
 
+    Set<User> reportableUsers =
+        preOrders.stream()
+            .filter(p -> p.getDeliveryState() != Delivery.UNDELIVERED)
+            .map(PreOrder::getUser)
+            .collect(Collectors.toSet());
+    List<PreOrder> deliveredPreOrders =
+        preOrders.stream().filter(p -> reportableUsers.contains(p.getUser())).toList();
     new DeliveryBillReport(deliveredPreOrders)
         .then(() -> controllerCallback.accept(deliveredPreOrders))
         .sendToPrinter(
@@ -246,13 +258,13 @@ public class PreOrderModel implements IModel<PreOrderController> {
     MISSING_ALTERNATIVE;
   }
 
-  toggleResult toggleDelivery(PreOrder p, Delivery newState) {
+  toggleResult toggleDelivery(PreOrder p, Delivery toggleState) {
     if (p.getOrderedOn() == null) {
       return toggleResult.NOT_YET_ORDERED;
     }
     Delivery currentState = delivery.get(p);
-    if (currentState != newState) {
-      if (newState == Delivery.ALTERNATIVE_DELIVERED) {
+    if (currentState != toggleState) {
+      if (toggleState == Delivery.ALTERNATIVE_DELIVERED) {
         if (!p.isAlternativePermitted()) {
           return toggleResult.NOT_PERMITTED;
         }
@@ -260,9 +272,9 @@ public class PreOrderModel implements IModel<PreOrderController> {
           return toggleResult.MISSING_ALTERNATIVE;
         }
       }
-      delivery.put(p, newState);
+      delivery.put(p, toggleState);
     } else {
-      delivery.remove(p);
+      delivery.put(p, Delivery.UNDELIVERED);
     }
     return toggleResult.OK;
   }

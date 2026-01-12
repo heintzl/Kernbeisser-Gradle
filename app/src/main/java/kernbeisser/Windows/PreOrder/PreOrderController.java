@@ -44,6 +44,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
   @Getter private final Optional<User> restrictToUser;
   @Getter private final boolean isPreOrderManager;
   @Getter private final boolean isEditAllowed;
+  private boolean closeAllowed = true;
 
   @Getter
   private static final DayOfWeek weekdayOfDelivery =
@@ -133,23 +134,6 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
   void noEntryFound() {
     getView().pasteEntryDataInView(new CatalogEntry(), false);
     selectedEntry = null;
-  }
-
-  @Override
-  protected boolean commitClose() {
-    Collection<PreOrder> delivery = model.getDelivery().keySet();
-    int numDelivered = delivery.size();
-    Collection<PreOrder> remaining = model.getAllPreOrders();
-    remaining.removeAll(delivery);
-    long numOverdue =
-        remaining.stream()
-            .filter(p -> Tools.ifNull(p.getDueDate(), LocalDate.MAX).isBefore(LocalDate.now()))
-            .count();
-    if (!getView().confirmDelivery(numDelivered, numOverdue)) {
-      return false;
-    }
-    model.saveChanges();
-    return true;
   }
 
   private PreOrder obtainFromView() throws InvalidValue, NoResultException {
@@ -268,6 +252,11 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     }
   }
 
+  private void allowClose(boolean allowed) {
+    closeAllowed = allowed;
+    getView().enableClose(allowed);
+  }
+
   @Override
   protected boolean processKeyboardInput(KeyEvent e) {
     return barcodeCapture.processKeyEvent(e) || keyCapture.processKeyEvent(e);
@@ -339,12 +328,17 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
   }
 
   private void afterPrint(List<PreOrder> preOrders) {
-    if (getView().confirmBillsPrinted(preOrders.size())) {
+    PreOrderView view = getView();
+    allowClose(true);
+    int numBills = (int) preOrders.stream().map(PreOrder::getUser).distinct().count();
+    if (view.confirmBillsPrinted(numBills)) {
       model.setDeliveryDate(preOrders);
+      view.back();
     }
   }
 
   public void printDeliveryBills() {
+    allowClose(false);
     model.printDeliveryBills(this::afterPrint);
   }
 
@@ -363,9 +357,32 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     getView().refreshObjects(exportablePreorders);
   }
 
-  void toggleDelivery(PreOrder p) {
-    model.toggleDelivery(p, Delivery.DELIVERED);
-    getView().repaintTable();
+  @Override
+  protected boolean commitClose() {
+    if (!closeAllowed) {
+      return false;
+    }
+    Collection<PreOrder> delivery = model.getDelivery().keySet();
+    int numDelivered = delivery.size();
+    Collection<PreOrder> remaining = model.getAllPreOrders();
+    remaining.removeAll(delivery);
+    long numOverdue =
+        remaining.stream()
+            .filter(p -> Tools.ifNull(p.getDueDate(), LocalDate.MAX).isBefore(LocalDate.now()))
+            .count();
+    if (!getView().confirmDelivery(numDelivered, numOverdue)) {
+      return false;
+    }
+    model.close();
+    return true;
+  }
+
+  PreOrderModel.toggleResult toggleDelivery(PreOrder p) {
+    return model.toggleDelivery(p, Delivery.DELIVERED);
+  }
+
+  PreOrderModel.toggleResult toggleAlternativeDelivery(PreOrder p) {
+    return model.toggleDelivery(p, Delivery.ALTERNATIVE_DELIVERED);
   }
 
   public Optional<PreOrder> setAlternative(PreOrder p, Integer alternativeArticleNo) {
@@ -376,10 +393,6 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     } else {
       return Optional.empty();
     }
-  }
-
-  PreOrderModel.toggleResult toggleAlternativeDelivery(PreOrder p) {
-    return model.toggleDelivery(p, Delivery.ALTERNATIVE_DELIVERED);
   }
 
   boolean isDelivered(PreOrder p) {
