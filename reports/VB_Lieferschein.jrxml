@@ -40,7 +40,7 @@
 				<element kind="staticText" uuid="cf608791-fb18-465e-843a-2bfcd170e4ad" x="5" y="2" width="140" height="20" markup="html" fontName="DejaVu Sans Condensed" fontSize="14.0" bold="true">
 					<text><![CDATA[VB-Lieferschein für]]></text>
 				</element>
-				<element kind="staticText" uuid="5f1819b7-3629-4041-9f13-fa55def3eb12" x="301" y="38" width="40" height="15" fontName="DejaVu Sans Condensed" fontSize="11.0" bold="true" hTextAlign="Left">
+				<element kind="staticText" uuid="5f1819b7-3629-4041-9f13-fa55def3eb12" x="290" y="38" width="51" height="15" fontName="DejaVu Sans Condensed" fontSize="11.0" bold="true" hTextAlign="Left">
 					<text><![CDATA[Netto]]></text>
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="2c9f6621-4a86-4a68-9868-ed59877b405a"/>
 				</element>
@@ -74,7 +74,7 @@
 	<pageHeader height="5" splitType="Stretch"/>
 	<detail>
 		<band height="32" splitType="Stretch">
-			<element kind="textField" uuid="fa833c73-05a6-4b36-bc08-e3e8d4c1dd14" x="80" y="0" width="221" height="16" fontName="DejaVu Sans Condensed" fontSize="11.0">
+			<element kind="textField" uuid="fa833c73-05a6-4b36-bc08-e3e8d4c1dd14" x="80" y="0" width="210" height="16" fontName="DejaVu Sans Condensed" fontSize="11.0" textAdjust="StretchHeight">
 				<expression><![CDATA[$F{name}]]></expression>
 				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="87ed4b77-891b-4c19-864f-9861d33ae3ea"/>
 				<box topPadding="3" rightPadding="0">
@@ -84,7 +84,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 			</element>
-			<element kind="textField" uuid="09f1a3ee-8acc-4f3f-ab88-13ea0ffc748a" x="301" y="0" width="40" height="16" fontName="DejaVu Sans Condensed" fontSize="11.0" pattern="#,##0.00 €" hTextAlign="Right">
+			<element kind="textField" uuid="09f1a3ee-8acc-4f3f-ab88-13ea0ffc748a" x="290" y="0" width="51" height="16" fontName="DejaVu Sans Condensed" fontSize="11.0" textAdjust="StretchHeight" pattern="#,##0.00 €" hTextAlign="Right">
 				<expression><![CDATA[$F{netPrice}]]></expression>
 				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="2c9f6621-4a86-4a68-9868-ed59877b405a"/>
 				<box topPadding="3" rightPadding="3">
@@ -94,7 +94,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 			</element>
-			<element kind="textField" uuid="5d0197df-9859-4426-b392-aab04da6467c" x="0" y="0" width="30" height="16" fontName="DejaVu Sans Condensed" fontSize="11.0">
+			<element kind="textField" uuid="5d0197df-9859-4426-b392-aab04da6467c" x="0" y="0" width="30" height="16" fontName="DejaVu Sans Condensed" fontSize="11.0" textAdjust="StretchHeight">
 				<expression><![CDATA[$F{amount}]]></expression>
 				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c9a9a859-4177-493b-94d4-5279303b60e1"/>
 				<box topPadding="3" rightPadding="0">
@@ -104,7 +104,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 			</element>
-			<element kind="textField" uuid="deda202c-1513-4cc8-9e8f-0cf28034c013" x="20" y="0" width="60" height="16" fontName="DejaVu Sans Condensed" fontSize="11.0">
+			<element kind="textField" uuid="deda202c-1513-4cc8-9e8f-0cf28034c013" x="20" y="0" width="60" height="16" fontName="DejaVu Sans Condensed" fontSize="11.0" textAdjust="StretchHeight">
 				<expression><![CDATA[$F{kkNumber}]]></expression>
 				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="738ad2b1-fbdd-4b85-952b-cae631a0572a"/>
 				<box topPadding="3" leftPadding="6" rightPadding="0">
@@ -134,7 +134,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 			</element>
-			<element kind="textField" uuid="bef9cb30-bd13-4aa4-a89c-6bfb4021bf97" x="0" y="16" width="80" height="14" fontName="DejaVu Sans Condensed" fontSize="11.0" removeLineWhenBlank="true" italic="true">
+			<element kind="textField" uuid="bef9cb30-bd13-4aa4-a89c-6bfb4021bf97" x="0" y="16" width="180" height="14" fontName="DejaVu Sans Condensed" fontSize="11.0" removeLineWhenBlank="true" italic="true">
 				<printWhenExpression><![CDATA[!$F{delivered}]]></printWhenExpression>
 				<expression><![CDATA[$F{expectedDelivery}]]></expression>
 				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="87ed4b77-891b-4c19-864f-9861d33ae3ea"/>
@@ -143,6 +143,13 @@
 				<printWhenExpression><![CDATA[!$F{delivered}]]></printWhenExpression>
 				<expression><![CDATA[$F{alternativeFor}]]></expression>
 				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="87ed4b77-891b-4c19-864f-9861d33ae3ea"/>
+			</element>
+			<element kind="line" uuid="8fee7da5-1534-4e5a-bb45-8fa5ba7b5c0f" x="0" y="8" width="340" height="1">
+				<printWhenExpression><![CDATA[$F{delivered} == false]]></printWhenExpression>
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				<property name="com.jaspersoft.studio.unit.width" value="px"/>
 			</element>
 		</band>
 	</detail>

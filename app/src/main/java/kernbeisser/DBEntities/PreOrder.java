@@ -119,7 +119,7 @@ public class PreOrder implements Serializable, UserRelated {
   @Column
   @Getter(onMethod_ = {@Key(PermissionKey.CONTAINER_DELIVERY_READ)})
   @Setter(onMethod_ = {@Key(PermissionKey.CONTAINER_DELIVERY_WRITE)})
-  private Delivery deliveryType = Delivery.UNDELIVERED;
+  private Delivery deliveryState = Delivery.UNDELIVERED;
 
   @Key(PermissionKey.CONTAINER_DELIVERY_READ)
   public boolean isAlternativePermitted() {
@@ -186,9 +186,5 @@ public class PreOrder implements Serializable, UserRelated {
       return true;
     }
     return this.user.getId() == user.getId();
-  }
-
-  public boolean isDelivered() {
-    return delivery != null;
   }
 }

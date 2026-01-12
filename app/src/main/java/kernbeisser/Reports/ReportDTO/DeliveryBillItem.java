@@ -48,7 +48,7 @@ public class DeliveryBillItem {
   public static DeliveryBillItem ofPreOrder(PreOrder preOrder) {
     CatalogEntry deliveredEntry;
     String alternativeFor = "";
-    if (preOrder.getDeliveryType() == Delivery.ALTERNATIVE_DELIVERED) {
+    if (preOrder.getDeliveryState() == Delivery.ALTERNATIVE_DELIVERED) {
       deliveredEntry =
           Tools.ifNull(preOrder.getAlternativeCatalogEntry(), preOrder.getCatalogEntry());
       alternativeFor = "Ersatz für %s".formatted(preOrder.getCatalogEntry().getArtikelNr());
@@ -56,7 +56,7 @@ public class DeliveryBillItem {
       deliveredEntry = preOrder.getCatalogEntry();
     }
     String expectedDelivery = "";
-    if (preOrder.getDeliveryType() == Delivery.UNDELIVERED) {
+    if (preOrder.getDeliveryState() == Delivery.UNDELIVERED) {
       expectedDelivery = preOrder.getDueDateAsString();
     }
 
@@ -67,7 +67,7 @@ public class DeliveryBillItem {
         deliveredEntry.getPreis() * deliveredEntry.getBestelleinheitsMenge(),
         preOrder.getAmount(),
         Tools.ifNull(preOrder.getComment(), ""),
-        preOrder.isDelivered(),
+        preOrder.getDeliveryState() != Delivery.UNDELIVERED,
         expectedDelivery,
         preOrder.getCreationType().getIconCode(),
         alternativeFor);
