@@ -53,7 +53,7 @@ public class ShoppingMaskController extends Controller<ShoppingMaskView, Shoppin
   }
 
   public boolean hasPreorderPermission() {
-    return Tools.canInvoke(this::openPreOrder);
+    return Tools.canInvoke(StaticPermissionChecks.getStaticInstance()::checkOwnPreorderPermission);
   }
 
   private double getRelevantPrice() {
