@@ -16,4 +16,10 @@ public class StaticPermissionChecks {
 
   @Key(PermissionKey.ACTION_OPEN_OWN_PRE_ORDER)
   public void checkOwnPreorderPermission() {}
+
+  @Key(PermissionKey.ACTION_ORDER_OWN_CONTAINER)
+  public void checkOrderOwnContainerPermission() {}
+
+  @Key(PermissionKey.ACTION_ORDER_CONTAINER)
+  public void checkOrderContainerPermission() {}
 }

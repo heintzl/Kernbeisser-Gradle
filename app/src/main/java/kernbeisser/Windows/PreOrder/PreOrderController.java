@@ -23,9 +23,9 @@ import kernbeisser.Enums.Mode;
 import kernbeisser.Enums.PreOrderCreator;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.InvalidValue;
+import kernbeisser.Security.StaticPermissionChecks;
 import kernbeisser.Useful.Date;
 import kernbeisser.Useful.Tools;
-import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.PreOrder.CatalogSelector.CatalogSelectorController;
 import kernbeisser.Windows.ViewContainers.SubWindow;
@@ -51,15 +51,15 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
       Setting.KK_SUPPLY_DAY_OF_WEEK.getEnumValue(DayOfWeek.class).plus(1);
 
   public PreOrderController(@NotNull PreOrderCreator preOrderCreator, @Nullable User orderingUser) {
-    super(new PreOrderModel());
+    super(new PreOrderModel(preOrderCreator, orderingUser));
     this.restrictToUser = Optional.ofNullable(orderingUser);
     this.preOrderCreator = preOrderCreator;
     keyCapture = new KeyCapture();
     barcodeCapture = new BarcodeCapture(this::processBarcode);
     isPreOrderManager =
         preOrderCreator == PreOrderCreator.PRE_ORDER_MANAGER
-            && Tools.canInvoke(model::checkGeneralOrderPlacementPermission);
-    isEditAllowed = userMayEdit();
+            && Tools.canInvoke(StaticPermissionChecks.getStaticInstance()::checkOrderContainerPermission);
+    isEditAllowed = model.isEditable();
   }
 
   @Override
@@ -224,7 +224,7 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
       view.setUsers(Collections.singletonList(user));
       view.setUserEnabled(false);
       view.setPreOrders(model.getPreOrdersByUser(user));
-      preOrdersFor = LogInModel.getLoggedIn().getFullName();
+      preOrdersFor = user.getFullName();
     } else {
       // slow!
       view.setUsers(User.getAllUserFullNames(true, true));
@@ -235,21 +235,8 @@ public class PreOrderController extends Controller<PreOrderView, PreOrderModel> 
     view.setAmount("1");
     view.getSearchCatalog().addActionListener(e -> openSearchWindow(false));
     view.getSearchCatalogAlternative().addActionListener(e -> openSearchWindow(true));
-    view.getBestellungExportierenButton().setEnabled(isPreOrderManager);
-    view.getAbhakplanButton().setEnabled(isPreOrderManager);
+    view.enablePreOrderManagementButtons(isPreOrderManager);
     noEntryFound();
-  }
-
-  public boolean userMayEdit() {
-    try {
-      model.checkUserOrderContainerPermission();
-      return true;
-    } catch (AccessDeniedException e) {
-      if (preOrderCreator == PreOrderCreator.SELF) {
-        return Tools.canInvoke(model::checkOrderOwnContainerPermission);
-      }
-      return false;
-    }
   }
 
   private void allowClose(boolean allowed) {

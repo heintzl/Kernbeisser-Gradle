@@ -85,6 +85,16 @@ public class PreOrderView implements IView<PreOrderController> {
 
   @Linked private PreOrderController controller;
 
+    void enablePreOrderManagementButtons(boolean enabled) {
+    bestellungExportierenButton.setVisible(enabled);
+    bestellungExportierenButton.setEnabled(enabled);
+    abhakplanButton.setVisible(enabled);
+    abhakplanButton.setEnabled(enabled);
+    duplexPrint.setVisible(enabled);
+    printBills.setVisible(enabled);
+    printBills.setVisible(enabled);
+  }
+
   void setInsertSectionEnabled(boolean b) {
     insertSection.setVisible(b);
   }
@@ -657,7 +667,9 @@ public class PreOrderView implements IView<PreOrderController> {
         break;
       case EDIT:
         preOrders.getSelectedObject().ifPresent(p -> controller.edit(p));
-        user.setSelectedItem(null);
+        if (user.isEnabled()) {
+          user.setSelectedItem(null);
+        }
         break;
       default:
     }
@@ -737,11 +749,11 @@ public class PreOrderView implements IView<PreOrderController> {
 
   public void setCaption(String forWho, boolean editable) {
     this.caption.setText(
-        "<html><body><h2>Hier werden die Vorbestellungen für <em>"
+        "<html><body><h3>Hier werden die Vorbestellungen für <em>"
             + forWho
             + "</em> angezeigt."
-            + (editable ? " Die Bestellungen können hier auch bearbeitet und ergänzt werden." : "")
-            + "</h2></body></html>");
+            + (editable ? " Die Bestellungen können hier auch bearbeitet werden." : "")
+            + "</h3></body></html>");
   }
 
   public void messageExportSuccess() {
@@ -952,112 +964,112 @@ public class PreOrderView implements IView<PreOrderController> {
     preOrders.setShowHorizontalLines(true);
     scrollPane1.setViewportView(preOrders);
     insertSection = new JPanel();
-    insertSection.setLayout(new GridLayoutManager(4, 14, new Insets(0, 0, 0, 0), -1, -1));
+    insertSection.setLayout(new GridLayoutManager(4, 12, new Insets(0, 0, 0, 0), -1, -1));
     main.add(insertSection, new GridConstraints(1, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     amount = new IntegerParseField();
-    insertSection.add(amount, new GridConstraints(1, 7, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(25, -1), null, 0, false));
+    insertSection.add(amount, new GridConstraints(1, 6, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(25, -1), null, 0, false));
     containerSize = new JLabel();
     containerSize.setText("");
-    insertSection.add(containerSize, new GridConstraints(1, 9, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    insertSection.add(containerSize, new GridConstraints(1, 8, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     final JLabel label1 = new JLabel();
     label1.setText("Produktname");
-    insertSection.add(label1, new GridConstraints(0, 8, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    insertSection.add(label1, new GridConstraints(0, 7, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     final JLabel label2 = new JLabel();
     label2.setText("Gebinde");
-    insertSection.add(label2, new GridConstraints(0, 9, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    insertSection.add(label2, new GridConstraints(0, 8, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     final JLabel label3 = new JLabel();
     label3.setText("Nettopreis");
-    insertSection.add(label3, new GridConstraints(0, 10, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    insertSection.add(label3, new GridConstraints(0, 9, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     netPrice = new JLabel();
     netPrice.setText("");
-    insertSection.add(netPrice, new GridConstraints(1, 10, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    insertSection.add(netPrice, new GridConstraints(1, 9, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     final JLabel label4 = new JLabel();
     label4.setText("Lieferantennr.");
-    insertSection.add(label4, new GridConstraints(0, 3, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    insertSection.add(label4, new GridConstraints(0, 2, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     kkNumber = new IntegerParseField();
-    insertSection.add(kkNumber, new GridConstraints(1, 3, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+    insertSection.add(kkNumber, new GridConstraints(1, 2, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
     final JLabel label5 = new JLabel();
     label5.setText("Benutzer");
-    insertSection.add(label5, new GridConstraints(0, 0, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, new Dimension(150, -1), new Dimension(150, 16), new Dimension(150, -1), 0, false));
+    insertSection.add(label5, new GridConstraints(0, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, new Dimension(150, -1), new Dimension(150, 16), new Dimension(150, -1), 0, false));
     user.setAlignmentX(0.0f);
-    insertSection.add(user, new GridConstraints(1, 0, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, new Dimension(350, -1), new Dimension(-1, 30), new Dimension(350, -1), 0, false));
+    insertSection.add(user, new GridConstraints(1, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, new Dimension(350, -1), new Dimension(-1, 30), new Dimension(350, -1), 0, false));
     final JLabel label6 = new JLabel();
     label6.setText("Anzahl");
-    insertSection.add(label6, new GridConstraints(0, 7, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    insertSection.add(label6, new GridConstraints(0, 6, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     findByShopNumber = new JButton();
     findByShopNumber.setBorderPainted(false);
     findByShopNumber.setContentAreaFilled(false);
     findByShopNumber.setOpaque(false);
     findByShopNumber.setText("");
-    insertSection.add(findByShopNumber, new GridConstraints(1, 5, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, 1, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null, 0, false));
+    insertSection.add(findByShopNumber, new GridConstraints(1, 4, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, 1, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null, 0, false));
     name = new JLabel();
     name.setBackground(new Color(-1));
     Font nameFont = this.$$$getFont$$$(null, Font.BOLD, -1, name.getFont());
     if (nameFont != null) name.setFont(nameFont);
     name.setText("");
-    insertSection.add(name, new GridConstraints(1, 8, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, new Dimension(300, -1), new Dimension(300, -1), new Dimension(300, -1), 0, false));
+    insertSection.add(name, new GridConstraints(1, 7, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, new Dimension(300, -1), new Dimension(300, -1), new Dimension(300, -1), 0, false));
     alternativeKkNumber = new IntegerParseField();
-    insertSection.add(alternativeKkNumber, new GridConstraints(3, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+    insertSection.add(alternativeKkNumber, new GridConstraints(3, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
     findAlternativeByShopNumber = new JButton();
     findAlternativeByShopNumber.setBorderPainted(false);
     findAlternativeByShopNumber.setContentAreaFilled(false);
     findAlternativeByShopNumber.setOpaque(false);
     findAlternativeByShopNumber.setText("");
-    insertSection.add(findAlternativeByShopNumber, new GridConstraints(3, 5, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, 1, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null, 0, false));
+    insertSection.add(findAlternativeByShopNumber, new GridConstraints(3, 4, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, 1, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null, 0, false));
     final JLabel label7 = new JLabel();
     label7.setText("Ersatzartikel falls nicht verfügbar");
-    insertSection.add(label7, new GridConstraints(2, 3, 1, 5, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    insertSection.add(label7, new GridConstraints(2, 2, 1, 5, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     final JLabel label8 = new JLabel();
     label8.setText("Lieferung von");
     insertSection.add(label8, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     comment = new JTextArea();
     comment.setMargin(new Insets(1, 1, 1, 1));
-    insertSection.add(comment, new GridConstraints(1, 11, 3, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, 16), null, 0, false));
+    insertSection.add(comment, new GridConstraints(1, 10, 3, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, 16), null, 0, false));
     cancelEdit = new JButton();
     cancelEdit.setBorderPainted(true);
     cancelEdit.setText("Abbrechen");
-    insertSection.add(cancelEdit, new GridConstraints(3, 12, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-    submit = new PermissionButton();
-    submit.setAlignmentY(0.0f);
-    submit.setHorizontalTextPosition(0);
-    submit.setText("Übernehmen");
-    insertSection.add(submit, new GridConstraints(3, 13, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-    deletePreOrder = new JButton();
-    deletePreOrder.setText("Löschen");
-    insertSection.add(deletePreOrder, new GridConstraints(1, 13, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    insertSection.add(cancelEdit, new GridConstraints(3, 11, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     searchCatalog = new JButton();
     searchCatalog.setBorderPainted(false);
     searchCatalog.setContentAreaFilled(false);
     searchCatalog.setText("");
-    insertSection.add(searchCatalog, new GridConstraints(1, 6, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, 1, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null, 0, false));
+    insertSection.add(searchCatalog, new GridConstraints(1, 5, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, 1, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null, 0, false));
     searchCatalogAlternative = new JButton();
     searchCatalogAlternative.setBorderPainted(false);
     searchCatalogAlternative.setContentAreaFilled(false);
     searchCatalogAlternative.setText("");
-    insertSection.add(searchCatalogAlternative, new GridConstraints(3, 6, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, 1, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null, 0, false));
+    insertSection.add(searchCatalogAlternative, new GridConstraints(3, 5, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, 1, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null, 0, false));
     alternativeName = new JLabel();
     alternativeName.setBackground(new Color(-1));
     Font alternativeNameFont = this.$$$getFont$$$(null, Font.BOLD, -1, alternativeName.getFont());
     if (alternativeNameFont != null) alternativeName.setFont(alternativeNameFont);
     alternativeName.setText("");
-    insertSection.add(alternativeName, new GridConstraints(3, 8, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, new Dimension(300, -1), new Dimension(300, -1), new Dimension(300, -1), 0, false));
+    insertSection.add(alternativeName, new GridConstraints(3, 7, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, new Dimension(300, -1), new Dimension(300, -1), new Dimension(300, -1), 0, false));
     final JLabel label9 = new JLabel();
     label9.setText("Kommentar zur Bestellung");
-    insertSection.add(label9, new GridConstraints(0, 11, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    insertSection.add(label9, new GridConstraints(0, 10, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     alternativeContainerSize = new JLabel();
     alternativeContainerSize.setText("");
-    insertSection.add(alternativeContainerSize, new GridConstraints(3, 9, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    insertSection.add(alternativeContainerSize, new GridConstraints(3, 8, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     alternativeNetPrice = new JLabel();
     alternativeNetPrice.setText("");
-    insertSection.add(alternativeNetPrice, new GridConstraints(3, 10, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    insertSection.add(alternativeNetPrice, new GridConstraints(3, 9, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     final JLabel label10 = new JLabel();
     label10.setText("bis");
-    insertSection.add(label10, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-    insertSection.add(firstWeekOfDelivery, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-    insertSection.add(latestWeekOfDelivery, new GridConstraints(3, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+    insertSection.add(label10, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    insertSection.add(firstWeekOfDelivery, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+    insertSection.add(latestWeekOfDelivery, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
     alternativePermitted = new JCheckBox();
     alternativePermitted.setText("");
-    insertSection.add(alternativePermitted, new GridConstraints(3, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    insertSection.add(alternativePermitted, new GridConstraints(3, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    deletePreOrder = new JButton();
+    deletePreOrder.setText("Löschen");
+    insertSection.add(deletePreOrder, new GridConstraints(1, 11, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    submit = new PermissionButton();
+    submit.setAlignmentY(0.0f);
+    submit.setHorizontalTextPosition(0);
+    submit.setText("Übernehmen");
+    insertSection.add(submit, new GridConstraints(2, 11, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     final JPanel panel1 = new JPanel();
     panel1.setLayout(new GridLayoutManager(1, 8, new Insets(0, 0, 0, 0), -1, -1));
     main.add(panel1, new GridConstraints(3, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
