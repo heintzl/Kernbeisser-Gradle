@@ -60,6 +60,10 @@ public class SaleSession implements UserRelated {
     return sessionType == null ? "UNKNOWN" : getSessionType().name();
   }
 
+  public boolean isSoloShopping() {
+    return customer.equals(seller) && secondSeller == null;
+  }
+
   @Override
   public boolean isInRelation(@NotNull User user) {
     return user.getUserGroup().equals(customer.getUserGroup());
