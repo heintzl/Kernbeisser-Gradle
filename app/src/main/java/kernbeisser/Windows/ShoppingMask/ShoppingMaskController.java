@@ -21,6 +21,7 @@ import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.Pay.PayController;
 import kernbeisser.Windows.PostPanel.PostPanelController;
+import kernbeisser.Windows.PreOrder.PreOrderController;
 import kernbeisser.Windows.ShoppingMask.ArticleSelector.ArticleSelectorController;
 import kernbeisser.Windows.Transaction.TransactionController;
 import kernbeisser.Windows.UserInfo.UserInfoController;
@@ -46,13 +47,13 @@ public class ShoppingMaskController extends Controller<ShoppingMaskView, Shoppin
     this.view = getView();
   }
 
-  public static boolean hasPreorderPermission() {
-    try {
-      StaticPermissionChecks.getStaticInstance().checkPreorderPermission();
-      return true;
-    } catch (AccessDeniedException e) {
-      return false;
-    }
+  public static boolean hasPreorderDiscountPermission() {
+    return Tools.canInvoke(
+        StaticPermissionChecks.getStaticInstance()::checkPreorderDiscountPermission);
+  }
+
+  public boolean hasPreorderPermission() {
+    return Tools.canInvoke(StaticPermissionChecks.getStaticInstance()::checkOwnPreorderPermission);
   }
 
   private double getRelevantPrice() {
@@ -392,7 +393,7 @@ public class ShoppingMaskController extends Controller<ShoppingMaskView, Shoppin
       RememberDialog.showDialog(
           customer, "CustomerDebtWarning", null, infoMessage, "Kein Guthaben vorhanden");
     }
-    view.hasPreorderPermission = hasPreorderPermission();
+    view.hasPreorderPermission = hasPreorderDiscountPermission();
     view.setPriceOptions(ArticleType.ARTICLE_NUMBER);
   }
 
@@ -481,7 +482,16 @@ public class ShoppingMaskController extends Controller<ShoppingMaskView, Shoppin
         .openIn(new SubWindow(view.traceViewContainer()));
   }
 
-  public void sharedContainerTransaction(@NotNull ShoppingItem containerItem) {
+  @Key(PermissionKey.ACTION_OPEN_OWN_PRE_ORDER)
+  public void openPreOrder() {
+    SaleSession saleSession = model.getSaleSession();
+    PreOrderCreator preOrderCreator =
+        saleSession.isSoloShopping() ? PreOrderCreator.SELF : PreOrderCreator.POS;
+    new PreOrderController(preOrderCreator, saleSession.getCustomer()).openTab();
+  }
+
+  @Key(PermissionKey.ACTION_PREORDER_DISCOUNT)
+  public void sharedContainerTransaction(ShoppingItem containerItem) {
 
     MetricUnits unit;
     int numItems;

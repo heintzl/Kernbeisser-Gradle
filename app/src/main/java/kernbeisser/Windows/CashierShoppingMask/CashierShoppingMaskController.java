@@ -13,11 +13,14 @@ import kernbeisser.DBEntities.User;
 import kernbeisser.Enums.*;
 import kernbeisser.Exeptions.NoSelectionException;
 import kernbeisser.Exeptions.NotEnoughCreditException;
+import kernbeisser.Security.StaticPermissionChecks;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Useful.Users;
 import kernbeisser.Windows.LogIn.LogInModel;
 import kernbeisser.Windows.MVC.Controller;
 import kernbeisser.Windows.MVC.Linked;
 import kernbeisser.Windows.PostPanel.PostPanelController;
+import kernbeisser.Windows.PreOrder.PreOrderController;
 import kernbeisser.Windows.ShoppingMask.ShoppingMaskController;
 import kernbeisser.Windows.UserInfo.UserInfoController;
 import kernbeisser.Windows.ViewContainers.SubWindow;
@@ -56,6 +59,10 @@ public class CashierShoppingMaskController
     searchBoxController.addExtraComponents(userFilter.createFilterUIComponents());
   }
 
+  public boolean hasPreorderPermission() {
+    return Tools.canInvoke(StaticPermissionChecks.getStaticInstance()::checkOwnPreorderPermission);
+  }
+
   public void changeFilter() {
     searchBoxController.invokeSearch();
   }
@@ -64,11 +71,11 @@ public class CashierShoppingMaskController
     CashierShoppingMaskView view = getView();
     if (tableSelection != null) {
       view.setOpenShoppingMaskEnabled(!model.isOpenLock());
-      view.setUserInfoEnabled(true);
+      view.setUserFormsEnabled(true);
       view.setStartFor(tableSelection.getFirstName(), tableSelection.getSurname());
     } else {
       view.setOpenShoppingMaskEnabled(false);
-      view.setUserInfoEnabled(false);
+      view.setUserFormsEnabled(false);
     }
   }
 
@@ -104,6 +111,14 @@ public class CashierShoppingMaskController
     new UserInfoController(
             searchBoxController.getSelectedObject().orElseThrow(NoSelectionException::new))
         .openIn(new SubWindow(getView().traceViewContainer()));
+  }
+
+  @Key(PermissionKey.ACTION_OPEN_OWN_PRE_ORDER)
+  public void openUserPreOrder() throws NoSelectionException {
+    new PreOrderController(
+            PreOrderCreator.POS,
+            searchBoxController.getSelectedObject().orElseThrow(NoSelectionException::new))
+        .openTab();
   }
 
   private void setAllowOpen(boolean v) {

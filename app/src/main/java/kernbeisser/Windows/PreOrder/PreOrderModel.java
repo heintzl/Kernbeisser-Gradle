@@ -20,16 +20,21 @@ import kernbeisser.DBEntities.Repositories.ArticleRepository;
 import kernbeisser.DBEntities.User_;
 import kernbeisser.EntityWrapper.ObjectState;
 import kernbeisser.Enums.Delivery;
+import kernbeisser.Enums.PreOrderCreator;
 import kernbeisser.Enums.Setting;
 import kernbeisser.Exeptions.handler.UnexpectedExceptionHandler;
 import kernbeisser.Export.CSVExport;
 import kernbeisser.Reports.DeliveryBillReport;
 import kernbeisser.Reports.PreOrderChecklist;
 import kernbeisser.Reports.Report;
+import kernbeisser.Security.StaticPermissionChecks;
 import kernbeisser.Useful.Constants;
 import kernbeisser.Useful.Date;
+import kernbeisser.Useful.Tools;
 import kernbeisser.Windows.MVC.IModel;
 import lombok.Getter;
+import org.jetbrains.annotations.Nullable;
+import rs.groump.AccessDeniedException;
 import rs.groump.Key;
 import rs.groump.PermissionKey;
 
@@ -37,8 +42,14 @@ public class PreOrderModel implements IModel<PreOrderController> {
 
   private final EntityManager em = DBConnection.getEntityManager();
   private final EntityTransaction et = em.getTransaction();
-  @Getter private final Map<PreOrder, Delivery> delivery = initializeDelivery();
+  @Getter private final Map<PreOrder, Delivery> delivery;
   private final Set<PreOrder> dirty = new HashSet<>();
+  @Getter private final boolean editable;
+
+  public PreOrderModel(PreOrderCreator preOrderCreator, @Nullable User userRestricted) {
+    editable = mayEdit(preOrderCreator);
+    delivery = initializeDelivery(userRestricted);
+  }
 
   Optional<CatalogEntry> getEntryByKkNumber(Integer kkNumber) {
     List<CatalogEntry> entries = CatalogEntry.getByArticleNo(kkNumber.toString(), true, false);
@@ -56,8 +67,9 @@ public class PreOrderModel implements IModel<PreOrderController> {
     et.commit();
   }
 
-  private Map<PreOrder, Delivery> initializeDelivery() {
-    return getAllPreOrders().stream()
+  private Map<PreOrder, Delivery> initializeDelivery(@Nullable User userRestricted) {
+    Collection<PreOrder> preOrders = userRestricted == null ? getAllPreOrders() : getPreOrdersByUser(userRestricted);
+    return preOrders.stream()
         .filter(p -> p.getDeliveryState() != null)
         .collect(Collectors.toMap(p -> p, PreOrder::getDeliveryState));
   }
@@ -154,7 +166,9 @@ public class PreOrderModel implements IModel<PreOrderController> {
   }
 
   public void close() {
-    saveChanges();
+    if (editable) {
+      saveChanges();
+    }
     em.close();
   }
 
@@ -346,12 +360,9 @@ public class PreOrderModel implements IModel<PreOrderController> {
         && date.getDayOfWeek() == PreOrderController.getWeekdayOfDelivery();
   }
 
-  @Key(PermissionKey.ACTION_ORDER_OWN_CONTAINER)
-  public void checkOrderOwnContainerPermission() {}
-
-  @Key(PermissionKey.ACTION_ORDER_CONTAINER)
-  public void checkUserOrderContainerPermission() {}
-
-  @Key(PermissionKey.ACTION_ORDER_CONTAINER)
-  public void checkGeneralOrderPlacementPermission() {}
+  public boolean mayEdit(PreOrderCreator preOrderCreator) {
+    return Tools.canInvoke(StaticPermissionChecks.getStaticInstance()::checkOrderContainerPermission)
+            || (PreOrderCreator.SELF == preOrderCreator ||  PreOrderCreator.POS == preOrderCreator)
+                && Tools.canInvoke(StaticPermissionChecks.getStaticInstance()::checkOrderOwnContainerPermission);
+  }
 }

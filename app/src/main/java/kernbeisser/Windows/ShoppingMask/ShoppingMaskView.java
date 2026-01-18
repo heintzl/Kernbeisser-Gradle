@@ -4,6 +4,7 @@ import static java.text.MessageFormat.format;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
+import com.intellij.uiDesigner.core.Spacer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
@@ -102,8 +103,9 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
   private JTextField producer;
   private JButton editPost;
   private JButton shareContainer;
+  private JButton openPreOrder;
+  private JButton userInfo;
   private ButtonGroup optGrpArticleType;
-  private ButtonGroup optGrpReduction;
 
   @Getter @Linked private ShoppingMaskController controller;
   @Linked private ShoppingCartController cartController;
@@ -890,7 +892,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
           }
         });
 
-    if (ShoppingMaskController.hasPreorderPermission()) {
+    if (ShoppingMaskController.hasPreorderDiscountPermission()) {
       pricePreordered.addItemListener(
           e -> {
             variablePercentage.setEnabled(false);
@@ -920,6 +922,15 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
           }
         });
 
+    userInfo.setIcon(IconFontSwing.buildIcon(FontAwesome.INFO, 20, new Color(49, 114, 128)));
+    userInfo.addActionListener(e -> controller.openUserInfo());
+    if (controller.hasPreorderPermission()) {
+      openPreOrder.setIcon(
+          IconFontSwing.buildIcon(FontAwesome.CALENDAR, 20, new Color(49, 114, 128)));
+      openPreOrder.addActionListener(e -> controller.openPreOrder());
+    } else {
+      openPreOrder.setVisible(false);
+    }
     editUser.setIcon(IconFontSwing.buildIcon(FontAwesome.INFO, 20, new Color(49, 114, 128)));
     editUser.addActionListener(e -> controller.openUserInfo());
 
@@ -957,7 +968,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
 
     shareContainer.addActionListener(e -> sharedContainerTransaction());
     shareContainer.setEnabled(false);
-    shareContainer.setVisible(ShoppingMaskController.hasPreorderPermission());
+    shareContainer.setVisible(ShoppingMaskController.hasPreorderDiscountPermission());
     shareContainer.setIcon(Icons.defaultIcon(FontAwesome.SHARE, new Color(0x00A113)));
     shoppingCartView
         .getShoppingItemsTable()
@@ -1122,7 +1133,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     label2.setText("Lief.-Artikelnr.:");
     GridBagConstraints gbc;
     gbc = new GridBagConstraints();
-    gbc.gridx = 0;
+    gbc.gridx = 1;
     gbc.gridy = 3;
     gbc.gridwidth = 2;
     gbc.anchor = GridBagConstraints.WEST;
@@ -1133,7 +1144,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     if (suppliersItemNumberFont != null) suppliersItemNumber.setFont(suppliersItemNumberFont);
     suppliersItemNumber.setText("");
     gbc = new GridBagConstraints();
-    gbc.gridx = 3;
+    gbc.gridx = 4;
     gbc.gridy = 3;
     gbc.gridwidth = 2;
     gbc.anchor = GridBagConstraints.WEST;
@@ -1145,7 +1156,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     if (label3Font != null) label3.setFont(label3Font);
     label3.setText("Artikel:");
     gbc = new GridBagConstraints();
-    gbc.gridx = 0;
+    gbc.gridx = 1;
     gbc.gridy = 4;
     gbc.gridwidth = 2;
     gbc.anchor = GridBagConstraints.WEST;
@@ -1156,7 +1167,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     if (articleNameFont != null) articleName.setFont(articleNameFont);
     articleName.setText("");
     gbc = new GridBagConstraints();
-    gbc.gridx = 3;
+    gbc.gridx = 4;
     gbc.gridy = 4;
     gbc.gridwidth = 4;
     gbc.weightx = 0.3;
@@ -1169,7 +1180,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     if (label4Font != null) label4.setFont(label4Font);
     label4.setText("Verkaufspreis:");
     gbc = new GridBagConstraints();
-    gbc.gridx = 0;
+    gbc.gridx = 1;
     gbc.gridy = 8;
     gbc.gridwidth = 2;
     gbc.anchor = GridBagConstraints.WEST;
@@ -1179,7 +1190,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     Font retailPriceFont = this.$$$getFont$$$(null, Font.PLAIN, 16, retailPrice.getFont());
     if (retailPriceFont != null) retailPrice.setFont(retailPriceFont);
     gbc = new GridBagConstraints();
-    gbc.gridx = 3;
+    gbc.gridx = 4;
     gbc.gridy = 8;
     gbc.gridwidth = 2;
     gbc.weightx = 0.3;
@@ -1192,7 +1203,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     if (label5Font != null) label5.setFont(label5Font);
     label5.setText("Menge:");
     gbc = new GridBagConstraints();
-    gbc.gridx = 0;
+    gbc.gridx = 1;
     gbc.gridy = 9;
     gbc.gridwidth = 2;
     gbc.anchor = GridBagConstraints.WEST;
@@ -1202,7 +1213,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     Font itemMultiplierFont = this.$$$getFont$$$(null, Font.PLAIN, 16, itemMultiplier.getFont());
     if (itemMultiplierFont != null) itemMultiplier.setFont(itemMultiplierFont);
     gbc = new GridBagConstraints();
-    gbc.gridx = 3;
+    gbc.gridx = 4;
     gbc.gridy = 9;
     gbc.gridwidth = 2;
     gbc.anchor = GridBagConstraints.WEST;
@@ -1214,7 +1225,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     if (containerSizeLabelFont != null) containerSizeLabel.setFont(containerSizeLabelFont);
     containerSizeLabel.setText("Gebindegröße:");
     gbc = new GridBagConstraints();
-    gbc.gridx = 0;
+    gbc.gridx = 1;
     gbc.gridy = 10;
     gbc.gridwidth = 2;
     gbc.anchor = GridBagConstraints.WEST;
@@ -1225,7 +1236,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     if (label6Font != null) label6.setFont(label6Font);
     label6.setText("Pfand:");
     gbc = new GridBagConstraints();
-    gbc.gridx = 0;
+    gbc.gridx = 1;
     gbc.gridy = 11;
     gbc.gridwidth = 2;
     gbc.anchor = GridBagConstraints.WEST;
@@ -1235,7 +1246,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     Font depositFont = this.$$$getFont$$$(null, Font.PLAIN, 16, deposit.getFont());
     if (depositFont != null) deposit.setFont(depositFont);
     gbc = new GridBagConstraints();
-    gbc.gridx = 3;
+    gbc.gridx = 4;
     gbc.gridy = 11;
     gbc.gridwidth = 2;
     gbc.weightx = 0.3;
@@ -1249,7 +1260,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     if (retailPriceUnitFont != null) retailPriceUnit.setFont(retailPriceUnitFont);
     retailPriceUnit.setText("€/kg");
     gbc = new GridBagConstraints();
-    gbc.gridx = 5;
+    gbc.gridx = 6;
     gbc.gridy = 8;
     gbc.gridwidth = 2;
     gbc.anchor = GridBagConstraints.WEST;
@@ -1261,7 +1272,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     if (itemMultiplierUnitFont != null) itemMultiplierUnit.setFont(itemMultiplierUnitFont);
     itemMultiplierUnit.setText("g");
     gbc = new GridBagConstraints();
-    gbc.gridx = 5;
+    gbc.gridx = 6;
     gbc.gridy = 9;
     gbc.anchor = GridBagConstraints.WEST;
     gbc.insets = new Insets(0, 0, 0, 5);
@@ -1272,7 +1283,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     if (containerUnitFont != null) containerUnit.setFont(containerUnitFont);
     containerUnit.setText("Stk");
     gbc = new GridBagConstraints();
-    gbc.gridx = 5;
+    gbc.gridx = 6;
     gbc.gridy = 10;
     gbc.anchor = GridBagConstraints.WEST;
     gbc.insets = new Insets(0, 0, 0, 5);
@@ -1283,7 +1294,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     if (depositUnitFont != null) depositUnit.setFont(depositUnitFont);
     depositUnit.setText("€");
     gbc = new GridBagConstraints();
-    gbc.gridx = 5;
+    gbc.gridx = 6;
     gbc.gridy = 11;
     gbc.gridwidth = 2;
     gbc.anchor = GridBagConstraints.WEST;
@@ -1299,7 +1310,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     addDeposit.setVerifyInputWhenFocusTarget(true);
     addDeposit.setVisible(true);
     gbc = new GridBagConstraints();
-    gbc.gridx = 7;
+    gbc.gridx = 8;
     gbc.gridy = 11;
     gbc.gridwidth = 2;
     ShoppingItemPanel.add(addDeposit, gbc);
@@ -1313,7 +1324,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     addAmount.setToolTipText("Artikel einkaufen");
     addAmount.setVisible(true);
     gbc = new GridBagConstraints();
-    gbc.gridx = 7;
+    gbc.gridx = 8;
     gbc.gridy = 9;
     gbc.gridwidth = 2;
     ShoppingItemPanel.add(addAmount, gbc);
@@ -1325,7 +1336,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     addPrice.setText("");
     addPrice.setToolTipText("Artikel einkaufen");
     gbc = new GridBagConstraints();
-    gbc.gridx = 7;
+    gbc.gridx = 8;
     gbc.gridy = 8;
     gbc.gridwidth = 2;
     ShoppingItemPanel.add(addPrice, gbc);
@@ -1337,7 +1348,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     searchArticle.setText("");
     searchArticle.setToolTipText("Artikel suchen");
     gbc = new GridBagConstraints();
-    gbc.gridx = 7;
+    gbc.gridx = 8;
     gbc.gridy = 4;
     gbc.gridwidth = 2;
     ShoppingItemPanel.add(searchArticle, gbc);
@@ -1349,7 +1360,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     productTypePanel.setFocusable(true);
     productTypePanel.setMaximumSize(new Dimension(2147483647, 185));
     gbc = new GridBagConstraints();
-    gbc.gridx = 0;
+    gbc.gridx = 1;
     gbc.gridy = 0;
     gbc.gridwidth = 9;
     gbc.weightx = 0.3;
@@ -1455,7 +1466,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     if (label7Font != null) label7.setFont(label7Font);
     label7.setText("KB-Artikelnr.:");
     gbc = new GridBagConstraints();
-    gbc.gridx = 0;
+    gbc.gridx = 1;
     gbc.gridy = 1;
     gbc.gridwidth = 2;
     gbc.anchor = GridBagConstraints.WEST;
@@ -1466,7 +1477,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     if (kbNumberFont != null) kbNumber.setFont(kbNumberFont);
     kbNumber.setText("");
     gbc = new GridBagConstraints();
-    gbc.gridx = 3;
+    gbc.gridx = 4;
     gbc.gridy = 1;
     gbc.gridwidth = 2;
     gbc.anchor = GridBagConstraints.WEST;
@@ -1480,7 +1491,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     reductionPanel.setFocusTraversalPolicyProvider(false);
     reductionPanel.setFocusable(false);
     gbc = new GridBagConstraints();
-    gbc.gridx = 0;
+    gbc.gridx = 1;
     gbc.gridy = 12;
     gbc.gridwidth = 9;
     gbc.fill = GridBagConstraints.BOTH;
@@ -1596,7 +1607,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     Font netPriceFont = this.$$$getFont$$$(null, Font.PLAIN, 16, netPrice.getFont());
     if (netPriceFont != null) netPrice.setFont(netPriceFont);
     gbc = new GridBagConstraints();
-    gbc.gridx = 3;
+    gbc.gridx = 4;
     gbc.gridy = 7;
     gbc.gridwidth = 2;
     gbc.weightx = 0.3;
@@ -1609,7 +1620,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     if (label10Font != null) label10.setFont(label10Font);
     label10.setText("Nettopreis:");
     gbc = new GridBagConstraints();
-    gbc.gridx = 0;
+    gbc.gridx = 1;
     gbc.gridy = 7;
     gbc.gridwidth = 2;
     gbc.anchor = GridBagConstraints.WEST;
@@ -1623,7 +1634,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     netPriceUnit.setMinimumSize(new Dimension(100, 22));
     netPriceUnit.setText("€/kg");
     gbc = new GridBagConstraints();
-    gbc.gridx = 5;
+    gbc.gridx = 6;
     gbc.gridy = 7;
     gbc.gridwidth = 2;
     gbc.anchor = GridBagConstraints.WEST;
@@ -1637,7 +1648,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     addNetPrice.setText("");
     addNetPrice.setToolTipText("Artikel einkaufen");
     gbc = new GridBagConstraints();
-    gbc.gridx = 7;
+    gbc.gridx = 8;
     gbc.gridy = 7;
     gbc.gridwidth = 2;
     ShoppingItemPanel.add(addNetPrice, gbc);
@@ -1646,7 +1657,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     if (containerSizeFont != null) containerSize.setFont(containerSizeFont);
     containerSize.setText("");
     gbc = new GridBagConstraints();
-    gbc.gridx = 3;
+    gbc.gridx = 4;
     gbc.gridy = 10;
     gbc.gridwidth = 2;
     gbc.anchor = GridBagConstraints.WEST;
@@ -1658,7 +1669,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     if (label11Font != null) label11.setFont(label11Font);
     label11.setText("MWSt.:");
     gbc = new GridBagConstraints();
-    gbc.gridx = 0;
+    gbc.gridx = 1;
     gbc.gridy = 6;
     gbc.gridwidth = 2;
     gbc.anchor = GridBagConstraints.WEST;
@@ -1669,7 +1680,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     Font vatFont = this.$$$getFont$$$(null, -1, 14, vat.getFont());
     if (vatFont != null) vat.setFont(vatFont);
     gbc = new GridBagConstraints();
-    gbc.gridx = 3;
+    gbc.gridx = 4;
     gbc.gridy = 6;
     gbc.gridwidth = 4;
     gbc.weightx = 0.3;
@@ -1682,7 +1693,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     Font supplierFont = this.$$$getFont$$$(null, -1, 14, supplier.getFont());
     if (supplierFont != null) supplier.setFont(supplierFont);
     gbc = new GridBagConstraints();
-    gbc.gridx = 3;
+    gbc.gridx = 4;
     gbc.gridy = 2;
     gbc.gridwidth = 4;
     gbc.weightx = 0.3;
@@ -1695,7 +1706,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     if (label12Font != null) label12.setFont(label12Font);
     label12.setText("Lieferant:");
     gbc = new GridBagConstraints();
-    gbc.gridx = 0;
+    gbc.gridx = 1;
     gbc.gridy = 2;
     gbc.gridwidth = 2;
     gbc.anchor = GridBagConstraints.WEST;
@@ -1703,7 +1714,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     ShoppingItemPanel.add(label12, gbc);
     final JPanel spacer2 = new JPanel();
     gbc = new GridBagConstraints();
-    gbc.gridx = 5;
+    gbc.gridx = 6;
     gbc.gridy = 13;
     gbc.weighty = 1.0;
     gbc.fill = GridBagConstraints.VERTICAL;
@@ -1713,7 +1724,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     if (label13Font != null) label13.setFont(label13Font);
     label13.setText("Hersteller:");
     gbc = new GridBagConstraints();
-    gbc.gridx = 0;
+    gbc.gridx = 1;
     gbc.gridy = 5;
     gbc.gridwidth = 2;
     gbc.anchor = GridBagConstraints.WEST;
@@ -1726,7 +1737,7 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     if (producerFont != null) producer.setFont(producerFont);
     producer.setText("");
     gbc = new GridBagConstraints();
-    gbc.gridx = 3;
+    gbc.gridx = 4;
     gbc.gridy = 5;
     gbc.gridwidth = 4;
     gbc.weightx = 0.3;
@@ -1734,6 +1745,24 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     gbc.fill = GridBagConstraints.HORIZONTAL;
     gbc.insets = new Insets(0, 5, 0, 5);
     ShoppingItemPanel.add(producer, gbc);
+    final JPanel panel1 = new JPanel();
+    panel1.setLayout(new GridLayoutManager(1, 3, new Insets(0, 0, 0, 0), -1, -1));
+    gbc = new GridBagConstraints();
+    gbc.gridx = 0;
+    gbc.gridy = 14;
+    gbc.gridwidth = 10;
+    gbc.fill = GridBagConstraints.BOTH;
+    ShoppingItemPanel.add(panel1, gbc);
+    openPreOrder = new JButton();
+    openPreOrder.setLabel("Vorbestellung");
+    openPreOrder.setText("Vorbestellung");
+    panel1.add(openPreOrder, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+    userInfo = new JButton();
+    userInfo.setLabel("Benutzerinfo");
+    userInfo.setText("Benutzerinfo");
+    panel1.add(userInfo, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+    final Spacer spacer3 = new Spacer();
+    panel1.add(spacer3, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
     eastPanel = new JPanel();
     eastPanel.setLayout(new BorderLayout(0, 0));
     eastPanel.setMinimumSize(new Dimension(-1, -1));
@@ -1870,12 +1899,12 @@ public class ShoppingMaskView implements IView<ShoppingMaskController> {
     gbc.fill = GridBagConstraints.HORIZONTAL;
     gbc.insets = new Insets(0, 5, 5, 10);
     eastUpperPanel.add(solidarity, gbc);
-    final JPanel spacer3 = new JPanel();
+    final JPanel spacer4 = new JPanel();
     gbc = new GridBagConstraints();
     gbc.gridx = 8;
     gbc.gridy = 4;
     gbc.fill = GridBagConstraints.HORIZONTAL;
-    eastUpperPanel.add(spacer3, gbc);
+    eastUpperPanel.add(spacer4, gbc);
     shoppingCartPanel = new JPanel();
     shoppingCartPanel.setLayout(new BorderLayout(0, 0));
     shoppingCartPanel.setAutoscrolls(true);

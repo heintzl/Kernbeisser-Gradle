@@ -12,5 +12,14 @@ public class StaticPermissionChecks {
   public void checkShouldReadArticlePrintPoolAgain() {}
 
   @Key(PermissionKey.ACTION_PREORDER_DISCOUNT)
-  public void checkPreorderPermission() {}
+  public void checkPreorderDiscountPermission() {}
+
+  @Key(PermissionKey.ACTION_OPEN_OWN_PRE_ORDER)
+  public void checkOwnPreorderPermission() {}
+
+  @Key(PermissionKey.ACTION_ORDER_OWN_CONTAINER)
+  public void checkOrderOwnContainerPermission() {}
+
+  @Key(PermissionKey.ACTION_ORDER_CONTAINER)
+  public void checkOrderContainerPermission() {}
 }
