@@ -463,6 +463,13 @@ public class PreOrderView implements IView<PreOrderController> {
       }
       return;
     }
+    if (controller.isSlowOrder(entry) && !confirmSlowOrder(entry)) {
+      return;
+    }
+      pasteCheckedEntryDataInView(entry, targetAlternative);
+  }
+
+  private void pasteCheckedEntryDataInView(CatalogEntry entry, boolean targetAlternative) {
     String bezeichnung = entry.getBezeichnung();
     String bestellEinheit = entry.getBestelleinheit();
     String artikelNr = entry.getArtikelNr();
@@ -481,9 +488,6 @@ public class PreOrderView implements IView<PreOrderController> {
       setAlternativeNetPrice(containerNetPrice);
       return;
     }
-    if (controller.isSlowOrder(entry) && !confirmSlowOrder(entry)) {
-      return;
-    }
     controller.setSelectedEntry(entry);
     setKkNumber(artikelNr);
     setItemName(bezeichnung);
@@ -491,7 +495,8 @@ public class PreOrderView implements IView<PreOrderController> {
     setNetPrice(containerNetPrice);
     Optional.ofNullable(entry.getErsatzArtikelNr())
         .flatMap(nr -> controller.getEntryByKKNr(nr))
-        .ifPresent(this::confirmAlternativeFromCatalog);
+            .filter(c -> !c.getArtikelNr().equals(alternativeKkNumber.getText()))
+            .ifPresent(this::confirmAlternativeFromCatalog);
   }
 
   @Override
@@ -639,13 +644,13 @@ public class PreOrderView implements IView<PreOrderController> {
     user.getModel().setSelectedItem(preOrder.getUser());
     user.repaint();
     setAmount(Integer.toString(preOrder.getAmount()));
-    pasteEntryDataInView(preOrder.getCatalogEntry(), false);
     if (preOrder.isAlternativePermitted()) {
       alternativePermitted.setSelected(true);
-      pasteEntryDataInView(preOrder.getAlternativeCatalogEntry(), true);
+      pasteCheckedEntryDataInView(preOrder.getAlternativeCatalogEntry(), true);
     } else {
       alternativePermitted.setSelected(false);
     }
+    pasteCheckedEntryDataInView(preOrder.getCatalogEntry(), false);
     setComment(preOrder.getComment());
     setFirstWeekOfDelivery(preOrder);
     setLatestWeekOfDelivery(preOrder);
