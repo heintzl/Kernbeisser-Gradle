@@ -41,7 +41,7 @@ JAVA_RUN_OPTS    := -Xmx1024m -splash:KernbeisserSplash.png -javaagent:security.
 JDWP_OPTS        := -agentlib:jdwp=transport=dt_socket,server=y,suspend=$(SUSPEND),address=localhost:$(DEBUG_PORT)
 
 .DEFAULT_GOAL := help
-.PHONY: help build test check format clean dev-config run debug \
+.PHONY: help build test check format clean dev-config dev-setup run debug \
         db-up db-down db-logs db-shell db-import db-dump db-reset \
         gui gui-down adminer down
 
@@ -74,6 +74,9 @@ clean: ## Delete all build output
 ## --- Run locally (needs JDK 21 and a display) ---------------------------
 
 dev-config: $(DEV_CONFIG)
+
+dev-setup: db-up dev-config ## Prepare for running from the IDE (DB, .dev/config.json, security.jar)
+	$(GRADLE) :security:jar :kbmetamodel:jar
 
 $(DEV_CONFIG):
 	@mkdir -p $(DEV_DIR)

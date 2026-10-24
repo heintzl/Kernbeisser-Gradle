@@ -64,15 +64,41 @@ Dumps in `docker/initdb/` are ignored by git.
 ### Debugging
 
 Both ways of running the app open a JDWP debug port (default `5005`, set `DEBUG_PORT` to change).
-In IntelliJ IDEA: *Run → Edit Configurations → + → Remote JVM Debug*, host `localhost`, port `5005`.
-In VS Code: a `java` launch configuration with `"request": "attach"`, `"port": 5005`.
+Attach with the run configuration `Attach debugger (localhost:5005)`, which exists in both IntelliJ
+IDEA and VS Code (see [IDE setup](#ide-setup)).
 
 To debug startup code, make the JVM wait for the debugger: `make debug SUSPEND=y` or
 `make gui SUSPEND=y`.
 
 The app must always be started with `-javaagent:security.jar` (the permission system is
-implemented as a Java agent); the Makefile and the GUI container take care of that. In IntelliJ,
-the shared run configuration `Main(Proxy)` does the same.
+implemented as a Java agent); the Makefile, the GUI container and the IDE run configurations take care
+of that.
+
+### IDE setup
+
+Both IDEs launch `kernbeisser.Main` from source. Before each launch they run `make dev-setup`,
+which starts the dev database, creates `.dev/config.json` and builds `security.jar` (needed for
+`-javaagent`). A JDK 21 must be installed and configured in the IDE.
+
+**IntelliJ IDEA:** open the project folder and let IntelliJ import the Gradle project. Shared run
+configurations:
+
+| Run configuration                  | What it does                                                   |
+|------------------------------------|----------------------------------------------------------------|
+| `Kernbeisser (dev DB)`             | Runs or debugs the app from source against the dev database    |
+| `Attach debugger (localhost:5005)` | Attaches to `make debug` or `make gui`                         |
+| `Kernbeisser in Docker (make gui)` | Starts the app in the noVNC container                          |
+| `Tests (Gradle)`                   | Runs all unit tests                                            |
+| `Dev setup (make dev-setup)`       | Runs automatically before `Kernbeisser (dev DB)`               |
+
+**VS Code:** open the folder and install the recommended extensions when asked (Java Extension
+Pack, Gradle, Docker, EditorConfig). *Run and Debug* has `Kernbeisser (dev DB)` and
+`Attach debugger (localhost:5005)`; *Terminal → Run Task* lists the `make` targets. If the Java
+extension reports missing `*_` classes (e.g. `Article_`), run `make dev-setup` once and then
+*Java: Clean Java Language Server Workspace*.
+
+`.editorconfig` sets the indentation that google-java-format expects (2 spaces). Run
+`make format` before committing; spotless fails the build on formatting errors.
 
 ### Database
 

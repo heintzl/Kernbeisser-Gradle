@@ -209,6 +209,10 @@ gradle-app.setting
 
 # Local development environment (see README.md)
 /.dev/
+# VS Code Java output
+/app/bin/
+/security/bin/
+/kbmetamodel/bin/
 /docker/.env
 /docker/initdb/*
 !/docker/initdb/README.md
